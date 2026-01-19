@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  stats    UserStats?
+  progress LevelProgress[]
+}
+
+model UserStats {
+  id            String @id @default(cuid())
+  userId        String @unique
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  gamesPlayed   Int    @default(0)
+  gamesWon      Int    @default(0)
+  totalScore    Int    @default(0)
+  bestScore     Int    @default(0)
+  longestPath   Int    @default(0)
+  daysPlayed    Int    @default(0)
+  currentStreak Int    @default(0)
+  longestStreak Int    @default(0)
+  lastPlayedAt  DateTime?
+}
+
+model Level {
+  id               String   @id @default(cuid())
+  date             String   @unique // YYYY-MM-DD format
+  gridWidth        Int      @default(10)
+  gridHeight       Int      @default(10)
+  laserConfig      String   // JSON: { x, y, direction }
+  obstacles        String   // JSON: [{ x, y }]
+  mirrorsAvailable Int      @default(5)
+  starThresholds   String   // JSON: [oneStar, twoStar, threeStar]
+  createdAt        DateTime @default(now())
+
+  progress LevelProgress[]
+}
+
+model LevelProgress {
+  id           String   @id @default(cuid())
+  userId       String
+  levelId      String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level        Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  completed    Boolean  @default(false)
+  bestScore    Int      @default(0)
+  stars        Int      @default(0)
+  attempts     Int      @default(0)
+  bestSolution String?  // JSON: [{ x, y, type }]
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, levelId])
+}
