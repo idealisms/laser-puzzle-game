@@ -1,65 +1,120 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import Link from 'next/link'
+import { useAuth } from '@/context/AuthContext'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
+
+export default function HomePage() {
+  const { user, loading, logout } = useAuth()
+
+  const todayDate = new Date().toISOString().split('T')[0]
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen flex flex-col">
+      <header className="border-b border-gray-800 px-6 py-4">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <Link href="/" className="text-xl font-bold text-emerald-400">
+            Laser Puzzle
+          </Link>
+          <nav className="flex items-center gap-4">
+            {loading ? (
+              <span className="text-gray-400">Loading...</span>
+            ) : user ? (
+              <>
+                <Link
+                  href="/profile"
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  {user.username}
+                </Link>
+                <Button variant="secondary" size="sm" onClick={logout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="secondary" size="sm">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button variant="primary" size="sm">
+                    Register
+                  </Button>
+                </Link>
+              </>
+            )}
+          </nav>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      <main className="flex-1 flex flex-col items-center justify-center p-6">
+        <div className="max-w-2xl w-full text-center">
+          <h1 className="text-5xl font-bold mb-4">
+            <span className="text-emerald-400">Laser</span> Puzzle
+          </h1>
+          <p className="text-xl text-gray-400 mb-8">
+            Place mirrors to direct the laser and create the longest possible path!
+          </p>
+
+          <Card className="mb-8">
+            <h2 className="text-2xl font-bold mb-4">Today&apos;s Puzzle</h2>
+            <p className="text-gray-400 mb-6">{todayDate}</p>
+            <Link href={`/game/${todayDate}`}>
+              <Button size="lg">Play Now</Button>
+            </Link>
+          </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link href="/game">
+              <Card className="hover:border-emerald-500 transition-colors cursor-pointer h-full">
+                <h3 className="text-lg font-semibold mb-2">Browse Levels</h3>
+                <p className="text-sm text-gray-400">
+                  Play previous daily puzzles
+                </p>
+              </Card>
+            </Link>
+            {user && (
+              <Link href="/profile">
+                <Card className="hover:border-emerald-500 transition-colors cursor-pointer h-full">
+                  <h3 className="text-lg font-semibold mb-2">Your Stats</h3>
+                  <p className="text-sm text-gray-400">
+                    View your progress and streaks
+                  </p>
+                </Card>
+              </Link>
+            )}
+          </div>
+
+          <div className="mt-12 text-left">
+            <h3 className="text-lg font-semibold mb-4">How to Play</h3>
+            <ul className="text-gray-400 space-y-2">
+              <li>
+                <span className="text-emerald-400 mr-2">1.</span>
+                Click on empty cells to place mirrors
+              </li>
+              <li>
+                <span className="text-emerald-400 mr-2">2.</span>
+                Click on a placed mirror to toggle its orientation (/ or \)
+              </li>
+              <li>
+                <span className="text-emerald-400 mr-2">3.</span>
+                Right-click to remove a mirror
+              </li>
+              <li>
+                <span className="text-emerald-400 mr-2">4.</span>
+                Create the longest laser path to earn more stars!
+              </li>
+            </ul>
+          </div>
         </div>
       </main>
+
+      <footer className="border-t border-gray-800 px-6 py-4 text-center text-gray-500 text-sm">
+        A daily puzzle game
+      </footer>
     </div>
-  );
+  )
 }
