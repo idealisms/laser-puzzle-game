@@ -129,12 +129,12 @@ export async function POST(request: Request) {
       },
       update: {
         completed: true,
-        bestScore: isNewBest ? score : existingProgress.bestScore,
-        stars: isNewBest ? (stars || 0) : existingProgress.stars,
+        bestScore: isNewBest ? score : (existingProgress?.bestScore ?? score),
+        stars: isNewBest ? (stars || 0) : (existingProgress?.stars ?? 0),
         attempts: { increment: 1 },
         bestSolution: isNewBest && solution
           ? JSON.stringify(solution)
-          : existingProgress.bestSolution,
+          : (existingProgress?.bestSolution ?? null),
       },
     })
 

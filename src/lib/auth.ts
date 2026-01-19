@@ -11,6 +11,7 @@ const COOKIE_NAME = 'auth-token'
 export interface JWTPayload {
   userId: string
   username: string
+  [key: string]: unknown
 }
 
 export async function hashPassword(password: string): Promise<string> {
