@@ -38,6 +38,7 @@ export async function GET(request: Request, { params }: RouteParams) {
         obstacles: JSON.parse(level.obstacles),
         mirrorsAvailable: level.mirrorsAvailable,
         starThresholds: JSON.parse(level.starThresholds),
+        optimalScore: level.optimalScore,
       },
     })
   } catch (error) {

@@ -30,6 +30,7 @@ export async function GET() {
         obstacles: JSON.parse(level.obstacles),
         mirrorsAvailable: level.mirrorsAvailable,
         starThresholds: JSON.parse(level.starThresholds),
+        optimalScore: level.optimalScore,
       },
     })
   } catch (error) {
