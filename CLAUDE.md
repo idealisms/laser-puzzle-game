@@ -59,3 +59,7 @@ Complex fields (laserConfig, obstacles, solution) stored as JSON.
 ## Path Alias
 
 `@/*` maps to `./src/*` (configured in tsconfig.json)
+
+## Workflow
+
+Always commit changes to git after completing each edit or logical unit of work. Do not batch multiple unrelated changes into a single commit.
