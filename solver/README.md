@@ -10,10 +10,12 @@ The solver takes a puzzle configuration (grid size, laser position, obstacles, n
 
 | File | Description |
 |------|-------------|
-| `puzzles.py` | Defines the 7 puzzle configurations from the game, including grid dimensions, laser start position/direction, obstacle positions, and available mirrors |
+| `puzzles.py` | Defines the 7 puzzle configurations from the game (10x10 grids) |
+| `large_puzzles.py` | Larger puzzle configurations (15x20 grids with 10 mirrors) for scalability testing |
 | `simulator.py` | Laser path simulator that traces the beam through the grid. Also includes a beam search solver used as a baseline |
 | `cpsat_solver.py` | Main solver using Google OR-Tools CP-SAT constraint programming. Models laser physics symbolically to find optimal solutions |
-| `test_solver.py` | Test harness that runs both solvers on all puzzles and compares results |
+| `test_solver.py` | Test harness that runs both solvers on all 10x10 puzzles and compares results |
+| `test_large_puzzles.py` | Test harness for 15x20 puzzles with extended time limits |
 | `requirements.txt` | Python dependencies (ortools>=9.8) |
 
 ## Setup
@@ -117,6 +119,8 @@ A heuristic solver that:
 
 ## Puzzles
 
+### Standard Puzzles (10x10)
+
 The 7 puzzle configurations from the game:
 
 | # | Name | Grid | Mirrors | Obstacles |
@@ -129,9 +133,71 @@ The 7 puzzle configurations from the game:
 | 5 | Spiral Walls | 10x10 | 6 | 20 |
 | 6 | Chamber Maze | 10x10 | 7 | 22 |
 
+### Large Puzzles (15x20)
+
+Additional puzzles for scalability testing:
+
+| # | Name | Grid | Mirrors | Obstacles |
+|---|------|------|---------|-----------|
+| 0 | Spiral Inward | 15x20 | 10 | 84 |
+| 1 | Chamber Grid | 15x20 | 10 | 51 |
+| 2 | Diagonal Barriers | 15x20 | 10 | 35 |
+| 3 | Fortress | 15x20 | 10 | 55 |
+| 4 | Labyrinth | 15x20 | 10 | 55 |
+| 5 | Scattered Islands | 15x20 | 10 | 45 |
+
 ## Performance Notes
 
 - Solving time depends heavily on puzzle complexity and `max_time` parameter
 - `max_time` should be set to at least the expected optimal path length
 - Typical solve times range from seconds to minutes per puzzle
 - The solver is parallelized across 8 CPU workers by default
+
+## Scalability
+
+### 10x10 Grids (Standard Puzzles)
+
+The CP-SAT solver performs well on 10x10 grids with 5-7 mirrors:
+- Typical solve time: seconds to minutes
+- Often proves `OPTIMAL` within time limits
+- Outperforms or matches beam search
+
+### 15x20 Grids (Large Puzzles)
+
+Larger puzzles (15x20 with 10 mirrors) are significantly more challenging:
+
+| Factor | 10x10, 6 mirrors | 15x20, 10 mirrors |
+|--------|------------------|-------------------|
+| Valid cells | ~85 | ~220 |
+| Constraints per step | ~85 | ~220 |
+| Mirror combinations | ~10⁹ | ~10²¹ |
+
+**Test Results** (Spiral Inward puzzle, max_time=300, time_limit=600s):
+- Beam search: **139** path length in ~3 minutes
+- CP-SAT: **125** (FEASIBLE) in 602s (timed out)
+
+For large puzzles, beam search often outperforms CP-SAT because:
+1. CP-SAT times out before proving optimality
+2. The constraint model grows quadratically with grid size
+3. Beam search heuristics can find good solutions quickly
+
+### Recommendations by Grid Size
+
+| Grid Size | Mirrors | Recommended Approach |
+|-----------|---------|---------------------|
+| 10x10 | 5-7 | CP-SAT (optimal solutions likely) |
+| 15x15 | 8-10 | Both (compare results) |
+| 15x20+ | 10+ | Beam search (faster, often better) |
+
+### Testing Large Puzzles
+
+```bash
+# Test a single large puzzle
+python test_large_puzzles.py --single 0
+
+# Test all large puzzles (may take hours)
+python test_large_puzzles.py
+
+# Custom time limits
+python test_large_puzzles.py 600 300  # time_limit=600s, max_time=300
+```
