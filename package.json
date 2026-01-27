@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "db:start": "docker start laser-postgres || echo 'Container not found. Run: docker run --name laser-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=laser_puzzle -p 5432:5432 -d postgres:16'",
