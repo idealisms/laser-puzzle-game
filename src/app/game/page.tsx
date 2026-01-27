@@ -11,6 +11,12 @@ interface CalendarEntry {
   available: boolean
   completed: boolean
   stars: number
+  bestScore: number | null
+}
+
+interface LocalProgress {
+  bestScore: number
+  stars: number
 }
 
 function StarDisplay({ stars }: { stars: number }) {
@@ -44,7 +50,26 @@ export default function LevelSelectPage() {
         const res = await fetch('/api/levels/calendar')
         if (res.ok) {
           const data = await res.json()
-          setCalendar(data.calendar)
+          let calendarData: CalendarEntry[] = data.calendar
+
+          // For non-logged-in users, merge localStorage progress
+          if (!user) {
+            const localProgress = getLocalProgress()
+            calendarData = calendarData.map((entry) => {
+              const local = localProgress[entry.date]
+              if (local) {
+                return {
+                  ...entry,
+                  completed: true,
+                  bestScore: local.bestScore,
+                  stars: local.stars,
+                }
+              }
+              return entry
+            })
+          }
+
+          setCalendar(calendarData)
         }
       } catch (error) {
         console.error('Failed to fetch calendar:', error)
@@ -54,7 +79,17 @@ export default function LevelSelectPage() {
     }
 
     fetchCalendar()
-  }, [])
+  }, [user])
+
+  function getLocalProgress(): Record<string, LocalProgress> {
+    if (typeof window === 'undefined') return {}
+    try {
+      const stored = localStorage.getItem('laser-puzzle-progress')
+      return stored ? JSON.parse(stored) : {}
+    } catch {
+      return {}
+    }
+  }
 
   const todayDate = new Date().toISOString().split('T')[0]
 
@@ -127,8 +162,15 @@ export default function LevelSelectPage() {
                       <div className="text-xs text-gray-500 mb-1">{dayName}</div>
                       <div className="font-semibold mb-2">{monthDay}</div>
                       {entry.completed ? (
-                        <div className="flex justify-center">
-                          <StarDisplay stars={entry.stars} />
+                        <div className="space-y-1">
+                          <div className="flex justify-center">
+                            <StarDisplay stars={entry.stars} />
+                          </div>
+                          {entry.bestScore !== null && (
+                            <div className="text-xs text-gray-400">
+                              {entry.bestScore} pts
+                            </div>
+                          )}
                         </div>
                       ) : isToday ? (
                         <div className="text-xs text-emerald-400">Today</div>

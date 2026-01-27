@@ -69,17 +69,24 @@ export default function GamePage() {
 
     // Fetch user progress for this level
     async function fetchProgress() {
-      if (!user) return
-      try {
-        const res = await fetch(`/api/progress?date=${date}`)
-        if (res.ok) {
-          const data = await res.json()
-          if (data.progress) {
-            setPreviousBest(data.progress.bestScore)
+      if (user) {
+        try {
+          const res = await fetch(`/api/progress?date=${date}`)
+          if (res.ok) {
+            const data = await res.json()
+            if (data.progress) {
+              setPreviousBest(data.progress.bestScore)
+            }
           }
+        } catch (error) {
+          console.error('Failed to fetch progress:', error)
         }
-      } catch (error) {
-        console.error('Failed to fetch progress:', error)
+      } else {
+        // Load from localStorage for non-logged-in users
+        const localProgress = getLocalProgress()
+        if (localProgress[date]) {
+          setPreviousBest(localProgress[date].bestScore)
+        }
       }
     }
 
@@ -87,10 +94,39 @@ export default function GamePage() {
     fetchProgress()
   }, [date, loadLevel, user])
 
+  function getLocalProgress(): Record<string, { bestScore: number; stars: number }> {
+    if (typeof window === 'undefined') return {}
+    try {
+      const stored = localStorage.getItem('laser-puzzle-progress')
+      return stored ? JSON.parse(stored) : {}
+    } catch {
+      return {}
+    }
+  }
+
+  function saveLocalProgress(levelDate: string, score: number, stars: number) {
+    try {
+      const progress = getLocalProgress()
+      const existing = progress[levelDate]
+      if (!existing || score > existing.bestScore) {
+        progress[levelDate] = { bestScore: score, stars }
+        localStorage.setItem('laser-puzzle-progress', JSON.stringify(progress))
+        return true // isNewBest
+      }
+      return false
+    } catch {
+      return false
+    }
+  }
+
   const handleSubmit = useCallback(async () => {
     if (!user) {
-      // For non-logged-in users, just show the completion modal
-      setIsNewBest(previousBest === null || gameState.score > previousBest)
+      // For non-logged-in users, save to localStorage
+      const newBest = saveLocalProgress(date, gameState.score, gameState.stars)
+      setIsNewBest(newBest)
+      if (newBest) {
+        setPreviousBest(gameState.score)
+      }
       setShowComplete(true)
       return
     }
