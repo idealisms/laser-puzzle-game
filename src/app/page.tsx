@@ -93,18 +93,14 @@ export default function HomePage() {
             <ul className="text-gray-400 space-y-2">
               <li>
                 <span className="text-emerald-400 mr-2">1.</span>
-                Click on empty cells to place mirrors
+                Click on a cell to cycle through mirrors: / → \ → empty
               </li>
               <li>
                 <span className="text-emerald-400 mr-2">2.</span>
-                Click on a placed mirror to toggle its orientation (/ or \)
+                Mirrors reflect the laser beam at 90° angles
               </li>
               <li>
                 <span className="text-emerald-400 mr-2">3.</span>
-                Right-click to remove a mirror
-              </li>
-              <li>
-                <span className="text-emerald-400 mr-2">4.</span>
                 Create the longest laser path possible!
               </li>
             </ul>
