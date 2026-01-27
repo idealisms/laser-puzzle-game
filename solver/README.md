@@ -1,20 +1,26 @@
 # Laser Puzzle Solver
 
-A Python-based solver for the laser puzzle game that finds optimal mirror placements to maximize laser path length. Uses Google OR-Tools CP-SAT constraint solver to find provably optimal solutions.
+A Python-based solver for the laser puzzle game that finds optimal mirror placements to maximize laser path length.
 
 ## Overview
 
-The solver takes a puzzle configuration (grid size, laser position, obstacles, number of mirrors) and finds the mirror placement that maximizes the laser path length. It includes both a constraint programming solver (CP-SAT) and a beam search baseline for comparison.
+The solver takes a puzzle configuration (grid size, laser position, obstacles, number of mirrors) and finds the mirror placement that maximizes the laser path length. It includes two solving algorithms:
+
+- **Beam search** (default) - Fast heuristic search that works well on all puzzle sizes
+- **CP-SAT** - Google OR-Tools constraint solver that can prove optimality but is slower
+
+Beam search is the default because it is significantly faster and often finds equal or better solutions, especially on larger puzzles.
 
 ## Files
 
 | File | Description |
 |------|-------------|
+| `solve.py` | **Main entry point** - unified CLI for solving puzzles |
 | `puzzles.py` | Defines the 7 puzzle configurations from the game (10x10 grids) |
 | `large_puzzles.py` | Larger puzzle configurations (15x20 grids with 10 mirrors) for scalability testing |
-| `simulator.py` | Laser path simulator that traces the beam through the grid. Also includes a beam search solver used as a baseline |
-| `cpsat_solver.py` | Main solver using Google OR-Tools CP-SAT constraint programming. Models laser physics symbolically to find optimal solutions |
-| `test_solver.py` | Test harness that runs both solvers on all 10x10 puzzles and compares results |
+| `simulator.py` | Laser path simulator and beam search solver implementation |
+| `cpsat_solver.py` | CP-SAT constraint solver using Google OR-Tools |
+| `test_solver.py` | Test harness that compares both solvers on all 10x10 puzzles |
 | `test_large_puzzles.py` | Test harness for 15x20 puzzles with extended time limits |
 | `requirements.txt` | Python dependencies (ortools>=9.8) |
 
@@ -33,31 +39,70 @@ pip install -r requirements.txt
 
 ## Usage
 
-### Run the CP-SAT solver on a single puzzle
+### Basic usage
 
 ```bash
-python cpsat_solver.py
+# Solve a puzzle with beam search (default)
+python solve.py 0
+
+# List all available puzzles
+python solve.py --list
+
+# Solve with verbose output
+python solve.py 4 -v
 ```
 
-This runs the solver on the "Cross Pattern" puzzle (puzzle #4) and prints the optimal solution.
+### Using CP-SAT solver
 
-### Test all puzzles with comparison
+Use the `--cpsat` flag to use the OR-Tools constraint solver instead of beam search:
 
 ```bash
-# Full test (60s time limit per puzzle)
-python test_solver.py
+# Solve with CP-SAT
+python solve.py 4 --cpsat
 
-# Custom time limit (in seconds)
-python test_solver.py 120
+# CP-SAT with custom time limit
+python solve.py 4 --cpsat --time-limit 120
+
+# CP-SAT with extended max time steps
+python solve.py 4 --cpsat --max-time 100 --time-limit 180
+```
+
+### Large puzzles
+
+```bash
+# Solve a large puzzle (15x20 grid)
+python solve.py large-0
+
+# Large puzzle with wider beam
+python solve.py large-0 --beam-width 1000 --random-iterations 20000
+```
+
+### All options
+
+```bash
+python solve.py --help
+```
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--cpsat` | Use CP-SAT solver instead of beam search | Off (beam search) |
+| `-v, --verbose` | Show detailed progress | Off |
+| `--beam-width` | Beam width for beam search | 500 |
+| `--random-iterations` | Random search iterations | 10000 |
+| `--time-limit` | CP-SAT time limit (seconds) | 60 |
+| `--max-time` | CP-SAT max simulation steps | 80 |
+
+### Running tests
+
+```bash
+# Compare both solvers on all standard puzzles
+python test_solver.py
 
 # Quick test on single puzzle
 python test_solver.py --quick
-```
 
-### Run beam search baseline only
-
-```bash
-python simulator.py
+# Custom time limit
+python test_solver.py 120
 ```
 
 ## Output
@@ -65,16 +110,21 @@ python simulator.py
 The solver outputs:
 - **Path length**: Number of cells the laser traverses before exiting the grid or hitting an obstacle
 - **Mirrors**: List of mirror placements as `(x, y, type)` tuples where type is `/` or `\`
-- **Status**: `OPTIMAL` (proven best) or `FEASIBLE` (good solution, may not be optimal)
 - **Solve time**: Time taken to find the solution
 
 Example output:
 ```
-Solving 'Cross Pattern' (10x10 grid, 5 mirrors)...
+Puzzle: Cross Pattern
+Grid: 10x10
+Mirrors available: 5
+Obstacles: 16
 Laser: (0, 9) -> UP
-Obstacles: 16, Valid cells: 83
 
-OPTIMAL solution found!
+Solving with beam search (beam_width: 500, random_iterations: 10000)...
+
+==================================================
+SOLUTION
+==================================================
 Path length: 42
 Mirrors placed: 5
   (1, 8) -> /
@@ -82,21 +132,19 @@ Mirrors placed: 5
   (7, 2) -> /
   (9, 4) -> \
   (4, 0) -> /
-Solve time: 23.45s
+Solve time: 2.34s
 ```
 
 ## How It Works
 
-### Simulator (`simulator.py`)
+### Beam Search (Default)
 
-The simulator traces the laser path step by step:
-1. Start at the laser source with the initial direction
-2. Move one cell in the current direction
-3. If out of bounds or hitting an obstacle, terminate
-4. If hitting a mirror, reflect (change direction based on mirror type)
-5. Repeat until termination or loop detected
+The beam search solver:
+1. Incrementally builds mirror placements, keeping the top `beam_width` candidates at each step
+2. Supplements with random search to escape local optima
+3. Fast and effective for all puzzle sizes
 
-### CP-SAT Solver (`cpsat_solver.py`)
+### CP-SAT Solver
 
 The constraint solver models the problem symbolically:
 1. **Decision variables**: For each valid cell, whether a mirror is placed and its type
@@ -109,13 +157,6 @@ The solver uses:
 - Reified constraints for conditional logic (boundaries, obstacles, reflections)
 - Boolean multiplication for conjunctions
 - 8 parallel workers for faster solving
-
-### Beam Search Baseline (`simulator.py`)
-
-A heuristic solver that:
-1. Incrementally builds mirror placements, keeping the top `beam_width` candidates
-2. Supplements with random search to escape local optima
-3. Used to verify CP-SAT results and as a fast approximation
 
 ## Puzzles
 
@@ -139,65 +180,39 @@ Additional puzzles for scalability testing:
 
 | # | Name | Grid | Mirrors | Obstacles |
 |---|------|------|---------|-----------|
-| 0 | Spiral Inward | 15x20 | 10 | 84 |
-| 1 | Chamber Grid | 15x20 | 10 | 51 |
-| 2 | Diagonal Barriers | 15x20 | 10 | 35 |
-| 3 | Fortress | 15x20 | 10 | 55 |
-| 4 | Labyrinth | 15x20 | 10 | 55 |
-| 5 | Scattered Islands | 15x20 | 10 | 45 |
+| large-0 | Spiral Inward | 15x20 | 10 | 84 |
+| large-1 | Chamber Grid | 15x20 | 10 | 51 |
+| large-2 | Diagonal Barriers | 15x20 | 10 | 35 |
+| large-3 | Fortress | 15x20 | 10 | 55 |
+| large-4 | Labyrinth | 15x20 | 10 | 55 |
+| large-5 | Scattered Islands | 15x20 | 10 | 45 |
 
-## Performance Notes
+## Performance Comparison
 
-- Solving time depends heavily on puzzle complexity and `max_time` parameter
-- `max_time` should be set to at least the expected optimal path length
-- Typical solve times range from seconds to minutes per puzzle
-- The solver is parallelized across 8 CPU workers by default
+### Why Beam Search is Default
 
-## Scalability
+Beam search is the default solver because:
+1. **Faster**: Completes in seconds vs minutes/hours for CP-SAT
+2. **Better on large puzzles**: CP-SAT often times out before finding good solutions
+3. **Good solutions**: Usually finds optimal or near-optimal solutions
 
-### 10x10 Grids (Standard Puzzles)
+### When to Use CP-SAT
 
-The CP-SAT solver performs well on 10x10 grids with 5-7 mirrors:
-- Typical solve time: seconds to minutes
-- Often proves `OPTIMAL` within time limits
-- Outperforms or matches beam search
+Use `--cpsat` when you need:
+- **Proven optimality**: CP-SAT can prove a solution is optimal (status: `OPTIMAL`)
+- **Small puzzles**: Works well on 10x10 grids with 5-7 mirrors
+- **Verification**: Confirm beam search found the true optimum
 
-### 15x20 Grids (Large Puzzles)
+### Benchmark Results
 
-Larger puzzles (15x20 with 10 mirrors) are significantly more challenging:
-
-| Factor | 10x10, 6 mirrors | 15x20, 10 mirrors |
-|--------|------------------|-------------------|
-| Valid cells | ~85 | ~220 |
-| Constraints per step | ~85 | ~220 |
-| Mirror combinations | ~10⁹ | ~10²¹ |
-
-**Test Results** (Spiral Inward puzzle, max_time=300, time_limit=600s):
-- Beam search: **139** path length in ~3 minutes
-- CP-SAT: **125** (FEASIBLE) in 602s (timed out)
-
-For large puzzles, beam search often outperforms CP-SAT because:
-1. CP-SAT times out before proving optimality
-2. The constraint model grows quadratically with grid size
-3. Beam search heuristics can find good solutions quickly
+Test results on the Spiral Inward large puzzle (15x20, 10 mirrors):
+- **Beam search**: 139 path length in ~3 minutes
+- **CP-SAT**: 125 path length (FEASIBLE) in 602s (timed out)
 
 ### Recommendations by Grid Size
 
 | Grid Size | Mirrors | Recommended Approach |
 |-----------|---------|---------------------|
-| 10x10 | 5-7 | CP-SAT (optimal solutions likely) |
-| 15x15 | 8-10 | Both (compare results) |
-| 15x20+ | 10+ | Beam search (faster, often better) |
-
-### Testing Large Puzzles
-
-```bash
-# Test a single large puzzle
-python test_large_puzzles.py --single 0
-
-# Test all large puzzles (may take hours)
-python test_large_puzzles.py
-
-# Custom time limits
-python test_large_puzzles.py 600 300  # time_limit=600s, max_time=300
-```
+| 10x10 | 5-7 | Beam search (fast), or CP-SAT if optimality proof needed |
+| 15x15 | 8-10 | Beam search recommended |
+| 15x20+ | 10+ | Beam search (CP-SAT will likely timeout) |
