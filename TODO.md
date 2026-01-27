@@ -1,34 +1,22 @@
 # TODO
 
-## Mobile Support
-The 15x20 grid at 40px per cell is 600x800 pixels, which is too wide for mobile screens.
+## ~~Mobile Support~~ ✓ DONE
+~~The 15x20 grid at 40px per cell is 600x800 pixels, which is too wide for mobile screens.~~
 
-Options to consider:
-- Reduce cell size further on mobile (e.g., 25-30px)
-- Use viewport-based sizing (vw/vh units)
-- Add pinch-to-zoom or pan functionality
-- Show a simplified/zoomed view on mobile
-- Responsive breakpoints in useCanvas hook and GameCanvas component
+Implemented:
+- CSS transform scaling via ResponsiveCanvas component
+- useResponsiveScale hook with ResizeObserver
+- Touch handlers for mobile interaction
+- Click cycle behavior (place → toggle → remove) eliminates need for right-click
 
-Key files:
-- `src/game/constants.ts` - CELL_SIZE constant
-- `src/hooks/useCanvas.ts` - Canvas size calculation
-- `src/components/game/GameCanvas.tsx` - Canvas rendering
-- `src/app/game/[date]/page.tsx` - Layout structure
+## ~~Track and Display Best Score Per Level~~ ✓ DONE
+~~Currently the game tracks best score but should ensure it's prominently displayed and persisted.~~
 
-## Track and Display Best Score Per Level
-Currently the game tracks best score but should ensure it's prominently displayed and persisted.
-
-Requirements:
-- Show current best score on the game page (already partially implemented in page.tsx)
-- Ensure best score is saved to database for logged-in users (via /api/progress)
-- Consider localStorage fallback for non-logged-in users
-- Display best score in level select screen
-
-Key files:
-- `src/app/game/[date]/page.tsx` - Already shows previousBest
-- `src/app/api/progress/route.ts` - Saves progress
-- `prisma/schema.prisma` - LevelProgress model has bestScore field
+Implemented:
+- Best score shown on game page for both logged-in and guest users
+- Best score saved to database for logged-in users
+- localStorage fallback for non-logged-in users
+- Best score displayed in level select screen alongside stars
 
 ## Allow Player to Restore Best Solution
 Players should be able to load their previous best solution to continue improving from there.
