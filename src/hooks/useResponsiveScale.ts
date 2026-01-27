@@ -7,7 +7,7 @@ interface UseResponsiveScaleProps {
   padding?: number
 }
 
-export function useResponsiveScale({ canvasWidth, padding = 32 }: UseResponsiveScaleProps) {
+export function useResponsiveScale({ canvasWidth, padding = 0 }: UseResponsiveScaleProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
 
