@@ -20,8 +20,7 @@ const DEFAULT_LEVEL: LevelConfig = {
   laserConfig: { x: 0, y: 0, direction: 'right' },
   obstacles: [],
   mirrorsAvailable: 10,
-  starThresholds: [20, 40, 60],
-  optimalScore: 60,
+  optimalScore: 100,
 }
 
 export default function GamePage() {
@@ -94,7 +93,7 @@ export default function GamePage() {
     fetchProgress()
   }, [date, loadLevel, user])
 
-  function getLocalProgress(): Record<string, { bestScore: number; stars: number }> {
+  function getLocalProgress(): Record<string, { bestScore: number }> {
     if (typeof window === 'undefined') return {}
     try {
       const stored = localStorage.getItem('laser-puzzle-progress')
@@ -104,12 +103,12 @@ export default function GamePage() {
     }
   }
 
-  function saveLocalProgress(levelDate: string, score: number, stars: number) {
+  function saveLocalProgress(levelDate: string, score: number) {
     try {
       const progress = getLocalProgress()
       const existing = progress[levelDate]
       if (!existing || score > existing.bestScore) {
-        progress[levelDate] = { bestScore: score, stars }
+        progress[levelDate] = { bestScore: score }
         localStorage.setItem('laser-puzzle-progress', JSON.stringify(progress))
         return true // isNewBest
       }
@@ -122,7 +121,7 @@ export default function GamePage() {
   const handleSubmit = useCallback(async () => {
     if (!user) {
       // For non-logged-in users, save to localStorage
-      const newBest = saveLocalProgress(date, gameState.score, gameState.stars)
+      const newBest = saveLocalProgress(date, gameState.score)
       setIsNewBest(newBest)
       if (newBest) {
         setPreviousBest(gameState.score)
@@ -138,7 +137,6 @@ export default function GamePage() {
         body: JSON.stringify({
           levelDate: date,
           score: gameState.score,
-          stars: gameState.stars,
           solution: gameState.placedMirrors,
         }),
       })
@@ -214,11 +212,7 @@ export default function GamePage() {
             </div>
 
             <div className="lg:w-64 space-y-4">
-              <ScoreDisplay
-                score={gameState.score}
-                stars={gameState.stars}
-                thresholds={level.starThresholds}
-              />
+              <ScoreDisplay score={gameState.score} />
 
               <MirrorPalette
                 selectedType={gameState.selectedMirrorType}
@@ -268,7 +262,7 @@ export default function GamePage() {
         isOpen={showComplete}
         onClose={() => setShowComplete(false)}
         score={gameState.score}
-        stars={gameState.stars}
+        optimalScore={level.optimalScore}
         isNewBest={isNewBest}
         onPlayAgain={handlePlayAgain}
         onNextLevel={handleNextLevel}

@@ -105,7 +105,7 @@ export default function HomePage() {
               </li>
               <li>
                 <span className="text-emerald-400 mr-2">4.</span>
-                Create the longest laser path to earn more stars!
+                Create the longest laser path possible!
               </li>
             </ul>
           </div>

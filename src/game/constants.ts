@@ -30,7 +30,3 @@ export const COLORS = {
   },
 }
 
-export const STAR_COLORS = {
-  empty: '#333333',
-  filled: '#ffd700',
-}

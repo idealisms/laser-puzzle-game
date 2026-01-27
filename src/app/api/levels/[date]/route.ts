@@ -37,7 +37,6 @@ export async function GET(request: Request, { params }: RouteParams) {
         laserConfig: JSON.parse(level.laserConfig),
         obstacles: JSON.parse(level.obstacles),
         mirrorsAvailable: level.mirrorsAvailable,
-        starThresholds: JSON.parse(level.starThresholds),
         optimalScore: level.optimalScore,
       },
     })

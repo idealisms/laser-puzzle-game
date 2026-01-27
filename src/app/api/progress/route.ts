@@ -51,7 +51,6 @@ export async function GET(request: Request) {
       progress: {
         completed: progress.completed,
         bestScore: progress.bestScore,
-        stars: progress.stars,
         attempts: progress.attempts,
         bestSolution: progress.bestSolution
           ? JSON.parse(progress.bestSolution)
@@ -78,7 +77,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const { levelDate, score, stars, solution } = await request.json()
+    const { levelDate, score, solution } = await request.json()
 
     if (!levelDate || score === undefined) {
       return NextResponse.json(
@@ -123,14 +122,13 @@ export async function POST(request: Request) {
         levelId: level.id,
         completed: true,
         bestScore: score,
-        stars: stars || 0,
+        stars: 0,
         attempts: 1,
         bestSolution: solution ? JSON.stringify(solution) : null,
       },
       update: {
         completed: true,
         bestScore: isNewBest ? score : (existingProgress?.bestScore ?? score),
-        stars: isNewBest ? (stars || 0) : (existingProgress?.stars ?? 0),
         attempts: { increment: 1 },
         bestSolution: isNewBest && solution
           ? JSON.stringify(solution)
@@ -145,7 +143,6 @@ export async function POST(request: Request) {
       progress: {
         completed: progress.completed,
         bestScore: progress.bestScore,
-        stars: progress.stars,
         attempts: progress.attempts,
         isNewBest,
       },

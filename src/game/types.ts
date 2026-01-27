@@ -42,8 +42,7 @@ export interface LevelConfig {
   laserConfig: LaserConfig
   obstacles: Obstacle[]
   mirrorsAvailable: number
-  starThresholds: [number, number, number] // [1-star, 2-star, 3-star]
-  optimalScore: number // Maximum possible score - required for 3 stars
+  optimalScore: number
 }
 
 export interface GameState {
@@ -53,7 +52,6 @@ export interface GameState {
   selectedMirrorType: MirrorType
   isComplete: boolean
   score: number
-  stars: number
 }
 
 export interface CellState {

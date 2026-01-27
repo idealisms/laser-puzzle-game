@@ -10,33 +10,11 @@ interface CalendarEntry {
   date: string
   available: boolean
   completed: boolean
-  stars: number
   bestScore: number | null
 }
 
 interface LocalProgress {
   bestScore: number
-  stars: number
-}
-
-function StarDisplay({ stars }: { stars: number }) {
-  return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3].map((n) => (
-        <svg
-          key={n}
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill={n <= stars ? '#ffd700' : '#333333'}
-          stroke={n <= stars ? '#ffd700' : '#666666'}
-          strokeWidth="1"
-        >
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>
-      ))}
-    </div>
-  )
 }
 
 export default function LevelSelectPage() {
@@ -62,7 +40,6 @@ export default function LevelSelectPage() {
                   ...entry,
                   completed: true,
                   bestScore: local.bestScore,
-                  stars: local.stars,
                 }
               }
               return entry
@@ -162,15 +139,8 @@ export default function LevelSelectPage() {
                       <div className="text-xs text-gray-500 mb-1">{dayName}</div>
                       <div className="font-semibold mb-2">{monthDay}</div>
                       {entry.completed ? (
-                        <div className="space-y-1">
-                          <div className="flex justify-center">
-                            <StarDisplay stars={entry.stars} />
-                          </div>
-                          {entry.bestScore !== null && (
-                            <div className="text-xs text-gray-400">
-                              {entry.bestScore} pts
-                            </div>
-                          )}
+                        <div className="text-xs text-emerald-400">
+                          {entry.bestScore} pts
                         </div>
                       ) : isToday ? (
                         <div className="text-xs text-emerald-400">Today</div>

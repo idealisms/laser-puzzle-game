@@ -16,7 +16,7 @@ export async function GET() {
     })
 
     // If user is logged in, get their progress
-    let progressMap: Record<string, { completed: boolean; stars: number; bestScore: number }> = {}
+    let progressMap: Record<string, { completed: boolean; bestScore: number }> = {}
 
     if (user) {
       const progress = await prisma.levelProgress.findMany({
@@ -24,17 +24,16 @@ export async function GET() {
         select: {
           levelId: true,
           completed: true,
-          stars: true,
           bestScore: true,
         },
       })
 
       progressMap = progress.reduce(
         (acc, p) => {
-          acc[p.levelId] = { completed: p.completed, stars: p.stars, bestScore: p.bestScore }
+          acc[p.levelId] = { completed: p.completed, bestScore: p.bestScore }
           return acc
         },
-        {} as Record<string, { completed: boolean; stars: number; bestScore: number }>
+        {} as Record<string, { completed: boolean; bestScore: number }>
       )
     }
 
@@ -42,7 +41,6 @@ export async function GET() {
       date: level.date,
       available: true,
       completed: progressMap[level.id]?.completed ?? false,
-      stars: progressMap[level.id]?.stars ?? 0,
       bestScore: progressMap[level.id]?.bestScore ?? null,
     }))
 

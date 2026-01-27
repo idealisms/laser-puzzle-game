@@ -137,10 +137,3 @@ export function calculateLaserPath(
 export function calculateScore(laserPath: LaserPath): number {
   return laserPath.totalLength
 }
-
-export function calculateStars(score: number, thresholds: [number, number, number]): number {
-  if (score >= thresholds[2]) return 3
-  if (score >= thresholds[1]) return 2
-  if (score >= thresholds[0]) return 1
-  return 0
-}

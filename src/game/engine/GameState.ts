@@ -5,7 +5,7 @@ import {
   MirrorType,
   Position,
 } from '../types'
-import { calculateLaserPath, calculateScore, calculateStars } from './Laser'
+import { calculateLaserPath, calculateScore } from './Laser'
 
 export function createInitialGameState(level: LevelConfig): GameState {
   const laserPath = calculateLaserPath(
@@ -22,7 +22,6 @@ export function createInitialGameState(level: LevelConfig): GameState {
     selectedMirrorType: '/',
     isComplete: false,
     score: calculateScore(laserPath),
-    stars: 0,
   }
 }
 
@@ -91,15 +90,11 @@ export function placeMirror(
     { width: state.level.gridWidth, height: state.level.gridHeight }
   )
 
-  const score = calculateScore(laserPath)
-  const stars = calculateStars(score, state.level.starThresholds)
-
   return {
     ...state,
     placedMirrors: newMirrors,
     laserPath,
-    score,
-    stars,
+    score: calculateScore(laserPath),
   }
 }
 
@@ -119,15 +114,11 @@ export function removeMirror(state: GameState, position: Position): GameState {
     { width: state.level.gridWidth, height: state.level.gridHeight }
   )
 
-  const score = calculateScore(laserPath)
-  const stars = calculateStars(score, state.level.starThresholds)
-
   return {
     ...state,
     placedMirrors: newMirrors,
     laserPath,
-    score,
-    stars,
+    score: calculateScore(laserPath),
   }
 }
 
@@ -154,15 +145,11 @@ export function toggleMirrorType(state: GameState, position: Position): GameStat
     { width: state.level.gridWidth, height: state.level.gridHeight }
   )
 
-  const score = calculateScore(laserPath)
-  const stars = calculateStars(score, state.level.starThresholds)
-
   return {
     ...state,
     placedMirrors: newMirrors,
     laserPath,
-    score,
-    stars,
+    score: calculateScore(laserPath),
   }
 }
 
