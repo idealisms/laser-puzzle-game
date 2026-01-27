@@ -15,12 +15,13 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 
 const DEFAULT_LEVEL: LevelConfig = {
-  gridWidth: 10,
-  gridHeight: 10,
+  gridWidth: 15,
+  gridHeight: 20,
   laserConfig: { x: 0, y: 0, direction: 'right' },
   obstacles: [],
-  mirrorsAvailable: 5,
-  starThresholds: [10, 15, 20],
+  mirrorsAvailable: 10,
+  starThresholds: [20, 40, 60],
+  optimalScore: 60,
 }
 
 export default function GamePage() {

@@ -1,6 +1,6 @@
-export const CELL_SIZE = 50
-export const DEFAULT_GRID_WIDTH = 10
-export const DEFAULT_GRID_HEIGHT = 10
+export const CELL_SIZE = 40
+export const DEFAULT_GRID_WIDTH = 15
+export const DEFAULT_GRID_HEIGHT = 20
 export const MAX_LASER_LENGTH = 1000
 
 export const COLORS = {

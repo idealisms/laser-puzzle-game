@@ -174,116 +174,183 @@ function generateLevels() {
   return levels
 }
 
+// Grid dimensions for large puzzles
+const GRID_WIDTH = 15
+const GRID_HEIGHT = 20
+
 function generateLevel(seed: number, date: string) {
-  // Different configurations based on seed
+  // Large puzzle configurations (15x20 grids with 10 mirrors)
   const configs = [
     {
-      // Corridor run - horizontal walls create lanes
-      laserConfig: { x: 0, y: 1, direction: 'right' as const },
-      obstacles: [
-        { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 },
-        { x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 },
-        { x: 6, y: 3 }, { x: 7, y: 3 }, { x: 8, y: 3 },
-        { x: 6, y: 5 }, { x: 7, y: 5 }, { x: 8, y: 5 },
-        { x: 1, y: 7 }, { x: 2, y: 7 }, { x: 3, y: 7 },
-      ],
-      mirrorsAvailable: 5,
-      starThresholds: [12, 20, 28],
-    },
-    {
-      // Zigzag barriers
+      // Spiral Inward - A spiral pattern that forces the laser to wind through the grid
+      name: 'Spiral Inward',
       laserConfig: { x: 0, y: 0, direction: 'right' as const },
       obstacles: [
-        { x: 3, y: 0 }, { x: 3, y: 1 }, { x: 3, y: 2 },
-        { x: 5, y: 3 }, { x: 5, y: 4 }, { x: 5, y: 5 },
-        { x: 7, y: 6 }, { x: 7, y: 7 }, { x: 7, y: 8 },
-        { x: 2, y: 5 }, { x: 2, y: 6 },
-        { x: 8, y: 2 }, { x: 9, y: 2 },
+        // Outer wall (top, leaving gap at right)
+        ...Array.from({ length: 13 }, (_, i) => ({ x: i, y: 2 })),
+        // Right wall going down
+        ...Array.from({ length: 15 }, (_, i) => ({ x: 13, y: i + 2 })),
+        // Bottom wall going left
+        ...Array.from({ length: 11 }, (_, i) => ({ x: i + 3, y: 17 })),
+        // Left wall going up
+        ...Array.from({ length: 13 }, (_, i) => ({ x: 3, y: i + 5 })),
+        // Inner spiral
+        ...Array.from({ length: 8 }, (_, i) => ({ x: i + 3, y: 5 })),
+        ...Array.from({ length: 9 }, (_, i) => ({ x: 10, y: i + 5 })),
+        ...Array.from({ length: 5 }, (_, i) => ({ x: i + 6, y: 14 })),
+        ...Array.from({ length: 7 }, (_, i) => ({ x: 6, y: i + 8 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 6, y: 8 })),
       ],
-      mirrorsAvailable: 6,
-      starThresholds: [14, 22, 30],
+      mirrorsAvailable: 10,
     },
     {
-      // Central fortress
-      laserConfig: { x: 0, y: 5, direction: 'right' as const },
+      // Chamber Grid - A grid of interconnected chambers
+      name: 'Chamber Grid',
+      laserConfig: { x: 0, y: 8, direction: 'right' as const },
       obstacles: [
-        { x: 4, y: 3 }, { x: 5, y: 3 }, { x: 6, y: 3 },
-        { x: 4, y: 4 }, { x: 6, y: 4 },
-        { x: 4, y: 5 }, { x: 6, y: 5 },
-        { x: 4, y: 6 }, { x: 5, y: 6 }, { x: 6, y: 6 },
-        { x: 2, y: 2 }, { x: 8, y: 2 },
-        { x: 2, y: 8 }, { x: 8, y: 8 },
+        // Vertical dividers (with gaps for passages)
+        ...Array.from({ length: 5 }, (_, i) => ({ x: 4, y: i })),
+        ...Array.from({ length: 4 }, (_, i) => ({ x: 4, y: i + 7 })),
+        ...Array.from({ length: 5 }, (_, i) => ({ x: 4, y: i + 13 })),
+        ...Array.from({ length: 5 }, (_, i) => ({ x: 9, y: i + 1 })),
+        ...Array.from({ length: 4 }, (_, i) => ({ x: 9, y: i + 8 })),
+        ...Array.from({ length: 5 }, (_, i) => ({ x: 9, y: i + 14 })),
+        // Horizontal dividers (with gaps)
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 1, y: 5 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 6, y: 5 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 11, y: 5 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 1, y: 12 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 6, y: 12 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 11, y: 12 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 1, y: 17 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 6, y: 17 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 11, y: 17 })),
       ],
-      mirrorsAvailable: 5,
-      starThresholds: [10, 18, 26],
+      mirrorsAvailable: 10,
     },
     {
-      // Scattered maze
-      laserConfig: { x: 0, y: 2, direction: 'right' as const },
+      // Diagonal Barriers - Staggered diagonal walls creating a zigzag path
+      name: 'Diagonal Barriers',
+      laserConfig: { x: 0, y: 19, direction: 'up' as const },
       obstacles: [
-        { x: 2, y: 1 }, { x: 2, y: 2 }, { x: 2, y: 3 },
-        { x: 4, y: 0 }, { x: 4, y: 1 },
-        { x: 6, y: 4 }, { x: 6, y: 5 }, { x: 7, y: 5 },
-        { x: 3, y: 6 }, { x: 3, y: 7 }, { x: 4, y: 7 },
-        { x: 8, y: 1 }, { x: 8, y: 2 },
-        { x: 5, y: 8 }, { x: 6, y: 8 }, { x: 7, y: 8 },
+        // Diagonal barrier 1 (bottom-left to middle)
+        { x: 2, y: 17 }, { x: 3, y: 16 }, { x: 4, y: 15 }, { x: 5, y: 14 }, { x: 6, y: 13 },
+        // Diagonal barrier 2 (right side)
+        { x: 12, y: 15 }, { x: 11, y: 14 }, { x: 10, y: 13 }, { x: 9, y: 12 }, { x: 8, y: 11 },
+        // Diagonal barrier 3
+        { x: 3, y: 9 }, { x: 4, y: 8 }, { x: 5, y: 7 }, { x: 6, y: 6 }, { x: 7, y: 5 },
+        // Diagonal barrier 4
+        { x: 11, y: 7 }, { x: 10, y: 6 }, { x: 9, y: 5 }, { x: 8, y: 4 }, { x: 7, y: 3 },
+        // Diagonal barrier 5 (top)
+        { x: 2, y: 3 }, { x: 3, y: 2 }, { x: 4, y: 1 }, { x: 5, y: 0 },
+        { x: 12, y: 2 }, { x: 13, y: 1 }, { x: 14, y: 0 },
+        // Some blocking walls
+        { x: 0, y: 10 }, { x: 1, y: 10 },
+        { x: 13, y: 10 }, { x: 14, y: 10 },
       ],
-      mirrorsAvailable: 6,
-      starThresholds: [14, 22, 32],
+      mirrorsAvailable: 10,
     },
     {
-      // Cross pattern
-      laserConfig: { x: 0, y: 9, direction: 'up' as const },
+      // Fortress - A central fortress with outer defenses
+      name: 'Fortress',
+      laserConfig: { x: 7, y: 0, direction: 'down' as const },
       obstacles: [
-        { x: 5, y: 2 }, { x: 5, y: 3 }, { x: 5, y: 4 },
-        { x: 5, y: 6 }, { x: 5, y: 7 }, { x: 5, y: 8 },
-        { x: 2, y: 5 }, { x: 3, y: 5 }, { x: 4, y: 5 },
-        { x: 6, y: 5 }, { x: 7, y: 5 }, { x: 8, y: 5 },
-        { x: 1, y: 1 }, { x: 9, y: 1 },
-        { x: 1, y: 9 }, { x: 9, y: 9 },
+        // Central fortress walls
+        { x: 5, y: 8 }, { x: 6, y: 8 }, { x: 7, y: 8 }, { x: 8, y: 8 }, { x: 9, y: 8 },
+        { x: 5, y: 9 }, { x: 9, y: 9 },
+        { x: 5, y: 10 }, { x: 9, y: 10 },
+        { x: 5, y: 11 }, { x: 6, y: 11 }, { x: 7, y: 11 }, { x: 8, y: 11 }, { x: 9, y: 11 },
+        // Outer defense - top
+        { x: 3, y: 4 }, { x: 4, y: 4 }, { x: 5, y: 4 }, { x: 9, y: 4 }, { x: 10, y: 4 }, { x: 11, y: 4 },
+        // Outer defense - bottom
+        { x: 3, y: 15 }, { x: 4, y: 15 }, { x: 5, y: 15 }, { x: 9, y: 15 }, { x: 10, y: 15 }, { x: 11, y: 15 },
+        // Side towers
+        ...Array.from({ length: 8 }, (_, i) => ({ x: 1, y: i + 6 })),
+        ...Array.from({ length: 8 }, (_, i) => ({ x: 13, y: i + 6 })),
+        // Corner blocks
+        { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 },
+        { x: 13, y: 0 }, { x: 14, y: 0 }, { x: 14, y: 1 },
+        { x: 0, y: 18 }, { x: 0, y: 19 }, { x: 1, y: 19 },
+        { x: 14, y: 18 }, { x: 14, y: 19 }, { x: 13, y: 19 },
       ],
-      mirrorsAvailable: 5,
-      starThresholds: [12, 20, 28],
+      mirrorsAvailable: 10,
     },
     {
-      // Spiral walls
-      laserConfig: { x: 9, y: 0, direction: 'down' as const },
+      // Labyrinth - A maze-like pattern with many corridors
+      name: 'Labyrinth',
+      laserConfig: { x: 0, y: 1, direction: 'right' as const },
       obstacles: [
-        { x: 1, y: 1 }, { x: 2, y: 1 }, { x: 3, y: 1 }, { x: 4, y: 1 }, { x: 5, y: 1 }, { x: 6, y: 1 }, { x: 7, y: 1 },
-        { x: 1, y: 2 }, { x: 1, y: 3 }, { x: 1, y: 4 }, { x: 1, y: 5 },
-        { x: 3, y: 3 }, { x: 4, y: 3 }, { x: 5, y: 3 }, { x: 6, y: 3 }, { x: 7, y: 3 },
-        { x: 7, y: 4 }, { x: 7, y: 5 },
-        { x: 3, y: 7 }, { x: 4, y: 7 }, { x: 5, y: 7 },
+        // Horizontal walls
+        ...Array.from({ length: 6 }, (_, i) => ({ x: i + 2, y: 3 })),
+        ...Array.from({ length: 5 }, (_, i) => ({ x: i + 10, y: 3 })),
+        ...Array.from({ length: 5 }, (_, i) => ({ x: i, y: 6 })),
+        ...Array.from({ length: 5 }, (_, i) => ({ x: i + 7, y: 6 })),
+        ...Array.from({ length: 6 }, (_, i) => ({ x: i + 3, y: 9 })),
+        ...Array.from({ length: 4 }, (_, i) => ({ x: i + 11, y: 9 })),
+        ...Array.from({ length: 4 }, (_, i) => ({ x: i, y: 12 })),
+        ...Array.from({ length: 5 }, (_, i) => ({ x: i + 6, y: 12 })),
+        ...Array.from({ length: 2 }, (_, i) => ({ x: i + 13, y: 12 })),
+        ...Array.from({ length: 5 }, (_, i) => ({ x: i + 2, y: 15 })),
+        ...Array.from({ length: 5 }, (_, i) => ({ x: i + 9, y: 15 })),
+        ...Array.from({ length: 5 }, (_, i) => ({ x: i, y: 18 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 7, y: 18 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: i + 12, y: 18 })),
       ],
-      mirrorsAvailable: 6,
-      starThresholds: [10, 16, 24],
+      mirrorsAvailable: 10,
     },
     {
-      // Chamber maze
+      // Scattered Islands - Random-looking clusters of obstacles
+      name: 'Scattered Islands',
+      laserConfig: { x: 14, y: 10, direction: 'left' as const },
+      obstacles: [
+        // Island 1 (top-left)
+        { x: 1, y: 2 }, { x: 2, y: 2 }, { x: 3, y: 2 }, { x: 2, y: 3 }, { x: 2, y: 4 },
+        // Island 2 (top-right)
+        { x: 11, y: 1 }, { x: 12, y: 1 }, { x: 11, y: 2 }, { x: 12, y: 2 }, { x: 13, y: 2 },
+        // Island 3 (middle-left)
+        { x: 0, y: 8 }, { x: 1, y: 8 }, { x: 2, y: 8 }, { x: 1, y: 9 }, { x: 0, y: 10 }, { x: 1, y: 10 },
+        // Island 4 (center)
+        { x: 6, y: 9 }, { x: 7, y: 9 }, { x: 8, y: 9 }, { x: 6, y: 10 }, { x: 8, y: 10 }, { x: 6, y: 11 }, { x: 7, y: 11 }, { x: 8, y: 11 },
+        // Island 5 (middle-right)
+        { x: 12, y: 7 }, { x: 13, y: 7 }, { x: 12, y: 8 }, { x: 13, y: 8 }, { x: 14, y: 8 },
+        // Island 6 (bottom-left)
+        { x: 2, y: 15 }, { x: 3, y: 15 }, { x: 4, y: 15 }, { x: 3, y: 16 }, { x: 3, y: 17 }, { x: 4, y: 17 },
+        // Island 7 (bottom-center)
+        { x: 8, y: 16 }, { x: 9, y: 16 }, { x: 10, y: 16 }, { x: 9, y: 17 },
+        // Island 8 (bottom-right)
+        { x: 12, y: 14 }, { x: 13, y: 14 }, { x: 12, y: 15 }, { x: 13, y: 15 }, { x: 14, y: 15 },
+      ],
+      mirrorsAvailable: 10,
+    },
+    {
+      // Gauntlet - A challenging run through multiple barriers
+      name: 'Gauntlet',
       laserConfig: { x: 0, y: 0, direction: 'down' as const },
       obstacles: [
-        { x: 2, y: 0 }, { x: 2, y: 1 }, { x: 2, y: 2 }, { x: 2, y: 3 },
-        { x: 4, y: 2 }, { x: 5, y: 2 }, { x: 6, y: 2 },
-        { x: 6, y: 3 }, { x: 6, y: 4 }, { x: 6, y: 5 },
-        { x: 3, y: 5 }, { x: 4, y: 5 }, { x: 5, y: 5 },
-        { x: 3, y: 6 }, { x: 3, y: 7 }, { x: 3, y: 8 },
-        { x: 8, y: 4 }, { x: 8, y: 5 }, { x: 8, y: 6 }, { x: 8, y: 7 },
-        { x: 5, y: 8 }, { x: 6, y: 8 }, { x: 7, y: 8 },
+        // Alternating horizontal barriers
+        ...Array.from({ length: 10 }, (_, i) => ({ x: i + 2, y: 3 })),
+        ...Array.from({ length: 10 }, (_, i) => ({ x: i + 3, y: 7 })),
+        ...Array.from({ length: 10 }, (_, i) => ({ x: i + 2, y: 11 })),
+        ...Array.from({ length: 10 }, (_, i) => ({ x: i + 3, y: 15 })),
+        // Side barriers
+        ...Array.from({ length: 3 }, (_, i) => ({ x: 0, y: i + 5 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: 14, y: i + 9 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: 0, y: i + 13 })),
+        ...Array.from({ length: 3 }, (_, i) => ({ x: 14, y: i + 17 })),
       ],
-      mirrorsAvailable: 7,
-      starThresholds: [16, 26, 38],
+      mirrorsAvailable: 10,
     },
   ]
 
   const config = configs[seed % configs.length]
 
-  console.log(`Computing optimal score for ${date}...`)
+  console.log(`Computing optimal score for ${date} (${config.name})...`)
   const optimalScore = findOptimalScore(
     config.laserConfig,
     config.obstacles,
     config.mirrorsAvailable,
-    10,
-    10
+    GRID_WIDTH,
+    GRID_HEIGHT
   )
   console.log(`  Optimal score: ${optimalScore}`)
 
@@ -293,8 +360,8 @@ function generateLevel(seed: number, date: string) {
 
   return {
     date,
-    gridWidth: 10,
-    gridHeight: 10,
+    gridWidth: GRID_WIDTH,
+    gridHeight: GRID_HEIGHT,
     laserConfig: JSON.stringify(config.laserConfig),
     obstacles: JSON.stringify(config.obstacles),
     mirrorsAvailable: config.mirrorsAvailable,
