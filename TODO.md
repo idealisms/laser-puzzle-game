@@ -29,3 +29,24 @@ Implemented:
 - Solution saved to database for logged-in users
 - Solution saved to localStorage for guest users
 - loadSolution function in useGame hook
+
+## Push to GitHub
+Create a GitHub repository and push the code.
+
+Steps:
+1. Create new repository on GitHub
+2. Add remote: `git remote add origin <repo-url>`
+3. Push: `git push -u origin main`
+
+## Deploy to Vercel
+Deploy the application to Vercel with PostgreSQL.
+
+Steps:
+1. Import GitHub repository on Vercel
+2. Create Vercel Postgres database (Storage → Create → Postgres)
+3. Add environment variables:
+   - `DATABASE_URL` (auto-added if using Vercel Postgres)
+   - `JWT_SECRET` (generate with `openssl rand -base64 32`)
+4. Deploy
+5. Run database migration: `npx prisma migrate deploy`
+6. Seed production database (or create levels manually)
