@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { useGame } from '@/hooks/useGame'
 import { LevelConfig } from '@/game/types'
-import { GameCanvas } from '@/components/game/GameCanvas'
+import { ResponsiveCanvas } from '@/components/game/ResponsiveCanvas'
 import { MirrorPalette } from '@/components/game/MirrorPalette'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { GameControls } from '@/components/game/GameControls'
@@ -169,8 +169,8 @@ export default function GamePage() {
       <main className="flex-1 p-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-6">
-            <div className="flex-1 flex justify-center">
-              <GameCanvas
+            <div className="flex-1">
+              <ResponsiveCanvas
                 gameState={gameState}
                 onCellClick={handleCellClick}
                 onCellRightClick={handleCellRightClick}

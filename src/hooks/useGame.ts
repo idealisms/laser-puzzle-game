@@ -25,8 +25,12 @@ export function useGame(levelConfig: LevelConfig) {
       )
 
       if (existingMirror) {
-        // Toggle the mirror type
-        setGameState((prev) => toggleMirrorType(prev, position))
+        // Cycle: if '/', change to '\'; if '\', remove
+        if (existingMirror.type === '/') {
+          setGameState((prev) => toggleMirrorType(prev, position))
+        } else {
+          setGameState((prev) => removeMirror(prev, position))
+        }
       } else if (canPlaceMirror(gameState, position)) {
         // Place a new mirror
         setGameState((prev) =>

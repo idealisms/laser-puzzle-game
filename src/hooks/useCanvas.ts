@@ -9,12 +9,14 @@ interface UseCanvasProps {
   gameState: GameState
   onCellClick: (position: Position) => void
   onCellRightClick: (position: Position) => void
+  scale?: number
 }
 
 export function useCanvas({
   gameState,
   onCellClick,
   onCellRightClick,
+  scale = 1,
 }: UseCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rendererRef = useRef<Renderer | null>(null)
@@ -48,15 +50,52 @@ export function useCanvas({
       if (!canvas) return null
 
       const rect = canvas.getBoundingClientRect()
-      const x = Math.floor((e.clientX - rect.left) / CELL_SIZE)
-      const y = Math.floor((e.clientY - rect.top) / CELL_SIZE)
+      const x = Math.floor((e.clientX - rect.left) / (CELL_SIZE * scale))
+      const y = Math.floor((e.clientY - rect.top) / (CELL_SIZE * scale))
 
       if (x >= 0 && x < level.gridWidth && y >= 0 && y < level.gridHeight) {
         return { x, y }
       }
       return null
     },
-    [level.gridWidth, level.gridHeight]
+    [level.gridWidth, level.gridHeight, scale]
+  )
+
+  const getCellFromTouch = useCallback(
+    (touch: React.Touch): Position | null => {
+      const canvas = canvasRef.current
+      if (!canvas) return null
+
+      const rect = canvas.getBoundingClientRect()
+      const x = Math.floor((touch.clientX - rect.left) / (CELL_SIZE * scale))
+      const y = Math.floor((touch.clientY - rect.top) / (CELL_SIZE * scale))
+
+      if (x >= 0 && x < level.gridWidth && y >= 0 && y < level.gridHeight) {
+        return { x, y }
+      }
+      return null
+    },
+    [level.gridWidth, level.gridHeight, scale]
+  )
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLCanvasElement>) => {
+      e.preventDefault()
+    },
+    []
+  )
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<HTMLCanvasElement>) => {
+      e.preventDefault()
+      if (e.changedTouches.length > 0) {
+        const pos = getCellFromTouch(e.changedTouches[0])
+        if (pos) {
+          onCellClick(pos)
+        }
+      }
+    },
+    [getCellFromTouch, onCellClick]
   )
 
   const handleMouseMove = useCallback(
@@ -100,5 +139,7 @@ export function useCanvas({
     handleMouseLeave,
     handleClick,
     handleContextMenu,
+    handleTouchStart,
+    handleTouchEnd,
   }
 }
