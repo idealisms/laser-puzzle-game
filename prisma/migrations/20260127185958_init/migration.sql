@@ -1,15 +1,17 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "UserStats" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "gamesPlayed" INTEGER NOT NULL DEFAULT 0,
     "gamesWon" INTEGER NOT NULL DEFAULT 0,
@@ -19,13 +21,14 @@ CREATE TABLE "UserStats" (
     "daysPlayed" INTEGER NOT NULL DEFAULT 0,
     "currentStreak" INTEGER NOT NULL DEFAULT 0,
     "longestStreak" INTEGER NOT NULL DEFAULT 0,
-    "lastPlayedAt" DATETIME,
-    CONSTRAINT "UserStats_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "lastPlayedAt" TIMESTAMP(3),
+
+    CONSTRAINT "UserStats_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Level" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "date" TEXT NOT NULL,
     "gridWidth" INTEGER NOT NULL DEFAULT 10,
     "gridHeight" INTEGER NOT NULL DEFAULT 10,
@@ -33,12 +36,15 @@ CREATE TABLE "Level" (
     "obstacles" TEXT NOT NULL,
     "mirrorsAvailable" INTEGER NOT NULL DEFAULT 5,
     "starThresholds" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "optimalScore" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Level_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "LevelProgress" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "levelId" TEXT NOT NULL,
     "completed" BOOLEAN NOT NULL DEFAULT false,
@@ -46,9 +52,9 @@ CREATE TABLE "LevelProgress" (
     "stars" INTEGER NOT NULL DEFAULT 0,
     "attempts" INTEGER NOT NULL DEFAULT 0,
     "bestSolution" TEXT,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "LevelProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "LevelProgress_levelId_fkey" FOREIGN KEY ("levelId") REFERENCES "Level" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "LevelProgress_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -62,3 +68,12 @@ CREATE UNIQUE INDEX "Level_date_key" ON "Level"("date");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "LevelProgress_userId_levelId_key" ON "LevelProgress"("userId", "levelId");
+
+-- AddForeignKey
+ALTER TABLE "UserStats" ADD CONSTRAINT "UserStats_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LevelProgress" ADD CONSTRAINT "LevelProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LevelProgress" ADD CONSTRAINT "LevelProgress_levelId_fkey" FOREIGN KEY ("levelId") REFERENCES "Level"("id") ON DELETE CASCADE ON UPDATE CASCADE;
