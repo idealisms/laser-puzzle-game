@@ -1,5 +1,4 @@
 export * from './GameCanvas'
-export * from './MirrorPalette'
 export * from './ScoreDisplay'
 export * from './GameControls'
 export * from './LevelComplete'

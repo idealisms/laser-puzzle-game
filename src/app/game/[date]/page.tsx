@@ -7,7 +7,6 @@ import { useAuth } from '@/context/AuthContext'
 import { useGame } from '@/hooks/useGame'
 import { LevelConfig, Mirror } from '@/game/types'
 import { ResponsiveCanvas } from '@/components/game/ResponsiveCanvas'
-import { MirrorPalette } from '@/components/game/MirrorPalette'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { GameControls } from '@/components/game/GameControls'
 import { LevelComplete } from '@/components/game/LevelComplete'
@@ -41,7 +40,6 @@ export default function GamePage() {
     gameState,
     handleCellClick,
     handleCellRightClick,
-    handleSelectMirrorType,
     handleReset,
     loadLevel,
     loadSolution,
@@ -235,13 +233,8 @@ export default function GamePage() {
                 bestScore={previousBest}
                 canRestore={bestSolution !== null && gameState.score < (previousBest ?? 0)}
                 onRestoreBest={handleRestoreBest}
-              />
-
-              <MirrorPalette
-                selectedType={gameState.selectedMirrorType}
-                onSelectType={handleSelectMirrorType}
-                mirrorsAvailable={level.mirrorsAvailable}
                 mirrorsPlaced={gameState.placedMirrors.length}
+                mirrorsAvailable={level.mirrorsAvailable}
               />
 
               <GameControls

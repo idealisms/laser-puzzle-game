@@ -5,6 +5,8 @@ interface ScoreDisplayProps {
   bestScore: number | null
   canRestore: boolean
   onRestoreBest: () => void
+  mirrorsPlaced: number
+  mirrorsAvailable: number
 }
 
 export function ScoreDisplay({
@@ -12,6 +14,8 @@ export function ScoreDisplay({
   bestScore,
   canRestore,
   onRestoreBest,
+  mirrorsPlaced,
+  mirrorsAvailable,
 }: ScoreDisplayProps) {
   const showBest = bestScore !== null && score < bestScore
 
@@ -22,8 +26,18 @@ export function ScoreDisplay({
       }`}
       onClick={canRestore ? onRestoreBest : undefined}
     >
-      <h3 className="text-sm font-medium text-gray-400 mb-2">Path Length</h3>
-      <div className="text-3xl font-bold text-white">{score}</div>
+      <div className="flex justify-between items-start mb-2">
+        <div>
+          <h3 className="text-sm font-medium text-gray-400 mb-1">Path Length</h3>
+          <div className="text-3xl font-bold text-white">{score}</div>
+        </div>
+        <div className="text-right">
+          <h3 className="text-sm font-medium text-gray-400 mb-1">Mirrors</h3>
+          <div className="text-xl font-bold text-white">
+            {mirrorsPlaced}<span className="text-gray-500">/{mirrorsAvailable}</span>
+          </div>
+        </div>
+      </div>
       {showBest && (
         <div className="mt-2 pt-2 border-t border-gray-700">
           <div className="text-sm text-gray-400">
