@@ -167,6 +167,22 @@ export function resetGame(state: GameState): GameState {
   return createInitialGameState(state.level)
 }
 
+export function loadSolution(state: GameState, mirrors: Mirror[]): GameState {
+  const laserPath = calculateLaserPath(
+    state.level.laserConfig,
+    mirrors,
+    state.level.obstacles,
+    { width: state.level.gridWidth, height: state.level.gridHeight }
+  )
+
+  return {
+    ...state,
+    placedMirrors: mirrors,
+    laserPath,
+    score: calculateScore(laserPath),
+  }
+}
+
 export function completeGame(state: GameState): GameState {
   return {
     ...state,

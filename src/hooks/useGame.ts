@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { GameState, LevelConfig, Position, MirrorType } from '@/game/types'
+import { GameState, LevelConfig, Position, MirrorType, Mirror } from '@/game/types'
 import {
   createInitialGameState,
   placeMirror,
@@ -10,6 +10,7 @@ import {
   setSelectedMirrorType,
   resetGame,
   canPlaceMirror,
+  loadSolution as loadSolutionState,
 } from '@/game/engine/GameState'
 
 export function useGame(levelConfig: LevelConfig) {
@@ -58,6 +59,10 @@ export function useGame(levelConfig: LevelConfig) {
     setGameState(createInitialGameState(config))
   }, [])
 
+  const loadSolution = useCallback((mirrors: Mirror[]) => {
+    setGameState((prev) => loadSolutionState(prev, mirrors))
+  }, [])
+
   return {
     gameState,
     handleCellClick,
@@ -65,5 +70,6 @@ export function useGame(levelConfig: LevelConfig) {
     handleSelectMirrorType,
     handleReset,
     loadLevel,
+    loadSolution,
   }
 }

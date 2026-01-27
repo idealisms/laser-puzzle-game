@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { useGame } from '@/hooks/useGame'
-import { LevelConfig } from '@/game/types'
+import { LevelConfig, Mirror } from '@/game/types'
 import { ResponsiveCanvas } from '@/components/game/ResponsiveCanvas'
 import { MirrorPalette } from '@/components/game/MirrorPalette'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
@@ -35,6 +35,7 @@ export default function GamePage() {
   const [showComplete, setShowComplete] = useState(false)
   const [isNewBest, setIsNewBest] = useState(false)
   const [previousBest, setPreviousBest] = useState<number | null>(null)
+  const [bestSolution, setBestSolution] = useState<Mirror[] | null>(null)
 
   const {
     gameState,
@@ -43,6 +44,7 @@ export default function GamePage() {
     handleSelectMirrorType,
     handleReset,
     loadLevel,
+    loadSolution,
   } = useGame(level || DEFAULT_LEVEL)
 
   // Fetch level data
@@ -75,6 +77,9 @@ export default function GamePage() {
             const data = await res.json()
             if (data.progress) {
               setPreviousBest(data.progress.bestScore)
+              if (data.progress.bestSolution) {
+                setBestSolution(data.progress.bestSolution)
+              }
             }
           }
         } catch (error) {
@@ -85,6 +90,9 @@ export default function GamePage() {
         const localProgress = getLocalProgress()
         if (localProgress[date]) {
           setPreviousBest(localProgress[date].bestScore)
+          if (localProgress[date].bestSolution) {
+            setBestSolution(localProgress[date].bestSolution)
+          }
         }
       }
     }
@@ -93,7 +101,7 @@ export default function GamePage() {
     fetchProgress()
   }, [date, loadLevel, user])
 
-  function getLocalProgress(): Record<string, { bestScore: number }> {
+  function getLocalProgress(): Record<string, { bestScore: number; bestSolution?: Mirror[] }> {
     if (typeof window === 'undefined') return {}
     try {
       const stored = localStorage.getItem('laser-puzzle-progress')
@@ -103,12 +111,12 @@ export default function GamePage() {
     }
   }
 
-  function saveLocalProgress(levelDate: string, score: number) {
+  function saveLocalProgress(levelDate: string, score: number, solution: Mirror[]) {
     try {
       const progress = getLocalProgress()
       const existing = progress[levelDate]
       if (!existing || score > existing.bestScore) {
-        progress[levelDate] = { bestScore: score }
+        progress[levelDate] = { bestScore: score, bestSolution: solution }
         localStorage.setItem('laser-puzzle-progress', JSON.stringify(progress))
         return true // isNewBest
       }
@@ -121,10 +129,11 @@ export default function GamePage() {
   const handleSubmit = useCallback(async () => {
     if (!user) {
       // For non-logged-in users, save to localStorage
-      const newBest = saveLocalProgress(date, gameState.score)
+      const newBest = saveLocalProgress(date, gameState.score, gameState.placedMirrors)
       setIsNewBest(newBest)
       if (newBest) {
         setPreviousBest(gameState.score)
+        setBestSolution(gameState.placedMirrors)
       }
       setShowComplete(true)
       return
@@ -145,18 +154,27 @@ export default function GamePage() {
         const data = await res.json()
         setIsNewBest(data.progress.isNewBest)
         setPreviousBest(data.progress.bestScore)
+        if (data.progress.isNewBest) {
+          setBestSolution(gameState.placedMirrors)
+        }
       }
     } catch (error) {
       console.error('Failed to save progress:', error)
     }
 
     setShowComplete(true)
-  }, [user, date, gameState, previousBest])
+  }, [user, date, gameState])
 
   const handlePlayAgain = useCallback(() => {
     setShowComplete(false)
     handleReset()
   }, [handleReset])
+
+  const handleRestoreBest = useCallback(() => {
+    if (bestSolution) {
+      loadSolution(bestSolution)
+    }
+  }, [bestSolution, loadSolution])
 
   const handleNextLevel = useCallback(() => {
     // Navigate to the next available date
@@ -212,7 +230,12 @@ export default function GamePage() {
             </div>
 
             <div className="lg:w-64 space-y-4">
-              <ScoreDisplay score={gameState.score} />
+              <ScoreDisplay
+                score={gameState.score}
+                bestScore={previousBest}
+                canRestore={bestSolution !== null && gameState.score < (previousBest ?? 0)}
+                onRestoreBest={handleRestoreBest}
+              />
 
               <MirrorPalette
                 selectedType={gameState.selectedMirrorType}
@@ -220,14 +243,6 @@ export default function GamePage() {
                 mirrorsAvailable={level.mirrorsAvailable}
                 mirrorsPlaced={gameState.placedMirrors.length}
               />
-
-              {previousBest !== null && (
-                <Card padding="sm">
-                  <div className="text-sm text-gray-400">
-                    Best Score: <span className="text-white font-medium">{previousBest}</span>
-                  </div>
-                </Card>
-              )}
 
               <GameControls
                 onReset={handleReset}
