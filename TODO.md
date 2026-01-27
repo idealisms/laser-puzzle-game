@@ -30,13 +30,8 @@ Implemented:
 - Solution saved to localStorage for guest users
 - loadSolution function in useGame hook
 
-## Push to GitHub
-Create a GitHub repository and push the code.
-
-Steps:
-1. Create new repository on GitHub
-2. Add remote: `git remote add origin <repo-url>`
-3. Push: `git push -u origin main`
+## ~~Push to GitHub~~ ✓ DONE
+Repository: https://github.com/idealisms/laser-puzzle-game
 
 ## Deploy to Vercel
 Deploy the application to Vercel with PostgreSQL.
