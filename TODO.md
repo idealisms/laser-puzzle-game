@@ -16,7 +16,9 @@ Implemented:
 - Best score shown on game page for both logged-in and guest users
 - Best score saved to database for logged-in users
 - localStorage fallback for non-logged-in users
-- Best score displayed in level select screen alongside stars
+- Best score displayed in level select screen
+- Removed star scoring system - now shows percentage of optimal score
+- Level complete modal shows score as percentage (100% = Perfect!)
 
 ## Allow Player to Restore Best Solution
 Players should be able to load their previous best solution to continue improving from there.
