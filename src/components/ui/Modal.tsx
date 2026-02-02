@@ -38,7 +38,7 @@ export function Modal({ isOpen, onClose, children, title }: ModalProps) {
       />
       <div className="relative bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-md w-full mx-4 shadow-2xl">
         {title && (
-          <h2 className="text-2xl font-bold text-white mb-4">{title}</h2>
+          <h2 className="text-2xl font-bold text-white mb-4 pt-4">{title}</h2>
         )}
         {children}
       </div>
