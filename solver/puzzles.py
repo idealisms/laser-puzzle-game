@@ -28,7 +28,7 @@ Grid size: 15x20 with 8-11 mirrors for varied difficulty.
 === ADDING NEW PUZZLES ===
 
 1. Create new PuzzleConfig entries in the PUZZLES list below
-2. Run `python generate_levels.py --date YYYY-MM-DD` to test
+2. Run `pypy3 generate_levels.py --date YYYY-MM-DD` to test
 3. Verify the optimal score meets minimum requirements
 4. After puzzles are used, move them to used_puzzles.py
 """
