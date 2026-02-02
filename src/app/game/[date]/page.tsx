@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { useGame } from '@/hooks/useGame'
@@ -24,7 +24,6 @@ const DEFAULT_LEVEL: LevelConfig = {
 
 export default function GamePage() {
   const params = useParams()
-  const router = useRouter()
   const { user } = useAuth()
   const date = params.date as string
 
@@ -163,25 +162,11 @@ export default function GamePage() {
     setShowComplete(true)
   }, [user, date, gameState])
 
-  const handlePlayAgain = useCallback(() => {
-    setShowComplete(false)
-    handleReset()
-  }, [handleReset])
-
   const handleRestoreBest = useCallback(() => {
     if (bestSolution) {
       loadSolution(bestSolution)
     }
   }, [bestSolution, loadSolution])
-
-  const handleNextLevel = useCallback(() => {
-    // Navigate to the next available date
-    const currentDate = new Date(date + 'T00:00:00')
-    const nextDate = new Date(currentDate)
-    nextDate.setDate(nextDate.getDate() + 1)
-    const nextDateStr = nextDate.toISOString().split('T')[0]
-    router.push(`/game/${nextDateStr}`)
-  }, [date, router])
 
   if (loading) {
     return (
@@ -272,8 +257,7 @@ export default function GamePage() {
         score={gameState.score}
         optimalScore={level.optimalScore}
         isNewBest={isNewBest}
-        onPlayAgain={handlePlayAgain}
-        onNextLevel={handleNextLevel}
+        date={date}
       />
     </div>
   )
