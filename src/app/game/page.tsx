@@ -106,7 +106,7 @@ export default function LevelSelectPage() {
             <div className="text-center text-gray-400 py-12">
               Loading puzzles...
             </div>
-          ) : calendar.length === 0 ? (
+          ) : calendar.filter((e) => e.date <= todayDate).length === 0 ? (
             <Card className="text-center py-12">
               <p className="text-gray-400 mb-4">No puzzles available yet.</p>
               <p className="text-sm text-gray-500">
@@ -115,7 +115,7 @@ export default function LevelSelectPage() {
             </Card>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {calendar.map((entry) => {
+              {calendar.filter((e) => e.date <= todayDate).map((entry) => {
                 const isToday = entry.date === todayDate
                 const dateObj = new Date(entry.date + 'T00:00:00')
                 const dayName = dateObj.toLocaleDateString('en-US', {
