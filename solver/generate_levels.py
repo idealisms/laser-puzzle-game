@@ -16,38 +16,52 @@ import os
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from puzzles import PUZZLES, ORIGINAL_PUZZLE_COUNT
+from puzzles import PUZZLES, ORIGINAL_PUZZLE_COUNT, PuzzleConfig
+from used_puzzles import USED_PUZZLES
 from simulator import beam_search_solver
 
-# Cutoff date: puzzles before this date use original puzzles (indices 0-6)
-# Puzzles on or after this date use new puzzles only (indices 7+)
-CUTOFF_DATE = datetime(2026, 1, 29)
+# Date ranges for puzzle sets
+# Original puzzles: Jan 22-28, 2026 (indices 0-6 in USED_PUZZLES)
+# Extended puzzles: Jan 29 - Feb 28, 2026 (indices 7-37 in USED_PUZZLES)
+# New puzzles: Mar 1, 2026+ (in PUZZLES)
+ORIGINAL_START = datetime(2026, 1, 22)
+EXTENDED_START = datetime(2026, 1, 29)
+NEW_PUZZLES_START = datetime(2026, 3, 1)
 
 
-def get_puzzle_index(date: datetime) -> int:
+def get_puzzle_for_date(date: datetime) -> PuzzleConfig:
     """
-    Get the puzzle index for a given date.
+    Get the puzzle configuration for a given date.
 
-    For dates before CUTOFF_DATE (Jan 22-28, 2026):
-        Uses original puzzles (indices 0-6) based on day of year % 7
-
-    For dates on or after CUTOFF_DATE (Jan 29+):
-        Uses new puzzles only (indices 7+) to avoid duplicates
+    Date ranges:
+    - Jan 22-28, 2026: Original puzzles (USED_PUZZLES indices 0-6)
+    - Jan 29 - Feb 28, 2026: Extended puzzles (USED_PUZZLES indices 7-37)
+    - Mar 1, 2026+: New puzzles (PUZZLES)
     """
-    if date < CUTOFF_DATE:
-        # Original behavior for existing puzzles
-        return date.timetuple().tm_yday % ORIGINAL_PUZZLE_COUNT
+    if date < EXTENDED_START:
+        # Original behavior for Jan 22-28
+        index = date.timetuple().tm_yday % ORIGINAL_PUZZLE_COUNT
+        return USED_PUZZLES[index]
+    elif date < NEW_PUZZLES_START:
+        # Extended puzzles for Jan 29 - Feb 28
+        days_since_extended = (date - EXTENDED_START).days
+        extended_count = len(USED_PUZZLES) - ORIGINAL_PUZZLE_COUNT
+        index = ORIGINAL_PUZZLE_COUNT + (days_since_extended % extended_count)
+        return USED_PUZZLES[index]
     else:
-        # For new dates, use only new puzzles (starting at index 7)
-        days_since_cutoff = (date - CUTOFF_DATE).days
-        new_puzzle_count = len(PUZZLES) - ORIGINAL_PUZZLE_COUNT
-        return ORIGINAL_PUZZLE_COUNT + (days_since_cutoff % new_puzzle_count)
+        # New puzzles for Mar 1+
+        if not PUZZLES:
+            raise ValueError(
+                f"No new puzzles available for {date.strftime('%Y-%m-%d')}. "
+                "Add new puzzles to puzzles.py following the documented rules."
+            )
+        days_since_new = (date - NEW_PUZZLES_START).days
+        index = days_since_new % len(PUZZLES)
+        return PUZZLES[index]
 
 
-def generate_level(date_str: str, puzzle_index: int) -> dict:
-    """Generate a level for the given date using the puzzle at the given index."""
-    config = PUZZLES[puzzle_index]
-
+def generate_level(date_str: str, config: PuzzleConfig) -> dict:
+    """Generate a level for the given date using the provided puzzle config."""
     print(f"Computing optimal score for {date_str} ({config.name})...")
     result = beam_search_solver(config, verbose=False)
     optimal_score = result['path_length']
@@ -71,8 +85,8 @@ def generate_level(date_str: str, puzzle_index: int) -> dict:
 def generate_for_date(date: datetime, output_dir: Path):
     """Generate and save a level for a specific date."""
     date_str = date.strftime("%Y-%m-%d")
-    puzzle_index = get_puzzle_index(date)
-    level = generate_level(date_str, puzzle_index)
+    config = get_puzzle_for_date(date)
+    level = generate_level(date_str, config)
 
     output_path = output_dir / f"{date_str}.json"
     with open(output_path, "w") as f:
