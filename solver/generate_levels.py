@@ -4,60 +4,31 @@ Generate level JSON files for the laser puzzle game.
 Computes optimal scores using beam search and outputs to solver/levels/
 
 Usage:
-    python generate_levels.py                    # Generate 7 days (today and 6 days back)
-    python generate_levels.py --days 30          # Generate 30 days
-    python generate_levels.py --date 2026-02-01  # Generate specific date
-    python generate_levels.py --start 2026-01-29 --end 2026-02-28  # Generate date range
+    python generate_levels.py --date 2026-03-01           # Generate specific date
+    python generate_levels.py --start 2026-03-01 --end 2026-03-07  # Generate date range
 """
 
 import argparse
 import json
-import os
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from puzzles import PUZZLES, ORIGINAL_PUZZLE_COUNT, PuzzleConfig
-from used_puzzles import USED_PUZZLES
+from puzzles import PUZZLES, PuzzleConfig
 from simulator import beam_search_solver
 
-# Date ranges for puzzle sets
-# Original puzzles: Jan 22-28, 2026 (indices 0-6 in USED_PUZZLES)
-# Extended puzzles: Jan 29 - Feb 28, 2026 (indices 7-37 in USED_PUZZLES)
-# New puzzles: Mar 1, 2026+ (in PUZZLES)
-ORIGINAL_START = datetime(2026, 1, 22)
-EXTENDED_START = datetime(2026, 1, 29)
-NEW_PUZZLES_START = datetime(2026, 3, 1)
 
-
-def get_puzzle_for_date(date: datetime) -> PuzzleConfig:
+def get_puzzle_for_date(date_str: str) -> PuzzleConfig:
     """
     Get the puzzle configuration for a given date.
-
-    Date ranges:
-    - Jan 22-28, 2026: Original puzzles (USED_PUZZLES indices 0-6)
-    - Jan 29 - Feb 28, 2026: Extended puzzles (USED_PUZZLES indices 7-37)
-    - Mar 1, 2026+: New puzzles (PUZZLES)
+    Raises an error if no puzzle exists for the date.
     """
-    if date < EXTENDED_START:
-        # Original behavior for Jan 22-28
-        index = date.timetuple().tm_yday % ORIGINAL_PUZZLE_COUNT
-        return USED_PUZZLES[index]
-    elif date < NEW_PUZZLES_START:
-        # Extended puzzles for Jan 29 - Feb 28
-        days_since_extended = (date - EXTENDED_START).days
-        extended_count = len(USED_PUZZLES) - ORIGINAL_PUZZLE_COUNT
-        index = ORIGINAL_PUZZLE_COUNT + (days_since_extended % extended_count)
-        return USED_PUZZLES[index]
-    else:
-        # New puzzles for Mar 1+
-        if not PUZZLES:
-            raise ValueError(
-                f"No new puzzles available for {date.strftime('%Y-%m-%d')}. "
-                "Add new puzzles to puzzles.py following the documented rules."
-            )
-        days_since_new = (date - NEW_PUZZLES_START).days
-        index = days_since_new % len(PUZZLES)
-        return PUZZLES[index]
+    if date_str not in PUZZLES:
+        raise ValueError(
+            f"No puzzle configured for {date_str}. "
+            "Add a new puzzle to puzzles.py with this date as the key."
+        )
+    return PUZZLES[date_str]
 
 
 def generate_level(date_str: str, config: PuzzleConfig) -> dict:
@@ -82,10 +53,9 @@ def generate_level(date_str: str, config: PuzzleConfig) -> dict:
     }
 
 
-def generate_for_date(date: datetime, output_dir: Path):
+def generate_for_date(date_str: str, output_dir: Path):
     """Generate and save a level for a specific date."""
-    date_str = date.strftime("%Y-%m-%d")
-    config = get_puzzle_for_date(date)
+    config = get_puzzle_for_date(date_str)
     level = generate_level(date_str, config)
 
     output_path = output_dir / f"{date_str}.json"
@@ -96,12 +66,6 @@ def generate_for_date(date: datetime, output_dir: Path):
 
 def main():
     parser = argparse.ArgumentParser(description="Generate level JSON files")
-    parser.add_argument(
-        "--days",
-        type=int,
-        default=7,
-        help="Number of days to generate (default: 7, going back from today)",
-    )
     parser.add_argument(
         "--date",
         type=str,
@@ -119,31 +83,38 @@ def main():
     )
     args = parser.parse_args()
 
+    # Validate arguments
+    if not args.date and not (args.start and args.end):
+        parser.error("Must specify either --date or both --start and --end")
+
+    if args.date and (args.start or args.end):
+        parser.error("Cannot use --date with --start/--end")
+
+    if (args.start and not args.end) or (args.end and not args.start):
+        parser.error("Must specify both --start and --end for range generation")
+
     # Create output directory
     output_dir = Path(__file__).parent / "levels"
     output_dir.mkdir(exist_ok=True)
 
-    if args.start and args.end:
-        # Generate date range
-        start_date = datetime.strptime(args.start, "%Y-%m-%d")
-        end_date = datetime.strptime(args.end, "%Y-%m-%d")
-        current = start_date
-        while current <= end_date:
-            generate_for_date(current, output_dir)
-            current += timedelta(days=1)
-    elif args.date:
-        # Generate single specific date
-        date = datetime.strptime(args.date, "%Y-%m-%d")
-        generate_for_date(date, output_dir)
-    else:
-        # Generate multiple days going back from today
-        today = datetime.now()
+    try:
+        if args.start and args.end:
+            # Generate date range
+            start_date = datetime.strptime(args.start, "%Y-%m-%d")
+            end_date = datetime.strptime(args.end, "%Y-%m-%d")
+            current = start_date
+            while current <= end_date:
+                date_str = current.strftime("%Y-%m-%d")
+                generate_for_date(date_str, output_dir)
+                current += timedelta(days=1)
+        else:
+            # Generate single specific date
+            generate_for_date(args.date, output_dir)
 
-        for i in range(args.days - 1, -1, -1):
-            date = today - timedelta(days=i)
-            generate_for_date(date, output_dir)
-
-    print("\nDone!")
+        print("\nDone!")
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
