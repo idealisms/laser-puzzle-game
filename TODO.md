@@ -33,15 +33,27 @@ Implemented:
 ## ~~Push to GitHub~~ ✓ DONE
 Repository: https://github.com/idealisms/laser-puzzle-game
 
-## Deploy to Vercel
-Deploy the application to Vercel with PostgreSQL.
+## ~~Deploy to Vercel~~ ✓ DONE
+~~Deploy the application to Vercel with PostgreSQL.~~
 
-Steps:
-1. Import GitHub repository on Vercel
-2. Create Vercel Postgres database (Storage → Create → Postgres)
-3. Add environment variables:
-   - `DATABASE_URL` (auto-added if using Vercel Postgres)
-   - `JWT_SECRET` (generate with `openssl rand -base64 32`)
-4. Deploy
-5. Run database migration: `npx prisma migrate deploy`
-6. Seed production database (or create levels manually)
+Implemented:
+- Connected GitHub repo to Vercel
+- Created Neon PostgreSQL database (laser_puzzle)
+- Set DATABASE_URL and JWT_SECRET environment variables
+- Ran `npx prisma db push` to apply schema
+- Seeded database with `npm run db:seed`
+
+## Refactor Level Generation Pipeline
+Move level generation and optimal path computation from `prisma/seed.ts` to Python, with a separate script for database insertion.
+
+Tasks:
+- [x] Update Python puzzle configs - Sync `solver/puzzles.py` with the current 15x20 grid configs from `seed.ts`
+- [x] Add level generator to Python - Create `solver/generator.py` to generate new puzzle layouts
+- [ ] Improve optimal path solver - Enhance beam search or implement better algorithm (current one is slow)
+- [x] Define JSON output format for generated levels
+- [x] Create level insertion script - Read generated JSON and insert/upsert into database
+- [x] Simplify seed.ts - Reduce to only read from pre-generated JSON files
+
+- [x] Store generated levels as JSON files in `solver/levels/` for version control
+- [ ] Cache optimal solutions alongside levels
+- [x] CLI to generate levels for specific dates or date ranges
