@@ -49,7 +49,7 @@ Move level generation and optimal path computation from `prisma/seed.ts` to Pyth
 Tasks:
 - [x] Update Python puzzle configs - Sync `solver/puzzles.py` with the current 15x20 grid configs from `seed.ts`
 - [x] Add level generator to Python - Create `solver/generator.py` to generate new puzzle layouts
-- [ ] Improve optimal path solver - Enhance beam search or implement better algorithm (current one is slow)
+- [x] Improve optimal path solver - Path pruning (3-4x faster), recommend PyPy (5-10x faster)
 - [x] Define JSON output format for generated levels
 - [x] Create level insertion script - Read generated JSON and insert/upsert into database
 - [x] Simplify seed.ts - Reduce to only read from pre-generated JSON files
