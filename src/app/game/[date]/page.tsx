@@ -34,6 +34,8 @@ export default function GamePage() {
   const [isNewBest, setIsNewBest] = useState(false)
   const [previousBest, setPreviousBest] = useState<number | null>(null)
   const [bestSolution, setBestSolution] = useState<Mirror[] | null>(null)
+  const [hasSubmitted, setHasSubmitted] = useState(false)
+  const [submittedScore, setSubmittedScore] = useState<number>(0)
 
   const {
     gameState,
@@ -77,6 +79,11 @@ export default function GamePage() {
               if (data.progress.bestSolution) {
                 setBestSolution(data.progress.bestSolution)
               }
+              // If user has already completed this level, mark as submitted
+              if (data.progress.completed) {
+                setHasSubmitted(true)
+                setSubmittedScore(data.progress.bestScore)
+              }
             }
           }
         } catch (error) {
@@ -90,6 +97,9 @@ export default function GamePage() {
           if (localProgress[date].bestSolution) {
             setBestSolution(localProgress[date].bestSolution)
           }
+          // Mark as submitted if there's existing progress
+          setHasSubmitted(true)
+          setSubmittedScore(localProgress[date].bestScore)
         }
       }
     }
@@ -124,14 +134,19 @@ export default function GamePage() {
   }
 
   const handleSubmit = useCallback(async () => {
+    // Store the submitted score before any async operations
+    const scoreAtSubmit = gameState.score
+
     if (!user) {
       // For non-logged-in users, save to localStorage
-      const newBest = saveLocalProgress(date, gameState.score, gameState.placedMirrors)
+      const newBest = saveLocalProgress(date, scoreAtSubmit, gameState.placedMirrors)
       setIsNewBest(newBest)
       if (newBest) {
-        setPreviousBest(gameState.score)
+        setPreviousBest(scoreAtSubmit)
         setBestSolution(gameState.placedMirrors)
       }
+      setSubmittedScore(scoreAtSubmit)
+      setHasSubmitted(true)
       setShowComplete(true)
       return
     }
@@ -142,7 +157,7 @@ export default function GamePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           levelDate: date,
-          score: gameState.score,
+          score: scoreAtSubmit,
           solution: gameState.placedMirrors,
         }),
       })
@@ -159,6 +174,8 @@ export default function GamePage() {
       console.error('Failed to save progress:', error)
     }
 
+    setSubmittedScore(scoreAtSubmit)
+    setHasSubmitted(true)
     setShowComplete(true)
   }, [user, date, gameState])
 
@@ -167,6 +184,10 @@ export default function GamePage() {
       loadSolution(bestSolution)
     }
   }, [bestSolution, loadSolution])
+
+  const handleShowResults = useCallback(() => {
+    setShowComplete(true)
+  }, [])
 
   if (loading) {
     return (
@@ -226,6 +247,8 @@ export default function GamePage() {
                 onReset={handleReset}
                 onSubmit={handleSubmit}
                 canSubmit={gameState.score > 0}
+                hasSubmitted={hasSubmitted}
+                onShowResults={handleShowResults}
               />
 
               {!user && (
@@ -254,9 +277,8 @@ export default function GamePage() {
       <LevelComplete
         isOpen={showComplete}
         onClose={() => setShowComplete(false)}
-        score={gameState.score}
+        score={submittedScore}
         optimalScore={level.optimalScore}
-        isNewBest={isNewBest}
         date={date}
       />
     </div>

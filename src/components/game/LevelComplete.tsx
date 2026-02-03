@@ -9,7 +9,6 @@ interface LevelCompleteProps {
   onClose: () => void
   score: number
   optimalScore: number
-  isNewBest: boolean
   date: string
 }
 
@@ -18,7 +17,6 @@ export function LevelComplete({
   onClose,
   score,
   optimalScore,
-  isNewBest,
   date,
 }: LevelCompleteProps) {
   const [copied, setCopied] = useState(false)
@@ -75,12 +73,6 @@ export function LevelComplete({
             {isPerfect ? 'Perfect!' : `Optimal: ${optimalScore}`}
           </div>
         </div>
-
-        {isNewBest && (
-          <div className="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full inline-block mb-4">
-            New Best!
-          </div>
-        )}
 
         <div className="flex justify-center mt-6">
           <Button variant="primary" onClick={handleShare}>
