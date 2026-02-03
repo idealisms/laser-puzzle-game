@@ -36,6 +36,12 @@ export interface LaserPath {
   terminationReason: 'edge' | 'obstacle' | 'loop' | 'max-length'
 }
 
+export interface OptimalMirror {
+  x: number
+  y: number
+  type: MirrorType
+}
+
 export interface LevelConfig {
   gridWidth: number
   gridHeight: number
@@ -43,6 +49,7 @@ export interface LevelConfig {
   obstacles: Obstacle[]
   mirrorsAvailable: number
   optimalScore: number
+  optimalSolution?: OptimalMirror[]
 }
 
 export interface GameState {

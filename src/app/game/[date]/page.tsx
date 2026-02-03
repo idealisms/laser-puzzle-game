@@ -189,6 +189,17 @@ export default function GamePage() {
     setShowComplete(true)
   }, [])
 
+  const handleShowOptimal = useCallback(() => {
+    if (level?.optimalSolution) {
+      // Convert OptimalMirror[] to Mirror[] format
+      const mirrors = level.optimalSolution.map(m => ({
+        position: { x: m.x, y: m.y },
+        type: m.type as '/' | '\\',
+      }))
+      loadSolution(mirrors)
+    }
+  }, [level, loadSolution])
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -241,6 +252,9 @@ export default function GamePage() {
                 onRestoreBest={handleRestoreBest}
                 mirrorsPlaced={gameState.placedMirrors.length}
                 mirrorsAvailable={level.mirrorsAvailable}
+                hasSubmitted={hasSubmitted}
+                optimalScore={level.optimalScore}
+                onShowOptimal={handleShowOptimal}
               />
 
               <GameControls
