@@ -19,9 +19,9 @@ def test_all_puzzles(time_limit: int = 60, max_time: int = 80):
 
     results = []
 
-    for i, config in enumerate(PUZZLES):
+    for i, (date, config) in enumerate(PUZZLES.items()):
         print(f"\n{'=' * 70}")
-        print(f"PUZZLE {i}: {config.name}")
+        print(f"PUZZLE {i} ({date}): {config.name}")
         print(f"{'=' * 70}")
 
         # First, get baseline from beam search
@@ -102,9 +102,9 @@ def test_all_puzzles(time_limit: int = 60, max_time: int = 80):
 
 def quick_test():
     """Quick test with just one puzzle."""
-    print("Quick test with Cross Pattern puzzle...\n")
+    print("Quick test with first puzzle...\n")
 
-    config = PUZZLES[4]  # Cross Pattern
+    config = list(PUZZLES.values())[0]
 
     print(f"Puzzle: {config.name}")
     print(f"Grid: {config.width}x{config.height}")
