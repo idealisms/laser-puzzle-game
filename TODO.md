@@ -55,5 +55,5 @@ Tasks:
 - [x] Simplify seed.ts - Reduce to only read from pre-generated JSON files
 
 - [x] Store generated levels as JSON files in `solver/levels/` for version control
-- [ ] Cache optimal solutions alongside levels
+- [x] Cache optimal solutions alongside levels
 - [x] CLI to generate levels for specific dates or date ranges
