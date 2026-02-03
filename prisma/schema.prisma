@@ -44,6 +44,7 @@ model Level {
   mirrorsAvailable Int      @default(5)
   starThresholds   String   // JSON: [oneStar, twoStar, threeStar]
   optimalScore     Int      // Maximum possible score for this level
+  optimalSolution  String?  // JSON: [{ x, y, type }] - cached optimal mirror placement
   createdAt        DateTime @default(now())
 
   progress LevelProgress[]

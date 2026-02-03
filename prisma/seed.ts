@@ -17,6 +17,7 @@ interface LevelJson {
   obstacles: { x: number; y: number }[]
   mirrorsAvailable: number
   optimalScore: number
+  optimalSolution?: { x: number; y: number; type: string }[]
 }
 
 async function main() {
@@ -57,6 +58,7 @@ async function main() {
         mirrorsAvailable: level.mirrorsAvailable,
         starThresholds: JSON.stringify([]),
         optimalScore: level.optimalScore,
+        optimalSolution: level.optimalSolution ? JSON.stringify(level.optimalSolution) : null,
       },
       create: {
         date: level.date,
@@ -67,6 +69,7 @@ async function main() {
         mirrorsAvailable: level.mirrorsAvailable,
         starThresholds: JSON.stringify([]),
         optimalScore: level.optimalScore,
+        optimalSolution: level.optimalSolution ? JSON.stringify(level.optimalSolution) : null,
       },
     })
     console.log(`Upserted level for ${level.date}`)

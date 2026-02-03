@@ -36,7 +36,14 @@ def generate_level(date_str: str, config: PuzzleConfig) -> dict:
     print(f"Computing optimal score for {date_str} ({config.name})...")
     result = beam_search_solver(config, verbose=False)
     optimal_score = result['path_length']
-    print(f"  Optimal score: {optimal_score}")
+    optimal_mirrors = result['mirrors']
+    print(f"  Optimal score: {optimal_score} ({len(optimal_mirrors)} mirrors)")
+
+    # Convert mirrors from (x, y, type) tuples to JSON-serializable format
+    optimal_solution = [
+        {"x": x, "y": y, "type": mirror_type}
+        for x, y, mirror_type in optimal_mirrors
+    ]
 
     return {
         "date": date_str,
@@ -50,6 +57,7 @@ def generate_level(date_str: str, config: PuzzleConfig) -> dict:
         "obstacles": [{"x": x, "y": y} for x, y in config.obstacles],
         "mirrorsAvailable": config.num_mirrors,
         "optimalScore": optimal_score,
+        "optimalSolution": optimal_solution,
     }
 
 
