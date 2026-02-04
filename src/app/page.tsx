@@ -4,11 +4,12 @@ import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { getLocalDateString } from '@/lib/date'
 
 export default function HomePage() {
   const { user, loading, logout } = useAuth()
 
-  const todayDate = new Date().toISOString().split('T')[0]
+  const todayDate = getLocalDateString()
 
   return (
     <div className="min-h-screen flex flex-col">
