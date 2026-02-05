@@ -108,10 +108,6 @@ export default function HomePage() {
           </div>
         </div>
       </main>
-
-      <footer className="border-t border-gray-800 px-6 py-4 text-center text-gray-500 text-sm">
-        A daily puzzle game
-      </footer>
     </div>
   )
 }
