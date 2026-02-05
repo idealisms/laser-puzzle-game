@@ -54,6 +54,9 @@ export function ScoreDisplay({
         >
           <div className="text-sm text-gray-400">
             {bestLabel} <span className="text-emerald-400 font-medium">{bestScore}</span>
+            {hasSubmitted && optimalScore > 0 && (
+              <span className="text-gray-500 ml-1">({Math.round((bestScore / optimalScore) * 100)}%)</span>
+            )}
           </div>
           {canRestore && (
             <div className="text-xs text-gray-500 mt-1">Tap to restore</div>
