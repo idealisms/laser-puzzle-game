@@ -23,7 +23,9 @@ export function ScoreDisplay({
   optimalScore,
   onShowOptimal,
 }: ScoreDisplayProps) {
-  const showBest = bestScore !== null && score < bestScore
+  const bestLabel = hasSubmitted ? 'Submitted:' : 'Best:'
+  const showBestSection = bestScore !== null && bestScore > 0
+  const isLastSection = !hasSubmitted
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
@@ -39,15 +41,19 @@ export function ScoreDisplay({
           </div>
         </div>
       </div>
-      {showBest && (
+      {showBestSection && (
         <div
           className={`mt-2 pt-2 border-t border-gray-700 ${
-            canRestore ? 'cursor-pointer hover:bg-gray-700/50 -mx-4 px-4 -mb-4 pb-4 rounded-b-lg transition-colors' : ''
+            canRestore
+              ? `cursor-pointer hover:bg-gray-700/50 -mx-4 px-4 transition-colors ${
+                  isLastSection ? '-mb-4 pb-4 rounded-b-lg' : 'pb-2'
+                }`
+              : ''
           }`}
           onClick={canRestore ? onRestoreBest : undefined}
         >
           <div className="text-sm text-gray-400">
-            Best: <span className="text-emerald-400 font-medium">{bestScore}</span>
+            {bestLabel} <span className="text-emerald-400 font-medium">{bestScore}</span>
           </div>
           {canRestore && (
             <div className="text-xs text-gray-500 mt-1">Tap to restore</div>

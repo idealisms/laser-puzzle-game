@@ -32,10 +32,11 @@ export default function GamePage() {
   const [error, setError] = useState<string | null>(null)
   const [showComplete, setShowComplete] = useState(false)
   const [isNewBest, setIsNewBest] = useState(false)
-  const [previousBest, setPreviousBest] = useState<number | null>(null)
   const [bestSolution, setBestSolution] = useState<Mirror[] | null>(null)
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const [submittedScore, setSubmittedScore] = useState<number>(0)
+  const [sessionBestScore, setSessionBestScore] = useState(0)
+  const [sessionBestSolution, setSessionBestSolution] = useState<Mirror[] | null>(null)
 
   const {
     gameState,
@@ -75,7 +76,6 @@ export default function GamePage() {
           if (res.ok) {
             const data = await res.json()
             if (data.progress) {
-              setPreviousBest(data.progress.bestScore)
               if (data.progress.bestSolution) {
                 setBestSolution(data.progress.bestSolution)
               }
@@ -93,7 +93,6 @@ export default function GamePage() {
         // Load from localStorage for non-logged-in users
         const localProgress = getLocalProgress()
         if (localProgress[date]) {
-          setPreviousBest(localProgress[date].bestScore)
           if (localProgress[date].bestSolution) {
             setBestSolution(localProgress[date].bestSolution)
           }
@@ -107,6 +106,14 @@ export default function GamePage() {
     fetchLevel()
     fetchProgress()
   }, [date, loadLevel, user])
+
+  // Track the best score discovered during the current session (pre-submission)
+  useEffect(() => {
+    if (level && !hasSubmitted && gameState.placedMirrors.length > 0 && gameState.score > sessionBestScore) {
+      setSessionBestScore(gameState.score)
+      setSessionBestSolution([...gameState.placedMirrors])
+    }
+  }, [level, gameState.score, gameState.placedMirrors, hasSubmitted, sessionBestScore])
 
   function getLocalProgress(): Record<string, { bestScore: number; bestSolution?: Mirror[] }> {
     if (typeof window === 'undefined') return {}
@@ -141,10 +148,7 @@ export default function GamePage() {
       // For non-logged-in users, save to localStorage
       const newBest = saveLocalProgress(date, scoreAtSubmit, gameState.placedMirrors)
       setIsNewBest(newBest)
-      if (newBest) {
-        setPreviousBest(scoreAtSubmit)
-        setBestSolution(gameState.placedMirrors)
-      }
+      setBestSolution([...gameState.placedMirrors])
       setSubmittedScore(scoreAtSubmit)
       setHasSubmitted(true)
       setShowComplete(true)
@@ -165,25 +169,24 @@ export default function GamePage() {
       if (res.ok) {
         const data = await res.json()
         setIsNewBest(data.progress.isNewBest)
-        setPreviousBest(data.progress.bestScore)
-        if (data.progress.isNewBest) {
-          setBestSolution(gameState.placedMirrors)
-        }
       }
     } catch (error) {
       console.error('Failed to save progress:', error)
     }
 
+    setBestSolution([...gameState.placedMirrors])
     setSubmittedScore(scoreAtSubmit)
     setHasSubmitted(true)
     setShowComplete(true)
   }, [user, date, gameState])
 
   const handleRestoreBest = useCallback(() => {
-    if (bestSolution) {
+    if (hasSubmitted && bestSolution) {
       loadSolution(bestSolution)
+    } else if (!hasSubmitted && sessionBestSolution) {
+      loadSolution(sessionBestSolution)
     }
-  }, [bestSolution, loadSolution])
+  }, [hasSubmitted, bestSolution, sessionBestSolution, loadSolution])
 
   const handleShowResults = useCallback(() => {
     setShowComplete(true)
@@ -247,8 +250,10 @@ export default function GamePage() {
             <div className="lg:w-64 space-y-4">
               <ScoreDisplay
                 score={gameState.score}
-                bestScore={previousBest}
-                canRestore={bestSolution !== null && gameState.score < (previousBest ?? 0)}
+                bestScore={hasSubmitted ? submittedScore : (sessionBestScore > 0 ? sessionBestScore : null)}
+                canRestore={hasSubmitted
+                  ? bestSolution !== null
+                  : sessionBestSolution !== null}
                 onRestoreBest={handleRestoreBest}
                 mirrorsPlaced={gameState.placedMirrors.length}
                 mirrorsAvailable={level.mirrorsAvailable}
