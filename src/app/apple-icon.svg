@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Dark background -->
+  <rect width="32" height="32" rx="6" fill="#1f2937"/>
+  <!-- Laser beam: vertical segment (top-left down to bottom-left) -->
+  <line x1="8" y1="3" x2="8" y2="24" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+  <!-- Laser beam: horizontal segment (bottom-left to bottom-right) -->
+  <line x1="8" y1="24" x2="29" y2="24" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+  <!-- Laser glow: vertical -->
+  <line x1="8" y1="3" x2="8" y2="24" stroke="#ef4444" stroke-width="6" stroke-linecap="round" opacity="0.3"/>
+  <!-- Laser glow: horizontal -->
+  <line x1="8" y1="24" x2="29" y2="24" stroke="#ef4444" stroke-width="6" stroke-linecap="round" opacity="0.3"/>
+  <!-- Mirror at the corner (diagonal line) -->
+  <line x1="4" y1="20" x2="12" y2="28" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+</svg>
