@@ -22,8 +22,19 @@ export default function LevelSelectPage() {
   const { user, loading: authLoading } = useAuth()
   const [calendar, setCalendar] = useState<CalendarEntry[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
 
   useEffect(() => {
+    // Load cache immediately for instant display
+    try {
+      const cached = localStorage.getItem('laser-puzzle-calendar')
+      if (cached) {
+        setCalendar(JSON.parse(cached))
+        setLoading(false)
+        setRefreshing(true)
+      }
+    } catch {}
+
     async function fetchCalendar() {
       try {
         const res = await fetch('/api/levels/calendar')
@@ -48,11 +59,15 @@ export default function LevelSelectPage() {
           }
 
           setCalendar(calendarData)
+          try {
+            localStorage.setItem('laser-puzzle-calendar', JSON.stringify(calendarData))
+          } catch {}
         }
       } catch (error) {
         console.error('Failed to fetch calendar:', error)
       } finally {
         setLoading(false)
+        setRefreshing(false)
       }
     }
 
@@ -101,7 +116,12 @@ export default function LevelSelectPage() {
 
       <main className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">Select a Puzzle</h1>
+          <div className="flex items-center gap-3 mb-8">
+            <h1 className="text-3xl font-bold">Select a Puzzle</h1>
+            {refreshing && !loading && (
+              <div className="w-5 h-5 border-2 border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
+            )}
+          </div>
 
           {loading ? (
             <div className="text-center text-gray-400 py-12">
