@@ -263,19 +263,6 @@ export default function GamePage() {
                 hasSubmitted={hasSubmitted}
                 onShowResults={handleShowResults}
               />
-
-              {!user && (
-                <Card padding="sm" className="text-center">
-                  <p className="text-sm text-gray-400 mb-2">
-                    Login to save your progress
-                  </p>
-                  <Link href="/login">
-                    <Button variant="secondary" size="sm">
-                      Login
-                    </Button>
-                  </Link>
-                </Card>
-              )}
             </div>
           </div>
         </div>
