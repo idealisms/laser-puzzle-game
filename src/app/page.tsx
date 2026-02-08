@@ -33,26 +33,16 @@ export default function HomePage() {
             </Link>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link href="/game">
-              <Card className="hover:border-emerald-500 transition-colors cursor-pointer h-full">
-                <h3 className="text-lg font-semibold mb-2">Browse Levels</h3>
+          {user && (
+            <Link href="/profile">
+              <Card className="hover:border-emerald-500 transition-colors cursor-pointer">
+                <h3 className="text-lg font-semibold mb-2">Your Stats</h3>
                 <p className="text-sm text-gray-400">
-                  Play previous daily puzzles
+                  View your progress and streaks
                 </p>
               </Card>
             </Link>
-            {user && (
-              <Link href="/profile">
-                <Card className="hover:border-emerald-500 transition-colors cursor-pointer h-full">
-                  <h3 className="text-lg font-semibold mb-2">Your Stats</h3>
-                  <p className="text-sm text-gray-400">
-                    View your progress and streaks
-                  </p>
-                </Card>
-              </Link>
-            )}
-          </div>
+          )}
 
         </div>
       </main>

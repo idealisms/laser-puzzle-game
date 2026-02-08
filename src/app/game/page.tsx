@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
-import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Header } from '@/components/ui/Header'
 import { getLocalDateString } from '@/lib/date'
@@ -152,12 +151,6 @@ export default function LevelSelectPage() {
               })}
             </div>
           )}
-
-          <div className="mt-8 text-center">
-            <Link href="/">
-              <Button variant="secondary">Back to Home</Button>
-            </Link>
-          </div>
         </div>
       </main>
     </div>

@@ -278,12 +278,6 @@ export default function GamePage() {
               )}
             </div>
           </div>
-
-          <div className="mt-6 text-center">
-            <Link href="/game" className="text-gray-500 hover:text-gray-300 text-sm">
-              Back to Level Select
-            </Link>
-          </div>
         </div>
       </main>
 
