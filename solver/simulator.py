@@ -37,7 +37,8 @@ REFLECT = {
 def simulate_laser(
     config: PuzzleConfig,
     mirrors: list[tuple[int, int, str]],
-    max_length: int = 1000
+    max_length: int = 1000,
+    obstacle_set: set[tuple[int, int]] | None = None,
 ) -> dict:
     """
     Simulate laser path and return path details.
@@ -45,13 +46,15 @@ def simulate_laser(
     Args:
         config: Puzzle configuration
         mirrors: List of (x, y, type) tuples where type is '/' or '\\'
+        obstacle_set: Pre-computed obstacle set (optional, computed if not provided)
 
     Returns:
         dict with 'length', 'path', 'termination_reason'
     """
     # Build mirror lookup
     mirror_map = {(x, y): t for x, y, t in mirrors}
-    obstacle_set = set(config.obstacles)
+    if obstacle_set is None:
+        obstacle_set = set(config.obstacles)
 
     # Start position and direction
     x, y = config.laser_x, config.laser_y
@@ -112,6 +115,141 @@ def simulate_laser(
     }
 
 
+def simulate_incremental(
+    config: PuzzleConfig,
+    obstacle_set: set[tuple[int, int]],
+    existing_mirrors: list[tuple[int, int, str]],
+    existing_path: list[tuple[int, int, Direction]],
+    existing_length: int,
+    new_mirror: tuple[int, int, str],
+    max_length: int = 1000,
+) -> dict:
+    """
+    Simulate adding a single new mirror to an existing configuration.
+
+    Optimization: if the new mirror is not on the existing path, it has no effect.
+    If it is on the path, only simulate from that point forward.
+
+    Args:
+        config: Puzzle configuration
+        obstacle_set: Pre-computed obstacle set
+        existing_mirrors: Current mirror placements
+        existing_path: Path from simulating existing_mirrors
+        existing_length: Length from simulating existing_mirrors
+        new_mirror: The new mirror to add (x, y, type)
+
+    Returns:
+        dict with 'length', 'path', 'termination_reason'
+    """
+    mx, my, mtype = new_mirror
+
+    # Find if and where the new mirror appears on the existing path
+    mirror_index = None
+    for i, (px, py, _) in enumerate(existing_path):
+        if px == mx and py == my:
+            mirror_index = i
+            break
+
+    # If mirror not on path, it has no effect
+    if mirror_index is None:
+        return {
+            'length': existing_length,
+            'path': existing_path,
+            'termination_reason': 'unchanged',
+        }
+
+    # If mirror is at starting position (index 0), it has no effect
+    # (laser starts there, doesn't "enter" it)
+    if mirror_index == 0:
+        return {
+            'length': existing_length,
+            'path': existing_path,
+            'termination_reason': 'unchanged',
+        }
+
+    # Get the incoming direction at the mirror position
+    # The laser was traveling in the direction from the previous path step
+    _, _, incoming_dir = existing_path[mirror_index - 1]
+
+    # Apply reflection from new mirror
+    new_dir = REFLECT[mtype][incoming_dir]
+
+    # Check if direction actually changes
+    _, _, existing_dir_at_mirror = existing_path[mirror_index]
+    if new_dir == existing_dir_at_mirror:
+        return {
+            'length': existing_length,
+            'path': existing_path,
+            'termination_reason': 'unchanged',
+        }
+
+    # Build full mirror map including the new mirror
+    mirror_map = {(x, y): t for x, y, t in existing_mirrors}
+    mirror_map[(mx, my)] = mtype
+
+    # Start from mirror position with new direction
+    x, y = mx, my
+    direction = new_dir
+    length = mirror_index  # Steps taken to reach the mirror position
+
+    # Reuse path up to mirror position, then update with new direction
+    new_path = list(existing_path[:mirror_index])
+    new_path.append((x, y, direction))
+
+    # Track visited states - include all states from the preserved path
+    visited = {(px, py, pd) for px, py, pd in new_path}
+
+    # Continue simulation from mirror position
+    while length < max_length:
+        # Move in current direction
+        dx, dy = DELTAS[direction]
+        next_x, next_y = x + dx, y + dy
+
+        # Check bounds
+        if next_x < 0 or next_x >= config.width or next_y < 0 or next_y >= config.height:
+            length += 1
+            return {
+                'length': length,
+                'path': new_path,
+                'termination_reason': 'edge',
+            }
+
+        # Check obstacle
+        if (next_x, next_y) in obstacle_set:
+            length += 1
+            return {
+                'length': length,
+                'path': new_path,
+                'termination_reason': 'obstacle',
+            }
+
+        # Move to next cell
+        length += 1
+        x, y = next_x, next_y
+
+        # Check for mirror and reflect
+        if (x, y) in mirror_map:
+            mirror_type = mirror_map[(x, y)]
+            direction = REFLECT[mirror_type][direction]
+
+        # Check for loop
+        state = (x, y, direction)
+        if state in visited:
+            return {
+                'length': length,
+                'path': new_path,
+                'termination_reason': 'loop',
+            }
+        visited.add(state)
+        new_path.append((x, y, direction))
+
+    return {
+        'length': length,
+        'path': new_path,
+        'termination_reason': 'max_length',
+    }
+
+
 def verify_solution(config: PuzzleConfig, mirrors: list[tuple[int, int, str]], expected_length: int) -> bool:
     """Verify that a mirror configuration achieves the expected path length."""
     result = simulate_laser(config, mirrors)
@@ -160,10 +298,12 @@ def beam_search_solver(
     use_path_pruning: bool = True,
 ) -> dict:
     """
-    Beam search + random search solver with path-based pruning.
+    Beam search solver with incremental simulation for better performance.
 
-    Path pruning dramatically reduces search space by only considering mirror
-    positions on or adjacent to the current laser path (~4x speedup).
+    Optimizations:
+    - Pre-computes obstacle_set once instead of per-simulation
+    - Uses incremental simulation: only re-simulates from the new mirror position
+    - Path pruning: only considers positions on/adjacent to laser path
 
     For best performance, run with PyPy: pypy3 solve.py ...
 
@@ -173,9 +313,7 @@ def beam_search_solver(
         verbose: Print progress updates
         use_path_pruning: Only consider positions on/adjacent to laser path (faster)
     """
-    import random
-
-    # Get valid positions
+    # Pre-compute obstacle set once (instead of per-simulation)
     obstacle_set = set(config.obstacles)
     laser_pos = (config.laser_x, config.laser_y)
     invalid_positions = obstacle_set | {laser_pos}
@@ -188,14 +326,15 @@ def beam_search_solver(
     best_mirrors = []
     mirror_types = ['/', '\\']
 
-    # Get initial path (no mirrors)
-    initial_result = simulate_laser(config, [])
+    # Get initial path (no mirrors) - use pre-computed obstacle_set
+    initial_result = simulate_laser(config, [], obstacle_set=obstacle_set)
     initial_path = initial_result['path']
+    initial_length = initial_result['length']
 
     # Beam search
     for num_mirrors in range(1, config.num_mirrors + 1):
         # Start with empty configuration and its path
-        candidates = [{'mirrors': [], 'score': 0, 'path': initial_path}]
+        candidates = [{'mirrors': [], 'score': initial_length, 'path': initial_path}]
 
         for depth in range(num_mirrors):
             next_candidates = []
@@ -211,11 +350,22 @@ def beam_search_solver(
                 else:
                     positions = [p for p in valid_positions if p not in used_positions]
 
-                # Evaluate each candidate position
+                # Evaluate each candidate position with incremental simulation
                 for pos in positions:
                     for mtype in mirror_types:
-                        new_mirrors = candidate['mirrors'] + [(pos[0], pos[1], mtype)]
-                        result = simulate_laser(config, new_mirrors)
+                        new_mirror = (pos[0], pos[1], mtype)
+
+                        # Use incremental simulation - only re-simulate from new mirror
+                        result = simulate_incremental(
+                            config,
+                            obstacle_set,
+                            candidate['mirrors'],
+                            candidate['path'],
+                            candidate['score'],
+                            new_mirror,
+                        )
+
+                        new_mirrors = candidate['mirrors'] + [new_mirror]
                         next_candidates.append({
                             'mirrors': new_mirrors,
                             'score': result['length'],
