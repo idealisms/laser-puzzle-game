@@ -155,8 +155,7 @@ def get_candidate_positions(
 
 def beam_search_solver(
     config: PuzzleConfig,
-    beam_width: int = 500,
-    random_iterations: int = 10000,
+    beam_width: int = 2000,
     verbose: bool = False,
     use_path_pruning: bool = True,
 ) -> dict:
@@ -171,7 +170,6 @@ def beam_search_solver(
     Args:
         config: Puzzle configuration
         beam_width: Number of top candidates to keep at each step
-        random_iterations: Number of random configurations to try
         verbose: Print progress updates
         use_path_pruning: Only consider positions on/adjacent to laser path (faster)
     """
@@ -236,40 +234,6 @@ def beam_search_solver(
 
             if not candidates:
                 break
-
-    # Random search (path-aware)
-    for i in range(random_iterations):
-        mirrors = []
-        used_positions = set()
-        # Get current path for pruning
-        current_result = simulate_laser(config, mirrors)
-        current_path = current_result['path']
-
-        for _ in range(config.num_mirrors):
-            if use_path_pruning:
-                available = get_candidate_positions(
-                    current_path, config, used_positions, invalid_positions
-                )
-            else:
-                available = [p for p in valid_positions if p not in used_positions]
-
-            if not available:
-                break
-
-            pos = random.choice(available)
-            mtype = random.choice(mirror_types)
-            mirrors.append((pos[0], pos[1], mtype))
-            used_positions.add(pos)
-
-            # Update path for next iteration
-            current_result = simulate_laser(config, mirrors)
-            current_path = current_result['path']
-
-        if current_result['length'] > best_score:
-            best_score = current_result['length']
-            best_mirrors = mirrors
-            if verbose:
-                print(f"  Random found: {best_score}")
 
     return {
         'path_length': best_score,
