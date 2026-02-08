@@ -269,24 +269,12 @@ def get_candidate_positions(
 ) -> list[tuple[int, int]]:
     """
     Get candidate positions for mirror placement based on current path.
-    Returns cells on the path and adjacent to the path, excluding invalid positions.
+    Only returns cells on the path - mirrors not on the path have no effect.
     """
     path_cells = get_path_cells(path)
-    candidates = set()
 
-    # Add cells on the path
-    candidates.update(path_cells)
-
-    # Add cells adjacent to path (mirrors here could redirect laser onto path)
-    for x, y in path_cells:
-        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < config.width and 0 <= ny < config.height:
-                candidates.add((nx, ny))
-
-    # Remove invalid and already-used positions
-    candidates -= invalid_positions
-    candidates -= used_positions
+    # Only consider cells on the path (mirrors elsewhere have no effect)
+    candidates = path_cells - invalid_positions - used_positions
 
     return list(candidates)
 
