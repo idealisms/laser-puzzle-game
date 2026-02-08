@@ -13,6 +13,7 @@ import { LevelComplete } from '@/components/game/LevelComplete'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Header } from '@/components/ui/Header'
+import { HowToPlayModal } from '@/components/ui/HowToPlayModal'
 
 const DEFAULT_LEVEL: LevelConfig = {
   gridWidth: 15,
@@ -38,6 +39,7 @@ export default function GamePage() {
   const [submittedScore, setSubmittedScore] = useState<number>(0)
   const [sessionBestScore, setSessionBestScore] = useState(0)
   const [sessionBestSolution, setSessionBestSolution] = useState<Mirror[] | null>(null)
+  const [showHowToPlay, setShowHowToPlay] = useState(false)
 
   const {
     gameState,
@@ -101,6 +103,12 @@ export default function GamePage() {
           setHasSubmitted(true)
           setSubmittedScore(localProgress[date].bestScore)
         }
+      }
+
+      // Show tutorial for first-time players (check localStorage for all users)
+      const localProgress = getLocalProgress()
+      if (Object.keys(localProgress).length === 0) {
+        setShowHowToPlay(true)
       }
     }
 
@@ -274,6 +282,11 @@ export default function GamePage() {
         score={submittedScore}
         optimalScore={level.optimalScore}
         date={date}
+      />
+
+      <HowToPlayModal
+        isOpen={showHowToPlay}
+        onClose={() => setShowHowToPlay(false)}
       />
     </div>
   )
