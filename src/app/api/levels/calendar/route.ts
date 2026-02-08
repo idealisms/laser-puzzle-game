@@ -27,6 +27,7 @@ export async function GET() {
       select: {
         id: true,
         date: true,
+        optimalScore: true,
       },
     })
 
@@ -57,6 +58,7 @@ export async function GET() {
       available: true,
       completed: progressMap[level.id]?.completed ?? false,
       bestScore: progressMap[level.id]?.bestScore ?? null,
+      optimalScore: level.optimalScore,
     }))
 
     return NextResponse.json({ calendar })

@@ -12,6 +12,7 @@ interface CalendarEntry {
   available: boolean
   completed: boolean
   bestScore: number | null
+  optimalScore: number
 }
 
 interface LocalProgress {
@@ -159,9 +160,9 @@ export default function LevelSelectPage() {
                     >
                       <div className="text-xs text-gray-500 mb-1">{dayName}</div>
                       <div className="font-semibold mb-2">{monthDay}</div>
-                      {entry.completed ? (
+                      {entry.completed && entry.bestScore ? (
                         <div className="text-xs text-emerald-400">
-                          {entry.bestScore} pts
+                          {entry.bestScore} pts ({Math.round((entry.bestScore / entry.optimalScore) * 100)}%)
                         </div>
                       ) : isToday ? (
                         <div className="text-xs text-emerald-400">Today</div>
