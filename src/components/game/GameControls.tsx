@@ -18,7 +18,7 @@ export function GameControls({
   onShowResults,
 }: GameControlsProps) {
   return (
-    <div className="flex gap-3">
+    <div className="flex justify-between gap-3">
       <Button variant="secondary" onClick={onReset}>
         Reset
       </Button>
