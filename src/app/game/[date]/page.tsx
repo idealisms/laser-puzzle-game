@@ -12,6 +12,7 @@ import { GameControls } from '@/components/game/GameControls'
 import { LevelComplete } from '@/components/game/LevelComplete'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { Header } from '@/components/ui/Header'
 
 const DEFAULT_LEVEL: LevelConfig = {
   gridWidth: 15,
@@ -227,14 +228,7 @@ export default function GamePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-gray-800 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold text-emerald-400">
-            Laser Puzzle
-          </Link>
-          <div className="text-gray-400">{date}</div>
-        </div>
-      </header>
+      <Header rightContent={date} />
 
       <main className="flex-1 p-6">
         <div className="max-w-6xl mx-auto">

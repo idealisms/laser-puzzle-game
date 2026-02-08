@@ -4,52 +4,17 @@ import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { Header } from '@/components/ui/Header'
 import { getLocalDateString } from '@/lib/date'
 
 export default function HomePage() {
-  const { user, loading, logout } = useAuth()
+  const { user } = useAuth()
 
   const todayDate = getLocalDateString()
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-gray-800 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold text-emerald-400">
-            Laser Puzzle
-          </Link>
-          <nav className="flex items-center gap-4">
-            {loading ? (
-              <span className="text-gray-400">Loading...</span>
-            ) : user ? (
-              <>
-                <Link
-                  href="/profile"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  {user.username}
-                </Link>
-                <Button variant="secondary" size="sm" onClick={logout}>
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link href="/login">
-                  <Button variant="secondary" size="sm">
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/register">
-                  <Button variant="primary" size="sm">
-                    Register
-                  </Button>
-                </Link>
-              </>
-            )}
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="max-w-2xl w-full text-center">
@@ -89,23 +54,6 @@ export default function HomePage() {
             )}
           </div>
 
-          <div className="mt-12 text-left">
-            <h3 className="text-lg font-semibold mb-4">How to Play</h3>
-            <ul className="text-gray-400 space-y-2">
-              <li>
-                <span className="text-emerald-400 mr-2">1.</span>
-                Click on a cell to cycle through mirrors: / → \ → empty
-              </li>
-              <li>
-                <span className="text-emerald-400 mr-2">2.</span>
-                Mirrors reflect the laser beam at 90° angles
-              </li>
-              <li>
-                <span className="text-emerald-400 mr-2">3.</span>
-                Create the longest laser path possible!
-              </li>
-            </ul>
-          </div>
         </div>
       </main>
     </div>

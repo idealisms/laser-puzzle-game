@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { Header } from '@/components/ui/Header'
 import { getLocalDateString } from '@/lib/date'
 
 interface CalendarEntry {
@@ -20,7 +21,7 @@ interface LocalProgress {
 }
 
 export default function LevelSelectPage() {
-  const { user, loading: authLoading } = useAuth()
+  const { user } = useAuth()
   const [calendar, setCalendar] = useState<CalendarEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -89,31 +90,7 @@ export default function LevelSelectPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-gray-800 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold text-emerald-400">
-            Laser Puzzle
-          </Link>
-          <nav className="flex items-center gap-4">
-            {authLoading ? (
-              <span className="text-gray-400">Loading...</span>
-            ) : user ? (
-              <Link
-                href="/profile"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                {user.username}
-              </Link>
-            ) : (
-              <Link href="/login">
-                <Button variant="secondary" size="sm">
-                  Login
-                </Button>
-              </Link>
-            )}
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">

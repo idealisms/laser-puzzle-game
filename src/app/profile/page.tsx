@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { Header } from '@/components/ui/Header'
 
 interface UserStats {
   gamesPlayed: number
@@ -31,7 +32,7 @@ function StatCard({ label, value, suffix = '' }: { label: string; value: number;
 
 export default function ProfilePage() {
   const router = useRouter()
-  const { user, loading: authLoading, logout } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const [stats, setStats] = useState<UserStats | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -74,19 +75,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-gray-800 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold text-emerald-400">
-            Laser Puzzle
-          </Link>
-          <nav className="flex items-center gap-4">
-            <span className="text-gray-300">{user.username}</span>
-            <Button variant="secondary" size="sm" onClick={logout}>
-              Logout
-            </Button>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
