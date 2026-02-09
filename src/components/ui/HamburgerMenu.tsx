@@ -13,6 +13,21 @@ interface HamburgerMenuProps {
 export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
   const { user, loading, logout } = useAuth()
   const [showHowToPlay, setShowHowToPlay] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    if (isOpen) {
+      setMounted(true)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setVisible(true))
+      })
+    } else {
+      setVisible(false)
+      const timer = setTimeout(() => setMounted(false), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -35,7 +50,7 @@ export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
     onClose()
   }
 
-  if (!isOpen) return null
+  if (!mounted) return null
 
   return (
     <>
@@ -43,10 +58,10 @@ export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
         className="fixed inset-0 z-40"
         onClick={onClose}
       >
-        <div className="absolute inset-0 bg-black/50" />
+        <div className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`} />
       </div>
 
-      <div className="fixed top-0 right-0 h-full w-64 bg-gray-900 border-l border-gray-800 z-50 transform transition-transform">
+      <div className={`fixed top-0 right-0 h-full w-64 bg-gray-900 border-l border-gray-800 z-50 transition-transform duration-300 ease-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="p-6">
           <button
             onClick={onClose}
