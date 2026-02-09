@@ -1,5 +1,10 @@
-import { GameState, Position, Direction, LaserSegment } from '../types'
+import { GameState, Position, Direction, LaserSegment, Mirror } from '../types'
 import { CELL_SIZE, COLORS } from '../constants'
+
+export interface OptimalOverlay {
+  mirrors: Mirror[]
+  laserPath: LaserSegment[]
+}
 
 export class Renderer {
   private ctx: CanvasRenderingContext2D
@@ -172,6 +177,85 @@ export class Renderer {
     this.ctx.stroke()
   }
 
+  drawOptimalMirror(x: number, y: number, type: '/' | '\\', isShared: boolean): void {
+    const centerX = x * CELL_SIZE + CELL_SIZE / 2
+    const centerY = y * CELL_SIZE + CELL_SIZE / 2
+    const halfSize = CELL_SIZE * 0.35
+
+    const colors = isShared
+      ? { surface: COLORS.optimal.shared, highlight: COLORS.optimal.sharedHighlight }
+      : { surface: COLORS.optimal.mirror, highlight: COLORS.optimal.mirrorHighlight }
+
+    this.ctx.globalAlpha = isShared ? 1.0 : 0.8
+    this.ctx.strokeStyle = colors.surface
+    this.ctx.lineWidth = 4
+    this.ctx.lineCap = 'round'
+
+    this.ctx.beginPath()
+    if (type === '/') {
+      this.ctx.moveTo(centerX + halfSize, centerY - halfSize)
+      this.ctx.lineTo(centerX - halfSize, centerY + halfSize)
+    } else {
+      this.ctx.moveTo(centerX - halfSize, centerY - halfSize)
+      this.ctx.lineTo(centerX + halfSize, centerY + halfSize)
+    }
+    this.ctx.stroke()
+
+    this.ctx.strokeStyle = colors.highlight
+    this.ctx.lineWidth = 2
+    this.ctx.beginPath()
+    if (type === '/') {
+      this.ctx.moveTo(centerX + halfSize - 2, centerY - halfSize + 2)
+      this.ctx.lineTo(centerX - halfSize + 2, centerY + halfSize - 2)
+    } else {
+      this.ctx.moveTo(centerX - halfSize + 2, centerY - halfSize + 2)
+      this.ctx.lineTo(centerX + halfSize - 2, centerY + halfSize - 2)
+    }
+    this.ctx.stroke()
+    this.ctx.globalAlpha = 1.0
+  }
+
+  drawOptimalLaserPath(segments: LaserSegment[]): void {
+    if (segments.length === 0) return
+
+    // Draw glow
+    this.ctx.strokeStyle = COLORS.optimal.glow
+    this.ctx.lineWidth = 8
+    this.ctx.lineCap = 'round'
+    this.ctx.lineJoin = 'round'
+
+    this.ctx.beginPath()
+    const firstSeg = segments[0]
+    this.ctx.moveTo(
+      firstSeg.start.x * CELL_SIZE + CELL_SIZE / 2,
+      firstSeg.start.y * CELL_SIZE + CELL_SIZE / 2
+    )
+    for (const seg of segments) {
+      this.ctx.lineTo(
+        seg.end.x * CELL_SIZE + CELL_SIZE / 2,
+        seg.end.y * CELL_SIZE + CELL_SIZE / 2
+      )
+    }
+    this.ctx.stroke()
+
+    // Draw main beam
+    this.ctx.strokeStyle = COLORS.optimal.beam
+    this.ctx.lineWidth = 3
+
+    this.ctx.beginPath()
+    this.ctx.moveTo(
+      firstSeg.start.x * CELL_SIZE + CELL_SIZE / 2,
+      firstSeg.start.y * CELL_SIZE + CELL_SIZE / 2
+    )
+    for (const seg of segments) {
+      this.ctx.lineTo(
+        seg.end.x * CELL_SIZE + CELL_SIZE / 2,
+        seg.end.y * CELL_SIZE + CELL_SIZE / 2
+      )
+    }
+    this.ctx.stroke()
+  }
+
   drawHoverPreview(x: number, y: number, type: '/' | '\\', canPlace: boolean): void {
     if (!canPlace) {
       // Draw red X
@@ -203,7 +287,7 @@ export class Renderer {
     )
   }
 
-  render(state: GameState, hoverPos: Position | null): void {
+  render(state: GameState, hoverPos: Position | null, overlay?: OptimalOverlay): void {
     this.clear()
 
     const { level, placedMirrors, laserPath } = state
@@ -231,6 +315,24 @@ export class Renderer {
     // Draw placed mirrors
     for (const mirror of placedMirrors) {
       this.drawMirror(mirror.position.x, mirror.position.y, mirror.type)
+    }
+
+    // Draw optimal overlay
+    if (overlay) {
+      // Build set of player mirror positions for shared detection
+      const playerMirrorKeys = new Set(
+        placedMirrors.map((m) => `${m.position.x},${m.position.y},${m.type}`)
+      )
+
+      // Draw optimal laser path
+      this.drawOptimalLaserPath(overlay.laserPath)
+
+      // Draw optimal mirrors
+      for (const mirror of overlay.mirrors) {
+        const key = `${mirror.position.x},${mirror.position.y},${mirror.type}`
+        const isShared = playerMirrorKeys.has(key)
+        this.drawOptimalMirror(mirror.position.x, mirror.position.y, mirror.type, isShared)
+      }
     }
 
     // Draw hover preview
