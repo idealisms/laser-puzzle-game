@@ -9,7 +9,8 @@ interface ScoreDisplayProps {
   mirrorsAvailable: number
   hasSubmitted: boolean
   optimalScore: number
-  onShowOptimal: () => void
+  onToggleOptimal: () => void
+  showingOptimal: boolean
 }
 
 export function ScoreDisplay({
@@ -21,7 +22,8 @@ export function ScoreDisplay({
   mirrorsAvailable,
   hasSubmitted,
   optimalScore,
-  onShowOptimal,
+  onToggleOptimal,
+  showingOptimal,
 }: ScoreDisplayProps) {
   const bestLabel = hasSubmitted ? 'Submitted:' : 'Best:'
   const showBestSection = bestScore !== null && bestScore > 0
@@ -65,13 +67,17 @@ export function ScoreDisplay({
       )}
       {hasSubmitted && (
         <div
-          className="mt-2 pt-2 border-t border-gray-700 cursor-pointer hover:bg-gray-700/50 -mx-4 px-4 -mb-4 pb-4 rounded-b-lg transition-colors"
-          onClick={onShowOptimal}
+          className={`mt-2 pt-2 border-t border-gray-700 cursor-pointer hover:bg-gray-700/50 -mx-4 px-4 -mb-4 pb-4 rounded-b-lg transition-colors ${
+            showingOptimal ? 'bg-amber-900/20' : ''
+          }`}
+          onClick={onToggleOptimal}
         >
           <div className="text-sm text-gray-400">
             Optimal: <span className="text-amber-400 font-medium">{optimalScore}</span>
           </div>
-          <div className="text-xs text-gray-500 mt-1">Tap to show</div>
+          <div className="text-xs text-gray-500 mt-1">
+            {showingOptimal ? 'Tap to hide' : 'Tap to show'}
+          </div>
         </div>
       )}
     </div>
