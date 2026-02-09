@@ -57,3 +57,12 @@ Tasks:
 - [x] Store generated levels as JSON files in `solver/levels/` for version control
 - [x] Cache optimal solutions alongside levels
 - [x] CLI to generate levels for specific dates or date ranges
+
+## Add Analytics
+Research and integrate analytics for tracking usage (personal use).
+
+## Add Twitch Login
+Add OAuth login via Twitch as an authentication option.
+
+## Server-Side Score Submissions & Leaderboard Histogram
+Store mirror submissions on the server and compute the score server-side. Use the collected scores to generate a histogram on the show results modal as a form of leaderboard.
