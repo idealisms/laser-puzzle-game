@@ -23,11 +23,14 @@ export function GameCanvas({
     canvasRef,
     canvasWidth,
     canvasHeight,
+    isEraserMode,
+    handleMouseDown,
+    handleMouseUp,
     handleMouseMove,
     handleMouseLeave,
-    handleClick,
     handleContextMenu,
     handleTouchStart,
+    handleTouchMove,
     handleTouchEnd,
   } = useCanvas({ gameState, onCellClick, onCellRightClick, scale, optimalOverlay })
 
@@ -36,13 +39,19 @@ export function GameCanvas({
       ref={canvasRef}
       width={canvasWidth}
       height={canvasHeight}
-      className="border-2 border-gray-700 rounded-lg cursor-crosshair"
+      className={`border-2 rounded-lg ${
+        isEraserMode
+          ? 'border-red-500 cursor-not-allowed'
+          : 'border-gray-700 cursor-crosshair'
+      }`}
       style={{ touchAction: 'none' }}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onClick={handleClick}
       onContextMenu={handleContextMenu}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     />
   )

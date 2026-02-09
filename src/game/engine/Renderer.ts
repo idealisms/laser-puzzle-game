@@ -256,6 +256,20 @@ export class Renderer {
     this.ctx.stroke()
   }
 
+  drawEraserHighlight(x: number, y: number): void {
+    this.ctx.fillStyle = COLORS.eraser.highlight
+    this.ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+
+    this.ctx.strokeStyle = COLORS.eraser.border
+    this.ctx.lineWidth = 2
+    this.ctx.strokeRect(
+      x * CELL_SIZE + 2,
+      y * CELL_SIZE + 2,
+      CELL_SIZE - 4,
+      CELL_SIZE - 4
+    )
+  }
+
   drawHoverPreview(x: number, y: number, type: '/' | '\\', canPlace: boolean): void {
     if (!canPlace) {
       // Draw red X
@@ -287,7 +301,7 @@ export class Renderer {
     )
   }
 
-  render(state: GameState, hoverPos: Position | null, overlay?: OptimalOverlay): void {
+  render(state: GameState, hoverPos: Position | null, overlay?: OptimalOverlay, isEraserMode?: boolean): void {
     this.clear()
 
     const { level, placedMirrors, laserPath } = state
@@ -340,7 +354,10 @@ export class Renderer {
       const existingMirror = placedMirrors.find(
         (m) => m.position.x === hoverPos.x && m.position.y === hoverPos.y
       )
-      if (!existingMirror) {
+
+      if (isEraserMode && existingMirror) {
+        this.drawEraserHighlight(hoverPos.x, hoverPos.y)
+      } else if (!existingMirror) {
         const canPlace =
           hoverPos.x >= 0 &&
           hoverPos.x < level.gridWidth &&

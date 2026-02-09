@@ -31,6 +31,10 @@ export const COLORS = {
     shared: '#4ecca3',
     sharedHighlight: '#6ff5c4',
   },
+  eraser: {
+    highlight: 'rgba(255, 0, 0, 0.25)',
+    border: 'rgba(255, 0, 0, 0.6)',
+  },
   ui: {
     selected: '#4ecca3',
     hover: 'rgba(78, 204, 163, 0.3)',
