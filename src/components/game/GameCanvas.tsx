@@ -2,12 +2,14 @@
 
 import { GameState, Position } from '@/game/types'
 import { useCanvas } from '@/hooks/useCanvas'
+import { OptimalOverlay } from '@/game/engine/Renderer'
 
 interface GameCanvasProps {
   gameState: GameState
   onCellClick: (position: Position) => void
   onCellRightClick: (position: Position) => void
   scale?: number
+  optimalOverlay?: OptimalOverlay
 }
 
 export function GameCanvas({
@@ -15,6 +17,7 @@ export function GameCanvas({
   onCellClick,
   onCellRightClick,
   scale = 1,
+  optimalOverlay,
 }: GameCanvasProps) {
   const {
     canvasRef,
@@ -26,7 +29,7 @@ export function GameCanvas({
     handleContextMenu,
     handleTouchStart,
     handleTouchEnd,
-  } = useCanvas({ gameState, onCellClick, onCellRightClick, scale })
+  } = useCanvas({ gameState, onCellClick, onCellRightClick, scale, optimalOverlay })
 
   return (
     <canvas
