@@ -1,13 +1,11 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { useGame } from '@/hooks/useGame'
 import { LevelConfig, Mirror } from '@/game/types'
-import { calculateLaserPath } from '@/game/engine/Laser'
-import { OptimalOverlay } from '@/game/engine/Renderer'
 import { ResponsiveCanvas } from '@/components/game/ResponsiveCanvas'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { GameControls } from '@/components/game/GameControls'
@@ -42,7 +40,6 @@ export default function GamePage() {
   const [sessionBestScore, setSessionBestScore] = useState(0)
   const [sessionBestSolution, setSessionBestSolution] = useState<Mirror[] | null>(null)
   const [showHowToPlay, setShowHowToPlay] = useState(false)
-  const [showOptimalOverlay, setShowOptimalOverlay] = useState(false)
 
   const {
     gameState,
@@ -204,27 +201,16 @@ export default function GamePage() {
     setShowComplete(true)
   }, [])
 
-  const handleToggleOptimal = useCallback(() => {
-    setShowOptimalOverlay(prev => !prev)
-  }, [])
-
-  const optimalOverlay = useMemo((): OptimalOverlay | undefined => {
-    if (!showOptimalOverlay || !level?.optimalSolution) return undefined
-
-    const mirrors: Mirror[] = level.optimalSolution.map(m => ({
-      position: { x: m.x, y: m.y },
-      type: m.type as '/' | '\\',
-    }))
-
-    const laserPath = calculateLaserPath(
-      level.laserConfig,
-      mirrors,
-      level.obstacles,
-      { width: level.gridWidth, height: level.gridHeight }
-    )
-
-    return { mirrors, laserPath: laserPath.segments }
-  }, [showOptimalOverlay, level])
+  const handleShowOptimal = useCallback(() => {
+    if (level?.optimalSolution) {
+      // Convert OptimalMirror[] to Mirror[] format
+      const mirrors = level.optimalSolution.map(m => ({
+        position: { x: m.x, y: m.y },
+        type: m.type as '/' | '\\',
+      }))
+      loadSolution(mirrors)
+    }
+  }, [level, loadSolution])
 
   if (loading) {
     return (
@@ -260,7 +246,6 @@ export default function GamePage() {
                 gameState={gameState}
                 onCellClick={handleCellClick}
                 onCellRightClick={handleCellRightClick}
-                optimalOverlay={optimalOverlay}
               />
             </div>
 
@@ -276,8 +261,7 @@ export default function GamePage() {
                 mirrorsAvailable={level.mirrorsAvailable}
                 hasSubmitted={hasSubmitted}
                 optimalScore={level.optimalScore}
-                onToggleOptimal={handleToggleOptimal}
-                showingOptimal={showOptimalOverlay}
+                onShowOptimal={handleShowOptimal}
               />
 
               <GameControls
