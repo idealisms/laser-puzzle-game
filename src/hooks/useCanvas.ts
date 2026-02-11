@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { Position, GameState } from '@/game/types'
-import { Renderer, OptimalOverlay } from '@/game/engine/Renderer'
+import { Renderer } from '@/game/engine/Renderer'
 import { CELL_SIZE } from '@/game/constants'
 
 const LONG_PRESS_MS = 400
@@ -13,7 +13,6 @@ interface UseCanvasProps {
   onCellClick: (position: Position) => void
   onCellRightClick: (position: Position) => void
   scale?: number
-  optimalOverlay?: OptimalOverlay
 }
 
 export function useCanvas({
@@ -21,7 +20,6 @@ export function useCanvas({
   onCellClick,
   onCellRightClick,
   scale = 1,
-  optimalOverlay,
 }: UseCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rendererRef = useRef<Renderer | null>(null)
@@ -51,9 +49,9 @@ export function useCanvas({
   // Render game state
   useEffect(() => {
     if (rendererRef.current) {
-      rendererRef.current.render(gameState, hoverPos, optimalOverlay, isEraserMode)
+      rendererRef.current.render(gameState, hoverPos, isEraserMode)
     }
-  }, [gameState, hoverPos, optimalOverlay, isEraserMode])
+  }, [gameState, hoverPos, isEraserMode])
 
   const getCellFromEvent = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>): Position | null => {
