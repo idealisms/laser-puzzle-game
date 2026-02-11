@@ -1,5 +1,5 @@
 import { GameState, Position, Direction, LaserSegment } from '../types'
-import { CELL_SIZE, COLORS } from '../constants'
+import { CELL_SIZE, COLORS, LASER_BLIP } from '../constants'
 
 export class Renderer {
   private ctx: CanvasRenderingContext2D
@@ -172,6 +172,59 @@ export class Renderer {
     this.ctx.stroke()
   }
 
+  drawLaserBlips(segments: LaserSegment[], time: number): void {
+    if (segments.length === 0) return
+
+    // Build cumulative lengths along the path (in pixels)
+    const segLengths: number[] = []
+    let totalLength = 0
+    for (const seg of segments) {
+      const dx = (seg.end.x - seg.start.x) * CELL_SIZE
+      const dy = (seg.end.y - seg.start.y) * CELL_SIZE
+      const len = Math.sqrt(dx * dx + dy * dy)
+      segLengths.push(len)
+      totalLength += len
+    }
+
+    if (totalLength === 0) return
+
+    const spacingPx = LASER_BLIP.spacing * CELL_SIZE
+    const offsetPx = (time * LASER_BLIP.speed * CELL_SIZE) % spacingPx
+
+    this.ctx.save()
+    this.ctx.fillStyle = COLORS.laser.blip
+    this.ctx.shadowColor = COLORS.laser.blip
+    this.ctx.shadowBlur = 8
+
+    for (let d = offsetPx; d <= totalLength; d += spacingPx) {
+      // Find which segment this distance falls in
+      let remaining = d
+      let px = 0
+      let py = 0
+      let found = false
+
+      for (let i = 0; i < segments.length; i++) {
+        if (remaining <= segLengths[i]) {
+          const t = segLengths[i] > 0 ? remaining / segLengths[i] : 0
+          const seg = segments[i]
+          px = (seg.start.x + (seg.end.x - seg.start.x) * t) * CELL_SIZE + CELL_SIZE / 2
+          py = (seg.start.y + (seg.end.y - seg.start.y) * t) * CELL_SIZE + CELL_SIZE / 2
+          found = true
+          break
+        }
+        remaining -= segLengths[i]
+      }
+
+      if (!found) continue
+
+      this.ctx.beginPath()
+      this.ctx.arc(px, py, LASER_BLIP.radius, 0, Math.PI * 2)
+      this.ctx.fill()
+    }
+
+    this.ctx.restore()
+  }
+
   drawEraserHighlight(x: number, y: number): void {
     this.ctx.fillStyle = COLORS.eraser.highlight
     this.ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
@@ -217,7 +270,7 @@ export class Renderer {
     )
   }
 
-  render(state: GameState, hoverPos: Position | null, isEraserMode?: boolean): void {
+  render(state: GameState, hoverPos: Position | null, isEraserMode?: boolean, time?: number): void {
     this.clear()
 
     const { level, placedMirrors, laserPath } = state
@@ -240,6 +293,9 @@ export class Renderer {
     // Draw laser path
     if (laserPath) {
       this.drawLaserPath(laserPath.segments)
+      if (time != null) {
+        this.drawLaserBlips(laserPath.segments, time)
+      }
     }
 
     // Draw placed mirrors

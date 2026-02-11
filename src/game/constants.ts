@@ -13,6 +13,7 @@ export const COLORS = {
     beam: '#ff0000',
     glow: 'rgba(255, 0, 0, 0.3)',
     source: '#ff4444',
+    blip: '#ff4444',
   },
   mirror: {
     frame: '#c0c0c0',
@@ -32,5 +33,11 @@ export const COLORS = {
     hover: 'rgba(78, 204, 163, 0.3)',
     disabled: '#666666',
   },
+}
+
+export const LASER_BLIP = {
+  spacing: 15,   // distance between blips in cells
+  speed: 15,     // cells per second
+  radius: 4,    // blip circle radius in pixels
 }
 

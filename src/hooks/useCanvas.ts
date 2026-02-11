@@ -46,11 +46,21 @@ export function useCanvas({
     rendererRef.current = new Renderer(ctx, canvasWidth, canvasHeight)
   }, [canvasWidth, canvasHeight])
 
-  // Render game state
+  // Animation loop for rendering
   useEffect(() => {
-    if (rendererRef.current) {
-      rendererRef.current.render(gameState, hoverPos, isEraserMode)
+    const renderer = rendererRef.current
+    if (!renderer) return
+
+    let frameId: number
+
+    const animate = (timestamp: number) => {
+      const timeSec = timestamp / 1000
+      renderer.render(gameState, hoverPos, isEraserMode, timeSec)
+      frameId = requestAnimationFrame(animate)
     }
+
+    frameId = requestAnimationFrame(animate)
+    return () => cancelAnimationFrame(frameId)
   }, [gameState, hoverPos, isEraserMode])
 
   const getCellFromEvent = useCallback(
