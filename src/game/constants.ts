@@ -20,8 +20,8 @@ export const COLORS = {
     highlight: '#ffffff',
   },
   obstacle: {
-    fill: '#2d2d2d',
-    stroke: '#1a1a1a',
+    fill: '#4a4a5a',
+    stroke: '#3a3a4a',
   },
   eraser: {
     highlight: 'rgba(255, 0, 0, 0.25)',
