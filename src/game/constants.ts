@@ -23,14 +23,6 @@ export const COLORS = {
     fill: '#2d2d2d',
     stroke: '#1a1a1a',
   },
-  optimal: {
-    beam: '#FFB800',
-    glow: 'rgba(255, 184, 0, 0.3)',
-    mirror: '#FFB800',
-    mirrorHighlight: '#FFD54F',
-    shared: '#4ecca3',
-    sharedHighlight: '#6ff5c4',
-  },
   eraser: {
     highlight: 'rgba(255, 0, 0, 0.25)',
     border: 'rgba(255, 0, 0, 0.6)',
