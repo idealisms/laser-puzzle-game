@@ -2,6 +2,7 @@
 
 import { GameState, Position } from '@/game/types'
 import { useCanvas } from '@/hooks/useCanvas'
+import { useSettings } from '@/context/SettingsContext'
 
 interface GameCanvasProps {
   gameState: GameState
@@ -16,6 +17,7 @@ export function GameCanvas({
   onCellRightClick,
   scale = 1,
 }: GameCanvasProps) {
+  const { settings } = useSettings()
   const {
     canvasRef,
     canvasWidth,
@@ -38,7 +40,7 @@ export function GameCanvas({
       height={canvasHeight}
       className={`border-2 rounded-lg ${
         isEraserMode
-          ? 'border-red-500 cursor-not-allowed'
+          ? `${settings.colorblindMode ? 'border-orange-500' : 'border-red-500'} cursor-not-allowed`
           : 'border-gray-700 cursor-crosshair'
       }`}
       style={{ touchAction: 'none' }}
