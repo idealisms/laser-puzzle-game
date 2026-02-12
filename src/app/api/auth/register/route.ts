@@ -4,7 +4,7 @@ import { hashPassword, createToken, setAuthCookie } from '@/lib/auth'
 
 export async function POST(request: Request) {
   try {
-    const { username, password } = await request.json()
+    const { username, password, anonId } = await request.json()
 
     if (!username || !password) {
       return NextResponse.json(
@@ -40,10 +40,15 @@ export async function POST(request: Request) {
 
     const passwordHash = await hashPassword(password)
 
+    // If anonId is a valid UUID, use it as playerId so ScoreSubmissions auto-associate
+    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    const validAnonId = typeof anonId === 'string' && UUID_REGEX.test(anonId) ? anonId : undefined
+
     const user = await prisma.user.create({
       data: {
         username,
         passwordHash,
+        ...(validAnonId && { playerId: validAnonId }),
         stats: {
           create: {},
         },

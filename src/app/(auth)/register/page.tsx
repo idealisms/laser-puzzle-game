@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
@@ -16,6 +16,12 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [twitchUrl, setTwitchUrl] = useState('/api/auth/twitch')
+
+  useEffect(() => {
+    const anonId = localStorage.getItem('laser-puzzle-anon-id')
+    if (anonId) setTwitchUrl(`/api/auth/twitch?anonId=${anonId}`)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -98,7 +104,7 @@ export default function RegisterPage() {
         </div>
 
         <a
-          href="/api/auth/twitch"
+          href={twitchUrl}
           className="flex items-center justify-center gap-2 w-full rounded-lg bg-[#9146FF] px-4 py-2.5 text-white font-medium hover:bg-[#7c3ae0] transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">

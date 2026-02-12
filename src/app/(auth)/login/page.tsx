@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
@@ -18,6 +18,12 @@ function LoginForm() {
     searchParams.get('error') === 'twitch_auth_failed' ? 'Twitch login failed. Please try again.' : ''
   )
   const [loading, setLoading] = useState(false)
+  const [twitchUrl, setTwitchUrl] = useState('/api/auth/twitch')
+
+  useEffect(() => {
+    const anonId = localStorage.getItem('laser-puzzle-anon-id')
+    if (anonId) setTwitchUrl(`/api/auth/twitch?anonId=${anonId}`)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -81,7 +87,7 @@ function LoginForm() {
         </div>
 
         <a
-          href="/api/auth/twitch"
+          href={twitchUrl}
           className="flex items-center justify-center gap-2 w-full rounded-lg bg-[#9146FF] px-4 py-2.5 text-white font-medium hover:bg-[#7c3ae0] transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">

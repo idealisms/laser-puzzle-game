@@ -18,6 +18,30 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+async function migrateLocalProgress() {
+  try {
+    const localProgressRaw = localStorage.getItem('laser-puzzle-progress')
+    const anonId = localStorage.getItem('laser-puzzle-anon-id')
+
+    if (!localProgressRaw && !anonId) return
+
+    const localProgress = localProgressRaw ? JSON.parse(localProgressRaw) : {}
+
+    await fetch('/api/auth/migrate-progress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ anonId, localProgress }),
+    })
+
+    // Clear anonymous data on success
+    localStorage.removeItem('laser-puzzle-progress')
+    localStorage.removeItem('laser-puzzle-anon-id')
+    localStorage.removeItem('laser-puzzle-calendar')
+  } catch {
+    // Migration is best-effort; don't block auth flow
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
@@ -28,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (res.ok) {
         const data = await res.json()
         setUser(data.user)
+        await migrateLocalProgress()
       } else {
         setUser(null)
       }
@@ -54,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (res.ok) {
         setUser(data.user)
+        await migrateLocalProgress()
         return { success: true }
       } else {
         return { success: false, error: data.error }
@@ -65,16 +91,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (username: string, password: string) => {
     try {
+      const anonId = localStorage.getItem('laser-puzzle-anon-id')
+
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, anonId }),
       })
 
       const data = await res.json()
 
       if (res.ok) {
         setUser(data.user)
+        await migrateLocalProgress()
         return { success: true }
       } else {
         return { success: false, error: data.error }
