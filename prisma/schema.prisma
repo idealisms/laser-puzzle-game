@@ -8,12 +8,14 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  playerId     String   @unique @default(dbgenerated("gen_random_uuid()::TEXT"))
-  username     String   @unique
-  passwordHash String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                String   @id @default(cuid())
+  playerId          String   @unique @default(dbgenerated("gen_random_uuid()::TEXT"))
+  username          String   @unique
+  passwordHash      String?
+  twitchId          String?  @unique
+  twitchDisplayName String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   stats    UserStats?
   progress LevelProgress[]
