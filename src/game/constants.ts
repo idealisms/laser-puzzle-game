@@ -3,7 +3,9 @@ export const DEFAULT_GRID_WIDTH = 15
 export const DEFAULT_GRID_HEIGHT = 20
 export const MAX_LASER_LENGTH = 1000
 
-export const COLORS = {
+export type ColorScheme = typeof DEFAULT_COLORS
+
+const DEFAULT_COLORS = {
   grid: {
     background: '#1a1a2e',
     lines: '#16213e',
@@ -33,6 +35,31 @@ export const COLORS = {
     hover: 'rgba(78, 204, 163, 0.3)',
     disabled: '#666666',
   },
+}
+
+const COLORBLIND_COLORS: ColorScheme = {
+  ...DEFAULT_COLORS,
+  laser: {
+    beam: '#4488ff',
+    glow: 'rgba(68, 136, 255, 0.3)',
+    source: '#66aaff',
+    blip: '#66aaff',
+  },
+  eraser: {
+    highlight: 'rgba(255, 153, 0, 0.25)',
+    border: 'rgba(255, 153, 0, 0.6)',
+  },
+  ui: {
+    selected: '#ff9933',
+    hover: 'rgba(255, 153, 51, 0.3)',
+    disabled: '#666666',
+  },
+}
+
+export const COLORS = DEFAULT_COLORS
+
+export function getColors(colorblindMode: boolean): ColorScheme {
+  return colorblindMode ? COLORBLIND_COLORS : DEFAULT_COLORS
 }
 
 export const LASER_BLIP = {

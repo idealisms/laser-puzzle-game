@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { Position, GameState } from '@/game/types'
 import { Renderer } from '@/game/engine/Renderer'
-import { CELL_SIZE } from '@/game/constants'
+import { CELL_SIZE, getColors } from '@/game/constants'
 import { useSettings } from '@/context/SettingsContext'
 
 const LONG_PRESS_MS = 400
@@ -53,6 +53,8 @@ export function useCanvas({
     const renderer = rendererRef.current
     if (!renderer) return
 
+    renderer.setColors(getColors(settings.colorblindMode))
+
     let frameId: number
 
     const animate = (timestamp: number) => {
@@ -63,7 +65,7 @@ export function useCanvas({
 
     frameId = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(frameId)
-  }, [gameState, hoverPos, isEraserMode, settings.showBlipAnimations])
+  }, [gameState, hoverPos, isEraserMode, settings.showBlipAnimations, settings.colorblindMode])
 
   const getCellFromEvent = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>): Position | null => {

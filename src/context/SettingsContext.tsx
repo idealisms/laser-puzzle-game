@@ -4,10 +4,12 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 
 interface Settings {
   showBlipAnimations: boolean
+  colorblindMode: boolean
 }
 
 const DEFAULT_SETTINGS: Settings = {
   showBlipAnimations: true,
+  colorblindMode: false,
 }
 
 const STORAGE_KEY = 'laser-puzzle-settings'

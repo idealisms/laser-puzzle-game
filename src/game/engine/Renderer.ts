@@ -1,10 +1,11 @@
 import { GameState, Position, Direction, LaserSegment } from '../types'
-import { CELL_SIZE, COLORS, LASER_BLIP } from '../constants'
+import { CELL_SIZE, COLORS, LASER_BLIP, ColorScheme } from '../constants'
 
 export class Renderer {
   private ctx: CanvasRenderingContext2D
   private width: number
   private height: number
+  private colors: ColorScheme = COLORS
 
   constructor(ctx: CanvasRenderingContext2D, width: number, height: number) {
     this.ctx = ctx
@@ -12,13 +13,17 @@ export class Renderer {
     this.height = height
   }
 
+  setColors(colors: ColorScheme): void {
+    this.colors = colors
+  }
+
   clear(): void {
-    this.ctx.fillStyle = COLORS.grid.background
+    this.ctx.fillStyle = this.colors.grid.background
     this.ctx.fillRect(0, 0, this.width, this.height)
   }
 
   drawGrid(gridWidth: number, gridHeight: number): void {
-    this.ctx.strokeStyle = COLORS.grid.lines
+    this.ctx.strokeStyle = this.colors.grid.lines
     this.ctx.lineWidth = 1
 
     // Draw vertical lines
@@ -43,7 +48,7 @@ export class Renderer {
     const centerY = y * CELL_SIZE + CELL_SIZE / 2
     const size = CELL_SIZE * 0.3
 
-    this.ctx.fillStyle = COLORS.laser.source
+    this.ctx.fillStyle = this.colors.laser.source
     this.ctx.beginPath()
 
     // Draw triangle pointing in the direction
@@ -76,8 +81,8 @@ export class Renderer {
 
   drawObstacle(x: number, y: number): void {
     const padding = 4
-    this.ctx.fillStyle = COLORS.obstacle.fill
-    this.ctx.strokeStyle = COLORS.obstacle.stroke
+    this.ctx.fillStyle = this.colors.obstacle.fill
+    this.ctx.strokeStyle = this.colors.obstacle.stroke
     this.ctx.lineWidth = 2
 
     this.ctx.fillRect(
@@ -99,7 +104,7 @@ export class Renderer {
     const centerY = y * CELL_SIZE + CELL_SIZE / 2
     const halfSize = CELL_SIZE * 0.35
 
-    this.ctx.strokeStyle = COLORS.mirror.surface
+    this.ctx.strokeStyle = this.colors.mirror.surface
     this.ctx.lineWidth = 4
     this.ctx.lineCap = 'round'
 
@@ -116,7 +121,7 @@ export class Renderer {
     this.ctx.stroke()
 
     // Draw highlight
-    this.ctx.strokeStyle = COLORS.mirror.highlight
+    this.ctx.strokeStyle = this.colors.mirror.highlight
     this.ctx.lineWidth = 2
     this.ctx.beginPath()
     if (type === '/') {
@@ -133,7 +138,7 @@ export class Renderer {
     if (segments.length === 0) return
 
     // Draw glow
-    this.ctx.strokeStyle = COLORS.laser.glow
+    this.ctx.strokeStyle = this.colors.laser.glow
     this.ctx.lineWidth = 8
     this.ctx.lineCap = 'round'
     this.ctx.lineJoin = 'round'
@@ -154,7 +159,7 @@ export class Renderer {
     this.ctx.stroke()
 
     // Draw main beam
-    this.ctx.strokeStyle = COLORS.laser.beam
+    this.ctx.strokeStyle = this.colors.laser.beam
     this.ctx.lineWidth = 3
 
     this.ctx.beginPath()
@@ -192,8 +197,8 @@ export class Renderer {
     const offsetPx = (time * LASER_BLIP.speed * CELL_SIZE) % spacingPx
 
     this.ctx.save()
-    this.ctx.fillStyle = COLORS.laser.blip
-    this.ctx.shadowColor = COLORS.laser.blip
+    this.ctx.fillStyle = this.colors.laser.blip
+    this.ctx.shadowColor = this.colors.laser.blip
     this.ctx.shadowBlur = 8
 
     for (let d = offsetPx; d <= totalLength; d += spacingPx) {
@@ -226,10 +231,10 @@ export class Renderer {
   }
 
   drawEraserHighlight(x: number, y: number): void {
-    this.ctx.fillStyle = COLORS.eraser.highlight
+    this.ctx.fillStyle = this.colors.eraser.highlight
     this.ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 
-    this.ctx.strokeStyle = COLORS.eraser.border
+    this.ctx.strokeStyle = this.colors.eraser.border
     this.ctx.lineWidth = 2
     this.ctx.strokeRect(
       x * CELL_SIZE + 2,
@@ -241,8 +246,8 @@ export class Renderer {
 
   drawHoverPreview(x: number, y: number, type: '/' | '\\', canPlace: boolean): void {
     if (!canPlace) {
-      // Draw red X
-      this.ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)'
+      // Draw X for invalid placement
+      this.ctx.strokeStyle = this.colors.eraser.border
       this.ctx.lineWidth = 3
       const padding = 15
       this.ctx.beginPath()
@@ -260,7 +265,7 @@ export class Renderer {
     this.ctx.globalAlpha = 1.0
 
     // Draw hover highlight
-    this.ctx.strokeStyle = COLORS.ui.hover
+    this.ctx.strokeStyle = this.colors.ui.hover
     this.ctx.lineWidth = 2
     this.ctx.strokeRect(
       x * CELL_SIZE + 2,
