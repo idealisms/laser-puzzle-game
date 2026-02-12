@@ -64,5 +64,13 @@ Research and integrate analytics for tracking usage (personal use).
 ## Add Twitch Login
 Add OAuth login via Twitch as an authentication option.
 
-## Server-Side Score Submissions & Leaderboard Histogram
-Store mirror submissions on the server and compute the score server-side. Use the collected scores to generate a histogram on the show results modal as a form of leaderboard.
+## ~~Server-Side Score Submissions & Leaderboard Histogram~~ ✓ DONE
+~~Store mirror submissions on the server and compute the score server-side. Use the collected scores to generate a histogram on the show results modal as a form of leaderboard.~~
+
+Implemented:
+- Server-side score computation from mirror placements (prevents fake scores)
+- ScoreSubmission model with one submission per player per level
+- Anonymous player tracking via persistent UUID in localStorage
+- Logged-in users identified by User.playerId (same UUID namespace)
+- Histogram API endpoint (GET /api/scores/histogram)
+- Histogram component on the results modal showing score distribution
