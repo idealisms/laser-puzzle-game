@@ -4,6 +4,7 @@ import { useRef, useEffect, useState, useCallback } from 'react'
 import { Position, GameState } from '@/game/types'
 import { Renderer } from '@/game/engine/Renderer'
 import { CELL_SIZE } from '@/game/constants'
+import { useSettings } from '@/context/SettingsContext'
 
 const LONG_PRESS_MS = 400
 const MOVE_THRESHOLD_PX = 10
@@ -25,6 +26,7 @@ export function useCanvas({
   const rendererRef = useRef<Renderer | null>(null)
   const [hoverPos, setHoverPos] = useState<Position | null>(null)
   const [isEraserMode, setIsEraserMode] = useState(false)
+  const { settings } = useSettings()
 
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pressStartPosRef = useRef<{ x: number; y: number } | null>(null)
@@ -54,14 +56,14 @@ export function useCanvas({
     let frameId: number
 
     const animate = (timestamp: number) => {
-      const timeSec = timestamp / 1000
+      const timeSec = settings.showBlipAnimations ? timestamp / 1000 : undefined
       renderer.render(gameState, hoverPos, isEraserMode, timeSec)
       frameId = requestAnimationFrame(animate)
     }
 
     frameId = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(frameId)
-  }, [gameState, hoverPos, isEraserMode])
+  }, [gameState, hoverPos, isEraserMode, settings.showBlipAnimations])
 
   const getCellFromEvent = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>): Position | null => {

@@ -4,6 +4,7 @@ import { useEffect, useCallback, useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { HowToPlayModal } from './HowToPlayModal'
+import { SettingsModal } from './SettingsModal'
 
 interface HamburgerMenuProps {
   isOpen: boolean
@@ -13,6 +14,7 @@ interface HamburgerMenuProps {
 export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
   const { user, loading, logout } = useAuth()
   const [showHowToPlay, setShowHowToPlay] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [visible, setVisible] = useState(false)
 
@@ -31,11 +33,11 @@ export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !showHowToPlay) {
+      if (e.key === 'Escape' && !showHowToPlay && !showSettings) {
         onClose()
       }
     },
-    [onClose, showHowToPlay]
+    [onClose, showHowToPlay, showSettings]
   )
 
   useEffect(() => {
@@ -100,6 +102,13 @@ export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
               How to Play
             </button>
 
+            <button
+              onClick={() => setShowSettings(true)}
+              className="block w-full text-left py-2 text-gray-300 hover:text-white transition-colors"
+            >
+              Settings
+            </button>
+
             <div className="border-t border-gray-800 pt-4 mt-4">
               {loading ? (
                 <span className="text-gray-400">Loading...</span>
@@ -145,6 +154,11 @@ export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
       <HowToPlayModal
         isOpen={showHowToPlay}
         onClose={() => setShowHowToPlay(false)}
+      />
+
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
       />
     </>
   )
