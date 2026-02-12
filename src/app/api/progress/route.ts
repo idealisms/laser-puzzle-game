@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { validateMirrors, computeScore } from '@/lib/scoring'
 
 export async function GET(request: Request) {
   try {
@@ -66,22 +67,41 @@ export async function GET(request: Request) {
   }
 }
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 export async function POST(request: Request) {
   try {
     const user = await getCurrentUser()
+    const body = await request.json()
+    const { levelDate, mirrors: mirrorInputs, anonId } = body
 
-    if (!user) {
+    // Determine player identity
+    let playerId: string
+
+    if (user) {
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.userId },
+        select: { playerId: true },
+      })
+      if (!dbUser) {
+        return NextResponse.json(
+          { error: 'User not found' },
+          { status: 401 }
+        )
+      }
+      playerId = dbUser.playerId
+    } else if (anonId && typeof anonId === 'string' && UUID_REGEX.test(anonId)) {
+      playerId = anonId
+    } else {
       return NextResponse.json(
-        { error: 'Not authenticated' },
+        { error: 'Must be logged in or provide a valid anonId' },
         { status: 401 }
       )
     }
 
-    const { levelDate, score, solution } = await request.json()
-
-    if (!levelDate || score === undefined) {
+    if (!levelDate || !Array.isArray(mirrorInputs)) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields: levelDate, mirrors' },
         { status: 400 }
       )
     }
@@ -97,55 +117,76 @@ export async function POST(request: Request) {
       )
     }
 
-    // Get existing progress
-    const existingProgress = await prisma.levelProgress.findUnique({
-      where: {
-        userId_levelId: {
-          userId: user.userId,
-          levelId: level.id,
-        },
-      },
+    // Check if already submitted
+    const existingSubmission = await prisma.scoreSubmission.findUnique({
+      where: { levelId_playerId: { levelId: level.id, playerId } },
     })
 
-    const isNewBest = !existingProgress || score > existingProgress.bestScore
+    if (existingSubmission) {
+      return NextResponse.json(
+        { error: 'Score already submitted for this level' },
+        { status: 409 }
+      )
+    }
 
-    // Update or create progress
-    const progress = await prisma.levelProgress.upsert({
-      where: {
-        userId_levelId: {
-          userId: user.userId,
-          levelId: level.id,
-        },
-      },
-      create: {
-        userId: user.userId,
+    // Validate mirrors
+    const validation = validateMirrors(mirrorInputs, level)
+    if (!validation.valid) {
+      return NextResponse.json(
+        { error: `Invalid mirrors: ${validation.error}` },
+        { status: 400 }
+      )
+    }
+
+    // Compute score server-side
+    const score = computeScore(validation.mirrors, level)
+
+    // Create ScoreSubmission
+    await prisma.scoreSubmission.create({
+      data: {
         levelId: level.id,
-        completed: true,
-        bestScore: score,
-        stars: 0,
-        attempts: 1,
-        bestSolution: solution ? JSON.stringify(solution) : null,
-      },
-      update: {
-        completed: true,
-        bestScore: isNewBest ? score : (existingProgress?.bestScore ?? score),
-        attempts: { increment: 1 },
-        bestSolution: isNewBest && solution
-          ? JSON.stringify(solution)
-          : (existingProgress?.bestSolution ?? null),
+        playerId,
+        score,
       },
     })
 
-    // Update user stats
-    await updateUserStats(user.userId, score, isNewBest)
+    // For authenticated users, also update LevelProgress and UserStats
+    if (user) {
+      const solutionJson = JSON.stringify(mirrorInputs)
+
+      await prisma.levelProgress.upsert({
+        where: {
+          userId_levelId: {
+            userId: user.userId,
+            levelId: level.id,
+          },
+        },
+        create: {
+          userId: user.userId,
+          levelId: level.id,
+          completed: true,
+          bestScore: score,
+          stars: 0,
+          attempts: 1,
+          bestSolution: solutionJson,
+        },
+        update: {
+          completed: true,
+          bestScore: score,
+          attempts: { increment: 1 },
+          bestSolution: solutionJson,
+        },
+      })
+
+      await updateUserStats(user.userId, score)
+    }
+
+    // Fetch histogram
+    const histogram = await getHistogram(level.id)
 
     return NextResponse.json({
-      progress: {
-        completed: progress.completed,
-        bestScore: progress.bestScore,
-        attempts: progress.attempts,
-        isNewBest,
-      },
+      score,
+      histogram,
     })
   } catch (error) {
     console.error('Error saving progress:', error)
@@ -156,7 +197,26 @@ export async function POST(request: Request) {
   }
 }
 
-async function updateUserStats(userId: string, score: number, isNewBest: boolean) {
+async function getHistogram(levelId: string) {
+  const groups = await prisma.scoreSubmission.groupBy({
+    by: ['score'],
+    where: { levelId },
+    _count: { score: true },
+    orderBy: { score: 'asc' },
+  })
+
+  const distribution: Record<number, number> = {}
+  let totalPlayers = 0
+
+  for (const group of groups) {
+    distribution[group.score] = group._count.score
+    totalPlayers += group._count.score
+  }
+
+  return { distribution, totalPlayers }
+}
+
+async function updateUserStats(userId: string, score: number) {
   const today = new Date().toISOString().split('T')[0]
 
   const stats = await prisma.userStats.findUnique({
@@ -164,7 +224,6 @@ async function updateUserStats(userId: string, score: number, isNewBest: boolean
   })
 
   if (!stats) {
-    // Create stats if they don't exist
     await prisma.userStats.create({
       data: {
         userId,
@@ -186,7 +245,6 @@ async function updateUserStats(userId: string, score: number, isNewBest: boolean
     ? stats.lastPlayedAt.toISOString().split('T')[0]
     : null
 
-  // Calculate streak
   let newStreak = stats.currentStreak
   if (lastPlayed) {
     const lastDate = new Date(lastPlayed)
@@ -200,8 +258,9 @@ async function updateUserStats(userId: string, score: number, isNewBest: boolean
     } else if (diffDays > 1) {
       newStreak = 1
     }
-    // If same day, keep the streak
   }
+
+  const isNewBest = score > stats.bestScore
 
   await prisma.userStats.update({
     where: { userId },
@@ -209,7 +268,7 @@ async function updateUserStats(userId: string, score: number, isNewBest: boolean
       gamesPlayed: { increment: 1 },
       gamesWon: { increment: 1 },
       totalScore: { increment: score },
-      bestScore: isNewBest && score > stats.bestScore ? score : stats.bestScore,
+      bestScore: isNewBest ? score : stats.bestScore,
       longestPath: score > stats.longestPath ? score : stats.longestPath,
       daysPlayed:
         lastPlayed !== today ? { increment: 1 } : stats.daysPlayed,

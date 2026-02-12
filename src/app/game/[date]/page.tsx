@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { useGame } from '@/hooks/useGame'
 import { LevelConfig, Mirror } from '@/game/types'
+import { getOrCreateAnonId } from '@/lib/anonId'
+import { HistogramData } from '@/components/game/LevelComplete'
 import { ResponsiveCanvas } from '@/components/game/ResponsiveCanvas'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { GameControls } from '@/components/game/GameControls'
@@ -33,13 +35,13 @@ export default function GamePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showComplete, setShowComplete] = useState(false)
-  const [isNewBest, setIsNewBest] = useState(false)
   const [bestSolution, setBestSolution] = useState<Mirror[] | null>(null)
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const [submittedScore, setSubmittedScore] = useState<number>(0)
   const [sessionBestScore, setSessionBestScore] = useState(0)
   const [sessionBestSolution, setSessionBestSolution] = useState<Mirror[] | null>(null)
   const [showHowToPlay, setShowHowToPlay] = useState(false)
+  const [histogramData, setHistogramData] = useState<HistogramData | null>(null)
 
   const {
     gameState,
@@ -150,41 +152,44 @@ export default function GamePage() {
   }
 
   const handleSubmit = useCallback(async () => {
-    // Store the submitted score before any async operations
-    const scoreAtSubmit = gameState.score
+    const mirrorPayload = gameState.placedMirrors.map(m => ({
+      x: m.position.x,
+      y: m.position.y,
+      type: m.type,
+    }))
+
+    const body: Record<string, unknown> = {
+      levelDate: date,
+      mirrors: mirrorPayload,
+    }
 
     if (!user) {
-      // For non-logged-in users, save to localStorage
-      const newBest = saveLocalProgress(date, scoreAtSubmit, gameState.placedMirrors)
-      setIsNewBest(newBest)
-      setBestSolution([...gameState.placedMirrors])
-      setSubmittedScore(scoreAtSubmit)
-      setHasSubmitted(true)
-      setShowComplete(true)
-      return
+      body.anonId = getOrCreateAnonId()
     }
 
     try {
       const res = await fetch('/api/progress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          levelDate: date,
-          score: scoreAtSubmit,
-          solution: gameState.placedMirrors,
-        }),
+        body: JSON.stringify(body),
       })
 
       if (res.ok) {
         const data = await res.json()
-        setIsNewBest(data.progress.isNewBest)
+        setSubmittedScore(data.score)
+        setHistogramData(data.histogram)
+      } else {
+        // Fallback to client-side score if server rejects (e.g. 409 duplicate)
+        setSubmittedScore(gameState.score)
       }
     } catch (error) {
       console.error('Failed to save progress:', error)
+      setSubmittedScore(gameState.score)
     }
 
+    // Also save to localStorage for offline access
+    saveLocalProgress(date, gameState.score, gameState.placedMirrors)
     setBestSolution([...gameState.placedMirrors])
-    setSubmittedScore(scoreAtSubmit)
     setHasSubmitted(true)
     setShowComplete(true)
   }, [user, date, gameState])
@@ -197,9 +202,24 @@ export default function GamePage() {
     }
   }, [hasSubmitted, bestSolution, sessionBestSolution, loadSolution])
 
-  const handleShowResults = useCallback(() => {
+  const handleShowResults = useCallback(async () => {
+    if (!histogramData) {
+      try {
+        const anonParam = !user ? `&anonId=${getOrCreateAnonId()}` : ''
+        const res = await fetch(`/api/scores/histogram?date=${date}${anonParam}`)
+        if (res.ok) {
+          const data = await res.json()
+          setHistogramData({
+            distribution: data.distribution,
+            totalPlayers: data.totalPlayers,
+          })
+        }
+      } catch (e) {
+        console.error('Failed to fetch histogram:', e)
+      }
+    }
     setShowComplete(true)
-  }, [])
+  }, [histogramData, date, user])
 
   const handleShowOptimal = useCallback(() => {
     if (level?.optimalSolution) {
@@ -282,6 +302,7 @@ export default function GamePage() {
         score={submittedScore}
         optimalScore={level.optimalScore}
         date={date}
+        histogram={histogramData}
       />
 
       <HowToPlayModal

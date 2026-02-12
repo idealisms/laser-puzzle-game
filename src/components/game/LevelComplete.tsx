@@ -3,6 +3,12 @@
 import { useState } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
+import { Histogram } from './Histogram'
+
+export interface HistogramData {
+  distribution: Record<number, number>
+  totalPlayers: number
+}
 
 interface LevelCompleteProps {
   isOpen: boolean
@@ -10,6 +16,7 @@ interface LevelCompleteProps {
   score: number
   optimalScore: number
   date: string
+  histogram?: HistogramData | null
 }
 
 export function LevelComplete({
@@ -18,6 +25,7 @@ export function LevelComplete({
   score,
   optimalScore,
   date,
+  histogram,
 }: LevelCompleteProps) {
   const [copied, setCopied] = useState(false)
   const percentage = Math.round((score / optimalScore) * 100)
@@ -94,6 +102,15 @@ export function LevelComplete({
             </span>
           </Button>
         </div>
+
+        {histogram && (
+          <Histogram
+            distribution={histogram.distribution}
+            playerScore={score}
+            optimalScore={optimalScore}
+            totalPlayers={histogram.totalPlayers}
+          />
+        )}
       </div>
     </Modal>
   )

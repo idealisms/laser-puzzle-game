@@ -9,6 +9,7 @@ datasource db {
 
 model User {
   id           String   @id @default(cuid())
+  playerId     String   @unique @default(dbgenerated("gen_random_uuid()::TEXT"))
   username     String   @unique
   passwordHash String
   createdAt    DateTime @default(now())
@@ -47,7 +48,20 @@ model Level {
   optimalSolution  String?  // JSON: [{ x, y, type }] - cached optimal mirror placement
   createdAt        DateTime @default(now())
 
-  progress LevelProgress[]
+  progress    LevelProgress[]
+  submissions ScoreSubmission[]
+}
+
+model ScoreSubmission {
+  id        String   @id @default(cuid())
+  levelId   String
+  level     Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  playerId  String
+  score     Int
+  createdAt DateTime @default(now())
+
+  @@unique([levelId, playerId])
+  @@index([levelId, score])
 }
 
 model LevelProgress {
