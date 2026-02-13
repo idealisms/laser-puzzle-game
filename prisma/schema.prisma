@@ -7,36 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id                String   @id @default(cuid())
-  playerId          String   @unique @default(dbgenerated("gen_random_uuid()::TEXT"))
-  username          String   @unique
-  passwordHash      String?
-  twitchId          String?  @unique
-  twitchDisplayName String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  stats    UserStats?
-  progress LevelProgress[]
-}
-
-model UserStats {
-  id            String @id @default(cuid())
-  userId        String @unique
-  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  gamesPlayed   Int    @default(0)
-  gamesWon      Int    @default(0)
-  totalScore    Int    @default(0)
-  bestScore     Int    @default(0)
-  longestPath   Int    @default(0)
-  daysPlayed    Int    @default(0)
-  currentStreak Int    @default(0)
-  longestStreak Int    @default(0)
-  lastPlayedAt  DateTime?
-}
-
 model Level {
   id               String   @id @default(cuid())
   date             String   @unique // YYYY-MM-DD format
@@ -50,7 +20,6 @@ model Level {
   optimalSolution  String?  // JSON: [{ x, y, type }] - cached optimal mirror placement
   createdAt        DateTime @default(now())
 
-  progress    LevelProgress[]
   submissions ScoreSubmission[]
 }
 
@@ -66,19 +35,3 @@ model ScoreSubmission {
   @@index([levelId, score])
 }
 
-model LevelProgress {
-  id           String   @id @default(cuid())
-  userId       String
-  levelId      String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  level        Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
-
-  completed    Boolean  @default(false)
-  bestScore    Int      @default(0)
-  stars        Int      @default(0)
-  attempts     Int      @default(0)
-  bestSolution String?  // JSON: [{ x, y, type }]
-  updatedAt    DateTime @updatedAt
-
-  @@unique([userId, levelId])
-}
