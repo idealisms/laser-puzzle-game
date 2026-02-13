@@ -56,8 +56,12 @@ Tasks:
 - [x] Cache optimal solutions alongside levels
 - [x] CLI to generate levels for specific dates or date ranges
 
-## Add Analytics
-Research and integrate analytics for tracking usage (personal use).
+## ~~Add Analytics~~ ✓ DONE
+~~Research and integrate analytics for tracking usage (personal use).~~
+
+Implemented:
+- Added @vercel/analytics to root layout
+- Enable in Vercel dashboard under Analytics tab
 
 ## ~~Add Twitch Login~~ — Decided not to implement
 ~~Add OAuth login via Twitch as an authentication option.~~
