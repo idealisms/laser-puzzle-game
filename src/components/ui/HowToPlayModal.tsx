@@ -51,6 +51,9 @@ export function HowToPlayModal({ isOpen, onClose }: HowToPlayModalProps) {
             <span>Create the longest laser path possible!</span>
           </li>
         </ul>
+        <p className="mt-4 text-sm text-gray-500">
+          Tip: Hold down on a mirror and drag to erase multiple mirrors at once.
+        </p>
         <button
           onClick={onClose}
           className="mt-6 w-full py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md transition-colors"
