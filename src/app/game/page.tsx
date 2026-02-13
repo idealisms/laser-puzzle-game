@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useAuth } from '@/context/AuthContext'
 import { Card } from '@/components/ui/Card'
 import { Header } from '@/components/ui/Header'
 import { getLocalDateString } from '@/lib/date'
@@ -20,7 +19,6 @@ interface LocalProgress {
 }
 
 export default function LevelSelectPage() {
-  const { user } = useAuth()
   const [calendar, setCalendar] = useState<CalendarEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -43,21 +41,19 @@ export default function LevelSelectPage() {
           const data = await res.json()
           let calendarData: CalendarEntry[] = data.calendar
 
-          // For non-logged-in users, merge localStorage progress
-          if (!user) {
-            const localProgress = getLocalProgress()
-            calendarData = calendarData.map((entry) => {
-              const local = localProgress[entry.date]
-              if (local) {
-                return {
-                  ...entry,
-                  completed: true,
-                  bestScore: local.bestScore,
-                }
+          // Merge localStorage progress
+          const localProgress = getLocalProgress()
+          calendarData = calendarData.map((entry) => {
+            const local = localProgress[entry.date]
+            if (local) {
+              return {
+                ...entry,
+                completed: true,
+                bestScore: local.bestScore,
               }
-              return entry
-            })
-          }
+            }
+            return entry
+          })
 
           setCalendar(calendarData)
           try {
@@ -73,7 +69,7 @@ export default function LevelSelectPage() {
     }
 
     fetchCalendar()
-  }, [user])
+  }, [])
 
   function getLocalProgress(): Record<string, LocalProgress> {
     if (typeof window === 'undefined') return {}

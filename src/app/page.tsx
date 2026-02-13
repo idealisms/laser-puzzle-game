@@ -1,15 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Header } from '@/components/ui/Header'
 import { getLocalDateString } from '@/lib/date'
 
 export default function HomePage() {
-  const { user } = useAuth()
-
   const todayDate = getLocalDateString()
 
   return (
@@ -32,17 +29,6 @@ export default function HomePage() {
               <Button size="lg">Play Now</Button>
             </Link>
           </Card>
-
-          {user && (
-            <Link href="/profile">
-              <Card className="hover:border-emerald-500 transition-colors cursor-pointer">
-                <h3 className="text-lg font-semibold mb-2">Your Stats</h3>
-                <p className="text-sm text-gray-400">
-                  View your progress and streaks
-                </p>
-              </Card>
-            </Link>
-          )}
 
         </div>
       </main>

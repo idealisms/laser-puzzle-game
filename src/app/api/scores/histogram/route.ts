@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getCurrentUser } from '@/lib/auth'
 
 export async function GET(request: Request) {
   try {
@@ -26,20 +25,6 @@ export async function GET(request: Request) {
       )
     }
 
-    // Determine player ID for highlighting their score
-    const user = await getCurrentUser()
-    let playerId: string | null = null
-
-    if (user) {
-      const dbUser = await prisma.user.findUnique({
-        where: { id: user.userId },
-        select: { playerId: true },
-      })
-      playerId = dbUser?.playerId ?? null
-    } else if (anonId) {
-      playerId = anonId
-    }
-
     // Get histogram distribution
     const groups = await prisma.scoreSubmission.groupBy({
       by: ['score'],
@@ -55,11 +40,11 @@ export async function GET(request: Request) {
       totalPlayers += group._count.score
     }
 
-    // Get player's score if available
+    // Get player's score if anonId provided
     let playerScore: number | null = null
-    if (playerId) {
+    if (anonId) {
       const submission = await prisma.scoreSubmission.findUnique({
-        where: { levelId_playerId: { levelId: level.id, playerId } },
+        where: { levelId_playerId: { levelId: level.id, playerId: anonId } },
       })
       playerScore = submission?.score ?? null
     }

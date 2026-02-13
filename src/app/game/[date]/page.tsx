@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { useAuth } from '@/context/AuthContext'
 import { useGame } from '@/hooks/useGame'
 import { LevelConfig, Mirror } from '@/game/types'
 import { getOrCreateAnonId } from '@/lib/anonId'
@@ -28,7 +27,6 @@ const DEFAULT_LEVEL: LevelConfig = {
 
 export default function GamePage() {
   const params = useParams()
-  const { user } = useAuth()
   const date = params.date as string
 
   const [level, setLevel] = useState<LevelConfig | null>(null)
@@ -73,42 +71,18 @@ export default function GamePage() {
       }
     }
 
-    // Fetch user progress for this level
-    async function fetchProgress() {
-      if (user) {
-        try {
-          const res = await fetch(`/api/progress?date=${date}`)
-          if (res.ok) {
-            const data = await res.json()
-            if (data.progress) {
-              if (data.progress.bestSolution) {
-                setBestSolution(data.progress.bestSolution)
-              }
-              // If user has already completed this level, mark as submitted
-              if (data.progress.completed) {
-                setHasSubmitted(true)
-                setSubmittedScore(data.progress.bestScore)
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Failed to fetch progress:', error)
+    // Load progress from localStorage
+    function fetchProgress() {
+      const localProgress = getLocalProgress()
+      if (localProgress[date]) {
+        if (localProgress[date].bestSolution) {
+          setBestSolution(localProgress[date].bestSolution)
         }
-      } else {
-        // Load from localStorage for non-logged-in users
-        const localProgress = getLocalProgress()
-        if (localProgress[date]) {
-          if (localProgress[date].bestSolution) {
-            setBestSolution(localProgress[date].bestSolution)
-          }
-          // Mark as submitted if there's existing progress
-          setHasSubmitted(true)
-          setSubmittedScore(localProgress[date].bestScore)
-        }
+        setHasSubmitted(true)
+        setSubmittedScore(localProgress[date].bestScore)
       }
 
-      // Show tutorial for first-time players (check localStorage for all users)
-      const localProgress = getLocalProgress()
+      // Show tutorial for first-time players
       if (Object.keys(localProgress).length === 0) {
         setShowHowToPlay(true)
       }
@@ -116,7 +90,7 @@ export default function GamePage() {
 
     fetchLevel()
     fetchProgress()
-  }, [date, loadLevel, user])
+  }, [date, loadLevel])
 
   // Track the best score discovered during the current session (pre-submission)
   useEffect(() => {
@@ -158,13 +132,10 @@ export default function GamePage() {
       type: m.type,
     }))
 
-    const body: Record<string, unknown> = {
+    const body = {
       levelDate: date,
       mirrors: mirrorPayload,
-    }
-
-    if (!user) {
-      body.anonId = getOrCreateAnonId()
+      anonId: getOrCreateAnonId(),
     }
 
     try {
@@ -192,7 +163,7 @@ export default function GamePage() {
     setBestSolution([...gameState.placedMirrors])
     setHasSubmitted(true)
     setShowComplete(true)
-  }, [user, date, gameState])
+  }, [date, gameState])
 
   const handleRestoreBest = useCallback(() => {
     if (hasSubmitted && bestSolution) {
@@ -205,8 +176,7 @@ export default function GamePage() {
   const handleShowResults = useCallback(async () => {
     if (!histogramData) {
       try {
-        const anonParam = !user ? `&anonId=${getOrCreateAnonId()}` : ''
-        const res = await fetch(`/api/scores/histogram?date=${date}${anonParam}`)
+        const res = await fetch(`/api/scores/histogram?date=${date}&anonId=${getOrCreateAnonId()}`)
         if (res.ok) {
           const data = await res.json()
           setHistogramData({
@@ -219,7 +189,7 @@ export default function GamePage() {
       }
     }
     setShowComplete(true)
-  }, [histogramData, date, user])
+  }, [histogramData, date])
 
   const handleShowOptimal = useCallback(() => {
     if (level?.optimalSolution) {

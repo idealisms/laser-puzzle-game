@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getCurrentUser } from '@/lib/auth'
 
 /**
  * Get the latest accessible date based on server time.
@@ -15,7 +14,6 @@ function getMaxAccessibleDate(): string {
 
 export async function GET() {
   try {
-    const user = await getCurrentUser()
     const maxDate = getMaxAccessibleDate()
 
     // Get all available levels up to the max accessible date
@@ -25,39 +23,16 @@ export async function GET() {
       },
       orderBy: { date: 'desc' },
       select: {
-        id: true,
         date: true,
         optimalScore: true,
       },
     })
 
-    // If user is logged in, get their progress
-    let progressMap: Record<string, { completed: boolean; bestScore: number }> = {}
-
-    if (user) {
-      const progress = await prisma.levelProgress.findMany({
-        where: { userId: user.userId },
-        select: {
-          levelId: true,
-          completed: true,
-          bestScore: true,
-        },
-      })
-
-      progressMap = progress.reduce(
-        (acc, p) => {
-          acc[p.levelId] = { completed: p.completed, bestScore: p.bestScore }
-          return acc
-        },
-        {} as Record<string, { completed: boolean; bestScore: number }>
-      )
-    }
-
     const calendar = levels.map((level) => ({
       date: level.date,
       available: true,
-      completed: progressMap[level.id]?.completed ?? false,
-      bestScore: progressMap[level.id]?.bestScore ?? null,
+      completed: false,
+      bestScore: null,
       optimalScore: level.optimalScore,
     }))
 
