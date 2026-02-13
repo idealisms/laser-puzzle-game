@@ -1,6 +1,8 @@
 # Laser Puzzle Game
 
-A daily laser puzzle game built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, and Prisma with PostgreSQL. Players place mirrors on a grid to redirect a laser beam, aiming for the longest path possible.
+A daily laser puzzle game where players place mirrors on a grid to redirect a laser beam, aiming for the longest path possible. New puzzles every day!
+
+**Play now:** https://laser-puzzle-game.vercel.app/
 
 ## Prerequisites
 
@@ -43,7 +45,6 @@ Create a `.env` file in the project root:
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/laser_puzzle"
-JWT_SECRET="your-secret-key-here"
 ```
 
 ### 4. Run database migrations and seed
@@ -76,20 +77,10 @@ Open [http://localhost:3000](http://localhost:3000) to play.
 | `npm run db:seed` | Seed database with puzzle levels |
 | `npm run db:reset` | Reset database and run migrations |
 
-## Deployment on Vercel
-
-1. Push your code to GitHub
-2. Import the repository on [Vercel](https://vercel.com)
-3. Set up a PostgreSQL database (Vercel Postgres or Neon)
-4. Add environment variables:
-   - `DATABASE_URL` - Your PostgreSQL connection string
-   - `JWT_SECRET` - A secure random string (`openssl rand -base64 32`)
-5. Deploy
-
 ## Tech Stack
 
 - **Framework:** Next.js 16 (App Router)
 - **UI:** React 19, Tailwind CSS 4
 - **Database:** PostgreSQL with Prisma ORM
-- **Authentication:** JWT with HTTP-only cookies
+- **Analytics:** Vercel Analytics
 - **Language:** TypeScript
