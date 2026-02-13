@@ -13,9 +13,8 @@ Implemented:
 ~~Currently the game tracks best score but should ensure it's prominently displayed and persisted.~~
 
 Implemented:
-- Best score shown on game page for both logged-in and guest users
-- Best score saved to database for logged-in users
-- localStorage fallback for non-logged-in users
+- Best score shown on game page
+- Best score saved to localStorage
 - Best score displayed in level select screen
 - Removed star scoring system - now shows percentage of optimal score
 - Level complete modal shows score as percentage (100% = Perfect!)
@@ -26,8 +25,7 @@ Implemented:
 Implemented:
 - Best score shown in ScoreDisplay when current score is lower
 - Tapping the score area restores the best solution
-- Solution saved to database for logged-in users
-- Solution saved to localStorage for guest users
+- Solution saved to localStorage
 - loadSolution function in useGame hook
 
 ## ~~Push to GitHub~~ ✓ DONE
@@ -39,7 +37,7 @@ Repository: https://github.com/idealisms/laser-puzzle-game
 Implemented:
 - Connected GitHub repo to Vercel
 - Created Neon PostgreSQL database (laser_puzzle)
-- Set DATABASE_URL and JWT_SECRET environment variables
+- Set DATABASE_URL environment variable
 - Ran `npx prisma db push` to apply schema
 - Seeded database with `npm run db:seed`
 
@@ -61,8 +59,10 @@ Tasks:
 ## Add Analytics
 Research and integrate analytics for tracking usage (personal use).
 
-## Add Twitch Login
-Add OAuth login via Twitch as an authentication option.
+## ~~Add Twitch Login~~ — Decided not to implement
+~~Add OAuth login via Twitch as an authentication option.~~
+
+Login/auth system was built and then removed. The game works well with anonymous play only (localStorage + anonymous UUID for score submissions).
 
 ## ~~Server-Side Score Submissions & Leaderboard Histogram~~ ✓ DONE
 ~~Store mirror submissions on the server and compute the score server-side. Use the collected scores to generate a histogram on the show results modal as a form of leaderboard.~~
@@ -71,6 +71,5 @@ Implemented:
 - Server-side score computation from mirror placements (prevents fake scores)
 - ScoreSubmission model with one submission per player per level
 - Anonymous player tracking via persistent UUID in localStorage
-- Logged-in users identified by User.playerId (same UUID namespace)
 - Histogram API endpoint (GET /api/scores/histogram)
 - Histogram component on the results modal showing score distribution
