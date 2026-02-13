@@ -77,3 +77,20 @@ Implemented:
 - Anonymous player tracking via persistent UUID in localStorage
 - Histogram API endpoint (GET /api/scores/histogram)
 - Histogram component on the results modal showing score distribution
+
+## Add Unit Tests for Game Engine
+Set up Vitest and add unit tests for the pure functional game logic in `/src/game/engine/` and `/src/lib/scoring.ts`.
+
+Tests to write:
+- [ ] Laser path computation for known mirror layouts
+- [ ] Score computation matches expected output for known levels
+- [ ] Mirror placement validation (out of bounds, on obstacles, duplicate positions)
+- [ ] `computeScore` (server-side) agrees with `GameState` scoring (client-side)
+
+## Add API Route Tests
+Test the API endpoints with a test database to catch regressions in the submission flow.
+
+Tests to write:
+- [ ] POST /api/progress — score submission, duplicate rejection, invalid mirrors
+- [ ] GET /api/scores/histogram — distribution aggregation, player score lookup
+- [ ] GET /api/levels/calendar — date filtering, response shape
