@@ -41,8 +41,8 @@ Implemented:
 - Ran `npx prisma db push` to apply schema
 - Seeded database with `npm run db:seed`
 
-## Refactor Level Generation Pipeline
-Move level generation and optimal path computation from `prisma/seed.ts` to Python, with a separate script for database insertion.
+## ~~Refactor Level Generation Pipeline~~ ✓ DONE
+~~Move level generation and optimal path computation from `prisma/seed.ts` to Python, with a separate script for database insertion.~~
 
 Tasks:
 - [x] Update Python puzzle configs - Sync `solver/puzzles.py` with the current 15x20 grid configs from `seed.ts`
