@@ -120,6 +120,8 @@ export default function LevelSelectPage() {
                   day: 'numeric',
                 })
 
+                const isPerfect = entry.completed && entry.bestScore === entry.optimalScore
+
                 return (
                   <Link key={entry.date} href={`/game/${entry.date}`}>
                     <Card
@@ -133,8 +135,8 @@ export default function LevelSelectPage() {
                       <div className="text-xs text-gray-500 mb-1">{dayName}</div>
                       <div className="font-semibold mb-2">{monthDay}</div>
                       {entry.completed && entry.bestScore ? (
-                        <div className="text-xs text-emerald-400">
-                          {entry.bestScore} pts ({Math.round((entry.bestScore / entry.optimalScore) * 100)}%)
+                        <div className={`text-xs ${isPerfect ? 'text-yellow-400' : 'text-emerald-400'}`}>
+                          {isPerfect && '\u2605 '}{entry.bestScore} pts ({Math.round((entry.bestScore / entry.optimalScore) * 100)}%)
                         </div>
                       ) : isToday ? (
                         <div className="text-xs text-emerald-400">Today</div>
