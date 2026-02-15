@@ -8,7 +8,7 @@ interface HistogramProps {
 }
 
 export function Histogram({ distribution, playerScore, optimalScore, totalPlayers }: HistogramProps) {
-  const scores = Object.keys(distribution).map(Number).sort((a, b) => a - b)
+  const scores = Object.keys(distribution).map(Number).sort((a, b) => b - a)
   if (scores.length === 0) return null
 
   const maxCount = Math.max(...scores.map(s => distribution[s]))
