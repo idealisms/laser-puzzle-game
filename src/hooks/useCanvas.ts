@@ -329,11 +329,18 @@ export function useCanvas({
     [getCellFromEvent, onCellRightClick]
   )
 
+  const hoverMirrorType = hoverPos
+    ? (gameState.placedMirrors.find(
+        (m) => m.position.x === hoverPos.x && m.position.y === hoverPos.y
+      )?.type ?? null)
+    : null
+
   return {
     canvasRef,
     canvasWidth,
     canvasHeight,
     isEraserMode,
+    hoverMirrorType,
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,

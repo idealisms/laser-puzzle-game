@@ -23,6 +23,7 @@ export function GameCanvas({
     canvasWidth,
     canvasHeight,
     isEraserMode,
+    hoverMirrorType,
     handleMouseDown,
     handleMouseUp,
     handleMouseMove,
@@ -41,6 +42,8 @@ export function GameCanvas({
       className={`border-2 rounded-lg ${
         isEraserMode
           ? `${settings.colorblindMode ? 'border-orange-500' : 'border-red-500'} cursor-not-allowed`
+          : hoverMirrorType === '\\'
+          ? 'border-gray-700 cursor-not-allowed'
           : 'border-gray-700 cursor-crosshair'
       }`}
       style={{ touchAction: 'none' }}

@@ -316,6 +316,12 @@ export class Renderer {
 
       if (isEraserMode && existingMirror) {
         this.drawEraserHighlight(hoverPos.x, hoverPos.y)
+      } else if (existingMirror && !isEraserMode) {
+        if (existingMirror.type === '/') {
+          // Clicking will toggle / → \, preview the result
+          this.drawHoverPreview(hoverPos.x, hoverPos.y, '\\', true)
+        }
+        // \ mirror: cursor changes but no extra canvas highlight needed
       } else if (!existingMirror) {
         const canPlace =
           hoverPos.x >= 0 &&
