@@ -68,6 +68,67 @@ GRID_HEIGHT = 20
 
 # All puzzle configurations keyed by date (YYYY-MM-DD)
 PUZZLES: dict[str, PuzzleConfig] = {
+    # === Jan 19-21, 2026 (splitter showcase) ===
+    "2026-01-19": PuzzleConfig(
+        name="Crossfire",
+        width=GRID_WIDTH,
+        height=GRID_HEIGHT,
+        laser_x=0,
+        laser_y=10,
+        laser_dir=Direction.RIGHT,
+        obstacles=[
+            # Upper and lower mid-left barriers (channel the approach visually)
+            (3, 7), (4, 7), (5, 7),
+            (3, 13), (4, 13), (5, 13),
+            # Upper and lower right-corner clusters
+            (10, 2), (11, 2), (12, 2),
+            (10, 17), (11, 17), (12, 17),
+        ],
+        num_mirrors=6,
+        splitters=[(7, 10)],
+    ),
+    "2026-01-20": PuzzleConfig(
+        name="Chain Reaction",
+        width=GRID_WIDTH,
+        height=GRID_HEIGHT,
+        laser_x=0,
+        laser_y=10,
+        laser_dir=Direction.RIGHT,
+        obstacles=[
+            # Short walls above and below the laser approach
+            (1, 7), (2, 7), (3, 7),
+            (1, 13), (2, 13), (3, 13),
+            # Top and bottom edge clusters
+            (9, 0), (10, 0), (11, 0),
+            (9, 19), (10, 19), (11, 19),
+        ],
+        num_mirrors=8,
+        # Splitter 1 at (5,10): UP/DOWN; UP beam leads to splitter 2 at (5,4): LEFT/RIGHT
+        splitters=[(5, 10), (5, 4)],
+    ),
+    "2026-01-21": PuzzleConfig(
+        name="Starfield",
+        width=GRID_WIDTH,
+        height=GRID_HEIGHT,
+        laser_x=0,
+        laser_y=10,
+        laser_dir=Direction.RIGHT,
+        obstacles=[
+            # Corner decorations
+            (1, 1), (2, 1), (1, 2),
+            (12, 1), (13, 1), (13, 2),
+            (1, 17), (1, 18), (2, 18),
+            (12, 18), (13, 18), (13, 17),
+            # Horizontal barriers (left and right of centre, don't block x=7 vertical beams)
+            (2, 7), (3, 7), (4, 7), (5, 7),
+            (9, 7), (10, 7), (11, 7), (12, 7),
+            (2, 13), (3, 13), (4, 13), (5, 13),
+            (9, 13), (10, 13), (11, 13), (12, 13),
+        ],
+        num_mirrors=9,
+        # Star pattern: center splits UP/DOWN; each arm hits another splitter → LEFT/RIGHT
+        splitters=[(7, 10), (7, 4), (7, 16)],
+    ),
     # === Jan 22-28, 2026 ===
     "2026-01-22": PuzzleConfig(
         name="Chamber Grid",
