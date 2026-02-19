@@ -59,11 +59,12 @@
     {
       "x": 7,
       "y": 10,
-      "type": "splitter"
+      "type": "splitter",
+      "orientation": "right"
     }
   ],
   "mirrorsAvailable": 6,
-  "optimalScore": 150,
+  "optimalScore": 147,
   "optimalSolution": [
     {
       "x": 7,
@@ -81,19 +82,19 @@
       "type": "/"
     },
     {
-      "x": 7,
+      "x": 14,
       "y": 0,
       "type": "\\"
     },
     {
-      "x": 14,
-      "y": 10,
+      "x": 7,
+      "y": 1,
       "type": "/"
     },
     {
       "x": 14,
       "y": 1,
-      "type": "\\"
+      "type": "/"
     }
   ]
 }

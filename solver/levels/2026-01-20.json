@@ -59,16 +59,18 @@
     {
       "x": 5,
       "y": 10,
-      "type": "splitter"
+      "type": "splitter",
+      "orientation": "right"
     },
     {
       "x": 5,
       "y": 4,
-      "type": "splitter"
+      "type": "splitter",
+      "orientation": "up"
     }
   ],
   "mirrorsAvailable": 8,
-  "optimalScore": 229,
+  "optimalScore": 210,
   "optimalSolution": [
     {
       "x": 14,
@@ -92,12 +94,7 @@
     },
     {
       "x": 5,
-      "y": 1,
-      "type": "/"
-    },
-    {
-      "x": 13,
-      "y": 1,
+      "y": 17,
       "type": "\\"
     },
     {
@@ -106,9 +103,14 @@
       "type": "/"
     },
     {
-      "x": 5,
-      "y": 17,
+      "x": 13,
+      "y": 5,
       "type": "\\"
+    },
+    {
+      "x": 0,
+      "y": 5,
+      "type": "/"
     }
   ]
 }
