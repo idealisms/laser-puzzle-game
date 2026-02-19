@@ -1,4 +1,4 @@
-import { GameState, Position, Direction, LaserSegment } from '../types'
+import { GameState, Position, Direction, LaserSegment, LaserStream } from '../types'
 import { CELL_SIZE, COLORS, LASER_BLIP, ColorScheme } from '../constants'
 
 export class Renderer {
@@ -99,6 +99,38 @@ export class Renderer {
     )
   }
 
+  drawSplitter(x: number, y: number): void {
+    const padding = 4
+    this.ctx.fillStyle = this.colors.splitter.fill
+    this.ctx.strokeStyle = this.colors.splitter.stroke
+    this.ctx.lineWidth = 2
+
+    this.ctx.fillRect(
+      x * CELL_SIZE + padding,
+      y * CELL_SIZE + padding,
+      CELL_SIZE - padding * 2,
+      CELL_SIZE - padding * 2
+    )
+    this.ctx.strokeRect(
+      x * CELL_SIZE + padding,
+      y * CELL_SIZE + padding,
+      CELL_SIZE - padding * 2,
+      CELL_SIZE - padding * 2
+    )
+
+    // Draw plus-sign cross (~60% of cell size)
+    const centerX = x * CELL_SIZE + CELL_SIZE / 2
+    const centerY = y * CELL_SIZE + CELL_SIZE / 2
+    const armLen = CELL_SIZE * 0.3
+    const armThick = CELL_SIZE * 0.1
+
+    this.ctx.fillStyle = this.colors.splitter.cross
+    // Horizontal bar
+    this.ctx.fillRect(centerX - armLen, centerY - armThick, armLen * 2, armThick * 2)
+    // Vertical bar
+    this.ctx.fillRect(centerX - armThick, centerY - armLen, armThick * 2, armLen * 2)
+  }
+
   drawMirror(x: number, y: number, type: '/' | '\\'): void {
     const centerX = x * CELL_SIZE + CELL_SIZE / 2
     const centerY = y * CELL_SIZE + CELL_SIZE / 2
@@ -134,40 +166,17 @@ export class Renderer {
     this.ctx.stroke()
   }
 
-  drawLaserPath(segments: LaserSegment[]): void {
+  private drawStreamPolyline(segments: LaserSegment[], strokeStyle: string, lineWidth: number): void {
     if (segments.length === 0) return
-
-    // Draw glow
-    this.ctx.strokeStyle = this.colors.laser.glow
-    this.ctx.lineWidth = 8
+    this.ctx.strokeStyle = strokeStyle
+    this.ctx.lineWidth = lineWidth
     this.ctx.lineCap = 'round'
     this.ctx.lineJoin = 'round'
-
-    this.ctx.beginPath()
-    const firstSeg = segments[0]
-    this.ctx.moveTo(
-      firstSeg.start.x * CELL_SIZE + CELL_SIZE / 2,
-      firstSeg.start.y * CELL_SIZE + CELL_SIZE / 2
-    )
-
-    for (const seg of segments) {
-      this.ctx.lineTo(
-        seg.end.x * CELL_SIZE + CELL_SIZE / 2,
-        seg.end.y * CELL_SIZE + CELL_SIZE / 2
-      )
-    }
-    this.ctx.stroke()
-
-    // Draw main beam
-    this.ctx.strokeStyle = this.colors.laser.beam
-    this.ctx.lineWidth = 3
-
     this.ctx.beginPath()
     this.ctx.moveTo(
-      firstSeg.start.x * CELL_SIZE + CELL_SIZE / 2,
-      firstSeg.start.y * CELL_SIZE + CELL_SIZE / 2
+      segments[0].start.x * CELL_SIZE + CELL_SIZE / 2,
+      segments[0].start.y * CELL_SIZE + CELL_SIZE / 2
     )
-
     for (const seg of segments) {
       this.ctx.lineTo(
         seg.end.x * CELL_SIZE + CELL_SIZE / 2,
@@ -177,54 +186,75 @@ export class Renderer {
     this.ctx.stroke()
   }
 
-  drawLaserBlips(segments: LaserSegment[], time: number): void {
-    if (segments.length === 0) return
+  drawLaserPath(streams: LaserStream[]): void {
+    const streamColors = this.colors.laserStreams
 
-    // Build cumulative lengths along the path (in pixels)
-    const segLengths: number[] = []
-    let totalLength = 0
-    for (const seg of segments) {
-      const dx = (seg.end.x - seg.start.x) * CELL_SIZE
-      const dy = (seg.end.y - seg.start.y) * CELL_SIZE
-      const len = Math.sqrt(dx * dx + dy * dy)
-      segLengths.push(len)
-      totalLength += len
+    // Glow pass (all streams)
+    for (const stream of streams) {
+      const colors = streamColors[Math.min(stream.generation, streamColors.length - 1)]
+      this.drawStreamPolyline(stream.segments, colors.glow, 8)
     }
 
-    if (totalLength === 0) return
+    // Beam pass (all streams)
+    for (const stream of streams) {
+      const colors = streamColors[Math.min(stream.generation, streamColors.length - 1)]
+      this.drawStreamPolyline(stream.segments, colors.beam, 3)
+    }
+  }
 
-    const spacingPx = LASER_BLIP.spacing * CELL_SIZE
-    const offsetPx = (time * LASER_BLIP.speed * CELL_SIZE) % spacingPx
+  drawLaserBlips(streams: LaserStream[], time: number): void {
+    const streamColors = this.colors.laserStreams
 
     this.ctx.save()
-    this.ctx.fillStyle = this.colors.laser.blip
-    this.ctx.shadowColor = this.colors.laser.blip
     this.ctx.shadowBlur = 8
 
-    for (let d = offsetPx; d <= totalLength; d += spacingPx) {
-      // Find which segment this distance falls in
-      let remaining = d
-      let px = 0
-      let py = 0
-      let found = false
+    for (const stream of streams) {
+      if (stream.segments.length === 0) continue
+      const colors = streamColors[Math.min(stream.generation, streamColors.length - 1)]
 
-      for (let i = 0; i < segments.length; i++) {
-        if (remaining <= segLengths[i]) {
-          const t = segLengths[i] > 0 ? remaining / segLengths[i] : 0
-          const seg = segments[i]
-          px = (seg.start.x + (seg.end.x - seg.start.x) * t) * CELL_SIZE + CELL_SIZE / 2
-          py = (seg.start.y + (seg.end.y - seg.start.y) * t) * CELL_SIZE + CELL_SIZE / 2
-          found = true
-          break
-        }
-        remaining -= segLengths[i]
+      // Build cumulative lengths along this stream (in pixels)
+      const segLengths: number[] = []
+      let totalLength = 0
+      for (const seg of stream.segments) {
+        const dx = (seg.end.x - seg.start.x) * CELL_SIZE
+        const dy = (seg.end.y - seg.start.y) * CELL_SIZE
+        const len = Math.sqrt(dx * dx + dy * dy)
+        segLengths.push(len)
+        totalLength += len
       }
 
-      if (!found) continue
+      if (totalLength === 0) continue
 
-      this.ctx.beginPath()
-      this.ctx.arc(px, py, LASER_BLIP.radius, 0, Math.PI * 2)
-      this.ctx.fill()
+      const spacingPx = LASER_BLIP.spacing * CELL_SIZE
+      const offsetPx = (time * LASER_BLIP.speed * CELL_SIZE) % spacingPx
+
+      this.ctx.fillStyle = colors.blip
+      this.ctx.shadowColor = colors.blip
+
+      for (let d = offsetPx; d <= totalLength; d += spacingPx) {
+        let remaining = d
+        let px = 0
+        let py = 0
+        let found = false
+
+        for (let i = 0; i < stream.segments.length; i++) {
+          if (remaining <= segLengths[i]) {
+            const t = segLengths[i] > 0 ? remaining / segLengths[i] : 0
+            const seg = stream.segments[i]
+            px = (seg.start.x + (seg.end.x - seg.start.x) * t) * CELL_SIZE + CELL_SIZE / 2
+            py = (seg.start.y + (seg.end.y - seg.start.y) * t) * CELL_SIZE + CELL_SIZE / 2
+            found = true
+            break
+          }
+          remaining -= segLengths[i]
+        }
+
+        if (!found) continue
+
+        this.ctx.beginPath()
+        this.ctx.arc(px, py, LASER_BLIP.radius, 0, Math.PI * 2)
+        this.ctx.fill()
+      }
     }
 
     this.ctx.restore()
@@ -285,7 +315,11 @@ export class Renderer {
 
     // Draw obstacles
     for (const obstacle of level.obstacles) {
-      this.drawObstacle(obstacle.x, obstacle.y)
+      if (obstacle.type === 'splitter') {
+        this.drawSplitter(obstacle.x, obstacle.y)
+      } else {
+        this.drawObstacle(obstacle.x, obstacle.y)
+      }
     }
 
     // Draw laser source
@@ -297,9 +331,9 @@ export class Renderer {
 
     // Draw laser path
     if (laserPath) {
-      this.drawLaserPath(laserPath.segments)
+      this.drawLaserPath(laserPath.streams)
       if (time != null) {
-        this.drawLaserBlips(laserPath.segments, time)
+        this.drawLaserBlips(laserPath.streams, time)
       }
     }
 

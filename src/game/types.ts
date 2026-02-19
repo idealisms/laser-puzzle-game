@@ -21,6 +21,7 @@ export interface LaserConfig {
 export interface Obstacle {
   x: number
   y: number
+  type?: 'wall' | 'splitter'
 }
 
 export interface LaserSegment {
@@ -29,8 +30,13 @@ export interface LaserSegment {
   direction: Direction
 }
 
-export interface LaserPath {
+export interface LaserStream {
   segments: LaserSegment[]
+  generation: number  // 0 = primary, 1 = first split, 2 = split-of-split, etc.
+}
+
+export interface LaserPath {
+  streams: LaserStream[]
   totalLength: number
   terminated: boolean
   terminationReason: 'edge' | 'obstacle' | 'loop' | 'max-length'

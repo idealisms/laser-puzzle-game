@@ -34,19 +34,31 @@ REFLECT = {
 }
 
 
+def get_split_directions(direction: Direction) -> tuple[Direction, Direction]:
+    """Return the two perpendicular directions for a beam hitting a splitter."""
+    if direction in (Direction.LEFT, Direction.RIGHT):
+        return (Direction.UP, Direction.DOWN)
+    return (Direction.LEFT, Direction.RIGHT)
+
+
 def simulate_laser(
     config: PuzzleConfig,
     mirrors: list[tuple[int, int, str]],
     max_length: int = 1000,
     obstacle_set: set[tuple[int, int]] | None = None,
+    splitter_set: set[tuple[int, int]] | None = None,
 ) -> dict:
     """
     Simulate laser path and return path details.
 
+    Supports splitters: when the laser hits a splitter cell it branches into two
+    perpendicular beams. Uses a DFS stack to process all beams.
+
     Args:
         config: Puzzle configuration
         mirrors: List of (x, y, type) tuples where type is '/' or '\\'
-        obstacle_set: Pre-computed obstacle set (optional, computed if not provided)
+        obstacle_set: Pre-computed wall obstacle set (optional, computed if not provided)
+        splitter_set: Pre-computed splitter set (optional, computed if not provided)
 
     Returns:
         dict with 'length', 'path', 'termination_reason'
@@ -55,63 +67,66 @@ def simulate_laser(
     mirror_map = {(x, y): t for x, y, t in mirrors}
     if obstacle_set is None:
         obstacle_set = set(config.obstacles)
+    if splitter_set is None:
+        splitter_set = set(getattr(config, 'splitters', []))
 
-    # Start position and direction
-    x, y = config.laser_x, config.laser_y
-    direction = config.laser_dir
-
-    # Track visited states to detect loops
+    # DFS stack: (x, y, direction)
+    stack = [(config.laser_x, config.laser_y, config.laser_dir)]
     visited = set()
-    path = [(x, y, direction)]
+    path = [(config.laser_x, config.laser_y, config.laser_dir)]
     length = 0
+    termination_reason = 'max_length'
 
-    while length < max_length:
-        state = (x, y, direction)
-        if state in visited:
-            return {
-                'length': length,
-                'path': path,
-                'termination_reason': 'loop',
-            }
-        visited.add(state)
+    while stack and length < max_length:
+        x, y, direction = stack.pop()
 
-        # Move in current direction
-        dx, dy = DELTAS[direction]
-        next_x, next_y = x + dx, y + dy
+        while length < max_length:
+            state = (x, y, direction)
+            if state in visited:
+                termination_reason = 'loop'
+                break
+            visited.add(state)
 
-        # Check bounds
-        if next_x < 0 or next_x >= config.width or next_y < 0 or next_y >= config.height:
+            # Move in current direction
+            dx, dy = DELTAS[direction]
+            next_x, next_y = x + dx, y + dy
+
+            # Check bounds
+            if next_x < 0 or next_x >= config.width or next_y < 0 or next_y >= config.height:
+                length += 1
+                termination_reason = 'edge'
+                break
+
+            # Check wall obstacle
+            if (next_x, next_y) in obstacle_set:
+                length += 1
+                termination_reason = 'obstacle'
+                break
+
+            # Check splitter
+            if (next_x, next_y) in splitter_set:
+                length += 1
+                dir1, dir2 = get_split_directions(direction)
+                stack.append((next_x, next_y, dir1))
+                stack.append((next_x, next_y, dir2))
+                path.append((next_x, next_y, direction))
+                break
+
+            # Move to next cell
             length += 1
-            return {
-                'length': length,
-                'path': path,
-                'termination_reason': 'edge',
-            }
+            x, y = next_x, next_y
 
-        # Check obstacle
-        if (next_x, next_y) in obstacle_set:
-            length += 1
-            return {
-                'length': length,
-                'path': path,
-                'termination_reason': 'obstacle',
-            }
+            # Check for mirror and reflect
+            if (x, y) in mirror_map:
+                mirror_type = mirror_map[(x, y)]
+                direction = REFLECT[mirror_type][direction]
 
-        # Move to next cell
-        length += 1
-        x, y = next_x, next_y
-
-        # Check for mirror and reflect
-        if (x, y) in mirror_map:
-            mirror_type = mirror_map[(x, y)]
-            direction = REFLECT[mirror_type][direction]
-
-        path.append((x, y, direction))
+            path.append((x, y, direction))
 
     return {
         'length': length,
         'path': path,
-        'termination_reason': 'max_length',
+        'termination_reason': termination_reason,
     }
 
 
@@ -123,6 +138,7 @@ def simulate_incremental(
     existing_length: int,
     new_mirror: tuple[int, int, str],
     max_length: int = 1000,
+    splitter_set: set[tuple[int, int]] | None = None,
 ) -> dict:
     """
     Simulate adding a single new mirror to an existing configuration.
@@ -141,6 +157,19 @@ def simulate_incremental(
     Returns:
         dict with 'length', 'path', 'termination_reason'
     """
+    if splitter_set is None:
+        splitter_set = set(getattr(config, 'splitters', []))
+
+    # If there are splitters, fall back to full simulation (correctness > performance)
+    if splitter_set:
+        return simulate_laser(
+            config,
+            existing_mirrors + [new_mirror],
+            max_length=max_length,
+            obstacle_set=obstacle_set,
+            splitter_set=splitter_set,
+        )
+
     mx, my, mtype = new_mirror
 
     # Find if and where the new mirror appears on the existing path
@@ -301,10 +330,11 @@ def beam_search_solver(
         verbose: Print progress updates
         use_path_pruning: Only consider positions on/adjacent to laser path (faster)
     """
-    # Pre-compute obstacle set once (instead of per-simulation)
+    # Pre-compute obstacle and splitter sets once (instead of per-simulation)
     obstacle_set = set(config.obstacles)
+    splitter_set = set(getattr(config, 'splitters', []))
     laser_pos = (config.laser_x, config.laser_y)
-    invalid_positions = obstacle_set | {laser_pos}
+    invalid_positions = obstacle_set | splitter_set | {laser_pos}
     valid_positions = [
         (x, y) for x in range(config.width) for y in range(config.height)
         if (x, y) not in invalid_positions
@@ -314,8 +344,8 @@ def beam_search_solver(
     best_mirrors = []
     mirror_types = ['/', '\\']
 
-    # Get initial path (no mirrors) - use pre-computed obstacle_set
-    initial_result = simulate_laser(config, [], obstacle_set=obstacle_set)
+    # Get initial path (no mirrors) - use pre-computed obstacle_set and splitter_set
+    initial_result = simulate_laser(config, [], obstacle_set=obstacle_set, splitter_set=splitter_set)
     initial_path = initial_result['path']
     initial_length = initial_result['length']
 
@@ -351,6 +381,7 @@ def beam_search_solver(
                             candidate['path'],
                             candidate['score'],
                             new_mirror,
+                            splitter_set=splitter_set,
                         )
 
                         new_mirrors = candidate['mirrors'] + [new_mirror]
