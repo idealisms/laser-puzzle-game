@@ -35,10 +35,37 @@ REFLECT = {
 
 
 def get_split_directions(direction: Direction) -> tuple[Direction, Direction]:
-    """Return the two perpendicular directions for a beam hitting a splitter."""
+    """Return the two perpendicular directions for a beam splitting at a splitter."""
     if direction in (Direction.LEFT, Direction.RIGHT):
         return (Direction.UP, Direction.DOWN)
     return (Direction.LEFT, Direction.RIGHT)
+
+
+def opposite_direction(direction: Direction) -> Direction:
+    """Return the direction opposite to the given direction."""
+    return {
+        Direction.UP: Direction.DOWN,
+        Direction.DOWN: Direction.UP,
+        Direction.LEFT: Direction.RIGHT,
+        Direction.RIGHT: Direction.LEFT,
+    }[direction]
+
+
+def get_splitter_action(laser_dir: Direction, orientation: str) -> str:
+    """
+    Return 'split', 'wall', or 'reflect' for a laser hitting a directional splitter.
+
+    - orientation: the direction a laser must travel to trigger a split
+    - laser traveling in orientation direction → 'split' (perpendicular beams)
+    - laser traveling opposite to orientation → 'wall' (blocked)
+    - laser traveling perpendicular to orientation → 'reflect' back toward opposite(orientation)
+    """
+    orientation_dir = Direction.from_string(orientation)
+    if laser_dir == orientation_dir:
+        return 'split'
+    if laser_dir == opposite_direction(orientation_dir):
+        return 'wall'
+    return 'reflect'
 
 
 def simulate_laser(
@@ -46,19 +73,19 @@ def simulate_laser(
     mirrors: list[tuple[int, int, str]],
     max_length: int = 1000,
     obstacle_set: set[tuple[int, int]] | None = None,
-    splitter_set: set[tuple[int, int]] | None = None,
+    splitter_map: dict[tuple[int, int], str] | None = None,
 ) -> dict:
     """
     Simulate laser path and return path details.
 
-    Supports splitters: when the laser hits a splitter cell it branches into two
-    perpendicular beams. Uses a DFS stack to process all beams.
+    Supports directional splitters: behaviour depends on the splitter's orientation
+    and the incoming laser direction ('split', 'wall', or 'reflect').
 
     Args:
         config: Puzzle configuration
         mirrors: List of (x, y, type) tuples where type is '/' or '\\'
         obstacle_set: Pre-computed wall obstacle set (optional, computed if not provided)
-        splitter_set: Pre-computed splitter set (optional, computed if not provided)
+        splitter_map: Pre-computed {(x,y): orientation} map (optional, computed if not provided)
 
     Returns:
         dict with 'length', 'path', 'termination_reason'
@@ -67,8 +94,8 @@ def simulate_laser(
     mirror_map = {(x, y): t for x, y, t in mirrors}
     if obstacle_set is None:
         obstacle_set = set(config.obstacles)
-    if splitter_set is None:
-        splitter_set = set(getattr(config, 'splitters', []))
+    if splitter_map is None:
+        splitter_map = {(x, y): orientation for x, y, orientation in getattr(config, 'splitters', [])}
 
     # DFS stack: (x, y, direction)
     stack = [(config.laser_x, config.laser_y, config.laser_dir)]
@@ -104,13 +131,24 @@ def simulate_laser(
                 break
 
             # Check splitter
-            if (next_x, next_y) in splitter_set:
+            if (next_x, next_y) in splitter_map:
+                orientation = splitter_map[(next_x, next_y)]
+                action = get_splitter_action(direction, orientation)
                 length += 1
-                dir1, dir2 = get_split_directions(direction)
-                stack.append((next_x, next_y, dir1))
-                stack.append((next_x, next_y, dir2))
-                path.append((next_x, next_y, direction))
-                break
+                if action == 'split':
+                    dir1, dir2 = get_split_directions(direction)
+                    stack.append((next_x, next_y, dir1))
+                    stack.append((next_x, next_y, dir2))
+                    path.append((next_x, next_y, direction))
+                    break
+                elif action == 'wall':
+                    termination_reason = 'obstacle'
+                    break
+                else:  # reflect
+                    direction = opposite_direction(Direction.from_string(orientation))
+                    x, y = next_x, next_y
+                    path.append((x, y, direction))
+                    continue
 
             # Move to next cell
             length += 1
@@ -138,7 +176,7 @@ def simulate_incremental(
     existing_length: int,
     new_mirror: tuple[int, int, str],
     max_length: int = 1000,
-    splitter_set: set[tuple[int, int]] | None = None,
+    splitter_map: dict[tuple[int, int], str] | None = None,
 ) -> dict:
     """
     Simulate adding a single new mirror to an existing configuration.
@@ -157,17 +195,17 @@ def simulate_incremental(
     Returns:
         dict with 'length', 'path', 'termination_reason'
     """
-    if splitter_set is None:
-        splitter_set = set(getattr(config, 'splitters', []))
+    if splitter_map is None:
+        splitter_map = {(x, y): orientation for x, y, orientation in getattr(config, 'splitters', [])}
 
     # If there are splitters, fall back to full simulation (correctness > performance)
-    if splitter_set:
+    if splitter_map:
         return simulate_laser(
             config,
             existing_mirrors + [new_mirror],
             max_length=max_length,
             obstacle_set=obstacle_set,
-            splitter_set=splitter_set,
+            splitter_map=splitter_map,
         )
 
     mx, my, mtype = new_mirror
@@ -330,11 +368,11 @@ def beam_search_solver(
         verbose: Print progress updates
         use_path_pruning: Only consider positions on/adjacent to laser path (faster)
     """
-    # Pre-compute obstacle and splitter sets once (instead of per-simulation)
+    # Pre-compute obstacle and splitter maps once (instead of per-simulation)
     obstacle_set = set(config.obstacles)
-    splitter_set = set(getattr(config, 'splitters', []))
+    splitter_map = {(x, y): orientation for x, y, orientation in getattr(config, 'splitters', [])}
     laser_pos = (config.laser_x, config.laser_y)
-    invalid_positions = obstacle_set | splitter_set | {laser_pos}
+    invalid_positions = obstacle_set | set(splitter_map.keys()) | {laser_pos}
     valid_positions = [
         (x, y) for x in range(config.width) for y in range(config.height)
         if (x, y) not in invalid_positions
@@ -344,8 +382,8 @@ def beam_search_solver(
     best_mirrors = []
     mirror_types = ['/', '\\']
 
-    # Get initial path (no mirrors) - use pre-computed obstacle_set and splitter_set
-    initial_result = simulate_laser(config, [], obstacle_set=obstacle_set, splitter_set=splitter_set)
+    # Get initial path (no mirrors) - use pre-computed obstacle_set and splitter_map
+    initial_result = simulate_laser(config, [], obstacle_set=obstacle_set, splitter_map=splitter_map)
     initial_path = initial_result['path']
     initial_length = initial_result['length']
 
@@ -381,7 +419,7 @@ def beam_search_solver(
                             candidate['path'],
                             candidate['score'],
                             new_mirror,
-                            splitter_set=splitter_set,
+                            splitter_map=splitter_map,
                         )
 
                         new_mirrors = candidate['mirrors'] + [new_mirror]

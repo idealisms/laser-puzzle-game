@@ -59,7 +59,7 @@ class PuzzleConfig(NamedTuple):
     laser_dir: Direction
     obstacles: list[tuple[int, int]]
     num_mirrors: int
-    splitters: list[tuple[int, int]] = []
+    splitters: list[tuple[int, int, str]] = []  # (x, y, orientation) where orientation ∈ {'right','left','up','down'}
 
 
 # Grid dimensions for all puzzles
@@ -85,7 +85,7 @@ PUZZLES: dict[str, PuzzleConfig] = {
             (10, 17), (11, 17), (12, 17),
         ],
         num_mirrors=6,
-        splitters=[(7, 10)],
+        splitters=[(7, 10, 'right')],
     ),
     "2026-01-20": PuzzleConfig(
         name="Chain Reaction",
@@ -103,8 +103,9 @@ PUZZLES: dict[str, PuzzleConfig] = {
             (9, 19), (10, 19), (11, 19),
         ],
         num_mirrors=8,
-        # Splitter 1 at (5,10): UP/DOWN; UP beam leads to splitter 2 at (5,4): LEFT/RIGHT
-        splitters=[(5, 10), (5, 4)],
+        # Splitter 1 at (5,10): 'right' → rightward laser splits UP/DOWN
+        # Splitter 2 at (5,4):  'up'    → upward beam from splitter 1 splits LEFT/RIGHT
+        splitters=[(5, 10, 'right'), (5, 4, 'up')],
     ),
     "2026-01-21": PuzzleConfig(
         name="Starfield",
@@ -126,8 +127,9 @@ PUZZLES: dict[str, PuzzleConfig] = {
             (9, 13), (10, 13), (11, 13), (12, 13),
         ],
         num_mirrors=9,
-        # Star pattern: center splits UP/DOWN; each arm hits another splitter → LEFT/RIGHT
-        splitters=[(7, 10), (7, 4), (7, 16)],
+        # Star pattern: center 'right' splits UP/DOWN;
+        # upper 'up' splits LEFT/RIGHT; lower 'down' splits LEFT/RIGHT
+        splitters=[(7, 10, 'right'), (7, 4, 'up'), (7, 16, 'down')],
     ),
     # === Jan 22-28, 2026 ===
     "2026-01-22": PuzzleConfig(
