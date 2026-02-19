@@ -54,7 +54,10 @@ def generate_level(date_str: str, config: PuzzleConfig) -> dict:
             "y": config.laser_y,
             "direction": config.laser_dir.to_string(),
         },
-        "obstacles": [{"x": x, "y": y} for x, y in config.obstacles],
+        "obstacles": (
+            [{"x": x, "y": y} for x, y in config.obstacles] +
+            [{"x": x, "y": y, "type": "splitter"} for x, y in getattr(config, 'splitters', [])]
+        ),
         "mirrorsAvailable": config.num_mirrors,
         "optimalScore": optimal_score,
         "optimalSolution": optimal_solution,

@@ -59,6 +59,7 @@ class PuzzleConfig(NamedTuple):
     laser_dir: Direction
     obstacles: list[tuple[int, int]]
     num_mirrors: int
+    splitters: list[tuple[int, int]] = []
 
 
 # Grid dimensions for all puzzles

@@ -6,6 +6,7 @@ import {
   LaserConfig,
   LaserPath,
   LaserSegment,
+  LaserStream,
 } from '../types'
 import { MAX_LASER_LENGTH } from '../constants'
 import { reflectLaser, getDirectionDelta } from './Mirror'
@@ -23,12 +24,29 @@ function isInBounds(pos: Position, bounds: GridBounds): boolean {
   return pos.x >= 0 && pos.x < bounds.width && pos.y >= 0 && pos.y < bounds.height
 }
 
-function isObstacle(pos: Position, obstacles: Obstacle[]): boolean {
-  return obstacles.some((o) => o.x === pos.x && o.y === pos.y)
+function isWall(pos: Position, obstacles: Obstacle[]): boolean {
+  return obstacles.some((o) => o.x === pos.x && o.y === pos.y && o.type !== 'splitter')
+}
+
+function isSplitter(pos: Position, obstacles: Obstacle[]): boolean {
+  return obstacles.some((o) => o.x === pos.x && o.y === pos.y && o.type === 'splitter')
+}
+
+function getSplitDirections(dir: Direction): [Direction, Direction] {
+  if (dir === 'left' || dir === 'right') {
+    return ['up', 'down']
+  }
+  return ['left', 'right']
 }
 
 function findMirror(pos: Position, mirrors: Mirror[]): Mirror | undefined {
   return mirrors.find((m) => m.position.x === pos.x && m.position.y === pos.y)
+}
+
+interface StackItem {
+  startPos: Position
+  startDir: Direction
+  generation: number
 }
 
 export function calculateLaserPath(
@@ -37,99 +55,79 @@ export function calculateLaserPath(
   obstacles: Obstacle[],
   bounds: GridBounds
 ): LaserPath {
-  const segments: LaserSegment[] = []
+  const streams: LaserStream[] = []
   const visited = new Set<string>()
-
-  let currentPos: Position = { x: laserConfig.x, y: laserConfig.y }
-  let currentDir: Direction = laserConfig.direction
   let totalLength = 0
-  let terminated = false
   let terminationReason: LaserPath['terminationReason'] = 'max-length'
 
-  // Move to the first cell in the laser's direction
-  const delta = getDirectionDelta(currentDir)
-  let nextPos: Position = {
-    x: currentPos.x + delta.dx,
-    y: currentPos.y + delta.dy,
-  }
+  const stack: StackItem[] = [
+    { startPos: { x: laserConfig.x, y: laserConfig.y }, startDir: laserConfig.direction, generation: 0 },
+  ]
 
-  while (totalLength < MAX_LASER_LENGTH) {
-    const stateKey = positionKey(currentPos, currentDir)
+  while (stack.length > 0) {
+    const { startPos, startDir, generation } = stack.pop()!
+    const streamSegments: LaserSegment[] = []
+    let pos: Position = { ...startPos }
+    let dir: Direction = startDir
 
-    // Check for loop
-    if (visited.has(stateKey)) {
-      terminated = true
-      terminationReason = 'loop'
-      break
+    while (totalLength < MAX_LASER_LENGTH) {
+      const stateKey = positionKey(pos, dir)
+
+      if (visited.has(stateKey)) {
+        terminationReason = 'loop'
+        break
+      }
+      visited.add(stateKey)
+
+      const moveDelta = getDirectionDelta(dir)
+      const nextPos: Position = {
+        x: pos.x + moveDelta.dx,
+        y: pos.y + moveDelta.dy,
+      }
+
+      if (!isInBounds(nextPos, bounds)) {
+        streamSegments.push({ start: { ...pos }, end: { ...nextPos }, direction: dir })
+        totalLength++
+        terminationReason = 'edge'
+        break
+      }
+
+      if (isWall(nextPos, obstacles)) {
+        streamSegments.push({ start: { ...pos }, end: { ...nextPos }, direction: dir })
+        totalLength++
+        terminationReason = 'obstacle'
+        break
+      }
+
+      if (isSplitter(nextPos, obstacles)) {
+        streamSegments.push({ start: { ...pos }, end: { ...nextPos }, direction: dir })
+        totalLength++
+        const [dir1, dir2] = getSplitDirections(dir)
+        stack.push({ startPos: { ...nextPos }, startDir: dir1, generation: generation + 1 })
+        stack.push({ startPos: { ...nextPos }, startDir: dir2, generation: generation + 1 })
+        break
+      }
+
+      const mirror = findMirror(nextPos, mirrors)
+      if (mirror) {
+        streamSegments.push({ start: { ...pos }, end: { ...nextPos }, direction: dir })
+        totalLength++
+        dir = reflectLaser(dir, mirror.type)
+        pos = nextPos
+      } else {
+        streamSegments.push({ start: { ...pos }, end: { ...nextPos }, direction: dir })
+        totalLength++
+        pos = nextPos
+      }
     }
-    visited.add(stateKey)
 
-    // Find next position
-    const moveDelta = getDirectionDelta(currentDir)
-    nextPos = {
-      x: currentPos.x + moveDelta.dx,
-      y: currentPos.y + moveDelta.dy,
-    }
-
-    // Check if next position is out of bounds
-    if (!isInBounds(nextPos, bounds)) {
-      // Create segment to the edge
-      segments.push({
-        start: { ...currentPos },
-        end: { ...nextPos },
-        direction: currentDir,
-      })
-      totalLength += 1
-      terminated = true
-      terminationReason = 'edge'
-      break
-    }
-
-    // Check if next position is an obstacle
-    if (isObstacle(nextPos, obstacles)) {
-      // Laser stops at obstacle
-      segments.push({
-        start: { ...currentPos },
-        end: { ...nextPos },
-        direction: currentDir,
-      })
-      totalLength += 1
-      terminated = true
-      terminationReason = 'obstacle'
-      break
-    }
-
-    // Check for mirror at next position
-    const mirror = findMirror(nextPos, mirrors)
-
-    if (mirror) {
-      // Create segment to mirror
-      segments.push({
-        start: { ...currentPos },
-        end: { ...nextPos },
-        direction: currentDir,
-      })
-      totalLength += 1
-
-      // Reflect laser
-      currentDir = reflectLaser(currentDir, mirror.type)
-      currentPos = nextPos
-    } else {
-      // Continue in same direction
-      segments.push({
-        start: { ...currentPos },
-        end: { ...nextPos },
-        direction: currentDir,
-      })
-      totalLength += 1
-      currentPos = nextPos
-    }
+    streams.push({ segments: streamSegments, generation })
   }
 
   return {
-    segments,
+    streams,
     totalLength,
-    terminated,
+    terminated: true,
     terminationReason,
   }
 }
