@@ -24,19 +24,41 @@ function isInBounds(pos: Position, bounds: GridBounds): boolean {
   return pos.x >= 0 && pos.x < bounds.width && pos.y >= 0 && pos.y < bounds.height
 }
 
-function isWall(pos: Position, obstacles: Obstacle[]): boolean {
-  return obstacles.some((o) => o.x === pos.x && o.y === pos.y && o.type !== 'splitter')
+function findObstacle(pos: Position, obstacles: Obstacle[]): Obstacle | undefined {
+  return obstacles.find((o) => o.x === pos.x && o.y === pos.y)
 }
 
-function isSplitter(pos: Position, obstacles: Obstacle[]): boolean {
-  return obstacles.some((o) => o.x === pos.x && o.y === pos.y && o.type === 'splitter')
-}
-
-function getSplitDirections(dir: Direction): [Direction, Direction] {
-  if (dir === 'left' || dir === 'right') {
-    return ['up', 'down']
+function oppositeDir(dir: Direction): Direction {
+  switch (dir) {
+    case 'right': return 'left'
+    case 'left':  return 'right'
+    case 'up':    return 'down'
+    case 'down':  return 'up'
   }
-  return ['left', 'right']
+}
+
+type ObstacleAction =
+  | { kind: 'wall' }
+  | { kind: 'split'; dirs: [Direction, Direction] }
+  | { kind: 'reflect'; dir: Direction }
+
+function getObstacleAction(laserDir: Direction, obstacle: Obstacle): ObstacleAction {
+  if (obstacle.type !== 'splitter') {
+    return { kind: 'wall' }
+  }
+  const orientation: Direction = obstacle.orientation ?? 'right'
+  if (laserDir === orientation) {
+    // Laser hits the open/splitting face — split perpendicularly
+    const dirs: [Direction, Direction] =
+      laserDir === 'left' || laserDir === 'right' ? ['up', 'down'] : ['left', 'right']
+    return { kind: 'split', dirs }
+  }
+  if (laserDir === oppositeDir(orientation)) {
+    // Laser hits the hypotenuse (wall face) — blocked
+    return { kind: 'wall' }
+  }
+  // Laser is perpendicular — reflect back toward opposite of orientation
+  return { kind: 'reflect', dir: oppositeDir(orientation) }
 }
 
 function findMirror(pos: Position, mirrors: Mirror[]): Mirror | undefined {
@@ -92,20 +114,24 @@ export function calculateLaserPath(
         break
       }
 
-      if (isWall(nextPos, obstacles)) {
+      const obstacle = findObstacle(nextPos, obstacles)
+      if (obstacle) {
+        const action = getObstacleAction(dir, obstacle)
         streamSegments.push({ start: { ...pos }, end: { ...nextPos }, direction: dir })
         totalLength++
-        terminationReason = 'obstacle'
-        break
-      }
-
-      if (isSplitter(nextPos, obstacles)) {
-        streamSegments.push({ start: { ...pos }, end: { ...nextPos }, direction: dir })
-        totalLength++
-        const [dir1, dir2] = getSplitDirections(dir)
-        stack.push({ startPos: { ...nextPos }, startDir: dir1, generation: generation + 1 })
-        stack.push({ startPos: { ...nextPos }, startDir: dir2, generation: generation + 1 })
-        break
+        if (action.kind === 'wall') {
+          terminationReason = 'obstacle'
+          break
+        }
+        if (action.kind === 'split') {
+          stack.push({ startPos: { ...nextPos }, startDir: action.dirs[0], generation: generation + 1 })
+          stack.push({ startPos: { ...nextPos }, startDir: action.dirs[1], generation: generation + 1 })
+          break
+        }
+        // reflect: continue from splitter cell in new direction
+        dir = action.dir
+        pos = nextPos
+        continue
       }
 
       const mirror = findMirror(nextPos, mirrors)

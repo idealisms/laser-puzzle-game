@@ -1,5 +1,5 @@
-import { GameState, Position, Direction, LaserSegment, LaserStream } from '../types'
-import { CELL_SIZE, COLORS, LASER_BLIP, ColorScheme } from '../constants'
+import { GameState, Position, Direction, LaserSegment, LaserStream, SplitterOrientation } from '../types'
+import { CELL_SIZE, COLORS, LASER_BLIP, LASER_LANE_OFFSET, ColorScheme } from '../constants'
 
 export class Renderer {
   private ctx: CanvasRenderingContext2D
@@ -99,36 +99,64 @@ export class Renderer {
     )
   }
 
-  drawSplitter(x: number, y: number): void {
-    const padding = 4
+  drawSplitter(x: number, y: number, orientation: SplitterOrientation = 'right'): void {
+    const p = 4
+    const cs = CELL_SIZE
+    const ox = x * cs
+    const oy = y * cs
+    const cx = ox + cs / 2
+    const cy = oy + cs / 2
+
+    // Right-angle vertex is at cell center.
+    // The two wing vertices are the corners of the wall face (hypotenuse).
+    // Vectors from center to each wing are perpendicular (dot product = 0),
+    // giving a true geometric right angle at the center vertex.
+    let v1x: number, v1y: number, v2x: number, v2y: number
+    switch (orientation) {
+      case 'right':  // wall on right, open face on left — tip points left
+        v1x = ox + cs - p;  v1y = oy + p        // top-right corner
+        v2x = ox + cs - p;  v2y = oy + cs - p   // bottom-right corner
+        break
+      case 'left':   // wall on left, open face on right — tip points right
+        v1x = ox + p;       v1y = oy + p        // top-left corner
+        v2x = ox + p;       v2y = oy + cs - p   // bottom-left corner
+        break
+      case 'up':     // wall on top, open face on bottom — tip points down
+        v1x = ox + p;       v1y = oy + p        // top-left corner
+        v2x = ox + cs - p;  v2y = oy + p        // top-right corner
+        break
+      case 'down':   // wall on bottom, open face on top — tip points up
+        v1x = ox + p;       v1y = oy + cs - p   // bottom-left corner
+        v2x = ox + cs - p;  v2y = oy + cs - p   // bottom-right corner
+        break
+    }
+
+    // Filled triangle
+    this.ctx.beginPath()
+    this.ctx.moveTo(cx, cy)
+    this.ctx.lineTo(v1x, v1y)
+    this.ctx.lineTo(v2x, v2y)
+    this.ctx.closePath()
     this.ctx.fillStyle = this.colors.splitter.fill
+    this.ctx.fill()
     this.ctx.strokeStyle = this.colors.splitter.stroke
-    this.ctx.lineWidth = 2
+    this.ctx.lineWidth = 1.5
+    this.ctx.stroke()
 
-    this.ctx.fillRect(
-      x * CELL_SIZE + padding,
-      y * CELL_SIZE + padding,
-      CELL_SIZE - padding * 2,
-      CELL_SIZE - padding * 2
-    )
-    this.ctx.strokeRect(
-      x * CELL_SIZE + padding,
-      y * CELL_SIZE + padding,
-      CELL_SIZE - padding * 2,
-      CELL_SIZE - padding * 2
-    )
+    // Hypotenuse highlight — indicates the wall face
+    this.ctx.beginPath()
+    this.ctx.moveTo(v1x, v1y)
+    this.ctx.lineTo(v2x, v2y)
+    this.ctx.strokeStyle = this.colors.splitter.cross
+    this.ctx.lineWidth = 3
+    this.ctx.lineCap = 'round'
+    this.ctx.stroke()
 
-    // Draw plus-sign cross (~60% of cell size)
-    const centerX = x * CELL_SIZE + CELL_SIZE / 2
-    const centerY = y * CELL_SIZE + CELL_SIZE / 2
-    const armLen = CELL_SIZE * 0.3
-    const armThick = CELL_SIZE * 0.1
-
+    // Dot at right-angle vertex — indicates the splitting point
+    this.ctx.beginPath()
+    this.ctx.arc(cx, cy, 3, 0, Math.PI * 2)
     this.ctx.fillStyle = this.colors.splitter.cross
-    // Horizontal bar
-    this.ctx.fillRect(centerX - armLen, centerY - armThick, armLen * 2, armThick * 2)
-    // Vertical bar
-    this.ctx.fillRect(centerX - armThick, centerY - armLen, armThick * 2, armLen * 2)
+    this.ctx.fill()
   }
 
   drawMirror(x: number, y: number, type: '/' | '\\'): void {
@@ -166,6 +194,18 @@ export class Renderer {
     this.ctx.stroke()
   }
 
+  // Returns the perpendicular pixel offset for a laser traveling in the given direction.
+  // Opposing beams (e.g. left vs right) get opposite offsets, keeping them visually separated.
+  // Convention: up → right, down → left, left → above, right → below.
+  private laneOffset(dir: Direction): { dx: number; dy: number } {
+    switch (dir) {
+      case 'up':    return { dx: +LASER_LANE_OFFSET, dy: 0 }
+      case 'down':  return { dx: -LASER_LANE_OFFSET, dy: 0 }
+      case 'left':  return { dx: 0, dy: -LASER_LANE_OFFSET }
+      case 'right': return { dx: 0, dy: +LASER_LANE_OFFSET }
+    }
+  }
+
   private drawStreamPolyline(segments: LaserSegment[], strokeStyle: string, lineWidth: number): void {
     if (segments.length === 0) return
     this.ctx.strokeStyle = strokeStyle
@@ -173,14 +213,16 @@ export class Renderer {
     this.ctx.lineCap = 'round'
     this.ctx.lineJoin = 'round'
     this.ctx.beginPath()
+    const startOff = this.laneOffset(segments[0].direction)
     this.ctx.moveTo(
-      segments[0].start.x * CELL_SIZE + CELL_SIZE / 2,
-      segments[0].start.y * CELL_SIZE + CELL_SIZE / 2
+      segments[0].start.x * CELL_SIZE + CELL_SIZE / 2 + startOff.dx,
+      segments[0].start.y * CELL_SIZE + CELL_SIZE / 2 + startOff.dy
     )
     for (const seg of segments) {
+      const off = this.laneOffset(seg.direction)
       this.ctx.lineTo(
-        seg.end.x * CELL_SIZE + CELL_SIZE / 2,
-        seg.end.y * CELL_SIZE + CELL_SIZE / 2
+        seg.end.x * CELL_SIZE + CELL_SIZE / 2 + off.dx,
+        seg.end.y * CELL_SIZE + CELL_SIZE / 2 + off.dy
       )
     }
     this.ctx.stroke()
@@ -241,8 +283,9 @@ export class Renderer {
           if (remaining <= segLengths[i]) {
             const t = segLengths[i] > 0 ? remaining / segLengths[i] : 0
             const seg = stream.segments[i]
-            px = (seg.start.x + (seg.end.x - seg.start.x) * t) * CELL_SIZE + CELL_SIZE / 2
-            py = (seg.start.y + (seg.end.y - seg.start.y) * t) * CELL_SIZE + CELL_SIZE / 2
+            const off = this.laneOffset(seg.direction)
+            px = (seg.start.x + (seg.end.x - seg.start.x) * t) * CELL_SIZE + CELL_SIZE / 2 + off.dx
+            py = (seg.start.y + (seg.end.y - seg.start.y) * t) * CELL_SIZE + CELL_SIZE / 2 + off.dy
             found = true
             break
           }
@@ -316,7 +359,7 @@ export class Renderer {
     // Draw obstacles
     for (const obstacle of level.obstacles) {
       if (obstacle.type === 'splitter') {
-        this.drawSplitter(obstacle.x, obstacle.y)
+        this.drawSplitter(obstacle.x, obstacle.y, obstacle.orientation ?? 'right')
       } else {
         this.drawObstacle(obstacle.x, obstacle.y)
       }

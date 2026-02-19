@@ -18,10 +18,13 @@ export interface LaserConfig {
   direction: Direction
 }
 
+export type SplitterOrientation = 'right' | 'left' | 'up' | 'down'
+
 export interface Obstacle {
   x: number
   y: number
   type?: 'wall' | 'splitter'
+  orientation?: SplitterOrientation  // only used when type === 'splitter'; defaults to 'right'
 }
 
 export interface LaserSegment {
