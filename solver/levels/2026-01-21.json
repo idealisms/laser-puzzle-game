@@ -123,66 +123,64 @@
     {
       "x": 7,
       "y": 10,
-      "type": "splitter"
+      "type": "splitter",
+      "orientation": "right"
     },
     {
       "x": 7,
       "y": 4,
-      "type": "splitter"
+      "type": "splitter",
+      "orientation": "up"
     },
     {
       "x": 7,
       "y": 16,
-      "type": "splitter"
+      "type": "splitter",
+      "orientation": "down"
     }
   ],
   "mirrorsAvailable": 9,
-  "optimalScore": 268,
+  "optimalScore": 255,
   "optimalSolution": [
     {
       "x": 14,
-      "y": 16,
-      "type": "/"
+      "y": 4,
+      "type": "\\"
     },
     {
       "x": 14,
-      "y": 0,
-      "type": "\\"
-    },
-    {
-      "x": 0,
-      "y": 0,
+      "y": 19,
       "type": "/"
     },
     {
       "x": 0,
-      "y": 16,
+      "y": 19,
       "type": "\\"
     },
     {
-      "x": 13,
+      "x": 0,
       "y": 4,
-      "type": "\\"
-    },
-    {
-      "x": 13,
-      "y": 15,
       "type": "/"
     },
     {
-      "x": 0,
-      "y": 15,
+      "x": 13,
+      "y": 16,
+      "type": "/"
+    },
+    {
+      "x": 13,
+      "y": 3,
       "type": "\\"
+    },
+    {
+      "x": 1,
+      "y": 3,
+      "type": "/"
     },
     {
       "x": 1,
       "y": 16,
       "type": "\\"
-    },
-    {
-      "x": 1,
-      "y": 4,
-      "type": "/"
     }
   ]
 }
