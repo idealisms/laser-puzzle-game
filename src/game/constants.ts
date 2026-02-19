@@ -90,3 +90,7 @@ export const LASER_BLIP = {
   radius: 4,    // blip circle radius in pixels
 }
 
+// Pixels to offset laser beams perpendicular to their travel direction.
+// Keeps opposing beams (e.g. left vs right) visually separated.
+export const LASER_LANE_OFFSET = 3
+
