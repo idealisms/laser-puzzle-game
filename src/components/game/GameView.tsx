@@ -26,11 +26,13 @@ const DEFAULT_LEVEL: LevelConfig = {
 
 interface GameViewProps {
   date: string
+  enableLevelCache?: boolean
 }
 
-export function GameView({ date }: GameViewProps) {
+export function GameView({ date, enableLevelCache }: GameViewProps) {
   const [level, setLevel] = useState<LevelConfig | null>(null)
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showComplete, setShowComplete] = useState(false)
   const [bestSolution, setBestSolution] = useState<Mirror[] | null>(null)
@@ -52,22 +54,51 @@ export function GameView({ date }: GameViewProps) {
 
   // Fetch level data
   useEffect(() => {
+    const CACHE_KEY = 'laser-puzzle-today'
+
+    // Load from cache immediately for instant display
+    let cachedLevelJson: string | null = null
+    if (enableLevelCache) {
+      try {
+        const cached = localStorage.getItem(CACHE_KEY)
+        if (cached) {
+          const { date: cachedDate, level: cachedLevel } = JSON.parse(cached)
+          if (cachedDate === date) {
+            cachedLevelJson = JSON.stringify(cachedLevel)
+            setLevel(cachedLevel)
+            loadLevel(cachedLevel)
+            setLoading(false)
+            setRefreshing(true)
+          }
+        }
+      } catch {}
+    }
+
     async function fetchLevel() {
       try {
         const res = await fetch(`/api/levels/${date}`)
         if (res.ok) {
           const data = await res.json()
-          setLevel(data.level)
-          loadLevel(data.level)
-        } else if (res.status === 404) {
-          setError('No puzzle available for this date')
-        } else {
-          setError('Failed to load puzzle')
+          const freshJson = JSON.stringify(data.level)
+          // Only reload game state if the level actually changed
+          if (freshJson !== cachedLevelJson) {
+            setLevel(data.level)
+            loadLevel(data.level)
+          }
+          if (enableLevelCache) {
+            try {
+              localStorage.setItem(CACHE_KEY, JSON.stringify({ date, level: data.level }))
+            } catch {}
+          }
+        } else if (!cachedLevelJson) {
+          if (res.status === 404) setError('No puzzle available for this date')
+          else setError('Failed to load puzzle')
         }
       } catch {
-        setError('Failed to load puzzle')
+        if (!cachedLevelJson) setError('Failed to load puzzle')
       } finally {
         setLoading(false)
+        setRefreshing(false)
       }
     }
 
@@ -90,7 +121,7 @@ export function GameView({ date }: GameViewProps) {
 
     fetchLevel()
     fetchProgress()
-  }, [date, loadLevel])
+  }, [date, loadLevel, enableLevelCache])
 
   // Track the best score discovered during the current session (pre-submission)
   useEffect(() => {
@@ -218,7 +249,14 @@ export function GameView({ date }: GameViewProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header rightContent={date} />
+      <Header rightContent={
+        <div className="flex items-center gap-2">
+          {refreshing && (
+            <div className="w-3 h-3 border border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
+          )}
+          <span>{date}</span>
+        </div>
+      } />
 
       <main className="flex-1 p-6">
         <div className="max-w-6xl mx-auto">

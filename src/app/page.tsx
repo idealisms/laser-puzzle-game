@@ -19,5 +19,5 @@ export default function HomePage() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
 
-  return <GameView key={date} date={date} />
+  return <GameView key={date} date={date} enableLevelCache />
 }
