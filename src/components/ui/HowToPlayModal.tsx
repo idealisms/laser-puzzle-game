@@ -37,22 +37,20 @@ export function HowToPlayModal({ isOpen, onClose }: HowToPlayModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-2xl font-bold mb-4">How to Play</h2>
-        <ul className="text-gray-400 space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Controls</p>
+        <ul className="text-gray-400 space-y-2 mb-4">
           <li className="flex">
-            <span className="text-emerald-400 mr-3 font-semibold">1.</span>
-            <span>Click on a cell to cycle through mirrors: / → \ → empty</span>
+            <span className="text-emerald-400 mr-3">•</span>
+            <span>Click a cell to cycle through mirrors: / → \ → empty</span>
           </li>
           <li className="flex">
-            <span className="text-emerald-400 mr-3 font-semibold">2.</span>
-            <span>Mirrors reflect the laser beam at 90° angles</span>
-          </li>
-          <li className="flex">
-            <span className="text-emerald-400 mr-3 font-semibold">3.</span>
-            <span>Create the longest laser path possible!</span>
+            <span className="text-emerald-400 mr-3">•</span>
+            <span>Hold and drag to erase multiple mirrors</span>
           </li>
         </ul>
-        <p className="mt-4 text-sm text-gray-500">
-          Tip: Hold down on a mirror and drag to erase multiple mirrors at once.
+        <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Goal</p>
+        <p className="text-gray-400">
+          Redirect the laser beam to create the <strong className="text-gray-300">longest path possible</strong>. Each puzzle is new daily — you only get <strong className="text-gray-300">one</strong> submission, so take your time.
         </p>
         <button
           onClick={onClose}
