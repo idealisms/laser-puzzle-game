@@ -202,15 +202,7 @@ export function GameView({ date }: GameViewProps) {
     }
   }, [level, loadSolution])
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-400">Loading puzzle...</div>
-      </div>
-    )
-  }
-
-  if (error || !level) {
+  if (!loading && (error || !level)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="text-center max-w-md">
@@ -232,11 +224,17 @@ export function GameView({ date }: GameViewProps) {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1">
-              <ResponsiveCanvas
-                gameState={gameState}
-                onCellClick={handleCellClick}
-                onCellRightClick={handleCellRightClick}
-              />
+              {loading ? (
+                <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[800px] flex items-center justify-center text-gray-500">
+                  Loading puzzle...
+                </div>
+              ) : (
+                <ResponsiveCanvas
+                  gameState={gameState}
+                  onCellClick={handleCellClick}
+                  onCellRightClick={handleCellRightClick}
+                />
+              )}
             </div>
 
             <div className="lg:w-64 space-y-4">
@@ -248,9 +246,9 @@ export function GameView({ date }: GameViewProps) {
                   : sessionBestSolution !== null}
                 onRestoreBest={handleRestoreBest}
                 mirrorsPlaced={gameState.placedMirrors.length}
-                mirrorsAvailable={level.mirrorsAvailable}
+                mirrorsAvailable={level?.mirrorsAvailable ?? DEFAULT_LEVEL.mirrorsAvailable}
                 hasSubmitted={hasSubmitted}
-                optimalScore={level.optimalScore}
+                optimalScore={level?.optimalScore ?? DEFAULT_LEVEL.optimalScore}
                 onShowOptimal={handleShowOptimal}
               />
 
@@ -270,7 +268,7 @@ export function GameView({ date }: GameViewProps) {
         isOpen={showComplete}
         onClose={() => setShowComplete(false)}
         score={submittedScore}
-        optimalScore={level.optimalScore}
+        optimalScore={level?.optimalScore ?? DEFAULT_LEVEL.optimalScore}
         date={date}
         histogram={histogramData}
       />
