@@ -1,5 +1,5 @@
 import { GameState, Position, Direction, LaserSegment, LaserStream, SplitterOrientation } from '../types'
-import { CELL_SIZE, COLORS, LASER_BLIP, LASER_LANE_OFFSET, ColorScheme } from '../constants'
+import { CELL_SIZE, COLORS, LASER_BLIP, ColorScheme } from '../constants'
 
 export class Renderer {
   private ctx: CanvasRenderingContext2D
@@ -194,18 +194,6 @@ export class Renderer {
     this.ctx.stroke()
   }
 
-  // Returns the perpendicular pixel offset for a laser traveling in the given direction.
-  // Opposing beams (e.g. left vs right) get opposite offsets, keeping them visually separated.
-  // Convention: up → right, down → left, left → above, right → below.
-  private laneOffset(dir: Direction): { dx: number; dy: number } {
-    switch (dir) {
-      case 'up':    return { dx: +LASER_LANE_OFFSET, dy: 0 }
-      case 'down':  return { dx: -LASER_LANE_OFFSET, dy: 0 }
-      case 'left':  return { dx: 0, dy: -LASER_LANE_OFFSET }
-      case 'right': return { dx: 0, dy: +LASER_LANE_OFFSET }
-    }
-  }
-
   private drawStreamPolyline(segments: LaserSegment[], strokeStyle: string, lineWidth: number): void {
     if (segments.length === 0) return
     this.ctx.strokeStyle = strokeStyle
@@ -213,16 +201,14 @@ export class Renderer {
     this.ctx.lineCap = 'round'
     this.ctx.lineJoin = 'round'
     this.ctx.beginPath()
-    const startOff = this.laneOffset(segments[0].direction)
     this.ctx.moveTo(
-      segments[0].start.x * CELL_SIZE + CELL_SIZE / 2 + startOff.dx,
-      segments[0].start.y * CELL_SIZE + CELL_SIZE / 2 + startOff.dy
+      segments[0].start.x * CELL_SIZE + CELL_SIZE / 2,
+      segments[0].start.y * CELL_SIZE + CELL_SIZE / 2
     )
     for (const seg of segments) {
-      const off = this.laneOffset(seg.direction)
       this.ctx.lineTo(
-        seg.end.x * CELL_SIZE + CELL_SIZE / 2 + off.dx,
-        seg.end.y * CELL_SIZE + CELL_SIZE / 2 + off.dy
+        seg.end.x * CELL_SIZE + CELL_SIZE / 2,
+        seg.end.y * CELL_SIZE + CELL_SIZE / 2
       )
     }
     this.ctx.stroke()
@@ -283,9 +269,8 @@ export class Renderer {
           if (remaining <= segLengths[i]) {
             const t = segLengths[i] > 0 ? remaining / segLengths[i] : 0
             const seg = stream.segments[i]
-            const off = this.laneOffset(seg.direction)
-            px = (seg.start.x + (seg.end.x - seg.start.x) * t) * CELL_SIZE + CELL_SIZE / 2 + off.dx
-            py = (seg.start.y + (seg.end.y - seg.start.y) * t) * CELL_SIZE + CELL_SIZE / 2 + off.dy
+            px = (seg.start.x + (seg.end.x - seg.start.x) * t) * CELL_SIZE + CELL_SIZE / 2
+            py = (seg.start.y + (seg.end.y - seg.start.y) * t) * CELL_SIZE + CELL_SIZE / 2
             found = true
             break
           }
