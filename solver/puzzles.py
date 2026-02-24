@@ -68,8 +68,8 @@ GRID_HEIGHT = 20
 
 # All puzzle configurations keyed by date (YYYY-MM-DD)
 PUZZLES: dict[str, PuzzleConfig] = {
-    # === Jan 19-21, 2026 (splitter showcase) ===
-    "2026-01-19": PuzzleConfig(
+    # === Mar 3-5, 2026 (splitter showcase) ===
+    "2026-03-03": PuzzleConfig(
         name="Crossfire",
         width=GRID_WIDTH,
         height=GRID_HEIGHT,
@@ -87,7 +87,7 @@ PUZZLES: dict[str, PuzzleConfig] = {
         num_mirrors=6,
         splitters=[(7, 10, 'right')],
     ),
-    "2026-01-20": PuzzleConfig(
+    "2026-03-04": PuzzleConfig(
         name="Chain Reaction",
         width=GRID_WIDTH,
         height=GRID_HEIGHT,
@@ -107,7 +107,7 @@ PUZZLES: dict[str, PuzzleConfig] = {
         # Splitter 2 at (5,4):  'up'    → upward beam from splitter 1 splits LEFT/RIGHT
         splitters=[(5, 10, 'right'), (5, 4, 'up')],
     ),
-    "2026-01-21": PuzzleConfig(
+    "2026-03-05": PuzzleConfig(
         name="Starfield",
         width=GRID_WIDTH,
         height=GRID_HEIGHT,
