@@ -288,6 +288,59 @@ export class Renderer {
     this.ctx.restore()
   }
 
+  drawCollisionFlash(x: number, y: number): void {
+    const cx = x * CELL_SIZE + CELL_SIZE / 2
+    const cy = y * CELL_SIZE + CELL_SIZE / 2
+
+    this.ctx.save()
+
+    // Outer glow
+    this.ctx.shadowBlur = 24
+    this.ctx.shadowColor = '#ffffff'
+    this.ctx.fillStyle = 'rgba(255, 230, 80, 0.45)'
+    this.ctx.beginPath()
+    this.ctx.arc(cx, cy, CELL_SIZE * 0.32, 0, Math.PI * 2)
+    this.ctx.fill()
+
+    // Bright core
+    this.ctx.shadowBlur = 16
+    this.ctx.fillStyle = '#ffffff'
+    this.ctx.beginPath()
+    this.ctx.arc(cx, cy, 5, 0, Math.PI * 2)
+    this.ctx.fill()
+
+    this.ctx.restore()
+  }
+
+  drawCollisionSparks(x: number, y: number, time: number): void {
+    const cx = x * CELL_SIZE + CELL_SIZE / 2
+    const cy = y * CELL_SIZE + CELL_SIZE / 2
+    const numSparks = 8
+    const maxRadius = CELL_SIZE * 0.72
+    const cycleDuration = 0.45 // seconds per wave
+
+    this.ctx.save()
+    this.ctx.shadowBlur = 8
+    this.ctx.shadowColor = '#ffee66'
+
+    // Two staggered waves for continuous animation
+    for (let wave = 0; wave < 2; wave++) {
+      const phase = ((time + wave * cycleDuration * 0.5) % cycleDuration) / cycleDuration
+      const r = phase * maxRadius
+      const alpha = (1 - phase) * 0.9
+
+      this.ctx.fillStyle = `rgba(255, 238, 100, ${alpha})`
+      for (let i = 0; i < numSparks; i++) {
+        const angle = (i / numSparks) * Math.PI * 2
+        this.ctx.beginPath()
+        this.ctx.arc(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r, 2.5, 0, Math.PI * 2)
+        this.ctx.fill()
+      }
+    }
+
+    this.ctx.restore()
+  }
+
   drawEraserHighlight(x: number, y: number): void {
     this.ctx.fillStyle = this.colors.eraser.highlight
     this.ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
@@ -362,6 +415,12 @@ export class Renderer {
       this.drawLaserPath(laserPath.streams)
       if (time != null) {
         this.drawLaserBlips(laserPath.streams, time)
+      }
+      for (const cp of laserPath.collisionPoints) {
+        this.drawCollisionFlash(cp.x, cp.y)
+        if (time != null) {
+          this.drawCollisionSparks(cp.x, cp.y, time)
+        }
       }
     }
 

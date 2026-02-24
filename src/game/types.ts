@@ -43,6 +43,7 @@ export interface LaserPath {
   totalLength: number
   terminated: boolean
   terminationReason: 'edge' | 'obstacle' | 'loop' | 'max-length'
+  collisionPoints: Position[]
 }
 
 export interface OptimalMirror {
