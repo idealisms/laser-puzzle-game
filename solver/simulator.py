@@ -68,6 +68,101 @@ def get_splitter_action(laser_dir: Direction, orientation: str) -> str:
     return 'reflect'
 
 
+def resolve_collisions(
+    streams: list[list[tuple]],
+    stream_offsets: list[int],
+    mirror_set: set[tuple[int, int]],
+) -> list[tuple]:
+    """
+    Detect head-on laser beam collisions and truncate streams in place.
+
+    Matches the JS resolveCollisions behaviour:
+      1. Same-cell same-time: beams from different streams arrive at the same
+         non-mirror cell from opposite directions at the same global time.
+      2. Crossing: at the same global time, beam A is at cell P heading toward Q
+         and beam B is at Q heading toward P (adjacent cells, opposite directions).
+
+    Per stream-pair, only the earliest collision is kept.  Both affected streams
+    are then truncated to include the collision step as the final step.
+
+    Each step in a stream is (nx, ny, incoming_dir) where:
+      - (nx, ny) is the cell reached
+      - incoming_dir is the direction of travel used to reach that cell
+      - global time for step i in stream s with offset o is: o + i + 1
+
+    Args:
+        streams: list of step lists; mutated in place on truncation
+        stream_offsets: global offset for each stream
+        mirror_set: (x, y) cells containing mirrors (collisions skipped there)
+
+    Returns:
+        list of collision positions as (x, y) or (x+0.5, y+0.5) tuples
+    """
+    # by_cell_time: (x, y, g_time) -> [(si, segi, dir), ...]
+    # by_time:      g_time         -> [(si, segi, x, y, dir), ...]
+    by_cell_time: dict = {}
+    by_time: dict = {}
+
+    for si, (offset, steps) in enumerate(zip(stream_offsets, streams)):
+        for segi, (x, y, d) in enumerate(steps):
+            g_time = offset + segi + 1
+            by_cell_time.setdefault((x, y, g_time), []).append((si, segi, d))
+            by_time.setdefault(g_time, []).append((si, segi, x, y, d))
+
+    # Per stream-pair: keep only the earliest collision
+    pair_collisions: dict = {}  # (lo_si, hi_si) -> (g_time, pos, a_info, b_info)
+
+    def try_collision(g_time, pos, a_si, a_segi, b_si, b_segi):
+        lo, hi = min(a_si, b_si), max(a_si, b_si)
+        key = (lo, hi)
+        if key not in pair_collisions or g_time < pair_collisions[key][0]:
+            pair_collisions[key] = (g_time, pos, (a_si, a_segi), (b_si, b_segi))
+
+    # 1. Same-cell, same-time, opposite directions (mirror cells excluded)
+    for (x, y, g_time), arrivals in by_cell_time.items():
+        if len(arrivals) < 2:
+            continue
+        if (x, y) in mirror_set:
+            continue
+        for i in range(len(arrivals)):
+            for j in range(i + 1, len(arrivals)):
+                a_si, a_segi, a_dir = arrivals[i]
+                b_si, b_segi, b_dir = arrivals[j]
+                if a_si != b_si and a_dir == opposite_direction(b_dir):
+                    try_collision(g_time, (x, y), a_si, a_segi, b_si, b_segi)
+
+    # 2. Crossing: at same g_time, A at P heading toward Q, B at Q heading toward P
+    for g_time, arrivals in by_time.items():
+        if len(arrivals) < 2:
+            continue
+        for i in range(len(arrivals)):
+            for j in range(i + 1, len(arrivals)):
+                a_si, a_segi, ax, ay, a_dir = arrivals[i]
+                b_si, b_segi, bx, by, b_dir = arrivals[j]
+                if a_si == b_si:
+                    continue
+                if a_dir != opposite_direction(b_dir):
+                    continue
+                ddx, ddy = DELTAS[a_dir]
+                if bx == ax + ddx and by == ay + ddy:
+                    pos = ((ax + bx) / 2, (ay + by) / 2)
+                    try_collision(g_time, pos, a_si, a_segi, b_si, b_segi)
+
+    # Apply truncations: keep steps 0..max_segi (inclusive) per stream
+    truncations: dict[int, int] = {}
+    collision_positions = []
+
+    for _g_time, pos, (a_si, a_segi), (b_si, b_segi) in pair_collisions.values():
+        collision_positions.append(pos)
+        truncations[a_si] = min(truncations.get(a_si, a_segi), a_segi)
+        truncations[b_si] = min(truncations.get(b_si, b_segi), b_segi)
+
+    for si, max_segi in truncations.items():
+        streams[si] = streams[si][:max_segi + 1]
+
+    return collision_positions
+
+
 def simulate_laser(
     config: PuzzleConfig,
     mirrors: list[tuple[int, int, str]],
@@ -78,8 +173,10 @@ def simulate_laser(
     """
     Simulate laser path and return path details.
 
-    Supports directional splitters: behaviour depends on the splitter's orientation
-    and the incoming laser direction ('split', 'wall', or 'reflect').
+    Supports directional splitters and head-on beam collision detection.
+    Collision detection matches the JS resolveCollisions logic: beams from
+    different split branches that meet head-on are truncated at the collision
+    point, reducing the reported path length.
 
     Args:
         config: Puzzle configuration
@@ -90,56 +187,68 @@ def simulate_laser(
     Returns:
         dict with 'length', 'path', 'termination_reason'
     """
-    # Build mirror lookup
     mirror_map = {(x, y): t for x, y, t in mirrors}
     if obstacle_set is None:
         obstacle_set = set(config.obstacles)
     if splitter_map is None:
         splitter_map = {(x, y): orientation for x, y, orientation in getattr(config, 'splitters', [])}
 
-    # DFS stack: (x, y, direction)
-    stack = [(config.laser_x, config.laser_y, config.laser_dir)]
-    visited = set()
-    path = [(config.laser_x, config.laser_y, config.laser_dir)]
-    length = 0
+    # DFS stack entries: (start_x, start_y, start_dir, global_offset)
+    # global_offset = total steps from the laser source before this stream started
+    stack = [(config.laser_x, config.laser_y, config.laser_dir, 0)]
+    visited: set = set()
+
+    # streams[i] = list of (nx, ny, incoming_dir) steps
+    # stream_offsets[i] = global offset for stream i
+    streams: list[list] = []
+    stream_offsets: list[int] = []
+
     termination_reason = 'max_length'
+    total_steps = 0
 
-    while stack and length < max_length:
-        x, y, direction = stack.pop()
+    while stack and total_steps < max_length:
+        start_x, start_y, start_dir, global_offset = stack.pop()
+        stream_steps: list = []
 
-        while length < max_length:
+        x, y, direction = start_x, start_y, start_dir
+
+        while total_steps < max_length:
             state = (x, y, direction)
             if state in visited:
                 termination_reason = 'loop'
                 break
             visited.add(state)
 
-            # Move in current direction
             dx, dy = DELTAS[direction]
             next_x, next_y = x + dx, y + dy
+            # step records: destination cell + the incoming direction used to reach it
+            step = (next_x, next_y, direction)
 
-            # Check bounds
+            # Out of bounds
             if next_x < 0 or next_x >= config.width or next_y < 0 or next_y >= config.height:
-                length += 1
+                stream_steps.append(step)
+                total_steps += 1
                 termination_reason = 'edge'
                 break
 
-            # Check wall obstacle
+            # Wall obstacle
             if (next_x, next_y) in obstacle_set:
-                length += 1
+                stream_steps.append(step)
+                total_steps += 1
                 termination_reason = 'obstacle'
                 break
 
-            # Check splitter
+            # Splitter
             if (next_x, next_y) in splitter_map:
                 orientation = splitter_map[(next_x, next_y)]
                 action = get_splitter_action(direction, orientation)
-                length += 1
+                stream_steps.append(step)
+                total_steps += 1
                 if action == 'split':
                     dir1, dir2 = get_split_directions(direction)
-                    stack.append((next_x, next_y, dir1))
-                    stack.append((next_x, next_y, dir2))
-                    path.append((next_x, next_y, direction))
+                    sub_offset = global_offset + len(stream_steps)
+                    stack.append((next_x, next_y, dir1, sub_offset))
+                    stack.append((next_x, next_y, dir2, sub_offset))
                     break
                 elif action == 'wall':
                     termination_reason = 'obstacle'
@@ -147,22 +256,39 @@ def simulate_laser(
                 else:  # reflect
                     direction = opposite_direction(Direction.from_string(orientation))
                     x, y = next_x, next_y
-                    path.append((x, y, direction))
                     continue
 
-            # Move to next cell
-            length += 1
+            # Normal move (may land on a mirror)
+            stream_steps.append(step)
+            total_steps += 1
             x, y = next_x, next_y
-
-            # Check for mirror and reflect
             if (x, y) in mirror_map:
-                mirror_type = mirror_map[(x, y)]
-                direction = REFLECT[mirror_type][direction]
+                direction = REFLECT[mirror_map[(x, y)]][direction]
 
-            path.append((x, y, direction))
+        streams.append(stream_steps)
+        stream_offsets.append(global_offset)
+
+    # Detect and truncate head-on collisions (matches JS resolveCollisions)
+    mirror_set_xy = set(mirror_map.keys())
+    resolve_collisions(streams, stream_offsets, mirror_set_xy)
+
+    # Total length = sum of all stream lengths after collision truncation
+    total_length = sum(len(s) for s in streams)
+
+    # Build backward-compatible path from the primary stream.
+    # Format: [(x, y, dir_leaving_cell), ...] starting with the laser source.
+    # This format is used by simulate_incremental for no-splitter puzzles.
+    path = [(config.laser_x, config.laser_y, config.laser_dir)]
+    if streams:
+        for nx, ny, incoming_dir in streams[0]:
+            if (nx, ny) in mirror_map:
+                path_dir = REFLECT[mirror_map[(nx, ny)]][incoming_dir]
+            else:
+                path_dir = incoming_dir
+            path.append((nx, ny, path_dir))
 
     return {
-        'length': length,
+        'length': total_length,
         'path': path,
         'termination_reason': termination_reason,
     }
