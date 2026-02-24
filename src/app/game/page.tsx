@@ -82,6 +82,8 @@ export default function LevelSelectPage() {
   }
 
   const todayDate = getLocalDateString()
+  const devMode = process.env.NEXT_PUBLIC_APP_MODE === 'DEV'
+  const visibleCalendar = devMode ? calendar : calendar.filter((e) => e.date <= todayDate)
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -91,6 +93,11 @@ export default function LevelSelectPage() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-8">
             <h1 className="text-3xl font-bold">Select a Puzzle</h1>
+            {devMode && (
+              <span className="text-xs font-mono bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 px-2 py-0.5 rounded">
+                DEV
+              </span>
+            )}
             {refreshing && !loading && (
               <div className="w-5 h-5 border-2 border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
             )}
@@ -100,7 +107,7 @@ export default function LevelSelectPage() {
             <div className="text-center text-gray-400 py-12">
               Loading puzzles...
             </div>
-          ) : calendar.filter((e) => e.date <= todayDate).length === 0 ? (
+          ) : visibleCalendar.length === 0 ? (
             <Card className="text-center py-12">
               <p className="text-gray-400 mb-4">No puzzles available yet.</p>
               <p className="text-sm text-gray-500">
@@ -109,7 +116,7 @@ export default function LevelSelectPage() {
             </Card>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {calendar.filter((e) => e.date <= todayDate).map((entry) => {
+              {visibleCalendar.map((entry) => {
                 const isToday = entry.date === todayDate
                 const dateObj = new Date(entry.date + 'T00:00:00')
                 const dayName = dateObj.toLocaleDateString('en-US', {

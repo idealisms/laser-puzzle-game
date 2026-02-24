@@ -30,8 +30,8 @@ export async function GET(request: Request, { params }: RouteParams) {
       )
     }
 
-    // Prevent access to future dates (server-side check)
-    if (!isDateAccessible(date)) {
+    // Prevent access to future dates (server-side check, bypassed in dev mode)
+    if (process.env.NEXT_PUBLIC_APP_MODE !== 'DEV' && !isDateAccessible(date)) {
       return NextResponse.json(
         { error: 'This puzzle is not yet available' },
         { status: 403 }

@@ -14,11 +14,12 @@ function getMaxAccessibleDate(): string {
 
 export async function GET() {
   try {
+    const devMode = process.env.NEXT_PUBLIC_APP_MODE === 'DEV'
     const maxDate = getMaxAccessibleDate()
 
-    // Get all available levels up to the max accessible date
+    // Get all available levels up to the max accessible date (or all levels in dev mode)
     const levels = await prisma.level.findMany({
-      where: {
+      where: devMode ? {} : {
         date: { lte: maxDate },
       },
       orderBy: { date: 'desc' },
