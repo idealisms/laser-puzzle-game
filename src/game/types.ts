@@ -18,9 +18,13 @@ export interface LaserConfig {
   direction: Direction
 }
 
+export type SplitterOrientation = 'right' | 'left' | 'up' | 'down'
+
 export interface Obstacle {
   x: number
   y: number
+  type?: 'wall' | 'splitter'
+  orientation?: SplitterOrientation  // only used when type === 'splitter'; defaults to 'right'
 }
 
 export interface LaserSegment {
@@ -29,11 +33,19 @@ export interface LaserSegment {
   direction: Direction
 }
 
-export interface LaserPath {
+export interface LaserStream {
   segments: LaserSegment[]
+  generation: number  // 0 = primary, 1 = first split, 2 = split-of-split, etc.
+  colorIndex?: number  // rendering color index; 0 = primary color, each new branch increments
+  globalOffset?: number  // total steps from laser source before this stream started (for blip sync)
+}
+
+export interface LaserPath {
+  streams: LaserStream[]
   totalLength: number
   terminated: boolean
   terminationReason: 'edge' | 'obstacle' | 'loop' | 'max-length'
+  collisionPoints: Position[]
 }
 
 export interface OptimalMirror {

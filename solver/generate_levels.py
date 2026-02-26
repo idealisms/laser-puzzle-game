@@ -31,8 +31,18 @@ def get_puzzle_for_date(date_str: str) -> PuzzleConfig:
     return PUZZLES[date_str]
 
 
+MAX_SPLITTERS = 2
+
+
 def generate_level(date_str: str, config: PuzzleConfig) -> dict:
     """Generate a level for the given date using the provided puzzle config."""
+    num_splitters = len(getattr(config, 'splitters', []))
+    if num_splitters > MAX_SPLITTERS:
+        raise ValueError(
+            f"{date_str}: puzzle has {num_splitters} splitters (max {MAX_SPLITTERS}). "
+            "Reduce the splitter count in puzzles.py before generating."
+        )
+
     print(f"Computing optimal score for {date_str} ({config.name})...")
     result = beam_search_solver(config, verbose=False)
     optimal_score = result['path_length']
@@ -54,7 +64,11 @@ def generate_level(date_str: str, config: PuzzleConfig) -> dict:
             "y": config.laser_y,
             "direction": config.laser_dir.to_string(),
         },
-        "obstacles": [{"x": x, "y": y} for x, y in config.obstacles],
+        "obstacles": (
+            [{"x": x, "y": y} for x, y in config.obstacles] +
+            [{"x": x, "y": y, "type": "splitter", "orientation": orientation}
+             for x, y, orientation in getattr(config, 'splitters', [])]
+        ),
         "mirrorsAvailable": config.num_mirrors,
         "optimalScore": optimal_score,
         "optimalSolution": optimal_solution,

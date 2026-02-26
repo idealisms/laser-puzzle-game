@@ -1,4 +1,4 @@
-import { GameState, Position, Direction, LaserSegment } from '../types'
+import { GameState, Position, Direction, LaserSegment, LaserStream, SplitterOrientation } from '../types'
 import { CELL_SIZE, COLORS, LASER_BLIP, ColorScheme } from '../constants'
 
 export class Renderer {
@@ -99,6 +99,66 @@ export class Renderer {
     )
   }
 
+  drawSplitter(x: number, y: number, orientation: SplitterOrientation = 'right'): void {
+    const p = 4
+    const cs = CELL_SIZE
+    const ox = x * cs
+    const oy = y * cs
+    const cx = ox + cs / 2
+    const cy = oy + cs / 2
+
+    // Right-angle vertex is at cell center.
+    // The two wing vertices are the corners of the wall face (hypotenuse).
+    // Vectors from center to each wing are perpendicular (dot product = 0),
+    // giving a true geometric right angle at the center vertex.
+    let v1x: number, v1y: number, v2x: number, v2y: number
+    switch (orientation) {
+      case 'right':  // wall on right, open face on left — tip points left
+        v1x = ox + cs - p;  v1y = oy + p        // top-right corner
+        v2x = ox + cs - p;  v2y = oy + cs - p   // bottom-right corner
+        break
+      case 'left':   // wall on left, open face on right — tip points right
+        v1x = ox + p;       v1y = oy + p        // top-left corner
+        v2x = ox + p;       v2y = oy + cs - p   // bottom-left corner
+        break
+      case 'up':     // wall on top, open face on bottom — tip points down
+        v1x = ox + p;       v1y = oy + p        // top-left corner
+        v2x = ox + cs - p;  v2y = oy + p        // top-right corner
+        break
+      case 'down':   // wall on bottom, open face on top — tip points up
+        v1x = ox + p;       v1y = oy + cs - p   // bottom-left corner
+        v2x = ox + cs - p;  v2y = oy + cs - p   // bottom-right corner
+        break
+    }
+
+    // Filled triangle
+    this.ctx.beginPath()
+    this.ctx.moveTo(cx, cy)
+    this.ctx.lineTo(v1x, v1y)
+    this.ctx.lineTo(v2x, v2y)
+    this.ctx.closePath()
+    this.ctx.fillStyle = this.colors.splitter.fill
+    this.ctx.fill()
+    this.ctx.strokeStyle = this.colors.splitter.stroke
+    this.ctx.lineWidth = 1.5
+    this.ctx.stroke()
+
+    // Hypotenuse highlight — indicates the wall face
+    this.ctx.beginPath()
+    this.ctx.moveTo(v1x, v1y)
+    this.ctx.lineTo(v2x, v2y)
+    this.ctx.strokeStyle = this.colors.splitter.cross
+    this.ctx.lineWidth = 3
+    this.ctx.lineCap = 'round'
+    this.ctx.stroke()
+
+    // Dot at right-angle vertex — indicates the splitting point
+    this.ctx.beginPath()
+    this.ctx.arc(cx, cy, 3, 0, Math.PI * 2)
+    this.ctx.fillStyle = this.colors.splitter.cross
+    this.ctx.fill()
+  }
+
   drawMirror(x: number, y: number, type: '/' | '\\'): void {
     const centerX = x * CELL_SIZE + CELL_SIZE / 2
     const centerY = y * CELL_SIZE + CELL_SIZE / 2
@@ -134,40 +194,17 @@ export class Renderer {
     this.ctx.stroke()
   }
 
-  drawLaserPath(segments: LaserSegment[]): void {
+  private drawStreamPolyline(segments: LaserSegment[], strokeStyle: string, lineWidth: number): void {
     if (segments.length === 0) return
-
-    // Draw glow
-    this.ctx.strokeStyle = this.colors.laser.glow
-    this.ctx.lineWidth = 8
+    this.ctx.strokeStyle = strokeStyle
+    this.ctx.lineWidth = lineWidth
     this.ctx.lineCap = 'round'
     this.ctx.lineJoin = 'round'
-
-    this.ctx.beginPath()
-    const firstSeg = segments[0]
-    this.ctx.moveTo(
-      firstSeg.start.x * CELL_SIZE + CELL_SIZE / 2,
-      firstSeg.start.y * CELL_SIZE + CELL_SIZE / 2
-    )
-
-    for (const seg of segments) {
-      this.ctx.lineTo(
-        seg.end.x * CELL_SIZE + CELL_SIZE / 2,
-        seg.end.y * CELL_SIZE + CELL_SIZE / 2
-      )
-    }
-    this.ctx.stroke()
-
-    // Draw main beam
-    this.ctx.strokeStyle = this.colors.laser.beam
-    this.ctx.lineWidth = 3
-
     this.ctx.beginPath()
     this.ctx.moveTo(
-      firstSeg.start.x * CELL_SIZE + CELL_SIZE / 2,
-      firstSeg.start.y * CELL_SIZE + CELL_SIZE / 2
+      segments[0].start.x * CELL_SIZE + CELL_SIZE / 2,
+      segments[0].start.y * CELL_SIZE + CELL_SIZE / 2
     )
-
     for (const seg of segments) {
       this.ctx.lineTo(
         seg.end.x * CELL_SIZE + CELL_SIZE / 2,
@@ -177,54 +214,131 @@ export class Renderer {
     this.ctx.stroke()
   }
 
-  drawLaserBlips(segments: LaserSegment[], time: number): void {
-    if (segments.length === 0) return
+  drawLaserPath(streams: LaserStream[]): void {
+    const streamColors = this.colors.laserStreams
 
-    // Build cumulative lengths along the path (in pixels)
-    const segLengths: number[] = []
-    let totalLength = 0
-    for (const seg of segments) {
-      const dx = (seg.end.x - seg.start.x) * CELL_SIZE
-      const dy = (seg.end.y - seg.start.y) * CELL_SIZE
-      const len = Math.sqrt(dx * dx + dy * dy)
-      segLengths.push(len)
-      totalLength += len
+    // Glow pass (all streams)
+    for (const stream of streams) {
+      const colors = streamColors[Math.min(stream.colorIndex ?? 0, streamColors.length - 1)]
+      this.drawStreamPolyline(stream.segments, colors.glow, 8)
     }
 
-    if (totalLength === 0) return
+    // Beam pass (all streams)
+    for (const stream of streams) {
+      const colors = streamColors[Math.min(stream.colorIndex ?? 0, streamColors.length - 1)]
+      this.drawStreamPolyline(stream.segments, colors.beam, 3)
+    }
+  }
 
-    const spacingPx = LASER_BLIP.spacing * CELL_SIZE
-    const offsetPx = (time * LASER_BLIP.speed * CELL_SIZE) % spacingPx
+  drawLaserBlips(streams: LaserStream[], time: number): void {
+    const streamColors = this.colors.laserStreams
 
     this.ctx.save()
-    this.ctx.fillStyle = this.colors.laser.blip
-    this.ctx.shadowColor = this.colors.laser.blip
     this.ctx.shadowBlur = 8
 
-    for (let d = offsetPx; d <= totalLength; d += spacingPx) {
-      // Find which segment this distance falls in
-      let remaining = d
-      let px = 0
-      let py = 0
-      let found = false
+    for (const stream of streams) {
+      if (stream.segments.length === 0) continue
+      const colors = streamColors[Math.min(stream.colorIndex ?? 0, streamColors.length - 1)]
 
-      for (let i = 0; i < segments.length; i++) {
-        if (remaining <= segLengths[i]) {
-          const t = segLengths[i] > 0 ? remaining / segLengths[i] : 0
-          const seg = segments[i]
-          px = (seg.start.x + (seg.end.x - seg.start.x) * t) * CELL_SIZE + CELL_SIZE / 2
-          py = (seg.start.y + (seg.end.y - seg.start.y) * t) * CELL_SIZE + CELL_SIZE / 2
-          found = true
-          break
-        }
-        remaining -= segLengths[i]
+      // Build cumulative lengths along this stream (in pixels)
+      const segLengths: number[] = []
+      let totalLength = 0
+      for (const seg of stream.segments) {
+        const dx = (seg.end.x - seg.start.x) * CELL_SIZE
+        const dy = (seg.end.y - seg.start.y) * CELL_SIZE
+        const len = Math.sqrt(dx * dx + dy * dy)
+        segLengths.push(len)
+        totalLength += len
       }
 
-      if (!found) continue
+      if (totalLength === 0) continue
 
-      this.ctx.beginPath()
-      this.ctx.arc(px, py, LASER_BLIP.radius, 0, Math.PI * 2)
-      this.ctx.fill()
+      const spacingPx = LASER_BLIP.spacing * CELL_SIZE
+      const globalTimePx = time * LASER_BLIP.speed * CELL_SIZE
+      const globalOffsetPx = (stream.globalOffset ?? 0) * CELL_SIZE
+      if (globalTimePx < globalOffsetPx) continue  // leading blip hasn't reached this stream yet
+      const offsetPx = (globalTimePx - globalOffsetPx) % spacingPx
+
+      this.ctx.fillStyle = colors.blip
+      this.ctx.shadowColor = colors.blip
+
+      for (let d = offsetPx; d <= totalLength; d += spacingPx) {
+        let remaining = d
+        let px = 0
+        let py = 0
+        let found = false
+
+        for (let i = 0; i < stream.segments.length; i++) {
+          if (remaining <= segLengths[i]) {
+            const t = segLengths[i] > 0 ? remaining / segLengths[i] : 0
+            const seg = stream.segments[i]
+            px = (seg.start.x + (seg.end.x - seg.start.x) * t) * CELL_SIZE + CELL_SIZE / 2
+            py = (seg.start.y + (seg.end.y - seg.start.y) * t) * CELL_SIZE + CELL_SIZE / 2
+            found = true
+            break
+          }
+          remaining -= segLengths[i]
+        }
+
+        if (!found) continue
+
+        this.ctx.beginPath()
+        this.ctx.arc(px, py, LASER_BLIP.radius, 0, Math.PI * 2)
+        this.ctx.fill()
+      }
+    }
+
+    this.ctx.restore()
+  }
+
+  drawCollisionFlash(x: number, y: number): void {
+    const cx = x * CELL_SIZE + CELL_SIZE / 2
+    const cy = y * CELL_SIZE + CELL_SIZE / 2
+
+    this.ctx.save()
+
+    // Outer glow
+    this.ctx.shadowBlur = 24
+    this.ctx.shadowColor = '#ffffff'
+    this.ctx.fillStyle = 'rgba(255, 230, 80, 0.45)'
+    this.ctx.beginPath()
+    this.ctx.arc(cx, cy, CELL_SIZE * 0.32, 0, Math.PI * 2)
+    this.ctx.fill()
+
+    // Bright core
+    this.ctx.shadowBlur = 16
+    this.ctx.fillStyle = '#ffffff'
+    this.ctx.beginPath()
+    this.ctx.arc(cx, cy, 5, 0, Math.PI * 2)
+    this.ctx.fill()
+
+    this.ctx.restore()
+  }
+
+  drawCollisionSparks(x: number, y: number, time: number): void {
+    const cx = x * CELL_SIZE + CELL_SIZE / 2
+    const cy = y * CELL_SIZE + CELL_SIZE / 2
+    const numSparks = 8
+    const maxRadius = CELL_SIZE * 0.72
+    const cycleDuration = 0.45 // seconds per wave
+
+    this.ctx.save()
+    this.ctx.shadowBlur = 8
+    this.ctx.shadowColor = '#ffee66'
+
+    // Two staggered waves for continuous animation
+    for (let wave = 0; wave < 2; wave++) {
+      const phase = ((time + wave * cycleDuration * 0.5) % cycleDuration) / cycleDuration
+      const r = phase * maxRadius
+      const alpha = (1 - phase) * 0.9
+
+      this.ctx.fillStyle = `rgba(255, 238, 100, ${alpha})`
+      for (let i = 0; i < numSparks; i++) {
+        const angle = (i / numSparks) * Math.PI * 2
+        this.ctx.beginPath()
+        this.ctx.arc(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r, 2.5, 0, Math.PI * 2)
+        this.ctx.fill()
+      }
     }
 
     this.ctx.restore()
@@ -285,7 +399,11 @@ export class Renderer {
 
     // Draw obstacles
     for (const obstacle of level.obstacles) {
-      this.drawObstacle(obstacle.x, obstacle.y)
+      if (obstacle.type === 'splitter') {
+        this.drawSplitter(obstacle.x, obstacle.y, obstacle.orientation ?? 'right')
+      } else {
+        this.drawObstacle(obstacle.x, obstacle.y)
+      }
     }
 
     // Draw laser source
@@ -297,9 +415,15 @@ export class Renderer {
 
     // Draw laser path
     if (laserPath) {
-      this.drawLaserPath(laserPath.segments)
+      this.drawLaserPath(laserPath.streams)
       if (time != null) {
-        this.drawLaserBlips(laserPath.segments, time)
+        this.drawLaserBlips(laserPath.streams, time)
+      }
+      for (const cp of laserPath.collisionPoints) {
+        this.drawCollisionFlash(cp.x, cp.y)
+        if (time != null) {
+          this.drawCollisionSparks(cp.x, cp.y, time)
+        }
       }
     }
 
