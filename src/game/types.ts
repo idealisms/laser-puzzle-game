@@ -37,6 +37,7 @@ export interface LaserStream {
   segments: LaserSegment[]
   generation: number  // 0 = primary, 1 = first split, 2 = split-of-split, etc.
   colorIndex?: number  // rendering color index; 0 = primary color, each new branch increments
+  globalOffset?: number  // total steps from laser source before this stream started (for blip sync)
 }
 
 export interface LaserPath {

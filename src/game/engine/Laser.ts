@@ -269,7 +269,7 @@ export function calculateLaserPath(
       }
     }
 
-    streams.push({ segments: streamSegments, generation, colorIndex })
+    streams.push({ segments: streamSegments, generation, colorIndex, globalOffset })
     streamOffsets.push(globalOffset)
   }
 

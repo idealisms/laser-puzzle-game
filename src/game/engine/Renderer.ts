@@ -254,7 +254,10 @@ export class Renderer {
       if (totalLength === 0) continue
 
       const spacingPx = LASER_BLIP.spacing * CELL_SIZE
-      const offsetPx = (time * LASER_BLIP.speed * CELL_SIZE) % spacingPx
+      const globalTimePx = time * LASER_BLIP.speed * CELL_SIZE
+      const globalOffsetPx = (stream.globalOffset ?? 0) * CELL_SIZE
+      if (globalTimePx < globalOffsetPx) continue  // leading blip hasn't reached this stream yet
+      const offsetPx = (globalTimePx - globalOffsetPx) % spacingPx
 
       this.ctx.fillStyle = colors.blip
       this.ctx.shadowColor = colors.blip
