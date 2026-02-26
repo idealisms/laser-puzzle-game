@@ -243,18 +243,31 @@ class TestCollisionDetection:
 class TestResolveCollisionsDirect:
     """Unit tests for the resolve_collisions helper directly."""
 
-    def test_no_collision_different_directions(self):
-        # Two streams going in the same direction → no collision.
+    def test_no_collision_streams_on_different_rows(self):
+        # Two streams going in the same direction on different rows — they never
+        # share a cell, so no collision regardless of the new direction-agnostic rule.
         streams = [
             [(1, 0, Direction.RIGHT), (2, 0, Direction.RIGHT)],
             [(1, 1, Direction.RIGHT), (2, 1, Direction.RIGHT)],
         ]
         offsets = [0, 0]
-        mirror_set = set()
-        positions = resolve_collisions(streams, offsets, mirror_set)
+        positions = resolve_collisions(streams, offsets)
         assert positions == []
         assert len(streams[0]) == 2
         assert len(streams[1]) == 2
+
+    def test_same_direction_same_cell_is_collision(self):
+        # Two streams going RIGHT along the same row share every cell simultaneously.
+        # First shared cell is (1,0) at gTime=1; both truncated to 1 step.
+        streams = [
+            [(1, 0, Direction.RIGHT), (2, 0, Direction.RIGHT)],
+            [(1, 0, Direction.RIGHT), (2, 0, Direction.RIGHT)],
+        ]
+        offsets = [0, 0]
+        positions = resolve_collisions(streams, offsets)
+        assert (1, 0) in positions
+        assert len(streams[0]) == 1
+        assert len(streams[1]) == 1
 
     def test_same_cell_same_time_truncates(self):
         # Stream 0 arrives at (5,3) going RIGHT at gTime=3 (offset=0, segi=2).
@@ -265,22 +278,37 @@ class TestResolveCollisionsDirect:
             [(7, 3, Direction.LEFT),  (6, 3, Direction.LEFT),  (5, 3, Direction.LEFT)],
         ]
         offsets = [0, 0]
-        mirror_set = set()
-        positions = resolve_collisions(streams, offsets, mirror_set)
+        positions = resolve_collisions(streams, offsets)
         assert (5, 3) in positions
         assert len(streams[0]) == 3  # truncated to segi=2 → keeps 3 steps
         assert len(streams[1]) == 3
 
-    def test_same_cell_at_mirror_no_collision(self):
-        # Collision at a mirror cell is ignored (mirrors handle each beam independently).
+    def test_cell_at_mirror_is_collision(self):
+        # Previously mirror cells were excluded; now any same-cell same-time pair
+        # collides regardless of cell content.
         streams = [
             [(5, 3, Direction.RIGHT)],
             [(5, 3, Direction.LEFT)],
         ]
         offsets = [0, 0]
-        mirror_set = {(5, 3)}
-        positions = resolve_collisions(streams, offsets, mirror_set)
-        assert positions == []
+        positions = resolve_collisions(streams, offsets)
+        assert (5, 3) in positions
+        assert len(streams[0]) == 1
+        assert len(streams[1]) == 1
+
+    def test_perpendicular_same_cell_is_collision(self):
+        # Stream 0 arrives at (5,3) going RIGHT at gTime=3.
+        # Stream 1 arrives at (5,3) going DOWN at gTime=3.
+        # Perpendicular, not head-on — but same cell same time → collision.
+        streams = [
+            [(3, 3, Direction.RIGHT), (4, 3, Direction.RIGHT), (5, 3, Direction.RIGHT)],
+            [(5, 1, Direction.DOWN),  (5, 2, Direction.DOWN),  (5, 3, Direction.DOWN)],
+        ]
+        offsets = [0, 0]
+        positions = resolve_collisions(streams, offsets)
+        assert (5, 3) in positions
+        assert len(streams[0]) == 3
+        assert len(streams[1]) == 3
 
     def test_crossing_truncates(self):
         # Stream 0 arrives at (4,3) going RIGHT at gTime=1 (offset=0, segi=0).
@@ -292,8 +320,7 @@ class TestResolveCollisionsDirect:
             [(5, 3, Direction.LEFT)],
         ]
         offsets = [0, 0]
-        mirror_set = set()
-        positions = resolve_collisions(streams, offsets, mirror_set)
+        positions = resolve_collisions(streams, offsets)
         assert (4.5, 3.0) in positions
         assert len(streams[0]) == 1
         assert len(streams[1]) == 1
@@ -308,11 +335,9 @@ class TestResolveCollisionsDirect:
             [(5,0,Direction.LEFT), (4,0,Direction.LEFT), (3,0,Direction.LEFT), (2,0,Direction.LEFT), (1,0,Direction.LEFT)],
         ]
         offsets = [0, 0]
-        mirror_set = set()
-        resolve_collisions(streams, offsets, mirror_set)
-        # Same-cell gTime=1: stream0 at (1,0) RIGHT, stream1 at (5,0) LEFT — different cells, no hit.
-        # Same-cell gTime=1: check (1,0,1) arrivals: only stream0. (5,0,1): only stream1.
-        # At gTime=3: stream0 at (3,0) RIGHT, stream1 at (3,0) LEFT → collision!
+        resolve_collisions(streams, offsets)
+        # At gTime=1: stream0 at (1,0), stream1 at (5,0) — different cells, no hit.
+        # At gTime=3: stream0 at (3,0), stream1 at (3,0) → collision!
         # Both truncated to segi=2 (3 steps).
         assert len(streams[0]) == 3
         assert len(streams[1]) == 3
@@ -326,8 +351,7 @@ class TestResolveCollisionsDirect:
             [(7,0,Direction.LEFT), (6,0,Direction.LEFT), (5,0,Direction.LEFT)],
         ]
         offsets = [0, 2]
-        mirror_set = set()
-        positions = resolve_collisions(streams, offsets, mirror_set)
+        positions = resolve_collisions(streams, offsets)
         assert (5, 0) in positions
         assert len(streams[0]) == 5   # truncated to segi=4
         assert len(streams[1]) == 3   # truncated to segi=2

@@ -71,14 +71,15 @@ def get_splitter_action(laser_dir: Direction, orientation: str) -> str:
 def resolve_collisions(
     streams: list[list[tuple]],
     stream_offsets: list[int],
-    mirror_set: set[tuple[int, int]],
 ) -> list[tuple]:
     """
-    Detect head-on laser beam collisions and truncate streams in place.
+    Detect laser beam collisions and truncate streams in place.
 
     Matches the JS resolveCollisions behaviour:
       1. Same-cell same-time: beams from different streams arrive at the same
-         non-mirror cell from opposite directions at the same global time.
+         cell at the same global time, regardless of direction or cell content.
+         This covers head-on, perpendicular, and same-direction beams — any two
+         beams sharing the same point in space and time count as a collision.
       2. Crossing: at the same global time, beam A is at cell P heading toward Q
          and beam B is at Q heading toward P (adjacent cells, opposite directions).
 
@@ -93,7 +94,6 @@ def resolve_collisions(
     Args:
         streams: list of step lists; mutated in place on truncation
         stream_offsets: global offset for each stream
-        mirror_set: (x, y) cells containing mirrors (collisions skipped there)
 
     Returns:
         list of collision positions as (x, y) or (x+0.5, y+0.5) tuples
@@ -118,17 +118,16 @@ def resolve_collisions(
         if key not in pair_collisions or g_time < pair_collisions[key][0]:
             pair_collisions[key] = (g_time, pos, (a_si, a_segi), (b_si, b_segi))
 
-    # 1. Same-cell, same-time, opposite directions (mirror cells excluded)
+    # 1. Same-cell same-time: any two beams from different streams at the same cell at
+    #    the same global time — regardless of direction or whether a mirror is present.
     for (x, y, g_time), arrivals in by_cell_time.items():
         if len(arrivals) < 2:
-            continue
-        if (x, y) in mirror_set:
             continue
         for i in range(len(arrivals)):
             for j in range(i + 1, len(arrivals)):
                 a_si, a_segi, a_dir = arrivals[i]
                 b_si, b_segi, b_dir = arrivals[j]
-                if a_si != b_si and a_dir == opposite_direction(b_dir):
+                if a_si != b_si:
                     try_collision(g_time, (x, y), a_si, a_segi, b_si, b_segi)
 
     # 2. Crossing: at same g_time, A at P heading toward Q, B at Q heading toward P
@@ -268,9 +267,8 @@ def simulate_laser(
         streams.append(stream_steps)
         stream_offsets.append(global_offset)
 
-    # Detect and truncate head-on collisions (matches JS resolveCollisions)
-    mirror_set_xy = set(mirror_map.keys())
-    resolve_collisions(streams, stream_offsets, mirror_set_xy)
+    # Detect and truncate beam collisions (matches JS resolveCollisions)
+    resolve_collisions(streams, stream_offsets)
 
     # Total length = sum of all stream lengths after collision truncation
     total_length = sum(len(s) for s in streams)
@@ -287,9 +285,13 @@ def simulate_laser(
                 path_dir = incoming_dir
             path.append((nx, ny, path_dir))
 
+    # all_cells: every cell visited across ALL streams (used for candidate generation)
+    all_cells = {(nx, ny) for stream in streams for nx, ny, _ in stream}
+
     return {
         'length': total_length,
         'path': path,
+        'all_cells': all_cells,
         'termination_reason': termination_reason,
     }
 
@@ -303,6 +305,7 @@ def simulate_incremental(
     new_mirror: tuple[int, int, str],
     max_length: int = 1000,
     splitter_map: dict[tuple[int, int], str] | None = None,
+    existing_all_cells: set[tuple[int, int]] | None = None,
 ) -> dict:
     """
     Simulate adding a single new mirror to an existing configuration.
@@ -317,9 +320,10 @@ def simulate_incremental(
         existing_path: Path from simulating existing_mirrors
         existing_length: Length from simulating existing_mirrors
         new_mirror: The new mirror to add (x, y, type)
+        existing_all_cells: All cells visited across all streams (for candidate gen)
 
     Returns:
-        dict with 'length', 'path', 'termination_reason'
+        dict with 'length', 'path', 'all_cells', 'termination_reason'
     """
     if splitter_map is None:
         splitter_map = {(x, y): orientation for x, y, orientation in getattr(config, 'splitters', [])}
@@ -333,6 +337,10 @@ def simulate_incremental(
             obstacle_set=obstacle_set,
             splitter_map=splitter_map,
         )
+
+    # For unchanged returns, fall back to computing from path if not provided
+    _existing_all_cells = existing_all_cells if existing_all_cells is not None \
+        else {(x, y) for x, y, _ in existing_path}
 
     mx, my, mtype = new_mirror
 
@@ -348,6 +356,7 @@ def simulate_incremental(
         return {
             'length': existing_length,
             'path': existing_path,
+            'all_cells': _existing_all_cells,
             'termination_reason': 'unchanged',
         }
 
@@ -357,6 +366,7 @@ def simulate_incremental(
         return {
             'length': existing_length,
             'path': existing_path,
+            'all_cells': _existing_all_cells,
             'termination_reason': 'unchanged',
         }
 
@@ -373,6 +383,7 @@ def simulate_incremental(
         return {
             'length': existing_length,
             'path': existing_path,
+            'all_cells': _existing_all_cells,
             'termination_reason': 'unchanged',
         }
 
@@ -404,6 +415,7 @@ def simulate_incremental(
             return {
                 'length': length,
                 'path': new_path,
+                'all_cells': {(x, y) for x, y, _ in new_path},
                 'termination_reason': 'edge',
             }
 
@@ -413,6 +425,7 @@ def simulate_incremental(
             return {
                 'length': length,
                 'path': new_path,
+                'all_cells': {(x, y) for x, y, _ in new_path},
                 'termination_reason': 'obstacle',
             }
 
@@ -431,6 +444,7 @@ def simulate_incremental(
             return {
                 'length': length,
                 'path': new_path,
+                'all_cells': {(x, y) for x, y, _ in new_path},
                 'termination_reason': 'loop',
             }
         visited.add(state)
@@ -439,6 +453,7 @@ def simulate_incremental(
     return {
         'length': length,
         'path': new_path,
+        'all_cells': {(x, y) for x, y, _ in new_path},
         'termination_reason': 'max_length',
     }
 
@@ -455,19 +470,17 @@ def get_path_cells(path: list[tuple[int, int, Direction]]) -> set[tuple[int, int
 
 
 def get_candidate_positions(
-    path: list[tuple[int, int, Direction]],
+    all_cells: set[tuple[int, int]],
     config: PuzzleConfig,
     used_positions: set[tuple[int, int]],
     invalid_positions: set[tuple[int, int]],
 ) -> list[tuple[int, int]]:
     """
-    Get candidate positions for mirror placement based on current path.
-    Only returns cells on the path - mirrors not on the path have no effect.
+    Get candidate positions for mirror placement based on all beam cells.
+    Only returns cells on any beam (primary or sub-beams) — mirrors elsewhere have no effect.
     """
-    path_cells = get_path_cells(path)
-
-    # Only consider cells on the path (mirrors elsewhere have no effect)
-    candidates = path_cells - invalid_positions - used_positions
+    # Only consider cells on any beam (mirrors elsewhere have no effect)
+    candidates = all_cells - invalid_positions - used_positions
 
     return list(candidates)
 
@@ -512,11 +525,12 @@ def beam_search_solver(
     initial_result = simulate_laser(config, [], obstacle_set=obstacle_set, splitter_map=splitter_map)
     initial_path = initial_result['path']
     initial_length = initial_result['length']
+    initial_all_cells = initial_result['all_cells']
 
     # Beam search
     for num_mirrors in range(1, config.num_mirrors + 1):
         # Start with empty configuration and its path
-        candidates = [{'mirrors': [], 'score': initial_length, 'path': initial_path}]
+        candidates = [{'mirrors': [], 'score': initial_length, 'path': initial_path, 'all_cells': initial_all_cells}]
 
         for depth in range(num_mirrors):
             next_candidates = []
@@ -527,7 +541,7 @@ def beam_search_solver(
                 # Get positions to consider
                 if use_path_pruning:
                     positions = get_candidate_positions(
-                        candidate['path'], config, used_positions, invalid_positions
+                        candidate['all_cells'], config, used_positions, invalid_positions
                     )
                 else:
                     positions = [p for p in valid_positions if p not in used_positions]
@@ -546,6 +560,7 @@ def beam_search_solver(
                             candidate['score'],
                             new_mirror,
                             splitter_map=splitter_map,
+                            existing_all_cells=candidate['all_cells'],
                         )
 
                         new_mirrors = candidate['mirrors'] + [new_mirror]
@@ -553,6 +568,7 @@ def beam_search_solver(
                             'mirrors': new_mirrors,
                             'score': result['length'],
                             'path': result['path'],
+                            'all_cells': result['all_cells'],
                         })
 
                         if result['length'] > best_score:

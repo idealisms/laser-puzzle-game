@@ -64,7 +64,7 @@
     }
   ],
   "mirrorsAvailable": 6,
-  "optimalScore": 147,
+  "optimalScore": 117,
   "optimalSolution": [
     {
       "x": 7,
@@ -87,14 +87,14 @@
       "type": "\\"
     },
     {
-      "x": 7,
-      "y": 1,
+      "x": 14,
+      "y": 18,
       "type": "/"
     },
     {
-      "x": 14,
-      "y": 1,
-      "type": "/"
+      "x": 1,
+      "y": 18,
+      "type": "\\"
     }
   ]
 }

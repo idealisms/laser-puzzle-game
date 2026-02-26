@@ -31,7 +31,7 @@ describe('resolveCollisions', () => {
       { segments: [seg(0,7,1,7,'right'), seg(1,7,2,7,'right')], generation: 1 },
     ]
     const offsets = [0, 0]
-    const result = resolveCollisions(streams, offsets, [])
+    const result = resolveCollisions(streams, offsets)
     expect(result).toHaveLength(0)
   })
 
@@ -43,7 +43,7 @@ describe('resolveCollisions', () => {
       { segments: [seg(9,5,8,5,'left'),  seg(8,5,7,5,'left'),  seg(7,5,6,5,'left'),  seg(6,5,5,5,'left'),  seg(5,5,4,5,'left')],  generation: 1 },
     ]
     const offsets = [0, 0]
-    const result = resolveCollisions(streams, offsets, [])
+    const result = resolveCollisions(streams, offsets)
     expect(result).toHaveLength(1)
     expect(result[0]).toEqual({ x: 5, y: 5 })
     // Both streams truncated to end at (5,5)
@@ -62,7 +62,7 @@ describe('resolveCollisions', () => {
       { segments: [seg(10,5,9,5,'left'), seg(9,5,8,5,'left'),  seg(8,5,7,5,'left'),  seg(7,5,6,5,'left'),  seg(6,5,5,5,'left')],  generation: 1 },
     ]
     const offsets = [0, 0]
-    const result = resolveCollisions(streams, offsets, [])
+    const result = resolveCollisions(streams, offsets)
     expect(result).toHaveLength(1)
     expect(result[0]).toEqual({ x: 5.5, y: 5 })  // midpoint between (5,5) and (6,5)
     // Each stream truncated at segi=3 (the segment before the crossing cell)
@@ -70,25 +70,48 @@ describe('resolveCollisions', () => {
     expect(streams[1].segments).toHaveLength(4)
   })
 
-  it('no collision when same-direction beams pass through the same cell', () => {
-    // Both going right through (5,5) — not a head-on collision
+  it('same-direction beams at the same cell and time count as a collision', () => {
+    // Both going right along identical paths — same-direction beams share the same
+    // point in space at the same time, which counts as a collision under the new rule.
+    // First shared cell is (4,5) at gTime=1; both streams truncated there.
     const streams: LaserStream[] = [
       { segments: [seg(3,5,4,5,'right'), seg(4,5,5,5,'right'), seg(5,5,6,5,'right')], generation: 0 },
       { segments: [seg(3,5,4,5,'right'), seg(4,5,5,5,'right'), seg(5,5,6,5,'right')], generation: 1 },
     ]
-    const result = resolveCollisions(streams, [0, 0], [])
-    expect(result).toHaveLength(0)
+    const result = resolveCollisions(streams, [0, 0])
+    expect(result).toHaveLength(1)
+    expect(result[0]).toEqual({ x: 4, y: 5 })
+    expect(streams[0].segments).toHaveLength(1)
+    expect(streams[1].segments).toHaveLength(1)
   })
 
-  it('no collision at mirror cells even when beams arrive from opposite directions at same time', () => {
-    // A mirror at (5,5); both beams arrive there going opposite directions at gTime=5
-    const mirrorAtFiveFive: Mirror[] = [mirror(5, 5, '/')]
+  it('collision at mirror cell: beams at the same cell simultaneously collide even when a mirror is present', () => {
+    // Previously mirror cells were excluded; now any same-cell same-time pair collides.
+    // A mirror at (5,5); both beams arrive there at gTime=4 from opposite directions.
     const streams: LaserStream[] = [
       { segments: [seg(1,5,2,5,'right'), seg(2,5,3,5,'right'), seg(3,5,4,5,'right'), seg(4,5,5,5,'right')], generation: 0 },
       { segments: [seg(9,5,8,5,'left'),  seg(8,5,7,5,'left'),  seg(7,5,6,5,'left'),  seg(6,5,5,5,'left')],  generation: 1 },
     ]
-    const result = resolveCollisions(streams, [0, 0], mirrorAtFiveFive)
-    expect(result).toHaveLength(0)
+    const result = resolveCollisions(streams, [0, 0])
+    expect(result).toHaveLength(1)
+    expect(result[0]).toEqual({ x: 5, y: 5 })
+    expect(streams[0].segments).toHaveLength(4)
+    expect(streams[1].segments).toHaveLength(4)
+  })
+
+  it('perpendicular beams at the same cell and time count as a collision', () => {
+    // Stream 0 goes right, arriving at (5,5) at gTime=5 (segi=4).
+    // Stream 1 goes down, arriving at (5,5) at gTime=5 (segi=4).
+    // Perpendicular, not head-on — but same cell same time → collision.
+    const streams: LaserStream[] = [
+      { segments: [seg(0,5,1,5,'right'), seg(1,5,2,5,'right'), seg(2,5,3,5,'right'), seg(3,5,4,5,'right'), seg(4,5,5,5,'right')], generation: 0 },
+      { segments: [seg(5,0,5,1,'down'),  seg(5,1,5,2,'down'),  seg(5,2,5,3,'down'),  seg(5,3,5,4,'down'),  seg(5,4,5,5,'down')],  generation: 1 },
+    ]
+    const result = resolveCollisions(streams, [0, 0])
+    expect(result).toHaveLength(1)
+    expect(result[0]).toEqual({ x: 5, y: 5 })
+    expect(streams[0].segments).toHaveLength(5)
+    expect(streams[1].segments).toHaveLength(5)
   })
 
   it('same-cell at different times does not trigger collision', () => {
@@ -98,7 +121,7 @@ describe('resolveCollisions', () => {
       { segments: [seg(8,5,7,5,'left'), seg(7,5,6,5,'left'), seg(6,5,5,5,'left')], generation: 1 },
     ]
     // offsets: stream 0 offset=0 → (5,5) at gTime 4; stream 1 offset=5 → (5,5) at gTime 5+2+1=8
-    const result = resolveCollisions(streams, [0, 5], [])
+    const result = resolveCollisions(streams, [0, 5])
     expect(result).toHaveLength(0)
   })
 
@@ -129,7 +152,7 @@ describe('resolveCollisions', () => {
         generation: 1,
       },
     ]
-    const result = resolveCollisions(streams, [0, 0], [])
+    const result = resolveCollisions(streams, [0, 0])
     expect(result).toHaveLength(1)
   })
 })
