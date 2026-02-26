@@ -185,6 +185,7 @@ interface StackItem {
   startDir: Direction
   generation: number
   globalOffset: number  // total steps from the laser source before this stream started
+  colorIndex: number
 }
 
 export function calculateLaserPath(
@@ -198,13 +199,14 @@ export function calculateLaserPath(
   const visited = new Set<string>()
   let totalLength = 0
   let terminationReason: LaserPath['terminationReason'] = 'max-length'
+  let nextColorIndex = 1
 
   const stack: StackItem[] = [
-    { startPos: { x: laserConfig.x, y: laserConfig.y }, startDir: laserConfig.direction, generation: 0, globalOffset: 0 },
+    { startPos: { x: laserConfig.x, y: laserConfig.y }, startDir: laserConfig.direction, generation: 0, globalOffset: 0, colorIndex: 0 },
   ]
 
   while (stack.length > 0) {
-    const { startPos, startDir, generation, globalOffset } = stack.pop()!
+    const { startPos, startDir, generation, globalOffset, colorIndex } = stack.pop()!
     const streamSegments: LaserSegment[] = []
     let pos: Position = { ...startPos }
     let dir: Direction = startDir
@@ -241,10 +243,11 @@ export function calculateLaserPath(
           break
         }
         if (action.kind === 'split') {
-          // Sub-streams inherit the global time at the split point
+          // Sub-streams inherit the global time at the split point.
+          // One child keeps the parent's color; the other gets a fresh color.
           const subOffset = globalOffset + streamSegments.length
-          stack.push({ startPos: { ...nextPos }, startDir: action.dirs[0], generation: generation + 1, globalOffset: subOffset })
-          stack.push({ startPos: { ...nextPos }, startDir: action.dirs[1], generation: generation + 1, globalOffset: subOffset })
+          stack.push({ startPos: { ...nextPos }, startDir: action.dirs[0], generation: generation + 1, globalOffset: subOffset, colorIndex: nextColorIndex++ })
+          stack.push({ startPos: { ...nextPos }, startDir: action.dirs[1], generation: generation + 1, globalOffset: subOffset, colorIndex })
           break
         }
         // reflect: continue from splitter cell in new direction
@@ -266,7 +269,7 @@ export function calculateLaserPath(
       }
     }
 
-    streams.push({ segments: streamSegments, generation })
+    streams.push({ segments: streamSegments, generation, colorIndex })
     streamOffsets.push(globalOffset)
   }
 

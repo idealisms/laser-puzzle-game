@@ -219,13 +219,13 @@ export class Renderer {
 
     // Glow pass (all streams)
     for (const stream of streams) {
-      const colors = streamColors[Math.min(stream.generation, streamColors.length - 1)]
+      const colors = streamColors[Math.min(stream.colorIndex ?? 0, streamColors.length - 1)]
       this.drawStreamPolyline(stream.segments, colors.glow, 8)
     }
 
     // Beam pass (all streams)
     for (const stream of streams) {
-      const colors = streamColors[Math.min(stream.generation, streamColors.length - 1)]
+      const colors = streamColors[Math.min(stream.colorIndex ?? 0, streamColors.length - 1)]
       this.drawStreamPolyline(stream.segments, colors.beam, 3)
     }
   }
@@ -238,7 +238,7 @@ export class Renderer {
 
     for (const stream of streams) {
       if (stream.segments.length === 0) continue
-      const colors = streamColors[Math.min(stream.generation, streamColors.length - 1)]
+      const colors = streamColors[Math.min(stream.colorIndex ?? 0, streamColors.length - 1)]
 
       // Build cumulative lengths along this stream (in pixels)
       const segLengths: number[] = []

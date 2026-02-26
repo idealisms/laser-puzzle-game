@@ -36,6 +36,7 @@ export interface LaserSegment {
 export interface LaserStream {
   segments: LaserSegment[]
   generation: number  // 0 = primary, 1 = first split, 2 = split-of-split, etc.
+  colorIndex?: number  // rendering color index; 0 = primary color, each new branch increments
 }
 
 export interface LaserPath {
