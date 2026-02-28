@@ -108,28 +108,34 @@ PUZZLES: dict[str, PuzzleConfig] = {
         splitters=[(5, 10, 'right'), (5, 4, 'up')],
     ),
     "2026-03-05": PuzzleConfig(
-        name="Starfield",
+        name="Solar Flare",
         width=GRID_WIDTH,
         height=GRID_HEIGHT,
         laser_x=0,
         laser_y=10,
         laser_dir=Direction.RIGHT,
         obstacles=[
-            # Corner decorations
-            (1, 1), (2, 1), (1, 2),
-            (12, 1), (13, 1), (13, 2),
-            (1, 17), (1, 18), (2, 18),
-            (12, 18), (13, 18), (13, 17),
-            # Horizontal barriers (left and right of centre, don't block x=7 vertical beams)
-            (2, 7), (3, 7), (4, 7), (5, 7),
-            (9, 7), (10, 7), (11, 7), (12, 7),
-            (2, 13), (3, 13), (4, 13), (5, 13),
-            (9, 13), (10, 13), (11, 13), (12, 13),
+            # Corona arc (the sun's crown, above the splitter)
+            (5, 1), (6, 1), (7, 1), (8, 1), (9, 1), (10, 1),
+            (5, 2), (10, 2),
+            (5, 3), (10, 3),
+            # Outer flare rays
+            (3, 0), (4, 0),
+            (11, 0), (12, 0),
+            (2, 2), (3, 2),
+            (12, 2), (13, 2),
+            (1, 5), (2, 5),
+            (12, 5), (13, 5),
+            # Lower barriers
+            (3, 15), (4, 15), (5, 15),
+            (9, 15), (10, 15), (11, 15),
+            (1, 18), (2, 18), (3, 18),
+            (11, 18), (12, 18), (13, 18),
         ],
         num_mirrors=9,
-        # Star pattern: center 'right' splits UP/DOWN;
-        # upper 'up' splits LEFT/RIGHT; lower 'down' splits LEFT/RIGHT
-        splitters=[(7, 10, 'right'), (7, 4, 'up'), (7, 16, 'down')],
+        # Splitter is in upper area (row 4), NOT in the laser's initial row-10 path.
+        # Player must redirect the beam upward to reach it.
+        splitters=[(8, 4, 'up')],
     ),
     # === Jan 22-28, 2026 ===
     "2026-01-22": PuzzleConfig(
