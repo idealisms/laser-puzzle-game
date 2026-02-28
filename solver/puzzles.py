@@ -1146,4 +1146,28 @@ PUZZLES: dict[str, PuzzleConfig] = {
         ],
         num_mirrors=9,
     ),
+    "2026-03-06": PuzzleConfig(
+        name="Slingshot",
+        width=GRID_WIDTH,
+        height=GRID_HEIGHT,
+        laser_x=7,
+        laser_y=0,
+        laser_dir=Direction.DOWN,
+        obstacles=[
+            # Symmetric flanking wings
+            (3, 4), (4, 4), (5, 4),
+            (9, 4), (10, 4), (11, 4),
+            (3, 15), (4, 15), (5, 15),
+            (9, 15), (10, 15), (11, 15),
+            # Corner accent clusters
+            (1, 2), (2, 2), (1, 3),
+            (12, 2), (13, 2), (13, 3),
+            (1, 16), (1, 17), (2, 17),
+            (12, 17), (13, 17), (13, 16),
+        ],
+        num_mirrors=9,
+        # Laser goes DOWN, hitting the 'right' splitter from above → reflects LEFT (side hit).
+        # To split (UP+DOWN), player must redirect the beam to arrive going RIGHT.
+        splitters=[(7, 10, 'right')],
+    ),
 }
