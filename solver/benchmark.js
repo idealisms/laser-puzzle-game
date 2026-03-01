@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /**
- * Benchmark: Node.js parallel solver vs pypy3 Python solver.
+ * Benchmark: Node.js single-threaded vs parallel solver.
  *
  * Runs two representative puzzles:
  *   - 2026-01-22  Chamber Grid  (10 mirrors, no splitters)
@@ -11,7 +11,7 @@
  *   node benchmark.js [--runs N] [--beam-width W] [--workers N]
  */
 
-const { execSync, spawnSync } = require('child_process');
+const { spawnSync } = require('child_process');
 const path = require('path');
 const os = require('os');
 
@@ -62,13 +62,11 @@ function bench(label, cmd, runs, cwd) {
   process.stdout.write(`  ${label}`);
   const times = [];
   let score = null;
-  let lastOutput = '';
 
   for (let i = 0; i < runs; i++) {
     try {
       const { stdout, elapsedMs } = runCommand(cmd, cwd);
       times.push(elapsedMs);
-      lastOutput = stdout;
       if (score === null) score = extractScore(stdout);
       process.stdout.write('.');
     } catch (err) {
@@ -91,16 +89,8 @@ async function main() {
   console.log(`${'='.repeat(60)}`);
   console.log(`Runs per configuration: ${opts.runs}`);
   console.log(`Beam width: ${opts.beamWidth}`);
-  console.log(`JS workers: ${opts.workers} (of ${os.cpus().length} CPUs)`);
+  console.log(`Workers: ${opts.workers} (of ${os.cpus().length} CPUs)`);
   console.log();
-
-  // Check for pypy3
-  const hasPypy = (() => {
-    try { execSync('pypy3 --version', { stdio: 'ignore' }); return true; }
-    catch { return false; }
-  })();
-
-  if (!hasPypy) console.log('⚠  pypy3 not found — skipping Python benchmarks\n');
 
   const beamArg = String(opts.beamWidth);
 
@@ -112,17 +102,6 @@ async function main() {
     console.log();
 
     const row = { date, label };
-
-    // ── Python / pypy3 ──────────────────────────────────────────────────────
-    if (hasPypy) {
-      const r = bench(
-        'pypy3 solve.py (single-threaded)',
-        ['pypy3', 'solve.py', date, '--quiet', '--beam-width', beamArg],
-        opts.runs,
-        SOLVER_DIR,
-      );
-      row.pypy = r;
-    }
 
     // ── Node.js single-threaded (workers=1) ─────────────────────────────────
     {
@@ -157,7 +136,7 @@ async function main() {
 
   for (const row of summary) {
     console.log(`\n${row.label}`);
-    const base = row.pypy ? row.pypy.medianMs : (row.jsSingle ? row.jsSingle.medianMs : null);
+    const base = row.jsSingle ? row.jsSingle.medianMs : null;
 
     function fmtRow(name, r) {
       if (!r) return;
@@ -168,7 +147,6 @@ async function main() {
       );
     }
 
-    if (hasPypy) fmtRow('pypy3 solve.py', row.pypy);
     fmtRow('node solve.js (workers=1)', row.jsSingle);
     fmtRow(`node solve.js (workers=${opts.workers})`, row.jsParallel);
   }

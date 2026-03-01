@@ -110,7 +110,14 @@ function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, useP
 
 /**
  * Solve a puzzle config and return { score, mirrors }.
- * opts: { beamWidth, workers, noPrune }
+ *
+ * Parallelises across mirror-count depth levels: one worker thread per depth
+ * (1 through config.numMirrors), capped to `opts.workers` concurrent threads.
+ * The main thread picks the best { score, mirrors } across all depths.
+ *
+ * @param {object} config  Puzzle config from PUZZLES (puzzles.js).
+ * @param {object} opts    { beamWidth?: number, workers?: number, noPrune?: boolean }
+ * @returns {Promise<{ score: number, mirrors: Array }>}
  */
 async function solvePuzzle(config, opts = {}) {
   const {

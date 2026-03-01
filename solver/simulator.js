@@ -32,6 +32,14 @@ function getSplitDirections(dir) {
   return (dir === LEFT || dir === RIGHT) ? [UP, DOWN] : [LEFT, RIGHT];
 }
 
+/**
+ * Return 'split', 'wall', or 'reflect' for a laser hitting a directional splitter.
+ *
+ * - orientation: the direction a laser must travel to trigger a split
+ * - laser traveling in orientation direction       → 'split' (emits perpendicular beams)
+ * - laser traveling opposite to orientation        → 'wall'  (blocked)
+ * - laser traveling perpendicular to orientation   → 'reflect' back toward opposite(orientation)
+ */
 function getSplitterAction(laserDir, orientation) {
   const orientDir = dirFromString(orientation);
   if (laserDir === orientDir) return 'split';
@@ -40,9 +48,27 @@ function getSplitterAction(laserDir, orientation) {
 }
 
 /**
- * Detect and truncate beam collisions across multiple streams.
- * Matches the Python resolveCollisions behaviour exactly.
- * Mutates streams in place; returns array of collision positions.
+ * Detect laser beam collisions and truncate streams in place.
+ *
+ * Two collision types are detected:
+ *   1. Same-cell same-time: beams from different streams arrive at the same
+ *      cell at the same global time, regardless of direction or cell content.
+ *      This covers head-on, perpendicular, and same-direction beams — any two
+ *      beams sharing the same point in space and time count as a collision.
+ *   2. Crossing: at the same global time, beam A is at cell P heading toward Q
+ *      and beam B is at Q heading toward P (adjacent cells, opposite directions).
+ *
+ * Per stream-pair, only the earliest collision is kept.  Both affected streams
+ * are then truncated to include the collision step as the final step.
+ *
+ * Each step in a stream is [nx, ny, incomingDir] where:
+ *   - (nx, ny) is the cell reached
+ *   - incomingDir is the direction of travel used to reach that cell
+ *   - global time for step i in stream s with offset o is: o + i + 1
+ *
+ * @param {Array[]} streams       Step lists; mutated in place on truncation.
+ * @param {number[]} streamOffsets Global offset for each stream.
+ * @returns {Array}               Collision positions as [x,y] or [x+0.5,y+0.5].
  */
 function resolveCollisions(streams, streamOffsets) {
   // byCellTime: encoded(gTime,x,y) -> [{si,segi,x,y,gTime}]
@@ -127,13 +153,19 @@ function resolveCollisions(streams, streamOffsets) {
 
 /**
  * Simulate a full laser path from scratch.
- * Returns { length, path, allCells, terminationReason }.
  *
- * @param {object} config - Puzzle configuration
- * @param {Array}  mirrors - [[x,y,type], ...]
- * @param {number} maxLength
- * @param {Set|null} obstacleSet - Set of posKey integers (pre-computed or null)
- * @param {Map|null} splitterMap - Map of posKey -> orientation string (or null)
+ * Supports directional splitters and head-on beam collision detection.
+ * When a splitter is hit with a matching direction, two sub-beams are pushed
+ * onto a DFS stack and each simulated independently.  resolveCollisions() is
+ * then called to truncate any streams that meet head-on or at the same cell
+ * at the same global time, reducing the reported path length accordingly.
+ *
+ * @param {object}   config      Puzzle configuration.
+ * @param {Array}    mirrors     [[x, y, type], …]
+ * @param {number}   maxLength   Safety cap on total steps (default 1000).
+ * @param {Set|null} obstacleSet Pre-computed Set of posKey integers (computed if null).
+ * @param {Map|null} splitterMap Pre-computed Map of posKey → orientation (computed if null).
+ * @returns {{ length, path, allCells, terminationReason }}
  */
 function simulateLaser(config, mirrors, maxLength = 1000, obstacleSet = null, splitterMap = null) {
   const mirrorMap = new Map();
@@ -235,11 +267,25 @@ function simulateLaser(config, mirrors, maxLength = 1000, obstacleSet = null, sp
 }
 
 /**
- * Incremental simulation: add one mirror to an existing configuration.
- * If the mirror isn't on the existing path, returns the existing result unchanged.
- * Falls back to full simulateLaser when splitters are present.
+ * Simulate adding a single new mirror to an existing configuration.
  *
- * Returns { length, path, allCells, terminationReason }.
+ * Optimization: if the new mirror is not on the existing path, it has no
+ * effect and the existing result is returned unchanged.  If it is on the
+ * path, only the portion from the mirror position onward is re-simulated.
+ *
+ * Falls back to full simulateLaser when splitters are present
+ * (correctness takes priority over performance for splitter puzzles).
+ *
+ * @param {object}   config           Puzzle configuration.
+ * @param {Set}      obstacleSet      Pre-computed Set of posKey integers.
+ * @param {Array}    existingMirrors  Current mirror placements [[x,y,t], …].
+ * @param {Array}    existingPath     Path from simulating existingMirrors.
+ * @param {number}   existingLength   Length from simulating existingMirrors.
+ * @param {Array}    newMirror        The new mirror to add [x, y, type].
+ * @param {number}   maxLength        Safety cap (default 1000).
+ * @param {Map|null} splitterMap      Pre-computed splitter map (computed if null).
+ * @param {Set|null} existingAllCells All cells visited across all streams.
+ * @returns {{ length, path, allCells, terminationReason }}
  */
 function simulateIncremental(
   config, obstacleSet, existingMirrors, existingPath, existingLength,
@@ -346,7 +392,9 @@ function simulateIncremental(
 }
 
 /**
- * Return candidate [x,y] positions from allCells that aren't invalid or used.
+ * Get candidate [x,y] positions for mirror placement from all beam cells.
+ * Only returns cells on any beam (primary or sub-beams) that are not already
+ * occupied or otherwise invalid — mirrors placed elsewhere have no effect.
  */
 function getCandidatePositions(allCells, usedPositions, invalidPositions) {
   const positions = [];
@@ -360,6 +408,15 @@ function getCandidatePositions(allCells, usedPositions, invalidPositions) {
 /**
  * Single-threaded beam search for exactly `targetDepth` mirrors.
  * Mirrors the Python beam_search_solver inner loop.
+ *
+ * Optimisations (matching the Python implementation):
+ *   - obstacleSet and splitterMap are pre-computed once, not per-simulation.
+ *   - simulateIncremental: only re-simulates from the new mirror position.
+ *   - Path pruning (usePathPruning): only considers cells on/adjacent to the
+ *     current laser path, skipping positions that cannot affect the beam.
+ *
+ * Called by worker.js threads; solve.js parallelises across depth levels so
+ * each worker runs this function for a single mirror count independently.
  *
  * @param {object} config
  * @param {number} targetDepth
