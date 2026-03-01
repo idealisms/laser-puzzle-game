@@ -1,0 +1,40 @@
+{
+  "date": "2026-03-09",
+  "name": "Bullseye",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 5,
+    "dir": "left"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Outer ring (near grid edges)",
+      "cells": [
+        [1,1],[2,1],[3,1],[4,1],[5,1],[6,1],[7,1],[8,1],[9,1],[10,1],[11,1],[12,1],[13,1],
+        [1,18],[2,18],[3,18],[4,18],[5,18],[6,18],[7,18],[8,18],[9,18],[10,18],[11,18],[12,18],[13,18],
+        [1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[1,8],[1,9],[1,10],[1,11],[1,12],[1,13],[1,14],[1,15],[1,16],[1,17],
+        [13,2],[13,3],[13,4],[13,6],[13,7],[13,8],[13,9],[13,10],[13,11],[13,12],[13,13],[13,14],[13,15],[13,16],[13,17]
+      ]
+    },
+    {
+      "label": "Middle ring (open corridors to splitter at x=7 and y=10)",
+      "cells": [
+        [4,6],[5,6],[6,6],[8,6],[9,6],[10,6],
+        [4,14],[5,14],[6,14],[8,14],[9,14],[10,14],
+        [4,7],[4,8],[4,9],[4,11],[4,12],[4,13],
+        [10,7],[10,8],[10,9],[10,11],[10,12],[10,13]
+      ]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 7,
+      "y": 10,
+      "dir": "right",
+      "note": "Laser arriving LEFT hits 'right' splitter → wall (blocked). To split (UP+DOWN), redirect beam to arrive going RIGHT. Open corridors at x=7 (top/bottom of middle ring) and y=10 (left/right of middle ring) give clear paths in."
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "date": "2026-03-21",
+  "name": "Atom",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 10,
+    "dir": "left"
+  },
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {
+      "label": "Inner orbital shell (gap at x=7 top/bottom for split beams, gap at y=10 sides for laser entry)",
+      "cells": [
+        [5,7],[6,7],[8,7],[9,7],
+        [5,13],[6,13],[8,13],[9,13],
+        [5,8],[5,9],[5,11],[5,12],
+        [9,8],[9,9],[9,11],[9,12]
+      ]
+    },
+    {
+      "label": "Outer orbital shell (gap at x=7 top/bottom, gap at y=10 sides)",
+      "cells": [
+        [3,4],[4,4],[5,4],[6,4],[8,4],[9,4],[10,4],[11,4],
+        [3,16],[4,16],[5,16],[6,16],[8,16],[9,16],[10,16],[11,16],
+        [3,5],[3,6],[3,7],[3,8],[3,9],[3,11],[3,12],[3,13],[3,14],[3,15],
+        [11,5],[11,6],[11,7],[11,8],[11,9],[11,11],[11,12],[11,13],[11,14],[11,15]
+      ]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 7,
+      "y": 10,
+      "dir": "left",
+      "note": "Laser going LEFT → split (UP+DOWN). The two beams thread through the orbital shell gaps at x=7."
+    }
+  ]
+}

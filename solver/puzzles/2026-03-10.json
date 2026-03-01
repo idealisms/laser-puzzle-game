@@ -1,0 +1,35 @@
+{
+  "date": "2026-03-10",
+  "name": "Switch Yard",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 7,
+    "y": 19,
+    "dir": "up"
+  },
+  "num_mirrors": 11,
+  "obstacle_groups": [
+    {
+      "label": "Left branch siding",
+      "cells": [[1,3],[2,3],[3,3],[4,3],[1,4],[2,4],[3,4],[1,5],[2,5]]
+    },
+    {
+      "label": "Right branch siding",
+      "cells": [[10,3],[11,3],[12,3],[13,3],[11,4],[12,4],[13,4],[12,5],[13,5]]
+    },
+    {
+      "label": "Center junction block",
+      "cells": [[5,8],[6,8],[8,8],[9,8],[5,9],[9,9],[5,10],[9,10]]
+    },
+    {
+      "label": "Lower crossings",
+      "cells": [[2,13],[3,13],[4,13],[5,13],[9,13],[10,13],[11,13],[12,13]]
+    },
+    {
+      "label": "Bottom trestle",
+      "cells": [[3,16],[4,16],[5,16],[9,16],[10,16],[11,16]]
+    }
+  ],
+  "splitters": []
+}

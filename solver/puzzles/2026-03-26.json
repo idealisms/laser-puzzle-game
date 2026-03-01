@@ -1,0 +1,34 @@
+{
+  "date": "2026-03-26",
+  "name": "Stargate",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 7,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Outer gate ring top/bottom",
+      "cells": [[4,5],[5,5],[6,5],[8,5],[9,5],[10,5],[4,15],[5,15],[6,15],[8,15],[9,15],[10,15]]
+    },
+    {
+      "label": "Outer gate ring left/right",
+      "cells": [[3,6],[3,7],[3,8],[3,9],[3,11],[3,12],[3,13],[3,14],[11,6],[11,7],[11,8],[11,9],[11,11],[11,12],[11,13],[11,14]]
+    },
+    {
+      "label": "Inner gate ring",
+      "cells": [[5,8],[6,8],[8,8],[9,8],[5,9],[9,9],[5,11],[9,11],[5,12],[6,12],[8,12],[9,12]]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 7,
+      "y": 10,
+      "dir": "right",
+      "note": "Laser going DOWN hits 'right' splitter → reflects LEFT. To split (UP+DOWN), redirect beam to arrive going RIGHT."
+    }
+  ]
+}
