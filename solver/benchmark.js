@@ -106,8 +106,8 @@ async function main() {
     // ── Node.js single-threaded (workers=1) ─────────────────────────────────
     {
       const r = bench(
-        'node  solve.js (workers=1)       ',
-        ['node', 'solve.js', date, '--quiet', '--beam-width', beamArg, '--workers', '1'],
+        'tsx   solve.ts (workers=1)       ',
+        ['npx', 'tsx', 'solve.ts', date, '--quiet', '--beam-width', beamArg, '--workers', '1'],
         opts.runs,
         SOLVER_DIR,
       );
@@ -117,8 +117,8 @@ async function main() {
     // ── Node.js parallel ────────────────────────────────────────────────────
     {
       const r = bench(
-        `node  solve.js (workers=${String(opts.workers).padEnd(2)})       `,
-        ['node', 'solve.js', date, '--quiet', '--beam-width', beamArg, '--workers', String(opts.workers)],
+        `tsx   solve.ts (workers=${String(opts.workers).padEnd(2)})       `,
+        ['npx', 'tsx', 'solve.ts', date, '--quiet', '--beam-width', beamArg, '--workers', String(opts.workers)],
         opts.runs,
         SOLVER_DIR,
       );
@@ -147,8 +147,8 @@ async function main() {
       );
     }
 
-    fmtRow('node solve.js (workers=1)', row.jsSingle);
-    fmtRow(`node solve.js (workers=${opts.workers})`, row.jsParallel);
+    fmtRow('tsx solve.ts (workers=1)', row.jsSingle);
+    fmtRow(`tsx solve.ts (workers=${opts.workers})`, row.jsParallel);
   }
 
   console.log();

@@ -10,18 +10,30 @@
 const fs = require('fs');
 const path = require('path');
 
-const DIR = { up: 0, right: 1, down: 2, left: 3 };
+const DIR: Record<string, number> = { up: 0, right: 1, down: 2, left: 3 };
 
-function loadPuzzles() {
+interface PuzzleConfig {
+  name: string;
+  width: number;
+  height: number;
+  laserX: number;
+  laserY: number;
+  laserDir: number;
+  obstacles: [number, number][];
+  numMirrors: number;
+  splitters: [number, number, string][];
+}
+
+function loadPuzzles(): Record<string, PuzzleConfig> {
   const puzzlesDir = path.join(__dirname, 'puzzles');
-  const configs = {};
+  const configs: Record<string, PuzzleConfig> = {};
 
   for (const file of fs.readdirSync(puzzlesDir).sort()) {
     if (!file.endsWith('.json')) continue;
     const data = JSON.parse(fs.readFileSync(path.join(puzzlesDir, file), 'utf8'));
 
-    const obstacles = data.obstacle_groups.flatMap(g => g.cells);
-    const splitters = (data.splitters || []).map(s => [s.x, s.y, s.dir]);
+    const obstacles: [number, number][] = data.obstacle_groups.flatMap(g => g.cells);
+    const splitters: [number, number, string][] = (data.splitters || []).map(s => [s.x, s.y, s.dir]);
 
     configs[data.date] = {
       name: data.name,

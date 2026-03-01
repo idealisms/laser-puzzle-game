@@ -1,3 +1,4 @@
+export * from './simulate'
 export * from './Laser'
 export * from './Mirror'
 export * from './GameState'

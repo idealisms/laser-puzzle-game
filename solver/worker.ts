@@ -9,7 +9,7 @@
  * Posts back: { score, mirrors }
  */
 const { workerData, parentPort } = require('worker_threads');
-const { beamSearchForDepth, posKey } = require('./simulator.js');
+const { beamSearchForDepth, posKey } = require('./simulator');
 
 const {
   configData,

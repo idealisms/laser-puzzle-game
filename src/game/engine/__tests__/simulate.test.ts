@@ -1,4 +1,4 @@
-import { calculateLaserPath, resolveCollisions } from '../Laser'
+import { calculateLaserPath, resolveCollisions } from '../simulate'
 import { LaserConfig, LaserStream, Mirror, Obstacle, Position } from '../../types'
 
 // Mirror reflection reference:
@@ -6,6 +6,7 @@ import { LaserConfig, LaserStream, Mirror, Obstacle, Position } from '../../type
 //   '/': right→up,   down→left, left→down, up→right
 
 const BOUNDS_15x20 = { width: 15, height: 20 }
+const BOUNDS_10x10 = { width: 10, height: 10 }
 
 function mirror(x: number, y: number, type: '/' | '\\'): Mirror {
   return { position: { x, y }, type }
@@ -13,6 +14,10 @@ function mirror(x: number, y: number, type: '/' | '\\'): Mirror {
 
 function splitter(x: number, y: number, orientation: 'right' | 'left' | 'up' | 'down'): Obstacle {
   return { x, y, type: 'splitter', orientation }
+}
+
+function wall(x: number, y: number): Obstacle {
+  return { x, y }
 }
 
 function seg(x0: number, y0: number, x1: number, y1: number, dir: 'up' | 'down' | 'left' | 'right') {
@@ -129,11 +134,6 @@ describe('resolveCollisions', () => {
     // Streams swap adjacent cells at T=5 (crossing) AND at T=6 (swap back).
     // The crossing check at T=5 and T=6 would both fire; pairKey deduplication
     // keeps only the earlier one (T=5).
-    //
-    // Stream 0 (offset 0): ... (4,5) right, (5,5) right, (6,5) right ...
-    // Stream 1 (offset 0): ... (6,5) left,  (5,5) left,  (4,5) left  ...
-    // At gTime=5: stream0 at (5,5), stream1 at (6,5) → crossing (midpoint 5.5,5)
-    // At gTime=6: stream0 at (6,5), stream1 at (5,5) → crossing again if not for dedup
     const streams: LaserStream[] = [
       {
         segments: [
@@ -158,10 +158,126 @@ describe('resolveCollisions', () => {
 })
 
 // ─────────────────────────────────────────────────────────────────────────────
-// calculateLaserPath — integration tests with actual grid configs
+// calculateLaserPath — simple beam tests (no splitters)
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe('calculateLaserPath', () => {
+describe('calculateLaserPath — straight beams', () => {
+  it('horizontal beam exits right edge', () => {
+    // 10-wide grid, laser at x=0 going right → 10 steps to exit
+    const laser: LaserConfig = { x: 0, y: 5, direction: 'right' }
+    const result = calculateLaserPath(laser, [], [], BOUNDS_10x10)
+    expect(result.totalLength).toBe(10)
+    expect(result.terminationReason).toBe('edge')
+  })
+
+  it('vertical beam exits top edge', () => {
+    // 10-tall grid, laser at y=9 going up → 10 steps to exit
+    const laser: LaserConfig = { x: 5, y: 9, direction: 'up' }
+    const result = calculateLaserPath(laser, [], [], BOUNDS_10x10)
+    expect(result.totalLength).toBe(10)
+    expect(result.terminationReason).toBe('edge')
+  })
+
+  it('laser at edge cell exits immediately', () => {
+    // Laser at last column going right exits in 1 step
+    const laser: LaserConfig = { x: 4, y: 2, direction: 'right' }
+    const result = calculateLaserPath(laser, [], [], { width: 5, height: 5 })
+    expect(result.totalLength).toBe(1)
+    expect(result.terminationReason).toBe('edge')
+  })
+
+  it('wall obstacle stops the beam', () => {
+    // Laser at (0,5) going right; wall at (5,5) — 5 steps (the step onto the wall is counted)
+    const laser: LaserConfig = { x: 0, y: 5, direction: 'right' }
+    const result = calculateLaserPath(laser, [], [wall(5, 5)], BOUNDS_10x10)
+    expect(result.totalLength).toBe(5)
+    expect(result.terminationReason).toBe('obstacle')
+  })
+
+  it('wall immediately in front — 1 step', () => {
+    const laser: LaserConfig = { x: 0, y: 5, direction: 'right' }
+    const result = calculateLaserPath(laser, [], [wall(1, 5)], BOUNDS_10x10)
+    expect(result.totalLength).toBe(1)
+    expect(result.terminationReason).toBe('obstacle')
+  })
+
+  it('slash mirror redirects right to up', () => {
+    // '/' mirror at (4,5): incoming RIGHT → exits UP.
+    // 4 steps going right, then (4,4)→…→(4,-1) = 6 steps up. Total = 10.
+    const laser: LaserConfig = { x: 0, y: 5, direction: 'right' }
+    const result = calculateLaserPath(laser, [mirror(4, 5, '/')], [], BOUNDS_10x10)
+    expect(result.totalLength).toBe(10)
+  })
+
+  it('backslash mirror redirects right to down', () => {
+    // '\\' mirror at (4,5): incoming RIGHT → exits DOWN.
+    // 4 steps right, then (4,6)→…→(4,10) = 5 steps down. Total = 9.
+    const laser: LaserConfig = { x: 0, y: 5, direction: 'right' }
+    const result = calculateLaserPath(laser, [mirror(4, 5, '\\')], [], BOUNDS_10x10)
+    expect(result.totalLength).toBe(9)
+  })
+
+  it('loop detection: four mirrors forming a closed rectangle', () => {
+    // '\\' at (5,3): right→down  (top-right corner)
+    // '/'  at (5,6): down→left   (bottom-right corner)
+    // '\\' at (2,6): left→up     (bottom-left corner)
+    // '/'  at (2,3): up→right    (top-left corner)
+    const laser: LaserConfig = { x: 3, y: 3, direction: 'right' }
+    const mirrors = [
+      mirror(5, 3, '\\'), mirror(5, 6, '/'), mirror(2, 6, '\\'), mirror(2, 3, '/'),
+    ]
+    const result = calculateLaserPath(laser, mirrors, [], { width: 8, height: 8 })
+    expect(result.terminationReason).toBe('loop')
+  })
+})
+
+// ─────────────────────────────────────────────────────────────────────────────
+// calculateLaserPath — splitter tests (no collision)
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('calculateLaserPath — splitters', () => {
+  it('splitter wall: laser hits hypotenuse face — blocked', () => {
+    // Splitter at (5,5) orientation='left'; laser going RIGHT → hits opposite face → wall
+    const laser: LaserConfig = { x: 0, y: 5, direction: 'right' }
+    const result = calculateLaserPath(laser, [], [splitter(5, 5, 'left')], BOUNDS_10x10)
+    expect(result.totalLength).toBe(5)
+    expect(result.terminationReason).toBe('obstacle')
+  })
+
+  it('splitter reflect: perpendicular hit reflects toward opposite of orientation', () => {
+    // Splitter at (5,5) orientation='up'; RIGHT is perpendicular → reflects toward DOWN.
+    // 5 steps right + 5 steps down to exit = 10
+    const laser: LaserConfig = { x: 0, y: 5, direction: 'right' }
+    const result = calculateLaserPath(laser, [], [splitter(5, 5, 'up')], BOUNDS_10x10)
+    expect(result.totalLength).toBe(10)
+  })
+
+  it('splitter split: both sub-beams count toward total length', () => {
+    // Splitter at (5,7) orientation='right' in 15x15.
+    // Laser at (0,7) going right: 5 steps to splitter (offset=5).
+    // UP beam: 8 steps to top edge; DOWN beam: 8 steps to bottom edge.
+    // No collision (they diverge immediately). Total = 5 + 8 + 8 = 21.
+    const laser: LaserConfig = { x: 0, y: 7, direction: 'right' }
+    const result = calculateLaserPath(laser, [], [splitter(5, 7, 'right')], { width: 15, height: 15 })
+    expect(result.totalLength).toBe(21)
+    expect(result.collisionPoints).toHaveLength(0)
+  })
+
+  it('splitter split symmetric: down-oriented splitter in rectangular grid', () => {
+    // Splitter at (7,4) orientation='down' in 15x10.
+    // Laser at (7,0) going down: 4 steps (offset=4).
+    // LEFT beam: 8 steps to exit; RIGHT beam: 8 steps to exit. Total = 4 + 8 + 8 = 20.
+    const laser: LaserConfig = { x: 7, y: 0, direction: 'down' }
+    const result = calculateLaserPath(laser, [], [splitter(7, 4, 'down')], { width: 15, height: 10 })
+    expect(result.totalLength).toBe(20)
+  })
+})
+
+// ─────────────────────────────────────────────────────────────────────────────
+// calculateLaserPath — collision detection integration tests
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('calculateLaserPath — collision detection', () => {
   it('no collision: straight beam with no splitter', () => {
     const laser: LaserConfig = { x: 0, y: 10, direction: 'right' }
     const result = calculateLaserPath(laser, [], [], BOUNDS_15x20)
@@ -179,20 +295,14 @@ describe('calculateLaserPath', () => {
 
   it('same-cell collision: symmetric loop where both beams meet at one cell', () => {
     // Layout (15×20, laser at (0,10) going right):
-    //
     //   Splitter at (5,10) 'right' → UP beam and DOWN beam
-    //
-    //   UP beam:   goes up 4 cells to (5,6) →  '/' mirror → goes right →
+    //   UP beam:   goes up 4 cells to (5,6) → '/' mirror → goes right →
     //              '\' mirror at (10,6) → goes down
-    //
     //   DOWN beam: goes down 4 cells to (5,14) → '\' mirror → goes right →
     //              '/' mirror at (10,14) → goes up
-    //
     //   Both start heading toward each other at the same global time.
     //   Gap between rows 6 and 14 = 8 (even) → they meet at row 10, col 10.
-    //
-    //   Primary: 5 segs → globalOffset 5 for both sub-streams
-    //   UP/DOWN each: 4 + 5 = 9 segs before turning, then 4 more segs to reach (10,10)
+    //   Primary: 5 segs; UP/DOWN each: 4 + 5 + 4 = 13 segs. Total = 5 + 13 + 13 = 31.
     const laser: LaserConfig = { x: 0, y: 10, direction: 'right' }
     const obstacles: Obstacle[] = [splitter(5, 10, 'right')]
     const mirrors: Mirror[] = [
@@ -202,85 +312,38 @@ describe('calculateLaserPath', () => {
       mirror(10, 14, '/'),  // DOWN beam going right hits → goes up
     ]
     const result = calculateLaserPath(laser, mirrors, obstacles, BOUNDS_15x20)
-
     expect(result.collisionPoints).toHaveLength(1)
     expect(result.collisionPoints[0]).toEqual({ x: 10, y: 10 })
-
-    // Both streams stop at (10,10); score counts all segments (beams sharing a cell count independently)
-    // Primary: (1..5,10) = 5 cells
-    // UP:   (5,9),(5,8),(5,7),(5,6), (6..10,6), (10,7),(10,8),(10,9),(10,10) = 4+5+4=13
-    // DOWN: (5,11),(5,12),(5,13),(5,14), (6..10,14), (10,13),(10,12),(10,11),(10,10) = 13
-    // (10,10) is the collision cell — both streams end there, counted twice
-    // Total = 5 + 13 + 13 = 31
     expect(result.totalLength).toBe(31)
   })
 
-  it('crossing collision: asymmetric beams cross between two adjacent cells', () => {
-    // Same rig as above but DOWN beam uses a mirror at (5,13) instead of (5,14).
-    // DOWN: 3 steps down + 5 right → 8 segs before going up from (10,13).
-    // UP: 4 steps up + 5 right → 9 segs before going down from (10,6).
-    //
-    // After the final mirrors both sub-streams start with globalOffset 5:
-    //   UP  segi 8 (first downward step) at gTime 5+8+1=14 → (10,7)
-    //   DOWN segi 7 (first upward step)  at gTime 5+7+1=13 → (10,12)
-    //
-    // They head toward each other. Solving:
-    //   UP   row: 7+k at gTime 14+k
-    //   DOWN row: 12-j at gTime 13+j
-    // Adjacent (differ by 1): 7+k = (12-j)-1 and 14+k = 13+j
-    //   → j = k+1, 7+k = 11-(k+1) → 2k = 3 → no integer solution
-    //   (They never reach adjacent rows at the same time; instead…)
-    // Same cell: 7+k = 12-j and 14+k = 13+j → k-j=-1, 7+k=12-(k-1)=13-k → 2k=6 → k=3
-    //   UP at (10,10) at gTime 17, DOWN at (10,9) at gTime 16 → different times!
-    //
-    // Actually the collision turns out to be a crossing:
-    //   At gTime 16: UP at (10,9) (gTime=14+2), DOWN at (10,10) (gTime=13+3=16? 12-3=9...)
-    //   Wait — let me re-derive carefully:
-    //     DOWN segi 8: (10,12) at gTime 14
-    //     DOWN segi 9: (10,11) at gTime 15
-    //     DOWN segi 10: (10,10) at gTime 16
-    //     DOWN segi 11: (10,9) at gTime 17
-    //     UP segi 9: (10,7) at gTime 15
-    //     UP segi 10: (10,8) at gTime 16
-    //     UP segi 11: (10,9) at gTime 17
-    //   → At gTime 17: UP at (10,9), DOWN at (10,9). Same cell! Collision at (10,9).
-    //
-    // The crossing at gTime 16 (UP at (10,8), DOWN at (10,10)) — gap of 2, not adjacent.
-    // The same-cell at gTime 17: collision at (10,9).
+  it('crossing collision: asymmetric beams, same-cell collision at (10,9)', () => {
+    // Same rig as above but DOWN beam uses mirror at (5,13) instead of (5,14).
+    // Same-cell collision at (10,9) at the same global time.
     const laser: LaserConfig = { x: 0, y: 10, direction: 'right' }
     const obstacles: Obstacle[] = [splitter(5, 10, 'right')]
     const mirrors: Mirror[] = [
-      mirror(5, 6,  '/'),    // UP goes right
-      mirror(10, 6, '\\'),   // UP goes down
-      mirror(5, 13, '\\'),   // DOWN goes right  ← one row shorter than even-gap test
-      mirror(10, 13, '/'),   // DOWN goes up
+      mirror(5, 6,  '/'),
+      mirror(10, 6, '\\'),
+      mirror(5, 13, '\\'),
+      mirror(10, 13, '/'),
     ]
     const result = calculateLaserPath(laser, mirrors, obstacles, BOUNDS_15x20)
     expect(result.collisionPoints).toHaveLength(1)
     expect(result.collisionPoints[0]).toEqual({ x: 10, y: 9 })
   })
 
-  it('no collision: two beams hit the same mirror from opposite directions at different times', () => {
-    // Primary beam goes right from (0,10).
-    // Splitter at (5,10) 'right' → UP and DOWN beams.
-    // UP beam (4 steps up, then '\' mirror at (5,6)) goes left → exits edge.
-    // DOWN beam (7 steps down, then '\' mirror at (5,17)) goes right.
-    // The '\' mirror at (5,6) and '\' at (5,17) are hit at DIFFERENT global times.
-    // A third beam from another path hits the mirror at (5,6) going right at a different time.
-    //
-    // Simpler: just verify that a splitter whose two arms hit NO common cells
-    // produces zero collisions.
+  it('no collision: two beams hit same mirror at different times', () => {
+    // UP and DOWN arms go straight → they exit opposite edges, no collision.
     const laser: LaserConfig = { x: 0, y: 10, direction: 'right' }
     const obstacles: Obstacle[] = [splitter(5, 10, 'right')]
-    // UP beam goes up and exits top edge; DOWN beam goes down and exits bottom edge.
-    // No mirrors → they go straight, no head-on meeting.
     const result = calculateLaserPath(laser, [], obstacles, BOUNDS_15x20)
     expect(result.collisionPoints).toHaveLength(0)
   })
 
-  it('totalLength counts segments per stream (crossing cells counted per beam)', () => {
+  it('totalLength counts segments per stream (collision cells counted per beam)', () => {
     // Same-cell collision: UP and DOWN both end at (10,10).
-    // With per-stream segment counting, (10,10) is counted twice (once per stream).
+    // (10,10) counted once per stream → segment sum equals totalLength.
     const laser: LaserConfig = { x: 0, y: 10, direction: 'right' }
     const obstacles: Obstacle[] = [splitter(5, 10, 'right')]
     const mirrors: Mirror[] = [
@@ -291,7 +354,45 @@ describe('calculateLaserPath', () => {
     ]
     const result = calculateLaserPath(laser, mirrors, obstacles, BOUNDS_15x20)
     const segmentSum = result.streams.reduce((s, st) => s + st.segments.length, 0)
-    // totalLength should equal the segment sum (not deduplicated)
     expect(result.totalLength).toBe(segmentSum)
+  })
+
+  it('collision scenario from solver test: total length 26 with four mirrors', () => {
+    // 13×13 grid, laser at (0,6) going RIGHT, splitter at (6,6) orientation='right'.
+    // Mirrors route both sub-beams to converge at (10,6):
+    //   '/'  at (6,3) : UP   → RIGHT
+    //   '\\' at (10,3): RIGHT → DOWN
+    //   '\\' at (6,9) : DOWN  → RIGHT
+    //   '/'  at (10,9): RIGHT → UP
+    // After collision truncation: 6 (primary) + 10 (UP) + 10 (DOWN) = 26.
+    const laser: LaserConfig = { x: 0, y: 6, direction: 'right' }
+    const obstacles: Obstacle[] = [splitter(6, 6, 'right')]
+    const mirrors: Mirror[] = [
+      mirror(6, 3,  '/'),
+      mirror(10, 3, '\\'),
+      mirror(6, 9,  '\\'),
+      mirror(10, 9, '/'),
+    ]
+    const result = calculateLaserPath(laser, mirrors, obstacles, { width: 13, height: 13 })
+    expect(result.totalLength).toBe(26)
+  })
+
+  it('collision scenario: no mirrors → no collision, total = 20', () => {
+    // Same setup without mirrors: 6 primary + 7 UP + 7 DOWN = 20.
+    const laser: LaserConfig = { x: 0, y: 6, direction: 'right' }
+    const obstacles: Obstacle[] = [splitter(6, 6, 'right')]
+    const result = calculateLaserPath(laser, [], obstacles, { width: 13, height: 13 })
+    expect(result.totalLength).toBe(20)
+    expect(result.collisionPoints).toHaveLength(0)
+  })
+
+  it('collision scenario: partial mirrors — only UP beam redirected, total = 23', () => {
+    // Only '/' at (6,3): UP beam turns right but DOWN goes straight.
+    // 6 (primary) + 3+7 (UP) + 7 (DOWN) = 23.
+    const laser: LaserConfig = { x: 0, y: 6, direction: 'right' }
+    const obstacles: Obstacle[] = [splitter(6, 6, 'right')]
+    const mirrors: Mirror[] = [mirror(6, 3, '/')]
+    const result = calculateLaserPath(laser, mirrors, obstacles, { width: 13, height: 13 })
+    expect(result.totalLength).toBe(23)
   })
 })

@@ -8,20 +8,20 @@
  * the Python solver.  The main thread picks the best result.
  *
  * Usage:
- *   node solve.js 2026-01-22                     # solve with defaults
- *   node solve.js --list                          # list puzzles
- *   node solve.js 2026-01-22 --workers 1         # single-threaded
- *   node solve.js 2026-01-22 --beam-width 3000
- *   node solve.js 2026-01-22 --no-prune
- *   node solve.js 2026-01-22 --quiet
+ *   npx tsx solve.ts 2026-01-22                     # solve with defaults
+ *   npx tsx solve.ts --list                          # list puzzles
+ *   npx tsx solve.ts 2026-01-22 --workers 1         # single-threaded
+ *   npx tsx solve.ts 2026-01-22 --beam-width 3000
+ *   npx tsx solve.ts 2026-01-22 --no-prune
+ *   npx tsx solve.ts 2026-01-22 --quiet
  */
 
 const path = require('path');
 const os = require('os');
 const { Worker } = require('worker_threads');
 
-const { PUZZLES } = require('./puzzles.js');
-const { simulateLaser, posKey } = require('./simulator.js');
+const { PUZZLES } = require('./puzzles');
+const { simulateLaser, posKey } = require('./simulator');
 
 // ── CLI argument parsing ──────────────────────────────────────────────────────
 
@@ -69,7 +69,8 @@ function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, useP
       if (dispatched >= depths.length) return;
       const targetDepth = depths[dispatched++];
 
-      const worker = new Worker(path.join(__dirname, 'worker.js'), {
+      const worker = new Worker(path.join(__dirname, 'worker.ts'), {
+        execArgv: ['--require', 'tsx/cjs'],
         workerData: {
           configData: config,
           ...sharedData,
@@ -115,7 +116,7 @@ function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, useP
  * (1 through config.numMirrors), capped to `opts.workers` concurrent threads.
  * The main thread picks the best { score, mirrors } across all depths.
  *
- * @param {object} config  Puzzle config from PUZZLES (puzzles.js).
+ * @param {object} config  Puzzle config from PUZZLES (puzzles.ts).
  * @param {object} opts    { beamWidth?: number, workers?: number, noPrune?: boolean }
  * @returns {Promise<{ score: number, mirrors: Array }>}
  */
@@ -173,8 +174,8 @@ async function main() {
   }
 
   if (!opts.puzzle) {
-    console.log('Usage: node solve.js <date> [options]');
-    console.log('       node solve.js --list');
+    console.log('Usage: npx tsx solve.ts <date> [options]');
+    console.log('       npx tsx solve.ts --list');
     return 1;
   }
 

@@ -5,27 +5,44 @@
  * Computes optimal scores using beam search and outputs to solver/levels/
  *
  * Usage:
- *   node generate_levels.js --date 2026-03-01           # Generate specific date
- *   node generate_levels.js --start 2026-03-01 --end 2026-03-07  # Generate date range
- *   node generate_levels.js --beam-width 2000 --workers 4  # Tuning options
+ *   npx tsx generate_levels.ts --date 2026-03-01           # Generate specific date
+ *   npx tsx generate_levels.ts --start 2026-03-01 --end 2026-03-07  # Generate date range
+ *   npx tsx generate_levels.ts --beam-width 2000 --workers 4  # Tuning options
  */
 
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const { PUZZLES } = require('./puzzles.js');
-const { solvePuzzle } = require('./solve.js');
+const { PUZZLES } = require('./puzzles');
+const { solvePuzzle } = require('./solve');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const MAX_SPLITTERS = 2;
 
+interface SolverOpts {
+  beamWidth: number;
+  workers: number;
+}
+
+interface PuzzleConfig {
+  name: string;
+  width: number;
+  height: number;
+  laserX: number;
+  laserY: number;
+  laserDir: number;
+  obstacles: [number, number][];
+  numMirrors: number;
+  splitters?: [number, number, string][];
+}
+
 /**
  * Get the puzzle configuration for a given date.
  * Throws if no puzzle exists for that date.
  */
-function getPuzzleForDate(dateStr) {
+function getPuzzleForDate(dateStr: string): PuzzleConfig {
   if (!(dateStr in PUZZLES)) {
     throw new Error(
       `No puzzle configured for ${dateStr}. ` +
@@ -39,7 +56,7 @@ function getPuzzleForDate(dateStr) {
  * Generate a level for the given date using the provided puzzle config.
  * Returns the level object (same schema as Python generate_levels.py).
  */
-async function generateLevel(dateStr, config, solverOpts) {
+async function generateLevel(dateStr: string, config: PuzzleConfig, solverOpts: SolverOpts) {
   const numSplitters = (config.splitters || []).length;
   if (numSplitters > MAX_SPLITTERS) {
     throw new Error(
@@ -85,7 +102,7 @@ async function generateLevel(dateStr, config, solverOpts) {
 /**
  * Generate and save a level for a specific date.
  */
-async function generateForDate(dateStr, outputDir, solverOpts) {
+async function generateForDate(dateStr: string, outputDir: string, solverOpts: SolverOpts) {
   const config = getPuzzleForDate(dateStr);
   const level = await generateLevel(dateStr, config, solverOpts);
 
@@ -96,17 +113,17 @@ async function generateForDate(dateStr, outputDir, solverOpts) {
 
 // ── Date utilities ────────────────────────────────────────────────────────────
 
-function parseDate(str) {
+function parseDate(str: string): Date {
   const d = new Date(str + 'T00:00:00Z');
-  if (isNaN(d)) throw new Error(`Invalid date: ${str}`);
+  if (isNaN(d.getTime())) throw new Error(`Invalid date: ${str}`);
   return d;
 }
 
-function formatDate(d) {
+function formatDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-function addDays(d, n) {
+function addDays(d: Date, n: number): Date {
   const r = new Date(d);
   r.setUTCDate(r.getUTCDate() + n);
   return r;
@@ -114,12 +131,12 @@ function addDays(d, n) {
 
 // ── CLI ───────────────────────────────────────────────────────────────────────
 
-function parseArgs(argv) {
+function parseArgs(argv: string[]) {
   const args = argv.slice(2);
   const opts = {
-    date: null,
-    start: null,
-    end: null,
+    date: null as string | null,
+    start: null as string | null,
+    end: null as string | null,
     beamWidth: 2000,
     workers: os.cpus().length,
   };
@@ -168,10 +185,10 @@ async function main() {
       }
     } else {
       // Generate single specific date
-      await generateForDate(opts.date, outputDir, solverOpts);
+      await generateForDate(opts.date!, outputDir, solverOpts);
     }
     console.log('\nDone!');
-  } catch (err) {
+  } catch (err: any) {
     console.error(`Error: ${err.message}`);
     process.exit(1);
   }

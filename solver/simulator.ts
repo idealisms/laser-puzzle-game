@@ -1,5 +1,8 @@
 'use strict';
 // Ported from simulator.py — pure functional laser path simulation.
+// simulateLaser is an adapter over the shared src/game/engine/simulate.ts module.
+
+const { calculateLaserPath } = require('../src/game/engine/simulate');
 
 const UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
 
@@ -17,8 +20,11 @@ const REFLECT = {
   '\\': [LEFT, DOWN, RIGHT, UP],
 };
 
+const INT_TO_DIR = ['up', 'right', 'down', 'left'];
+const DIR_TO_INT = { up: UP, right: RIGHT, down: DOWN, left: LEFT };
+
 function dirFromString(s) {
-  return { up: UP, right: RIGHT, down: DOWN, left: LEFT }[s];
+  return DIR_TO_INT[s];
 }
 
 // Encode (x, y) as a single integer. Grid is at most 15×20, so x*100+y is safe.
@@ -28,242 +34,80 @@ function decodePos(k) { return [Math.floor(k / 100), k % 100]; }
 // Encode (x, y, dir) for visited-state tracking.
 function stateKey(x, y, dir) { return (x * 20 + y) * 4 + dir; }
 
-function getSplitDirections(dir) {
-  return (dir === LEFT || dir === RIGHT) ? [UP, DOWN] : [LEFT, RIGHT];
-}
-
-/**
- * Return 'split', 'wall', or 'reflect' for a laser hitting a directional splitter.
- *
- * - orientation: the direction a laser must travel to trigger a split
- * - laser traveling in orientation direction       → 'split' (emits perpendicular beams)
- * - laser traveling opposite to orientation        → 'wall'  (blocked)
- * - laser traveling perpendicular to orientation   → 'reflect' back toward opposite(orientation)
- */
-function getSplitterAction(laserDir, orientation) {
-  const orientDir = dirFromString(orientation);
-  if (laserDir === orientDir) return 'split';
-  if (laserDir === OPPOSITE[orientDir]) return 'wall';
-  return 'reflect';
-}
-
-/**
- * Detect laser beam collisions and truncate streams in place.
- *
- * Two collision types are detected:
- *   1. Same-cell same-time: beams from different streams arrive at the same
- *      cell at the same global time, regardless of direction or cell content.
- *      This covers head-on, perpendicular, and same-direction beams — any two
- *      beams sharing the same point in space and time count as a collision.
- *   2. Crossing: at the same global time, beam A is at cell P heading toward Q
- *      and beam B is at Q heading toward P (adjacent cells, opposite directions).
- *
- * Per stream-pair, only the earliest collision is kept.  Both affected streams
- * are then truncated to include the collision step as the final step.
- *
- * Each step in a stream is [nx, ny, incomingDir] where:
- *   - (nx, ny) is the cell reached
- *   - incomingDir is the direction of travel used to reach that cell
- *   - global time for step i in stream s with offset o is: o + i + 1
- *
- * @param {Array[]} streams       Step lists; mutated in place on truncation.
- * @param {number[]} streamOffsets Global offset for each stream.
- * @returns {Array}               Collision positions as [x,y] or [x+0.5,y+0.5].
- */
-function resolveCollisions(streams, streamOffsets) {
-  // byCellTime: encoded(gTime,x,y) -> [{si,segi,x,y,gTime}]
-  // byTime:     gTime -> [{si,segi,x,y,d}]
-  const byCellTime = new Map();
-  const byTime = new Map();
-
-  for (let si = 0; si < streams.length; si++) {
-    const offset = streamOffsets[si];
-    const steps = streams[si];
-    for (let segi = 0; segi < steps.length; segi++) {
-      const [x, y, d] = steps[segi];
-      const gTime = offset + segi + 1;
-
-      // gTime ≤ 1000, x ≤ 14, y ≤ 19 → key fits comfortably in a safe integer
-      const ctKey = gTime * 1500 + x * 20 + y;
-      let arr = byCellTime.get(ctKey);
-      if (!arr) { arr = []; byCellTime.set(ctKey, arr); }
-      arr.push({ si, segi, x, y, gTime });
-
-      arr = byTime.get(gTime);
-      if (!arr) { arr = []; byTime.set(gTime, arr); }
-      arr.push({ si, segi, x, y, d });
-    }
-  }
-
-  // pairCollisions: encoded(lo,hi) -> {gTime, pos, aSi, aSegi, bSi, bSegi}
-  const pairCollisions = new Map();
-
-  function tryCollision(gTime, pos, aSi, aSegi, bSi, bSegi) {
-    const lo = Math.min(aSi, bSi), hi = Math.max(aSi, bSi);
-    const key = lo * 1024 + hi;
-    const existing = pairCollisions.get(key);
-    if (!existing || gTime < existing.gTime) {
-      pairCollisions.set(key, { gTime, pos, aSi, aSegi, bSi, bSegi });
-    }
-  }
-
-  // 1. Same-cell same-time: any two beams from different streams at the same cell.
-  for (const arrivals of byCellTime.values()) {
-    if (arrivals.length < 2) continue;
-    for (let i = 0; i < arrivals.length; i++) {
-      for (let j = i + 1; j < arrivals.length; j++) {
-        const a = arrivals[i], b = arrivals[j];
-        if (a.si !== b.si) {
-          tryCollision(a.gTime, [a.x, a.y], a.si, a.segi, b.si, b.segi);
-        }
-      }
-    }
-  }
-
-  // 2. Crossing: at same gTime, A at P heading toward Q and B at Q heading toward P.
-  for (const [gTime, arrivals] of byTime) {
-    if (arrivals.length < 2) continue;
-    for (let i = 0; i < arrivals.length; i++) {
-      for (let j = i + 1; j < arrivals.length; j++) {
-        const a = arrivals[i], b = arrivals[j];
-        if (a.si === b.si) continue;
-        if (a.d !== OPPOSITE[b.d]) continue;
-        const [ddx, ddy] = DELTAS[a.d];
-        if (b.x === a.x + ddx && b.y === a.y + ddy) {
-          tryCollision(gTime, [(a.x + b.x) / 2, (a.y + b.y) / 2],
-            a.si, a.segi, b.si, b.segi);
-        }
-      }
-    }
-  }
-
-  // Apply truncations
-  const truncations = new Map();
-  const collisionPositions = [];
-  for (const { pos, aSi, aSegi, bSi, bSegi } of pairCollisions.values()) {
-    collisionPositions.push(pos);
-    truncations.set(aSi, Math.min(truncations.has(aSi) ? truncations.get(aSi) : aSegi, aSegi));
-    truncations.set(bSi, Math.min(truncations.has(bSi) ? truncations.get(bSi) : bSegi, bSegi));
-  }
-  for (const [si, maxSegi] of truncations) {
-    streams[si] = streams[si].slice(0, maxSegi + 1);
-  }
-  return collisionPositions;
-}
-
 /**
  * Simulate a full laser path from scratch.
  *
- * Supports directional splitters and head-on beam collision detection.
- * When a splitter is hit with a matching direction, two sub-beams are pushed
- * onto a DFS stack and each simulated independently.  resolveCollisions() is
- * then called to truncate any streams that meet head-on or at the same cell
- * at the same global time, reducing the reported path length accordingly.
+ * Adapter over calculateLaserPath from src/game/engine/simulate.ts.
+ * Converts solver config format → frontend types, calls the shared implementation,
+ * then extracts the solver format from the returned LaserPath.
  *
  * @param {object}   config      Puzzle configuration.
  * @param {Array}    mirrors     [[x, y, type], …]
- * @param {number}   maxLength   Safety cap on total steps (default 1000).
- * @param {Set|null} obstacleSet Pre-computed Set of posKey integers (computed if null).
- * @param {Map|null} splitterMap Pre-computed Map of posKey → orientation (computed if null).
+ * @param {number}   maxLength   Safety cap (ignored — shared impl uses its own MAX_LASER_LENGTH).
+ * @param {Set|null} obstacleSet Unused (kept for API compatibility with simulateIncremental).
+ * @param {Map|null} splitterMap Unused (kept for API compatibility with simulateIncremental).
  * @returns {{ length, path, allCells, terminationReason }}
  */
 function simulateLaser(config, mirrors, maxLength = 1000, obstacleSet = null, splitterMap = null) {
-  const mirrorMap = new Map();
-  for (const [x, y, t] of mirrors) mirrorMap.set(posKey(x, y), t);
+  // Convert mirrors from [[x,y,type]] to Mirror[]
+  const mirrorObjs = mirrors.map(([x, y, type]) => ({ position: { x, y }, type }));
 
-  if (!obstacleSet) {
-    obstacleSet = new Set(config.obstacles.map(([x, y]) => posKey(x, y)));
-  }
-  if (!splitterMap) {
-    splitterMap = new Map(
-      (config.splitters || []).map(([x, y, o]) => [posKey(x, y), o])
-    );
-  }
+  // Convert config obstacles (plain walls) and splitters to Obstacle[]
+  const wallObstacles = config.obstacles.map(([x, y]) => ({ x, y, type: 'wall' }));
+  const splitterObstacles = (config.splitters || []).map(([x, y, o]) => ({
+    x, y, type: 'splitter', orientation: o,
+  }));
+  const allObstacles = [...wallObstacles, ...splitterObstacles];
 
-  // DFS stack entries: [startX, startY, startDir, globalOffset]
-  const stack = [[config.laserX, config.laserY, config.laserDir, 0]];
-  const visited = new Set();
-  const streams = [];
-  const streamOffsets = [];
+  // Convert laserDir from int to string
+  const laserConfig = {
+    x: config.laserX,
+    y: config.laserY,
+    direction: INT_TO_DIR[config.laserDir],
+  };
 
-  let terminationReason = 'max_length';
-  let totalSteps = 0;
+  const bounds = { width: config.width, height: config.height };
 
-  while (stack.length > 0 && totalSteps < maxLength) {
-    const [startX, startY, startDir, globalOffset] = stack.pop();
-    const streamSteps = [];
-    let x = startX, y = startY, direction = startDir;
+  const laserPath = calculateLaserPath(laserConfig, mirrorObjs, allObstacles, bounds);
 
-    while (totalSteps < maxLength) {
-      const state = stateKey(x, y, direction);
-      if (visited.has(state)) { terminationReason = 'loop'; break; }
-      visited.add(state);
+  // Map terminationReason to solver format
+  const termMap = {
+    'edge': 'edge',
+    'obstacle': 'obstacle',
+    'loop': 'loop',
+    'max-length': 'max_length',
+  };
+  const terminationReason = termMap[laserPath.terminationReason];
 
-      const [dx, dy] = DELTAS[direction];
-      const nx = x + dx, ny = y + dy;
-      const step = [nx, ny, direction];
-
-      if (nx < 0 || nx >= config.width || ny < 0 || ny >= config.height) {
-        streamSteps.push(step); totalSteps++;
-        terminationReason = 'edge'; break;
-      }
-
-      const nk = posKey(nx, ny);
-
-      if (obstacleSet.has(nk)) {
-        streamSteps.push(step); totalSteps++;
-        terminationReason = 'obstacle'; break;
-      }
-
-      if (splitterMap.has(nk)) {
-        const orientation = splitterMap.get(nk);
-        const action = getSplitterAction(direction, orientation);
-        streamSteps.push(step); totalSteps++;
-
-        if (action === 'split') {
-          const [dir1, dir2] = getSplitDirections(direction);
-          const subOffset = globalOffset + streamSteps.length;
-          stack.push([nx, ny, dir1, subOffset]);
-          stack.push([nx, ny, dir2, subOffset]);
-          break;
-        } else if (action === 'wall') {
-          terminationReason = 'obstacle'; break;
-        } else { // reflect
-          direction = OPPOSITE[dirFromString(orientation)];
-          x = nx; y = ny; continue;
-        }
-      }
-
-      streamSteps.push(step); totalSteps++;
-      x = nx; y = ny;
-      const k = posKey(x, y);
-      if (mirrorMap.has(k)) direction = REFLECT[mirrorMap.get(k)][direction];
-    }
-
-    streams.push(streamSteps);
-    streamOffsets.push(globalOffset);
-  }
-
-  resolveCollisions(streams, streamOffsets);
-
-  const totalLength = streams.reduce((s, st) => s + st.length, 0);
-
-  // Primary path (first stream only) — used by simulateIncremental
+  // Build primary path [[x,y,outgoingDir], …] starting with the laser source.
+  // For each segment i: the cell is segment.end, and the outgoing direction is
+  // segment[i+1].direction (next segment's incoming dir = current outgoing dir after
+  // any mirror reflection), falling back to segment[i].direction for the last step.
+  const stream0 = laserPath.streams[0];
   const path = [[config.laserX, config.laserY, config.laserDir]];
-  if (streams.length > 0) {
-    for (const [nx, ny, incomingDir] of streams[0]) {
-      const k = posKey(nx, ny);
-      const dir = mirrorMap.has(k) ? REFLECT[mirrorMap.get(k)][incomingDir] : incomingDir;
-      path.push([nx, ny, dir]);
+  if (stream0) {
+    for (let i = 0; i < stream0.segments.length; i++) {
+      const seg = stream0.segments[i];
+      const nextSeg = stream0.segments[i + 1];
+      const outgoingDirStr = nextSeg ? nextSeg.direction : seg.direction;
+      path.push([seg.end.x, seg.end.y, DIR_TO_INT[outgoingDirStr]]);
     }
   }
 
   // allCells: every cell visited across all streams (for candidate generation)
   const allCells = new Set();
-  for (const stream of streams)
-    for (const [nx, ny] of stream) allCells.add(posKey(nx, ny));
+  for (const stream of laserPath.streams) {
+    for (const seg of stream.segments) {
+      allCells.add(posKey(seg.end.x, seg.end.y));
+    }
+  }
 
-  return { length: totalLength, path, allCells, terminationReason };
+  return {
+    length: laserPath.totalLength,
+    path,
+    allCells,
+    terminationReason,
+  };
 }
 
 /**
@@ -415,7 +259,7 @@ function getCandidatePositions(allCells, usedPositions, invalidPositions) {
  *   - Path pruning (usePathPruning): only considers cells on/adjacent to the
  *     current laser path, skipping positions that cannot affect the beam.
  *
- * Called by worker.js threads; solve.js parallelises across depth levels so
+ * Called by worker.ts threads; solve.ts parallelises across depth levels so
  * each worker runs this function for a single mirror count independently.
  *
  * @param {object} config
@@ -493,8 +337,6 @@ module.exports = {
   UP, RIGHT, DOWN, LEFT,
   DELTAS, OPPOSITE, REFLECT,
   dirFromString, posKey, decodePos, stateKey,
-  getSplitDirections, getSplitterAction,
-  resolveCollisions,
   simulateLaser,
   simulateIncremental,
   getCandidatePositions,
