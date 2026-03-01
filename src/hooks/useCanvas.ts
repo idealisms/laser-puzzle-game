@@ -55,11 +55,15 @@ export function useCanvas({
 
     renderer.setColors(getColors(settings.colorblindMode))
 
+    if (!settings.showBlipAnimations) {
+      renderer.render(gameState, hoverPos, isEraserMode, undefined)
+      return
+    }
+
     let frameId: number
 
     const animate = (timestamp: number) => {
-      const timeSec = settings.showBlipAnimations ? timestamp / 1000 : undefined
-      renderer.render(gameState, hoverPos, isEraserMode, timeSec)
+      renderer.render(gameState, hoverPos, isEraserMode, timestamp / 1000)
       frameId = requestAnimationFrame(animate)
     }
 
