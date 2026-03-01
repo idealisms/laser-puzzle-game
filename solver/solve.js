@@ -106,6 +106,51 @@ function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, useP
   });
 }
 
+// ── Exported solver API ───────────────────────────────────────────────────────
+
+/**
+ * Solve a puzzle config and return { score, mirrors }.
+ * opts: { beamWidth, workers, noPrune }
+ */
+async function solvePuzzle(config, opts = {}) {
+  const {
+    beamWidth = 2000,
+    workers = os.cpus().length,
+    noPrune = false,
+  } = opts;
+
+  // Pre-compute shared data (passed to all workers)
+  const obstacleSet = new Set(config.obstacles.map(([x, y]) => posKey(x, y)));
+  const splitterMap = new Map(
+    (config.splitters || []).map(([x, y, o]) => [posKey(x, y), o])
+  );
+  const laserPos = posKey(config.laserX, config.laserY);
+  const invalidPositions = new Set([...obstacleSet, ...splitterMap.keys(), laserPos]);
+
+  const validPositions = [];
+  for (let x = 0; x < config.width; x++)
+    for (let y = 0; y < config.height; y++)
+      if (!invalidPositions.has(posKey(x, y))) validPositions.push([x, y]);
+
+  const initial = simulateLaser(config, [], 1000, obstacleSet, splitterMap);
+
+  const sharedData = {
+    obstacleSetArr: [...obstacleSet],
+    splitterMapArr: [...splitterMap.entries()],
+    invalidPosArr: [...invalidPositions],
+    validPositions,
+    initialLength: initial.length,
+    initialPath: initial.path,
+    initialAllCellsArr: [...initial.allCells],
+  };
+
+  return runParallel(
+    config, sharedData,
+    config.numMirrors, workers,
+    beamWidth, !noPrune,
+  );
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -197,7 +242,11 @@ async function main() {
   return 0;
 }
 
-main().then(code => process.exit(code)).catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+module.exports = { solvePuzzle };
+
+if (require.main === module) {
+  main().then(code => process.exit(code)).catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+}
