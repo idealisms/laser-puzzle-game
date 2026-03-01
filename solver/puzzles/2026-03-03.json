@@ -1,0 +1,79 @@
+{
+  "date": "2026-03-03",
+  "name": "Crossfire",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 10,
+    "dir": "right"
+  },
+  "num_mirrors": 6,
+  "obstacle_groups": [
+    {
+      "label": "Upper and lower mid-left barriers (channel the approach visually)",
+      "cells": [
+        [
+          3,
+          7
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          3,
+          13
+        ],
+        [
+          4,
+          13
+        ],
+        [
+          5,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "Upper and lower right-corner clusters",
+      "cells": [
+        [
+          10,
+          2
+        ],
+        [
+          11,
+          2
+        ],
+        [
+          12,
+          2
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          17
+        ],
+        [
+          12,
+          17
+        ]
+      ]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 7,
+      "y": 10,
+      "dir": "right"
+    }
+  ]
+}

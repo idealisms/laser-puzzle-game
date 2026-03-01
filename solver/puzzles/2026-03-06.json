@@ -1,0 +1,128 @@
+{
+  "date": "2026-03-06",
+  "name": "Slingshot",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 7,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {
+      "label": "Symmetric flanking wings",
+      "cells": [
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          9,
+          4
+        ],
+        [
+          10,
+          4
+        ],
+        [
+          11,
+          4
+        ],
+        [
+          3,
+          15
+        ],
+        [
+          4,
+          15
+        ],
+        [
+          5,
+          15
+        ],
+        [
+          9,
+          15
+        ],
+        [
+          10,
+          15
+        ],
+        [
+          11,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "Corner accent clusters",
+      "cells": [
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          12,
+          2
+        ],
+        [
+          13,
+          2
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          1,
+          17
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          13,
+          17
+        ],
+        [
+          13,
+          16
+        ]
+      ]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 7,
+      "y": 10,
+      "dir": "right",
+      "note": "Laser goes DOWN, hitting the 'right' splitter from above \u2192 reflects LEFT (side hit). To split (UP+DOWN), player must redirect the beam to arrive going RIGHT."
+    }
+  ]
+}

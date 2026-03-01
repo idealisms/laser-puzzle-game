@@ -1,0 +1,169 @@
+{
+  "date": "2026-01-23",
+  "name": "Diagonal Barriers",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 19,
+    "dir": "up"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Diagonal barrier 1 (bottom-left to middle)",
+      "cells": [
+        [
+          2,
+          17
+        ],
+        [
+          3,
+          16
+        ],
+        [
+          4,
+          15
+        ],
+        [
+          5,
+          14
+        ],
+        [
+          6,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "Diagonal barrier 2 (right side)",
+      "cells": [
+        [
+          12,
+          15
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          10,
+          13
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          8,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "Diagonal barrier 3",
+      "cells": [
+        [
+          3,
+          9
+        ],
+        [
+          4,
+          8
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          7,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Diagonal barrier 4",
+      "cells": [
+        [
+          11,
+          7
+        ],
+        [
+          10,
+          6
+        ],
+        [
+          9,
+          5
+        ],
+        [
+          8,
+          4
+        ],
+        [
+          7,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "Diagonal barrier 5 (top)",
+      "cells": [
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          5,
+          0
+        ],
+        [
+          12,
+          2
+        ],
+        [
+          13,
+          1
+        ],
+        [
+          14,
+          0
+        ]
+      ]
+    },
+    {
+      "label": "Some blocking walls",
+      "cells": [
+        [
+          0,
+          10
+        ],
+        [
+          1,
+          10
+        ],
+        [
+          13,
+          10
+        ],
+        [
+          14,
+          10
+        ]
+      ]
+    }
+  ],
+  "splitters": []
+}
