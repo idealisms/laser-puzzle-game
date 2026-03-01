@@ -2,17 +2,15 @@
 
 import { useEffect, useCallback, useState } from 'react'
 import Link from 'next/link'
-import { HowToPlayModal } from './HowToPlayModal'
-import { SettingsModal } from './SettingsModal'
 
 interface HamburgerMenuProps {
   isOpen: boolean
   onClose: () => void
+  onOpenHowToPlay: () => void
+  onOpenSettings: () => void
 }
 
-export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
-  const [showHowToPlay, setShowHowToPlay] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
+export function HamburgerMenu({ isOpen, onClose, onOpenHowToPlay, onOpenSettings }: HamburgerMenuProps) {
   const [mounted, setMounted] = useState(false)
   const [visible, setVisible] = useState(false)
 
@@ -31,11 +29,11 @@ export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !showHowToPlay && !showSettings) {
+      if (e.key === 'Escape') {
         onClose()
       }
     },
-    [onClose, showHowToPlay, showSettings]
+    [onClose]
   )
 
   useEffect(() => {
@@ -48,15 +46,16 @@ export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
   if (!mounted) return null
 
   return (
-    <>
-      <div
-        className="fixed inset-0 z-40"
-        onClick={onClose}
-      >
-        <div className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`} />
-      </div>
+    <div
+      className="fixed inset-0 z-40"
+      onClick={onClose}
+    >
+      <div className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`} />
 
-      <div className={`fixed top-0 right-0 h-full w-64 bg-gray-900 border-l border-gray-800 z-50 transition-transform duration-300 ease-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div
+        className={`absolute top-0 right-0 h-full w-64 bg-gray-900 border-l border-gray-800 transition-transform duration-300 ease-out ${visible ? 'translate-x-0' : 'translate-x-full'}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="p-6">
           <button
             onClick={onClose}
@@ -89,14 +88,14 @@ export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
             </Link>
 
             <button
-              onClick={() => setShowHowToPlay(true)}
+              onClick={() => { onClose(); onOpenHowToPlay() }}
               className="block w-full text-left py-2 text-gray-300 hover:text-white transition-colors"
             >
               How to Play
             </button>
 
             <button
-              onClick={() => setShowSettings(true)}
+              onClick={() => { onClose(); onOpenSettings() }}
               className="block w-full text-left py-2 text-gray-300 hover:text-white transition-colors"
             >
               Settings
@@ -104,16 +103,6 @@ export function HamburgerMenu({ isOpen, onClose }: HamburgerMenuProps) {
           </nav>
         </div>
       </div>
-
-      <HowToPlayModal
-        isOpen={showHowToPlay}
-        onClose={() => setShowHowToPlay(false)}
-      />
-
-      <SettingsModal
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
-      />
-    </>
+    </div>
   )
 }

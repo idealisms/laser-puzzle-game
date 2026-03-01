@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { HamburgerMenu } from './HamburgerMenu'
+import { HowToPlayModal } from './HowToPlayModal'
+import { SettingsModal } from './SettingsModal'
 
 interface HeaderProps {
   rightContent?: React.ReactNode
@@ -10,6 +12,8 @@ interface HeaderProps {
 
 export function Header({ rightContent }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [showHowToPlay, setShowHowToPlay] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
 
   return (
     <>
@@ -48,7 +52,22 @@ export function Header({ rightContent }: HeaderProps) {
         </div>
       </header>
 
-      <HamburgerMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+      <HamburgerMenu
+        isOpen={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onOpenHowToPlay={() => setShowHowToPlay(true)}
+        onOpenSettings={() => setShowSettings(true)}
+      />
+
+      <HowToPlayModal
+        isOpen={showHowToPlay}
+        onClose={() => setShowHowToPlay(false)}
+      />
+
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
     </>
   )
 }
