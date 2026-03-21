@@ -77,7 +77,7 @@ When working with the database, never echo the production database name or passw
 ### Puzzle config rules
 - Grid: 15 wide (x: 0–14) × 20 tall (y: 0–19)
 - `num_mirrors`: 8–11
-- `splitters`: 0–2 per puzzle. Splitter puzzles require more memory — use `--workers 4 --beam-width 300` to avoid OOM
+- `splitters`: 0–2 per puzzle. Splitter puzzles require more memory — use `--workers 4 --beam-width 1000` to avoid OOM
 - No duplicate obstacle layouts across puzzles
 
 ### Splitter semantics (easy to get wrong)
