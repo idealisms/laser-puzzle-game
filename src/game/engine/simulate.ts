@@ -68,6 +68,22 @@ function getObstacleAction(laserDir: Direction, obstacle: Obstacle): ObstacleAct
 type ArrivalInfo = { si: number; segi: number; dir: Direction; pos: Position }
 
 /**
+ * Returns which face of a mirror the laser is hitting (0 or 1).
+ *
+ * For '/': face 0 = {up, left}, face 1 = {right, down}
+ * For '\': face 0 = {up, right}, face 1 = {down, left}
+ *
+ * Two beams on the same face collide; on opposite faces they pass through independently.
+ */
+function mirrorSide(dir: Direction, mirrorType: '/' | '\\'): 0 | 1 {
+  if (mirrorType === '/') {
+    return (dir === 'up' || dir === 'left') ? 0 : 1
+  } else {
+    return (dir === 'up' || dir === 'right') ? 0 : 1
+  }
+}
+
+/**
  * Post-process computed streams to find collisions: two beams from different streams
  * that physically occupy the same point at the same time.
  *
@@ -76,8 +92,9 @@ type ArrivalInfo = { si: number; segi: number; dir: Direction; pos: Position }
  *
  * Two collision types:
  *   1. Same-cell same-time: beams from different streams arrive at the same cell at the
- *      same global time, regardless of direction. This covers head-on, perpendicular, and
- *      same-direction beams — any two beams sharing the same point in space and time.
+ *      same global time. If the cell contains a mirror, the beams only collide when they
+ *      are hitting the SAME face of the mirror (mirrorSide). Beams on opposite faces
+ *      reflect independently without colliding.
  *   2. Crossing: at the same global time, beam A is at cell P heading toward Q and beam B
  *      is at Q heading toward P — they cross between the cells. The collision position is
  *      the midpoint (fractional grid coordinate).
@@ -91,7 +108,8 @@ type ArrivalInfo = { si: number; segi: number; dir: Direction; pos: Position }
  */
 export function resolveCollisions(
   streams: LaserStream[],
-  streamOffsets: number[]
+  streamOffsets: number[],
+  mirrors: Mirror[]
 ): Position[] {
   // Map "x,y|globalTime" → arrivals (for same-cell detection)
   const byCellTime = new Map<string, ArrivalInfo[]>()
@@ -127,14 +145,16 @@ export function resolveCollisions(
     }
   }
 
-  // 1. Same-cell same-time: any two beams from different streams at the same cell at the
-  //    same global time — regardless of direction or whether a mirror is present.
+  // 1. Same-cell same-time: two beams from different streams at the same cell at the
+  //    same global time. At a mirror cell, only beams on the same mirror face collide.
   for (const arrivals of byCellTime.values()) {
     if (arrivals.length < 2) continue
     for (let i = 0; i < arrivals.length; i++) {
       for (let j = i + 1; j < arrivals.length; j++) {
         const a = arrivals[i], b = arrivals[j]
         if (a.si !== b.si) {
+          const m = mirrors.find((mir) => mir.position.x === a.pos.x && mir.position.y === a.pos.y)
+          if (m && mirrorSide(a.dir, m.type) !== mirrorSide(b.dir, m.type)) continue
           const gTime = streamOffsets[a.si] + a.segi + 1
           tryCollision(gTime, a.pos, a, b)
         }
@@ -273,7 +293,7 @@ export function calculateLaserPath(
     streamOffsets.push(globalOffset)
   }
 
-  const collisionPoints = resolveCollisions(streams, streamOffsets)
+  const collisionPoints = resolveCollisions(streams, streamOffsets, mirrors)
 
   // Count total segments after truncation; beams sharing a cell count independently
   const finalLength = streams.reduce((sum, st) => sum + st.segments.length, 0)
