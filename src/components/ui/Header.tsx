@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { HamburgerMenu } from './HamburgerMenu'
 import { HowToPlayModal } from './HowToPlayModal'
 import { SettingsModal } from './SettingsModal'
+import { AboutModal } from './AboutModal'
 
 interface HeaderProps {
   rightContent?: React.ReactNode
@@ -14,6 +15,7 @@ export function Header({ rightContent }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [showHowToPlay, setShowHowToPlay] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [showAbout, setShowAbout] = useState(false)
 
   return (
     <>
@@ -57,6 +59,7 @@ export function Header({ rightContent }: HeaderProps) {
         onClose={() => setMenuOpen(false)}
         onOpenHowToPlay={() => setShowHowToPlay(true)}
         onOpenSettings={() => setShowSettings(true)}
+        onOpenAbout={() => setShowAbout(true)}
       />
 
       <HowToPlayModal
@@ -67,6 +70,11 @@ export function Header({ rightContent }: HeaderProps) {
       <SettingsModal
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
+      />
+
+      <AboutModal
+        isOpen={showAbout}
+        onClose={() => setShowAbout(false)}
       />
     </>
   )
