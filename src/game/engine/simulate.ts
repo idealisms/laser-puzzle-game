@@ -146,7 +146,10 @@ export function resolveCollisions(
   }
 
   // 1. Same-cell same-time: two beams from different streams at the same cell at the
-  //    same global time. At a mirror cell, only beams on the same mirror face collide.
+  //    same global time.
+  //    - Mirror cell: only beams hitting the same mirror face collide (mirrorSide rule).
+  //    - Open cell: perpendicular beams pass through each other; only head-on or
+  //      same-direction beams collide.
   for (const arrivals of byCellTime.values()) {
     if (arrivals.length < 2) continue
     for (let i = 0; i < arrivals.length; i++) {
@@ -154,7 +157,12 @@ export function resolveCollisions(
         const a = arrivals[i], b = arrivals[j]
         if (a.si !== b.si) {
           const m = mirrors.find((mir) => mir.position.x === a.pos.x && mir.position.y === a.pos.y)
-          if (m && mirrorSide(a.dir, m.type) !== mirrorSide(b.dir, m.type)) continue
+          if (m) {
+            if (mirrorSide(a.dir, m.type) !== mirrorSide(b.dir, m.type)) continue
+          } else {
+            // Perpendicular beams in open space pass through each other
+            if (a.dir !== b.dir && a.dir !== oppositeDir(b.dir)) continue
+          }
           const gTime = streamOffsets[a.si] + a.segi + 1
           tryCollision(gTime, a.pos, a, b)
         }

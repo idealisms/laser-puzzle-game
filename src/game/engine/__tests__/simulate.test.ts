@@ -157,19 +157,31 @@ describe('resolveCollisions', () => {
     expect(streams[1].segments).toHaveLength(4)
   })
 
-  it('perpendicular beams at the same cell and time count as a collision', () => {
+  it('perpendicular beams in open space do not collide', () => {
     // Stream 0 goes right, arriving at (5,5) at gTime=5 (segi=4).
     // Stream 1 goes down, arriving at (5,5) at gTime=5 (segi=4).
-    // Perpendicular, not head-on — but same cell same time → collision.
+    // Perpendicular in open space → no collision.
     const streams: LaserStream[] = [
       { segments: [seg(0,5,1,5,'right'), seg(1,5,2,5,'right'), seg(2,5,3,5,'right'), seg(3,5,4,5,'right'), seg(4,5,5,5,'right')], generation: 0 },
       { segments: [seg(5,0,5,1,'down'),  seg(5,1,5,2,'down'),  seg(5,2,5,3,'down'),  seg(5,3,5,4,'down'),  seg(5,4,5,5,'down')],  generation: 1 },
     ]
     const result = resolveCollisions(streams, [0, 0], [])
-    expect(result).toHaveLength(1)
-    expect(result[0]).toEqual({ x: 5, y: 5 })
-    expect(streams[0].segments).toHaveLength(5)
-    expect(streams[1].segments).toHaveLength(5)
+    expect(result).toHaveLength(0)
+  })
+
+  it('perpendicular beams in open space: all four combos pass through', () => {
+    // up+right, up+left, down+right, down+left — none collide in open space
+    const pairs: [Parameters<typeof seg>[4], Parameters<typeof seg>[4]][] = [
+      ['up', 'right'], ['up', 'left'], ['down', 'right'], ['down', 'left'],
+    ]
+    for (const [d0, d1] of pairs) {
+      const streams: LaserStream[] = [
+        { segments: [seg(4,5,5,5,d0)], generation: 0 },
+        { segments: [seg(4,5,5,5,d1)], generation: 1 },
+      ]
+      const result = resolveCollisions(streams, [0, 0], [])
+      expect(result).toHaveLength(0)
+    }
   })
 
   it('same-cell at different times does not trigger collision', () => {
