@@ -61,6 +61,10 @@ export async function GET(request: Request, { params }: RouteParams) {
         optimalScore: level.optimalScore,
         optimalSolution: level.optimalSolution ? JSON.parse(level.optimalSolution) : null,
       },
+    }, {
+      headers: {
+        'X-Site-Version': process.env.NEXT_PUBLIC_SITE_VERSION ?? 'dev',
+      },
     })
   } catch (error) {
     console.error('Error fetching level:', error)

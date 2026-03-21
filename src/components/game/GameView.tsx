@@ -55,6 +55,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   // Fetch level data
   useEffect(() => {
     const CACHE_KEY = 'laser-puzzle-today'
+    const SITE_VERSION = process.env.NEXT_PUBLIC_SITE_VERSION ?? 'dev'
 
     // Load from cache immediately for instant display
     let cachedLevelJson: string | null = null
@@ -62,7 +63,13 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       try {
         const cached = localStorage.getItem(CACHE_KEY)
         if (cached) {
-          const { date: cachedDate, level: cachedLevel } = JSON.parse(cached)
+          const { date: cachedDate, level: cachedLevel, siteVersion } = JSON.parse(cached)
+          if (siteVersion !== SITE_VERSION) {
+            // Site was updated — clear stale cache and reload so new JS is active
+            localStorage.removeItem(CACHE_KEY)
+            window.location.reload()
+            return
+          }
           if (cachedDate === date) {
             cachedLevelJson = JSON.stringify(cachedLevel)
             setLevel(cachedLevel)
@@ -78,6 +85,13 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       try {
         const res = await fetch(`/api/levels/${date}`)
         if (res.ok) {
+          // If the server is running a newer build than our JS, reload to pick up
+          // new code before applying potentially-incompatible level data.
+          const serverVersion = res.headers.get('X-Site-Version')
+          if (serverVersion && serverVersion !== SITE_VERSION) {
+            window.location.reload()
+            return
+          }
           const data = await res.json()
           const freshJson = JSON.stringify(data.level)
           // Only reload game state if the level actually changed
@@ -87,7 +101,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
           }
           if (enableLevelCache) {
             try {
-              localStorage.setItem(CACHE_KEY, JSON.stringify({ date, level: data.level }))
+              localStorage.setItem(CACHE_KEY, JSON.stringify({ date, level: data.level, siteVersion: SITE_VERSION }))
             } catch {}
           }
         } else if (!cachedLevelJson) {
