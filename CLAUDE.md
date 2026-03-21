@@ -64,6 +64,8 @@ Complex fields (laserConfig, obstacles, solution) stored as JSON.
 
 Always commit changes to git after completing each edit or logical unit of work. Do not batch multiple unrelated changes into a single commit.
 
+When working with the database, never echo the production database name or password. Use stars to keep the information secret.
+
 ## Generating Puzzle Levels
 
 ### Pipeline
