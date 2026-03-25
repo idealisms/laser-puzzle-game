@@ -1,0 +1,59 @@
+{
+  "date": "2026-04-05",
+  "name": "Archipelago",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 10,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Atoll A — top-left, touches top and left edges",
+      "cells": [[0,0],[1,0],[2,0],[1,1],[2,1],[3,1],[2,2]]
+    },
+    {
+      "label": "Reef B — top-right, touches top and right edges",
+      "cells": [[11,0],[12,0],[13,0],[14,0],[12,1],[13,1]]
+    },
+    {
+      "label": "Rock C — upper center (small)",
+      "cells": [[6,2],[7,2],[8,2],[7,3]]
+    },
+    {
+      "label": "Shoal D — left middle, touches left edge",
+      "cells": [[0,6],[1,6],[0,7],[1,7],[0,8]]
+    },
+    {
+      "label": "Mesa E — right upper-middle, touches right edge",
+      "cells": [[12,6],[13,6],[14,6],[14,7],[13,7]]
+    },
+    {
+      "label": "Island F — center (small)",
+      "cells": [[6,7],[7,7],[8,7],[7,8]]
+    },
+    {
+      "label": "Cliff G — right lower-middle, touches right edge",
+      "cells": [[12,12],[13,12],[14,12],[14,13]]
+    },
+    {
+      "label": "Sandbar H — lower center (large)",
+      "cells": [[6,13],[7,13],[8,13],[6,14],[7,14],[8,14]]
+    },
+    {
+      "label": "Outcrop I — left lower, touches left edge",
+      "cells": [[0,13],[1,13],[0,14],[1,14]]
+    },
+    {
+      "label": "Bank J — bottom, near bottom edge",
+      "cells": [[3,17],[4,17],[6,17],[7,17],[8,17],[10,17]]
+    },
+    {
+      "label": "Pinnacle K — bottom-right, touches right edge",
+      "cells": [[12,16],[13,16],[14,16],[13,17]]
+    }
+  ],
+  "splitters": []
+}
