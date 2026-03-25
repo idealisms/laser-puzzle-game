@@ -1,0 +1,39 @@
+{
+  "date": "2026-04-03",
+  "name": "Hourglass",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 7,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Upper band 1 — thin outer strips near top edge",
+      "cells": [[0,2],[1,2],[2,2],[12,2],[13,2],[14,2]]
+    },
+    {
+      "label": "Upper band 2 — wider",
+      "cells": [[0,5],[1,5],[2,5],[3,5],[4,5],[10,5],[11,5],[12,5],[13,5],[14,5]]
+    },
+    {
+      "label": "Upper band 3 — near the waist, gap at x=6-8 only",
+      "cells": [[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[9,8],[10,8],[11,8],[12,8],[13,8],[14,8]]
+    },
+    {
+      "label": "Lower band 3 — near the waist (symmetric)",
+      "cells": [[0,11],[1,11],[2,11],[3,11],[4,11],[5,11],[9,11],[10,11],[11,11],[12,11],[13,11],[14,11]]
+    },
+    {
+      "label": "Lower band 2 — wider",
+      "cells": [[0,14],[1,14],[2,14],[3,14],[4,14],[10,14],[11,14],[12,14],[13,14],[14,14]]
+    },
+    {
+      "label": "Lower band 1 — thin outer strips near bottom edge",
+      "cells": [[0,17],[1,17],[2,17],[12,17],[13,17],[14,17]]
+    }
+  ],
+  "splitters": []
+}
