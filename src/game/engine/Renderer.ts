@@ -446,7 +446,7 @@ export class Renderer {
           this.drawHoverPreview(hoverPos.x, hoverPos.y, '\\', true)
         }
         // \ mirror: cursor changes but no extra canvas highlight needed
-      } else if (!existingMirror) {
+      } else if (!existingMirror && !isEraserMode) {
         const canPlace =
           hoverPos.x >= 0 &&
           hoverPos.x < level.gridWidth &&

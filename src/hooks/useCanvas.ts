@@ -31,6 +31,7 @@ export function useCanvas({
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pressStartPosRef = useRef<{ x: number; y: number } | null>(null)
   const lastErasedCellRef = useRef<string | null>(null)
+  const isTouchActiveRef = useRef<boolean>(false)
 
   const { level } = gameState
 
@@ -180,6 +181,7 @@ export function useCanvas({
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (isTouchActiveRef.current) return
       const pos = getCellFromEvent(e)
       setHoverPos(pos)
 
@@ -251,6 +253,7 @@ export function useCanvas({
   const handleTouchStart = useCallback(
     (e: React.TouchEvent<HTMLCanvasElement>) => {
       e.preventDefault()
+      isTouchActiveRef.current = true
       if (e.touches.length !== 1) return
       const touch = e.touches[0]
       const pos = getCellFromTouch(touch)
@@ -290,7 +293,6 @@ export function useCanvas({
         const pos = getCellFromTouch(touch)
         if (pos) {
           eraseMirrorAt(pos)
-          setHoverPos(pos)
         }
       }
     },
@@ -300,9 +302,11 @@ export function useCanvas({
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent<HTMLCanvasElement>) => {
       e.preventDefault()
+      isTouchActiveRef.current = false
 
       if (isEraserMode) {
         setIsEraserMode(false)
+        setHoverPos(null)
         lastErasedCellRef.current = null
         cancelLongPress()
         pressStartPosRef.current = null
