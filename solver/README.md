@@ -77,7 +77,7 @@ python solve.py --help
 | Option | Description | Default |
 |--------|-------------|---------|
 | `-q, --quiet` | Hide detailed progress | Off |
-| `--beam-width` | Beam width for beam search | 2000 |
+| `--beam-width` | Beam width for beam search | 8000 |
 | `--no-prune` | Disable path-based pruning | Off |
 | `-l, --list` | List all available puzzles | - |
 
@@ -96,7 +96,7 @@ Mirrors available: 9
 Obstacles: 38
 Laser: (0, 19) -> UP
 
-Solving with beam search (beam_width: 2000)...
+Solving with beam search (beam_width: 8000)...
 
 ==================================================
 SOLUTION

@@ -137,7 +137,7 @@ function parseArgs(argv: string[]) {
     date: null as string | null,
     start: null as string | null,
     end: null as string | null,
-    beamWidth: 2000,
+    beamWidth: 8000,
     workers: os.cpus().length,
   };
   for (let i = 0; i < args.length; i++) {

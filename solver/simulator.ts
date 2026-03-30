@@ -271,7 +271,7 @@ function getCandidatePositions(allCells, usedPositions, invalidPositions) {
  */
 function beamSearchForDepth(config, targetDepth, opts) {
   const {
-    beamWidth = 2000,
+    beamWidth = 8000,
     usePathPruning = true,
     obstacleSet,
     splitterMap,

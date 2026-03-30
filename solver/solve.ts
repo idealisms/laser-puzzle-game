@@ -31,7 +31,7 @@ function parseArgs(argv) {
     puzzle: null,
     list: false,
     quiet: false,
-    beamWidth: 2000,
+    beamWidth: 8000,
     noPrune: false,
     workers: os.cpus().length,
   };
@@ -122,7 +122,7 @@ function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, useP
  */
 async function solvePuzzle(config, opts = {}) {
   const {
-    beamWidth = 2000,
+    beamWidth = 8000,
     workers = os.cpus().length,
     noPrune = false,
   } = opts;
