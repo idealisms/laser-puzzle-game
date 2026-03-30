@@ -1,0 +1,51 @@
+{
+  "date": "2026-04-08",
+  "name": "Labyrinth",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "H1 — horizontal stub, upper-left",
+      "cells": [[0,3],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3]]
+    },
+    {
+      "label": "V1 — vertical stub, upper-right (near laser entry)",
+      "cells": [[12,1],[12,2],[12,3],[12,4],[12,5]]
+    },
+    {
+      "label": "H2 — horizontal stub, upper-right",
+      "cells": [[8,7],[9,7],[10,7],[11,7],[12,7],[13,7]]
+    },
+    {
+      "label": "V2 — vertical stub, left-center",
+      "cells": [[4,5],[4,6],[4,7],[4,8],[4,9]]
+    },
+    {
+      "label": "H3 — horizontal stub, center-left",
+      "cells": [[1,11],[2,11],[3,11],[4,11],[5,11],[6,11],[7,11]]
+    },
+    {
+      "label": "V3 — vertical stub, right-center",
+      "cells": [[9,9],[9,10],[9,11],[9,12],[9,13]]
+    },
+    {
+      "label": "H4 — horizontal stub, lower-right",
+      "cells": [[7,15],[8,15],[9,15],[10,15],[11,15],[12,15],[13,15]]
+    },
+    {
+      "label": "V4 — vertical stub, lower-left",
+      "cells": [[3,13],[3,14],[3,15],[3,16],[3,17]]
+    },
+    {
+      "label": "H5 — horizontal stub, near bottom-left",
+      "cells": [[1,18],[2,18],[3,18],[4,18],[5,18],[6,18]]
+    }
+  ],
+  "splitters": []
+}

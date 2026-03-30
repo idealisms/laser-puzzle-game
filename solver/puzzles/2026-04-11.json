@@ -1,0 +1,43 @@
+{
+  "date": "2026-04-11",
+  "name": "Pyramid",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 10,
+    "dir": "left"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Apex — rightmost, narrowest layer",
+      "cells": [[9,9],[9,10],[9,11]]
+    },
+    {
+      "label": "Layer 2",
+      "cells": [[7,7],[7,8],[7,9],[7,10],[7,11],[7,12],[7,13]]
+    },
+    {
+      "label": "Layer 3",
+      "cells": [[5,5],[5,6],[5,7],[5,8],[5,9],[5,10],[5,11],[5,12],[5,13],[5,14],[5,15]]
+    },
+    {
+      "label": "Base — near left edge, almost full height",
+      "cells": [[3,3],[3,4],[3,5],[3,6],[3,7],[3,8],[3,9],[3,10],[3,11],[3,12],[3,13],[3,14],[3,15],[3,16],[3,17]]
+    },
+    {
+      "label": "Top perimeter block — forces beam off top-right edge",
+      "cells": [[11,0],[12,0],[13,0],[11,1],[12,1],[13,1]]
+    },
+    {
+      "label": "Bottom perimeter block — forces beam off bottom-right edge",
+      "cells": [[11,18],[12,18],[13,18],[11,19],[12,19],[13,19]]
+    },
+    {
+      "label": "Right column — blocks right-side perimeter run, gap at y=9-11 for laser",
+      "cells": [[13,3],[13,4],[13,5],[13,6],[13,7],[13,8],[13,12],[13,13],[13,14],[13,15],[13,16],[13,17]]
+    }
+  ],
+  "splitters": []
+}
