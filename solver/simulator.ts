@@ -34,6 +34,48 @@ function decodePos(k) { return [Math.floor(k / 100), k % 100]; }
 // Encode (x, y, dir) for visited-state tracking.
 function stateKey(x, y, dir) { return (x * 20 + y) * 4 + dir; }
 
+// ── Path encoding ─────────────────────────────────────────────────────────────
+// Each path step is packed into a Uint16: (x << 7) | (y << 2) | dir
+//   x:   4 bits (0–14), y: 5 bits (0–19), dir: 2 bits (0–3) → max 1871, fits in 11 bits
+const PATH_MAX = 512;
+
+function encodePStep(x, y, dir) { return (x << 7) | (y << 2) | dir; }
+function pstepX(v)   { return v >> 7; }
+function pstepY(v)   { return (v >> 2) & 0x1F; }
+function pstepDir(v) { return v & 3; }
+
+/** Create a new empty path object. */
+function newPath() { return { buf: new Uint16Array(PATH_MAX), len: 0 }; }
+
+/** Push (x, y, dir) onto a path in place. */
+function pathPush(p, x, y, dir) { p.buf[p.len++] = encodePStep(x, y, dir); }
+
+/** Return a new path containing the first `end` steps of p. */
+function pathSlice(p, end) {
+  const q = { buf: new Uint16Array(PATH_MAX), len: end };
+  q.buf.set(p.buf.subarray(0, end));
+  return q;
+}
+
+// ── allCells bitset ───────────────────────────────────────────────────────────
+// Tracks which (x, y) grid cells the laser visits.
+// Cell index = x*20+y. Grid is 15×20 = 300 cells → 300 bits → 38 bytes, rounded to 40.
+const CELLS_BYTES = 40;
+
+function newCellSet() { return new Uint8Array(CELLS_BYTES); }
+function cellSetAdd(arr, x, y) { const i = x * 20 + y; arr[i >> 3] |= (1 << (i & 7)); }
+function cellSetHas(arr, x, y) { const i = x * 20 + y; return (arr[i >> 3] >> (i & 7)) & 1; }
+
+/** Build an allCells bitset from a path object. */
+function buildCellSet(path) {
+  const cells = newCellSet();
+  for (let i = 0; i < path.len; i++) {
+    const v = path.buf[i];
+    cellSetAdd(cells, pstepX(v), pstepY(v));
+  }
+  return cells;
+}
+
 /**
  * Simulate a full laser path from scratch.
  *
@@ -47,6 +89,8 @@ function stateKey(x, y, dir) { return (x * 20 + y) * 4 + dir; }
  * @param {Set|null} obstacleSet Unused (kept for API compatibility with simulateIncremental).
  * @param {Map|null} splitterMap Unused (kept for API compatibility with simulateIncremental).
  * @returns {{ length, path, allCells, terminationReason }}
+ *   path     — { buf: Uint16Array(512), len: number }, each entry encodes (x,y,dir)
+ *   allCells — Uint8Array(40) bitset, bit (x*20+y) set for each visited cell
  */
 function simulateLaser(config, mirrors, maxLength = 1000, obstacleSet = null, splitterMap = null) {
   // Convert mirrors from [[x,y,type]] to Mirror[]
@@ -79,26 +123,24 @@ function simulateLaser(config, mirrors, maxLength = 1000, obstacleSet = null, sp
   };
   const terminationReason = termMap[laserPath.terminationReason];
 
-  // Build primary path [[x,y,outgoingDir], …] starting with the laser source.
-  // For each segment i: the cell is segment.end, and the outgoing direction is
-  // segment[i+1].direction (next segment's incoming dir = current outgoing dir after
-  // any mirror reflection), falling back to segment[i].direction for the last step.
+  // Build primary path starting with the laser source.
+  const path = newPath();
+  pathPush(path, config.laserX, config.laserY, config.laserDir);
   const stream0 = laserPath.streams[0];
-  const path = [[config.laserX, config.laserY, config.laserDir]];
   if (stream0) {
     for (let i = 0; i < stream0.segments.length; i++) {
       const seg = stream0.segments[i];
       const nextSeg = stream0.segments[i + 1];
       const outgoingDirStr = nextSeg ? nextSeg.direction : seg.direction;
-      path.push([seg.end.x, seg.end.y, DIR_TO_INT[outgoingDirStr]]);
+      pathPush(path, seg.end.x, seg.end.y, DIR_TO_INT[outgoingDirStr]);
     }
   }
 
   // allCells: every cell visited across all streams (for candidate generation)
-  const allCells = new Set();
+  const allCells = newCellSet();
   for (const stream of laserPath.streams) {
     for (const seg of stream.segments) {
-      allCells.add(posKey(seg.end.x, seg.end.y));
+      cellSetAdd(allCells, seg.end.x, seg.end.y);
     }
   }
 
@@ -120,15 +162,15 @@ function simulateLaser(config, mirrors, maxLength = 1000, obstacleSet = null, sp
  * Falls back to full simulateLaser when splitters are present
  * (correctness takes priority over performance for splitter puzzles).
  *
- * @param {object}   config           Puzzle configuration.
- * @param {Set}      obstacleSet      Pre-computed Set of posKey integers.
- * @param {Array}    existingMirrors  Current mirror placements [[x,y,t], …].
- * @param {Array}    existingPath     Path from simulating existingMirrors.
- * @param {number}   existingLength   Length from simulating existingMirrors.
- * @param {Array}    newMirror        The new mirror to add [x, y, type].
- * @param {number}   maxLength        Safety cap (default 1000).
- * @param {Map|null} splitterMap      Pre-computed splitter map (computed if null).
- * @param {Set|null} existingAllCells All cells visited across all streams.
+ * @param {object}         config           Puzzle configuration.
+ * @param {Set}            obstacleSet      Pre-computed Set of posKey integers.
+ * @param {Array}          existingMirrors  Current mirror placements [[x,y,t], …].
+ * @param {{buf,len}}      existingPath     Path from simulating existingMirrors.
+ * @param {number}         existingLength   Length from simulating existingMirrors.
+ * @param {Array}          newMirror        The new mirror to add [x, y, type].
+ * @param {number}         maxLength        Safety cap (default 1000).
+ * @param {Map|null}       splitterMap      Pre-computed splitter map (computed if null).
+ * @param {Uint8Array|null} existingAllCells All cells visited across all streams.
  * @returns {{ length, path, allCells, terminationReason }}
  */
 function simulateIncremental(
@@ -148,15 +190,15 @@ function simulateIncremental(
     );
   }
 
-  const _existingAllCells = existingAllCells ||
-    new Set(existingPath.map(([x, y]) => posKey(x, y)));
+  const _existingAllCells = existingAllCells || buildCellSet(existingPath);
 
   const [mx, my, mtype] = newMirror;
 
   // Find if the new mirror appears on the existing path
   let mirrorIndex = null;
-  for (let i = 0; i < existingPath.length; i++) {
-    if (existingPath[i][0] === mx && existingPath[i][1] === my) {
+  for (let i = 0; i < existingPath.len; i++) {
+    const v = existingPath.buf[i];
+    if (pstepX(v) === mx && pstepY(v) === my) {
       mirrorIndex = i; break;
     }
   }
@@ -167,9 +209,9 @@ function simulateIncremental(
              allCells: _existingAllCells, terminationReason: 'unchanged' };
   }
 
-  const incomingDir = existingPath[mirrorIndex - 1][2];
+  const incomingDir = pstepDir(existingPath.buf[mirrorIndex - 1]);
   const newDir = REFLECT[mtype][incomingDir];
-  const existingDirAtMirror = existingPath[mirrorIndex][2];
+  const existingDirAtMirror = pstepDir(existingPath.buf[mirrorIndex]);
 
   // Mirror doesn't change direction → no effect
   if (newDir === existingDirAtMirror) {
@@ -186,9 +228,15 @@ function simulateIncremental(
   let direction = newDir;
   let length = mirrorIndex;
 
-  const newPath = existingPath.slice(0, mirrorIndex);
-  newPath.push([x, y, direction]);
-  const visited = new Set(newPath.map(([px, py, pd]) => stateKey(px, py, pd)));
+  const path = pathSlice(existingPath, mirrorIndex);
+  pathPush(path, x, y, direction);
+
+  // Build visited set from the initial path slice
+  const visited = new Set();
+  for (let i = 0; i < path.len; i++) {
+    const v = path.buf[i];
+    visited.add(stateKey(pstepX(v), pstepY(v), pstepDir(v)));
+  }
 
   while (length < maxLength) {
     const [dx, dy] = DELTAS[direction];
@@ -196,19 +244,11 @@ function simulateIncremental(
 
     if (nx < 0 || nx >= config.width || ny < 0 || ny >= config.height) {
       length++;
-      return {
-        length, path: newPath,
-        allCells: new Set(newPath.map(([px, py]) => posKey(px, py))),
-        terminationReason: 'edge',
-      };
+      return { length, path, allCells: buildCellSet(path), terminationReason: 'edge' };
     }
     if (obstacleSet.has(posKey(nx, ny))) {
       length++;
-      return {
-        length, path: newPath,
-        allCells: new Set(newPath.map(([px, py]) => posKey(px, py))),
-        terminationReason: 'obstacle',
-      };
+      return { length, path, allCells: buildCellSet(path), terminationReason: 'obstacle' };
     }
 
     length++;
@@ -218,21 +258,13 @@ function simulateIncremental(
 
     const state = stateKey(x, y, direction);
     if (visited.has(state)) {
-      return {
-        length, path: newPath,
-        allCells: new Set(newPath.map(([px, py]) => posKey(px, py))),
-        terminationReason: 'loop',
-      };
+      return { length, path, allCells: buildCellSet(path), terminationReason: 'loop' };
     }
     visited.add(state);
-    newPath.push([x, y, direction]);
+    pathPush(path, x, y, direction);
   }
 
-  return {
-    length, path: newPath,
-    allCells: new Set(newPath.map(([px, py]) => posKey(px, py))),
-    terminationReason: 'max_length',
-  };
+  return { length, path, allCells: buildCellSet(path), terminationReason: 'max_length' };
 }
 
 /**
@@ -242,9 +274,13 @@ function simulateIncremental(
  */
 function getCandidatePositions(allCells, usedPositions, invalidPositions) {
   const positions = [];
-  for (const pk of allCells) {
-    if (!invalidPositions.has(pk) && !usedPositions.has(pk))
-      positions.push(decodePos(pk));
+  for (let i = 0; i < 300; i++) {
+    if ((allCells[i >> 3] >> (i & 7)) & 1) {
+      const x = Math.floor(i / 20), y = i % 20;
+      const pk = posKey(x, y);
+      if (!invalidPositions.has(pk) && !usedPositions.has(pk))
+        positions.push([x, y]);
+    }
   }
   return positions;
 }

@@ -149,7 +149,7 @@ async function solvePuzzle(config, opts = {}) {
     validPositions,
     initialLength: initial.length,
     initialPath: initial.path,
-    initialAllCellsArr: [...initial.allCells],
+    initialAllCells: initial.allCells,
   };
 
   return runParallel(
@@ -220,7 +220,7 @@ async function main() {
     validPositions,
     initialLength: initial.length,
     initialPath: initial.path,
-    initialAllCellsArr: [...initial.allCells],
+    initialAllCells: initial.allCells,
   };
 
   const startTime = Date.now();

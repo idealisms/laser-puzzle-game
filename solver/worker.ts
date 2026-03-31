@@ -19,7 +19,7 @@ const {
   validPositions,
   initialLength,
   initialPath,
-  initialAllCellsArr,
+  initialAllCells,
   targetDepth,
   beamWidth,
   usePathPruning,
@@ -29,7 +29,6 @@ const {
 const obstacleSet = new Set(obstacleSetArr);
 const splitterMap = new Map(splitterMapArr);
 const invalidPositions = new Set(invalidPosArr);
-const initialAllCells = new Set(initialAllCellsArr);
 
 const result = beamSearchForDepth(configData, targetDepth, {
   beamWidth,
