@@ -1,0 +1,47 @@
+{
+  "date": "2026-04-16",
+  "name": "Gatehouse",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 0, "y": 10, "dir": "right" },
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {
+      "label": "Vertical divider at x=7, top section y=0..8",
+      "cells": [[7,0],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[7,8]]
+    },
+    {
+      "label": "Vertical divider at x=7, bottom section y=12..19",
+      "cells": [[7,12],[7,13],[7,14],[7,15],[7,16],[7,17],[7,18],[7,19]]
+    },
+    {
+      "label": "Top-left corner block",
+      "cells": [[1,1],[2,1],[1,2],[2,2]]
+    },
+    {
+      "label": "Bottom-left corner block",
+      "cells": [[1,17],[2,17],[1,18],[2,18]]
+    },
+    {
+      "label": "Left zone mid-row blocks",
+      "cells": [[4,5],[4,15]]
+    },
+    {
+      "label": "Top-right corner block",
+      "cells": [[11,2],[12,2],[11,3],[12,3]]
+    },
+    {
+      "label": "Bottom-right corner block",
+      "cells": [[11,16],[12,16],[11,17],[12,17]]
+    },
+    {
+      "label": "Right zone mid-row blocks",
+      "cells": [[9,7],[9,13]]
+    }
+  ],
+  "gates": [
+    { "x": 7, "y": 9,  "dir": "right", "note": "gate opens rightward — top of gap" },
+    { "x": 7, "y": 10, "dir": "right", "note": "gate opens rightward — laser entry row" },
+    { "x": 7, "y": 11, "dir": "right", "note": "gate opens rightward — bottom of gap" }
+  ]
+}

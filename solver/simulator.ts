@@ -96,12 +96,15 @@ function simulateLaser(config, mirrors, maxLength = 1000, obstacleSet = null, sp
   // Convert mirrors from [[x,y,type]] to Mirror[]
   const mirrorObjs = mirrors.map(([x, y, type]) => ({ position: { x, y }, type }));
 
-  // Convert config obstacles (plain walls) and splitters to Obstacle[]
+  // Convert config obstacles (plain walls), splitters, and gates to Obstacle[]
   const wallObstacles = config.obstacles.map(([x, y]) => ({ x, y, type: 'wall' }));
   const splitterObstacles = (config.splitters || []).map(([x, y, o]) => ({
     x, y, type: 'splitter', orientation: o,
   }));
-  const allObstacles = [...wallObstacles, ...splitterObstacles];
+  const gateObstacles = (config.gates || []).map(([x, y, o]) => ({
+    x, y, type: 'gate', orientation: o,
+  }));
+  const allObstacles = [...wallObstacles, ...splitterObstacles, ...gateObstacles];
 
   // Convert laserDir from int to string
   const laserConfig = {
@@ -183,8 +186,9 @@ function simulateIncremental(
     );
   }
 
-  // Splitter puzzles: always use full simulation for correctness
-  if (splitterMap.size > 0) {
+  // Splitter/gate puzzles: always use full simulation for correctness
+  const hasGates = (config.gates || []).length > 0;
+  if (splitterMap.size > 0 || hasGates) {
     return simulateLaser(
       config, [...existingMirrors, newMirror], maxLength, obstacleSet, splitterMap
     );

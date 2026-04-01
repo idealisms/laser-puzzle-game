@@ -43,10 +43,15 @@ function oppositeDir(dir: Direction): Direction {
 
 type ObstacleAction =
   | { kind: 'wall' }
+  | { kind: 'pass' }
   | { kind: 'split'; dirs: [Direction, Direction] }
   | { kind: 'reflect'; dir: Direction }
 
 function getObstacleAction(laserDir: Direction, obstacle: Obstacle): ObstacleAction {
+  if (obstacle.type === 'gate') {
+    const passDir: Direction = obstacle.orientation ?? 'right'
+    return laserDir === passDir ? { kind: 'pass' } : { kind: 'wall' }
+  }
   if (obstacle.type !== 'splitter') {
     return { kind: 'wall' }
   }
@@ -269,6 +274,11 @@ export function calculateLaserPath(
         if (action.kind === 'wall') {
           terminationReason = 'obstacle'
           break
+        }
+        if (action.kind === 'pass') {
+          // Laser passes through gate — continue from gate cell, same direction
+          pos = nextPos
+          continue
         }
         if (action.kind === 'split') {
           // Sub-streams inherit the global time at the split point.

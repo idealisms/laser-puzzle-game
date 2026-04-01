@@ -37,6 +37,11 @@ const DEFAULT_COLORS = {
     stroke: '#1a4060',
     cross: '#00ccff',
   },
+  gate: {
+    fill: '#0a1a0a',
+    stroke: '#1a5a1a',
+    arrow: '#44ff88',
+  },
   eraser: {
     highlight: 'rgba(255, 0, 0, 0.25)',
     border: 'rgba(255, 0, 0, 0.6)',

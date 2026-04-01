@@ -159,6 +159,61 @@ export class Renderer {
     this.ctx.fill()
   }
 
+  drawGate(x: number, y: number, orientation: SplitterOrientation = 'right'): void {
+    const p = 4
+    const cs = CELL_SIZE
+    const ox = x * cs
+    const oy = y * cs
+    const cx = ox + cs / 2
+    const cy = oy + cs / 2
+    const r = cs / 2 - p  // inner half-size
+
+    // Background fill
+    this.ctx.fillStyle = this.colors.gate.fill
+    this.ctx.strokeStyle = this.colors.gate.stroke
+    this.ctx.lineWidth = 2
+    this.ctx.fillRect(ox + p, oy + p, cs - p * 2, cs - p * 2)
+    this.ctx.strokeRect(ox + p, oy + p, cs - p * 2, cs - p * 2)
+
+    // Arrow pointing in the pass-through direction
+    let dx = 0, dy = 0
+    switch (orientation) {
+      case 'right': dx =  1; dy =  0; break
+      case 'left':  dx = -1; dy =  0; break
+      case 'down':  dx =  0; dy =  1; break
+      case 'up':    dx =  0; dy = -1; break
+    }
+    const perpX = -dy
+    const perpY =  dx
+
+    const tailX = cx - dx * r * 0.55
+    const tailY = cy - dy * r * 0.55
+    const tipX  = cx + dx * r * 0.75
+    const tipY  = cy + dy * r * 0.75
+    const juncX = cx + dx * r * 0.2
+    const juncY = cy + dy * r * 0.2
+    const wingW = r * 0.42
+
+    this.ctx.strokeStyle = this.colors.gate.arrow
+    this.ctx.fillStyle = this.colors.gate.arrow
+    this.ctx.lineWidth = 2.5
+    this.ctx.lineCap = 'round'
+
+    // Shaft
+    this.ctx.beginPath()
+    this.ctx.moveTo(tailX, tailY)
+    this.ctx.lineTo(juncX, juncY)
+    this.ctx.stroke()
+
+    // Arrowhead triangle
+    this.ctx.beginPath()
+    this.ctx.moveTo(tipX, tipY)
+    this.ctx.lineTo(juncX + perpX * wingW, juncY + perpY * wingW)
+    this.ctx.lineTo(juncX - perpX * wingW, juncY - perpY * wingW)
+    this.ctx.closePath()
+    this.ctx.fill()
+  }
+
   drawMirror(x: number, y: number, type: '/' | '\\'): void {
     const centerX = x * CELL_SIZE + CELL_SIZE / 2
     const centerY = y * CELL_SIZE + CELL_SIZE / 2
@@ -401,6 +456,8 @@ export class Renderer {
     for (const obstacle of level.obstacles) {
       if (obstacle.type === 'splitter') {
         this.drawSplitter(obstacle.x, obstacle.y, obstacle.orientation ?? 'right')
+      } else if (obstacle.type === 'gate') {
+        this.drawGate(obstacle.x, obstacle.y, obstacle.orientation ?? 'right')
       } else {
         this.drawObstacle(obstacle.x, obstacle.y)
       }

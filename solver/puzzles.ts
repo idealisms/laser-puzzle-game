@@ -22,6 +22,7 @@ interface PuzzleConfig {
   obstacles: [number, number][];
   numMirrors: number;
   splitters: [number, number, string][];
+  gates: [number, number, string][];
 }
 
 function loadPuzzles(): Record<string, PuzzleConfig> {
@@ -34,6 +35,7 @@ function loadPuzzles(): Record<string, PuzzleConfig> {
 
     const obstacles: [number, number][] = data.obstacle_groups.flatMap(g => g.cells);
     const splitters: [number, number, string][] = (data.splitters || []).map(s => [s.x, s.y, s.dir]);
+    const gates: [number, number, string][] = (data.gates || []).map(g => [g.x, g.y, g.dir]);
 
     configs[data.date] = {
       name: data.name,
@@ -45,6 +47,7 @@ function loadPuzzles(): Record<string, PuzzleConfig> {
       obstacles,
       numMirrors: data.num_mirrors,
       splitters,
+      gates,
     };
   }
 

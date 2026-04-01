@@ -14,7 +14,7 @@ interface LevelJson {
   gridWidth: number
   gridHeight: number
   laserConfig: { x: number; y: number; direction: string }
-  obstacles: { x: number; y: number }[]
+  obstacles: { x: number; y: number; type?: string; orientation?: string }[]
   mirrorsAvailable: number
   optimalScore: number
   optimalSolution?: { x: number; y: number; type: string }[]

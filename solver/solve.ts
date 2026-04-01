@@ -132,8 +132,9 @@ async function solvePuzzle(config, opts = {}) {
   const splitterMap = new Map(
     (config.splitters || []).map(([x, y, o]) => [posKey(x, y), o])
   );
+  const gatePositions = new Set((config.gates || []).map(([x, y]) => posKey(x, y)));
   const laserPos = posKey(config.laserX, config.laserY);
-  const invalidPositions = new Set([...obstacleSet, ...splitterMap.keys(), laserPos]);
+  const invalidPositions = new Set([...obstacleSet, ...splitterMap.keys(), ...gatePositions, laserPos]);
 
   const validPositions = [];
   for (let x = 0; x < config.width; x++)
@@ -202,8 +203,9 @@ async function main() {
   const splitterMap = new Map(
     (config.splitters || []).map(([x, y, o]) => [posKey(x, y), o])
   );
+  const gatePositions = new Set((config.gates || []).map(([x, y]) => posKey(x, y)));
   const laserPos = posKey(config.laserX, config.laserY);
-  const invalidPositions = new Set([...obstacleSet, ...splitterMap.keys(), laserPos]);
+  const invalidPositions = new Set([...obstacleSet, ...splitterMap.keys(), ...gatePositions, laserPos]);
 
   const validPositions = [];
   for (let x = 0; x < config.width; x++)

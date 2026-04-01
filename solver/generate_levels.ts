@@ -36,6 +36,7 @@ interface PuzzleConfig {
   obstacles: [number, number][];
   numMirrors: number;
   splitters?: [number, number, string][];
+  gates?: [number, number, string][];
 }
 
 /**
@@ -91,6 +92,10 @@ async function generateLevel(dateStr: string, config: PuzzleConfig, solverOpts: 
       // Splitters (emitted after walls, matching Python order)
       ...(config.splitters || []).map(([x, y, orientation]) => ({
         x, y, type: 'splitter', orientation,
+      })),
+      // Gates
+      ...(config.gates || []).map(([x, y, orientation]) => ({
+        x, y, type: 'gate', orientation,
       })),
     ],
     mirrorsAvailable: config.numMirrors,

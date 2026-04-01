@@ -23,8 +23,8 @@ export type SplitterOrientation = 'right' | 'left' | 'up' | 'down'
 export interface Obstacle {
   x: number
   y: number
-  type?: 'wall' | 'splitter'
-  orientation?: SplitterOrientation  // only used when type === 'splitter'; defaults to 'right'
+  type?: 'wall' | 'splitter' | 'gate'
+  orientation?: SplitterOrientation  // splitter: trigger dir; gate: pass-through dir; defaults to 'right'
 }
 
 export interface LaserSegment {
