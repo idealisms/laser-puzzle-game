@@ -15,6 +15,7 @@ const {
   configData,
   obstacleSetArr,
   splitterMapArr,
+  gateMapArr,
   invalidPosArr,
   validPositions,
   initialLength,
@@ -28,6 +29,7 @@ const {
 // Reconstruct typed collections from serialised arrays
 const obstacleSet = new Set(obstacleSetArr);
 const splitterMap = new Map(splitterMapArr);
+const gateMap = new Map((gateMapArr || []).map(([k, o]) => [k, { up: 0, right: 1, down: 2, left: 3 }[o]]));
 const invalidPositions = new Set(invalidPosArr);
 
 const result = beamSearchForDepth(configData, targetDepth, {
@@ -35,6 +37,7 @@ const result = beamSearchForDepth(configData, targetDepth, {
   usePathPruning,
   obstacleSet,
   splitterMap,
+  gateMap,
   invalidPositions,
   validPositions,
   initialLength,

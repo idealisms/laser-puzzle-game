@@ -178,17 +178,21 @@ function simulateLaser(config, mirrors, maxLength = 1000, obstacleSet = null, sp
  */
 function simulateIncremental(
   config, obstacleSet, existingMirrors, existingPath, existingLength,
-  newMirror, maxLength = 1000, splitterMap = null, existingAllCells = null
+  newMirror, maxLength = 1000, splitterMap = null, existingAllCells = null, gateMap = null
 ) {
   if (!splitterMap) {
     splitterMap = new Map(
       (config.splitters || []).map(([x, y, o]) => [posKey(x, y), o])
     );
   }
+  if (!gateMap) {
+    gateMap = new Map(
+      (config.gates || []).map(([x, y, o]) => [posKey(x, y), DIR_TO_INT[o]])
+    );
+  }
 
-  // Splitter/gate puzzles: always use full simulation for correctness
-  const hasGates = (config.gates || []).length > 0;
-  if (splitterMap.size > 0 || hasGates) {
+  // Splitter puzzles still need full simulation (branching paths)
+  if (splitterMap.size > 0) {
     return simulateLaser(
       config, [...existingMirrors, newMirror], maxLength, obstacleSet, splitterMap
     );
@@ -251,6 +255,12 @@ function simulateIncremental(
       return { length, path, allCells: buildCellSet(path), terminationReason: 'edge' };
     }
     if (obstacleSet.has(posKey(nx, ny))) {
+      length++;
+      return { length, path, allCells: buildCellSet(path), terminationReason: 'obstacle' };
+    }
+    const gateDir = gateMap.get(posKey(nx, ny));
+    if (gateDir !== undefined && direction !== gateDir) {
+      // Gate blocks laser approaching from the wrong direction
       length++;
       return { length, path, allCells: buildCellSet(path), terminationReason: 'obstacle' };
     }
@@ -344,7 +354,7 @@ class MinHeap {
  *
  * @param {object} config
  * @param {number} targetDepth
- * @param {object} opts - { beamWidth, usePathPruning, obstacleSet, splitterMap,
+ * @param {object} opts - { beamWidth, usePathPruning, obstacleSet, splitterMap, gateMap,
  *                          invalidPositions, validPositions,
  *                          initialLength, initialPath, initialAllCells }
  * @returns {{ score: number, mirrors: Array }}
@@ -355,12 +365,18 @@ function beamSearchForDepth(config, targetDepth, opts) {
     usePathPruning = true,
     obstacleSet,
     splitterMap,
+    gateMap = null,
     invalidPositions,
     validPositions,
     initialLength,
     initialPath,
     initialAllCells,
   } = opts;
+
+  // Pre-compute gateMap once for all simulateIncremental calls in this search
+  const resolvedGateMap = gateMap ?? new Map(
+    (config.gates || []).map(([x, y, o]) => [posKey(x, y), DIR_TO_INT[o]])
+  );
 
   let bestScore = 0, bestMirrors = [];
 
@@ -387,7 +403,7 @@ function beamSearchForDepth(config, targetDepth, opts) {
           const result = simulateIncremental(
             config, obstacleSet,
             candidate.mirrors, candidate.path, candidate.score,
-            newMirror, 1000, splitterMap, candidate.allCells,
+            newMirror, 1000, splitterMap, candidate.allCells, resolvedGateMap,
           );
 
           const newMirrors = [...candidate.mirrors, newMirror];
