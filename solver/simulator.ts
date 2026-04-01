@@ -347,7 +347,7 @@ class MinHeap {
  */
 function beamSearchForDepth(config, targetDepth, opts) {
   const {
-    beamWidth = 8000,
+    beamWidth = 12000,
     usePathPruning = true,
     obstacleSet,
     splitterMap,

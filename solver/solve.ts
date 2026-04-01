@@ -31,7 +31,7 @@ function parseArgs(argv) {
     puzzle: null,
     list: false,
     quiet: false,
-    beamWidth: 8000,
+    beamWidth: 12000,
     noPrune: false,
     workers: os.cpus().length,
   };
