@@ -285,6 +285,46 @@ function getCandidatePositions(allCells, usedPositions, invalidPositions) {
   return positions;
 }
 
+// ── Min-heap (keyed on .score) ────────────────────────────────────────────────
+// Used by beamSearchForDepth to keep only the top-beamWidth candidates without
+// ever materialising the full expansion in memory.
+class MinHeap {
+  _data: any[];
+  constructor() { this._data = []; }
+  get size() { return this._data.length; }
+  peek() { return this._data[0]; }
+  push(item) {
+    this._data.push(item);
+    this._siftUp(this._data.length - 1);
+  }
+  // Replace the minimum element with item (caller must ensure size > 0).
+  replaceMin(item) {
+    this._data[0] = item;
+    this._siftDown(0);
+  }
+  _siftUp(i) {
+    const d = this._data;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (d[p].score <= d[i].score) break;
+      const tmp = d[p]; d[p] = d[i]; d[i] = tmp;
+      i = p;
+    }
+  }
+  _siftDown(i) {
+    const d = this._data, n = d.length;
+    for (;;) {
+      let s = i, l = 2*i+1, r = 2*i+2;
+      if (l < n && d[l].score < d[s].score) s = l;
+      if (r < n && d[r].score < d[s].score) s = r;
+      if (s === i) break;
+      const tmp = d[s]; d[s] = d[i]; d[i] = tmp;
+      i = s;
+    }
+  }
+  toArray() { return this._data; }
+}
+
 /**
  * Single-threaded beam search for exactly `targetDepth` mirrors.
  * Mirrors the Python beam_search_solver inner loop.
@@ -328,7 +368,7 @@ function beamSearchForDepth(config, targetDepth, opts) {
   }];
 
   for (let depth = 0; depth < targetDepth; depth++) {
-    const nextCandidates = [];
+    const heap = new MinHeap();
 
     for (const candidate of candidates) {
       const usedPositions = new Set(candidate.mirrors.map(([x, y]) => posKey(x, y)));
@@ -351,18 +391,23 @@ function beamSearchForDepth(config, targetDepth, opts) {
             bestScore = result.length;
             bestMirrors = newMirrors;
           }
-          nextCandidates.push({
+
+          const entry = {
             mirrors: newMirrors,
             score: result.length,
             path: result.path,
             allCells: result.allCells,
-          });
+          };
+          if (heap.size < beamWidth) {
+            heap.push(entry);
+          } else if (result.length > heap.peek().score) {
+            heap.replaceMin(entry);
+          }
         }
       }
     }
 
-    nextCandidates.sort((a, b) => b.score - a.score);
-    candidates = nextCandidates.slice(0, beamWidth);
+    candidates = heap.toArray();
     if (candidates.length === 0) break;
   }
 
