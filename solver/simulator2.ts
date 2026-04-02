@@ -1,33 +1,32 @@
 'use strict';
 /**
- * simulator2.ts — Segment-based beam search.
+ * simulator2.ts — Segment-based beam search with splitter support.
  *
  * Instead of tracking the laser path as a list of individual cells, we track
  * it as a list of axis-aligned segments. This enables a "frontier" pruning
- * strategy: when placing mirror k, we only try positions on the segments that
- * mirror k-1 created (the "new segments"). Positions on older segments were
- * already explored in the parent state.
+ * strategy: when placing mirror k, we only try positions on the frontier
+ * (segments created by mirror k-1, plus any unexplored branches from splitters).
+ *
+ * Splitter support:
+ *   When the beam hits a splitter that triggers a split, two perpendicular
+ *   sub-beams are spawned. Each becomes its own "frontier group". The next
+ *   mirror can be placed on any frontier group, but only on cells that do not
+ *   appear in any other frontier group or any retained segment.
  *
  * Key differences from the original beamSearchForDepth in simulator.ts:
- *   - Candidate positions come from `newSegs` only (the frontier), not the
- *     full path. This is O(new_seg_length) instead of O(full_path_length).
- *   - `applyMirror` retains and trims segments analytically rather than
- *     re-stepping the entire retained path.
- *   - Loop detection uses a (x,y,dir) visited-state set built from retained
- *     segments, checked in O(1) per step during tracing.
+ *   - traceAll() handles splits: returns Seg[][] (one group per beam branch).
+ *   - BeamState uses retainedSegs + frontierGroups instead of segs + newSegs.
+ *   - applyMirror takes a group index (gi) targeting one frontier group.
+ *   - Candidate generation iterates all frontier groups; skips cells that
+ *     appear on retained segs OR on other (non-targeted) frontier groups.
  *
- * Splitter puzzles fall back to beamSearchForDepth (correct but slower).
- * Gate puzzles without splitters use the new approach.
- *
- * Scoring is identical to calculateLaserPath / simulateLaser: each step to a
- * new cell increments the score by 1, including the terminal cell (whether
- * that's a wall, obstacle, or loop-back cell).
+ * Scoring matches calculateLaserPath: each step to a new cell is +1,
+ * summed across all streams (branches).
  */
-
-const { beamSearchForDepth } = require('./simulator');
 
 const UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
 const DELTAS: readonly [number, number][] = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+const OPPOSITE = [DOWN, LEFT, UP, RIGHT];
 const REFLECT: Record<string, number[]> = {
   '/':  [RIGHT, UP,   LEFT,  DOWN],
   '\\': [LEFT,  DOWN, RIGHT, UP  ],
@@ -64,7 +63,7 @@ function segContains(s: Seg, px: number, py: number): number {
 }
 
 // Build a Set of stateKey(x,y,dir) for every cell of the given segments.
-// Used to detect loops back into the existing path during new-beam tracing.
+// Used to seed loop-detection across retained and other-frontier segments.
 function buildVisited(segs: Seg[]): Set<number> {
   const v = new Set<number>();
   for (const s of segs) {
@@ -76,39 +75,41 @@ function buildVisited(segs: Seg[]): Set<number> {
   return v;
 }
 
-// ── Beam tracing ──────────────────────────────────────────────────────────────
+// ── Single-stream tracer ──────────────────────────────────────────────────────
 /**
- * Trace a laser beam from (sx,sy) going `startDir` at global time `startTime`.
+ * Trace one beam stream from (sx,sy) going startDir.
  *
- * Returns an array of Seg objects. Terminates when the beam:
+ * `visited` is shared across all concurrent streams in one traceAll() call.
+ * Returns the segments for this stream plus any pending split-starts.
+ *
+ * Terminates when the beam:
  *   - exits the grid (edge)
  *   - hits a wall obstacle
  *   - hits a gate from the wrong direction
- *   - revisits a (x,y,dir) state already in the visited set (loop)
+ *   - hits a splitter that acts as a wall (opposite of orientation)
+ *   - hits a splitter that causes a split (returns splits instead of continuing)
+ *   - revisits a (x,y,dir) state already in visited (loop)
  *
- * `existingSegs` are the segments retained from before this new beam.
- * They seed the initial visited set so the new beam won't loop back into the
- * existing path without detection.
- *
- * `mirrorMap` must contain ALL placed mirrors (existing + newly placed).
+ * Splitter reflect: beam is perpendicular to orientation → continues in
+ *   OPPOSITE[splitterOrientation] direction (no split, no wall).
  */
-function traceBeam(
+function traceOne(
   sx: number, sy: number, startDir: number, startTime: number,
   width: number, height: number,
   mirrorMap: Map<number, string>,
   obstacleSet: Set<number>,
   gateMap: Map<number, number>,
-  existingSegs: Seg[],
-): Seg[] {
+  splitterMap: Map<number, string>,
+  visited: Set<number>,
+): { segs: Seg[]; splits: Array<{ x: number; y: number; dir: number; t: number }> } {
   const result: Seg[] = [];
-  const visited = buildVisited(existingSegs);
+
+  // Immediate loop check at starting cell
+  if (visited.has(stateKey(sx, sy, startDir))) return { segs: result, splits: [] };
+  visited.add(stateKey(sx, sy, startDir));
 
   let x = sx, y = sy, dir = startDir;
   let segX = sx, segY = sy, segT = startTime, stepsInSeg = 0;
-
-  // Immediate loop check at starting cell
-  if (visited.has(stateKey(x, y, dir))) return result;
-  visited.add(stateKey(x, y, dir));
 
   const MAX_TOTAL = 2000;
   let total = 0;
@@ -119,10 +120,10 @@ function traceBeam(
     stepsInSeg++;
     total++;
 
-    // Off grid → terminate (terminal cell is off-grid)
+    // Off grid → terminate
     if (nx < 0 || nx >= width || ny < 0 || ny >= height) {
       result.push({ x1: segX, y1: segY, x2: nx, y2: ny, dir, t1: segT, len: stepsInSeg });
-      return result;
+      return { segs: result, splits: [] };
     }
 
     const pk = posKey(nx, ny);
@@ -130,14 +131,49 @@ function traceBeam(
     // Wall obstacle
     if (obstacleSet.has(pk)) {
       result.push({ x1: segX, y1: segY, x2: nx, y2: ny, dir, t1: segT, len: stepsInSeg });
-      return result;
+      return { segs: result, splits: [] };
     }
 
-    // Gate: only passes in its orientation direction
+    // Gate: pass if direction matches, wall otherwise
     const gateDir = gateMap.get(pk);
-    if (gateDir !== undefined && dir !== gateDir) {
+    if (gateDir !== undefined) {
+      if (dir !== gateDir) {
+        result.push({ x1: segX, y1: segY, x2: nx, y2: ny, dir, t1: segT, len: stepsInSeg });
+        return { segs: result, splits: [] };
+      }
+      // Pass through: fall through to loop check below
+    }
+
+    // Splitter
+    const splOrientation = splitterMap.get(pk);
+    if (splOrientation !== undefined) {
+      const splDir = DIR_TO_INT[splOrientation];
       result.push({ x1: segX, y1: segY, x2: nx, y2: ny, dir, t1: segT, len: stepsInSeg });
-      return result;
+      const t = segT + stepsInSeg;
+      if (dir === splDir) {
+        // Split: two perpendicular beams
+        const perp1 = (dir === LEFT || dir === RIGHT) ? UP : LEFT;
+        const perp2 = (dir === LEFT || dir === RIGHT) ? DOWN : RIGHT;
+        return {
+          segs: result,
+          splits: [
+            { x: nx, y: ny, dir: perp1, t },
+            { x: nx, y: ny, dir: perp2, t },
+          ],
+        };
+      } else if (dir === OPPOSITE[splDir]) {
+        // Wall: blocked
+        return { segs: result, splits: [] };
+      } else {
+        // Reflect toward OPPOSITE[splDir]
+        const newDir = OPPOSITE[splDir];
+        x = nx; y = ny; dir = newDir;
+        segX = nx; segY = ny; segT = t; stepsInSeg = 0;
+        const sk = stateKey(x, y, dir);
+        if (visited.has(sk)) return { segs: result, splits: [] };
+        visited.add(sk);
+        continue;
+      }
     }
 
     // Mirror: close current segment, reflect, start new segment
@@ -148,16 +184,16 @@ function traceBeam(
       x = nx; y = ny; dir = newDir;
       segX = nx; segY = ny; segT = segT + stepsInSeg; stepsInSeg = 0;
       const sk = stateKey(x, y, dir);
-      if (visited.has(sk)) return result;
+      if (visited.has(sk)) return { segs: result, splits: [] };
       visited.add(sk);
       continue;
     }
 
-    // Loop check at (nx, ny) going dir
+    // Loop check at (nx, ny, dir)
     const sk = stateKey(nx, ny, dir);
     if (visited.has(sk)) {
       result.push({ x1: segX, y1: segY, x2: nx, y2: ny, dir, t1: segT, len: stepsInSeg });
-      return result;
+      return { segs: result, splits: [] };
     }
     visited.add(sk);
     x = nx; y = ny;
@@ -165,6 +201,43 @@ function traceBeam(
 
   // MAX_TOTAL exceeded
   result.push({ x1: segX, y1: segY, x2: x, y2: y, dir, t1: segT, len: stepsInSeg });
+  return { segs: result, splits: [] };
+}
+
+// ── Full trace (handles splits) ────────────────────────────────────────────────
+/**
+ * Trace a beam and all its sub-beams (from splitter splits).
+ * Returns one Seg[] per beam branch (stream). The visited set is shared
+ * across all branches so loop detection works correctly.
+ *
+ * `existingSegs` seeds the initial visited set (retained path + other
+ * frontier groups) so new beams don't silently loop back into them.
+ */
+function traceAll(
+  sx: number, sy: number, startDir: number, startTime: number,
+  width: number, height: number,
+  mirrorMap: Map<number, string>,
+  obstacleSet: Set<number>,
+  gateMap: Map<number, number>,
+  splitterMap: Map<number, string>,
+  existingSegs: Seg[],
+): Seg[][] {
+  const result: Seg[][] = [];
+  const visited = buildVisited(existingSegs);
+  const pending: Array<{ x: number; y: number; dir: number; t: number }> = [
+    { x: sx, y: sy, dir: startDir, t: startTime },
+  ];
+
+  while (pending.length > 0) {
+    const { x, y, dir, t } = pending.shift()!;
+    const { segs, splits } = traceOne(
+      x, y, dir, t, width, height,
+      mirrorMap, obstacleSet, gateMap, splitterMap, visited,
+    );
+    if (segs.length > 0) result.push(segs);
+    for (const sp of splits) pending.push(sp);
+  }
+
   return result;
 }
 
@@ -172,76 +245,84 @@ function traceBeam(
 interface BeamState {
   mirrors: Array<[number, number, string]>;
   mirrorMap: Map<number, string>;
-  segs: Seg[];      // full retained path (all segments)
-  newSegs: Seg[];   // frontier: segments to try mirror placements on
-  score: number;    // sum of seg.len for all segs
+  retainedSegs: Seg[];      // finalized segments from consumed/trimmed branches
+  frontierGroups: Seg[][];  // active branches: each is a list of segments
+  score: number;            // sum of all seg.len across retained + all frontier groups
 }
 
 // ── Apply a mirror ────────────────────────────────────────────────────────────
 /**
- * Place a mirror of type `mtype` at (px,py), which must lie on one of
- * state.newSegs (at a non-terminal step). Returns the new BeamState, or null
- * if (px,py) is not a valid placement.
+ * Place a mirror of type `mtype` at (px,py), which must lie on a non-terminal
+ * cell of frontier group `gi`. Returns the new BeamState, or null if the
+ * position is not valid for that group.
  *
- * The new state's `newSegs` is exactly the segments produced by tracing the
- * reflected beam — the frontier for the next mirror placement.
+ * The new state's frontierGroups = (other groups unchanged) + (new groups from
+ * tracing the reflected beam, which may include splitter sub-beams).
  */
 function applyMirror(
   state: BeamState,
+  gi: number,
   px: number, py: number, mtype: string,
   obstacleSet: Set<number>,
   gateMap: Map<number, number>,
+  splitterMap: Map<number, string>,
   width: number, height: number,
 ): BeamState | null {
-  // Find which newSeg contains (px,py), excluding the terminal cell (k = seg.len)
+  const group = state.frontierGroups[gi];
+
+  // Find which segment in group gi contains (px,py), excluding terminal cell
   let hitSeg: Seg | null = null;
   let hitK = -1;
-  for (const s of state.newSegs) {
+  let hitSegIdx = -1;
+  for (let si = 0; si < group.length; si++) {
+    const s = group[si];
     const k = segContains(s, px, py);
-    if (k >= 0 && k < s.len) { hitSeg = s; hitK = k; break; }
+    if (k >= 0 && k < s.len) { hitSeg = s; hitK = k; hitSegIdx = si; break; }
   }
   if (!hitSeg) return null;
 
   const tMirror = hitSeg.t1 + hitK;
   const newDir = REFLECT[mtype][hitSeg.dir];
 
-  // Retain all segments strictly before hitSeg (by start time)
-  const retainedSegs: Seg[] = [];
-  let score = 0;
-  for (const s of state.segs) {
-    if (s.t1 < hitSeg.t1) { retainedSegs.push(s); score += s.len; }
-  }
+  // Score delta: subtract old group contribution, add pre-hit + new groups
+  const oldGroupScore = group.reduce((s, seg) => s + seg.len, 0);
+  let preHitScore = hitK;
+  for (let si = 0; si < hitSegIdx; si++) preHitScore += group[si].len;
 
-  // Add trimmed hitSeg: from its start to (px,py), length = hitK
-  // (if hitK === 0 the mirror is at the segment's origin — already in mirrorMap
-  //  or invalidPositions, so this branch is filtered by the caller)
+  // Build new retained segs: existing retained + segments from group gi before hitSeg
+  const newRetained = [...state.retainedSegs];
+  for (let si = 0; si < hitSegIdx; si++) newRetained.push(group[si]);
   if (hitK > 0) {
-    retainedSegs.push({
+    newRetained.push({
       x1: hitSeg.x1, y1: hitSeg.y1,
       x2: px, y2: py,
       dir: hitSeg.dir, t1: hitSeg.t1,
       len: hitK,
     });
-    score += hitK;
   }
 
-  // Add the new mirror to the map
+  // New mirror map
   const newMirrorMap = new Map(state.mirrorMap);
   newMirrorMap.set(posKey(px, py), mtype);
 
-  // Trace the reflected beam
-  const newSegs = traceBeam(
+  // Build existingSegs for loop detection: retained + other frontier groups
+  const otherGroups = state.frontierGroups.filter((_, j) => j !== gi);
+  const allExisting: Seg[] = [...newRetained];
+  for (const g of otherGroups) for (const s of g) allExisting.push(s);
+
+  // Trace the new reflected beam (may produce multiple groups via splitters)
+  const newGroups = traceAll(
     px, py, newDir, tMirror,
-    width, height, newMirrorMap, obstacleSet, gateMap, retainedSegs,
+    width, height, newMirrorMap, obstacleSet, gateMap, splitterMap, allExisting,
   );
-  for (const s of newSegs) score += s.len;
+  const newGroupScore = newGroups.reduce((s, g) => s + g.reduce((ss, seg) => ss + seg.len, 0), 0);
 
   return {
     mirrors: [...state.mirrors, [px, py, mtype]],
     mirrorMap: newMirrorMap,
-    segs: [...retainedSegs, ...newSegs],
-    newSegs,
-    score,
+    retainedSegs: newRetained,
+    frontierGroups: [...otherGroups, ...newGroups],
+    score: state.score - oldGroupScore + preHitScore + newGroupScore,
   };
 }
 
@@ -284,17 +365,14 @@ class MinHeap {
 /**
  * Drop-in replacement for beamSearchForDepth from simulator.ts.
  *
- * Uses frontier-based candidate generation: at each depth, only positions on
- * `newSegs` (the segments created by the previous mirror) are explored. This
- * is typically far fewer candidates than the full-path approach, at the cost
- * of not revisiting earlier path segments at deeper levels.
- *
- * Splitter puzzles fall back to the original beamSearchForDepth automatically.
+ * Handles both plain mirror puzzles and splitter/gate puzzles natively.
+ * For splitter puzzles, multiple frontier groups are maintained — one per
+ * active beam branch. Mirror placements target one frontier group at a time;
+ * cells shared with other groups or retained segments are skipped.
  *
  * @param config      Puzzle configuration (same format as beamSearchForDepth).
  * @param targetDepth Number of mirrors to place.
- * @param opts        { beamWidth, obstacleSet, splitterMap, gateMap,
- *                      invalidPositions, [fallback fields for splitter path] }
+ * @param opts        { beamWidth, obstacleSet, splitterMap, gateMap, invalidPositions }
  */
 function beamSearchForDepth2(config: any, targetDepth: number, opts: any): { score: number; mirrors: any[] } {
   const {
@@ -305,11 +383,6 @@ function beamSearchForDepth2(config: any, targetDepth: number, opts: any): { sco
     invalidPositions,
   } = opts;
 
-  // Splitter puzzles: fall back to original full-simulation beam search
-  if (splitterMap && splitterMap.size > 0) {
-    return beamSearchForDepth(config, targetDepth, opts);
-  }
-
   // Resolve gateMap: worker.ts provides integer values; if called directly,
   // reconstruct from config (string directions → integers).
   const resolvedGateMap: Map<number, number> = gateMap ?? new Map(
@@ -318,21 +391,30 @@ function beamSearchForDepth2(config: any, targetDepth: number, opts: any): { sco
     )
   );
 
-  // Initial trace (no mirrors)
-  const initSegs = traceBeam(
+  // Resolve splitterMap: worker.ts provides Map<posKey, orientationString>.
+  const resolvedSplitterMap: Map<number, string> = splitterMap ?? new Map(
+    (config.splitters || []).map(([x, y, o]: [number, number, string]) =>
+      [posKey(x, y), o]
+    )
+  );
+
+  // Initial trace (no mirrors) — may return multiple groups for splitter puzzles
+  const initGroups = traceAll(
     config.laserX, config.laserY, config.laserDir, 0,
     config.width, config.height,
-    new Map(), obstacleSet, resolvedGateMap, [],
+    new Map(), obstacleSet, resolvedGateMap, resolvedSplitterMap, [],
   );
-  const initScore = initSegs.reduce((s: number, seg: Seg) => s + seg.len, 0);
+  const initScore = initGroups.reduce(
+    (s: number, g: Seg[]) => s + g.reduce((ss: number, seg: Seg) => ss + seg.len, 0), 0
+  );
 
   let bestScore = initScore, bestMirrors: any[] = [];
 
   let candidates: BeamState[] = [{
     mirrors: [],
     mirrorMap: new Map(),
-    segs: initSegs,
-    newSegs: initSegs,
+    retainedSegs: [],
+    frontierGroups: initGroups,
     score: initScore,
   }];
 
@@ -340,39 +422,51 @@ function beamSearchForDepth2(config: any, targetDepth: number, opts: any): { sco
     const heap = new MinHeap();
 
     for (const cand of candidates) {
-      // Identify frontier segments so we can skip them in the retained-cell check.
-      const frontierSet = new Set(cand.newSegs);
+      for (let gi = 0; gi < cand.frontierGroups.length; gi++) {
+        const group = cand.frontierGroups[gi];
 
-      for (const seg of cand.newSegs) {
-        const [dx, dy] = DELTAS[seg.dir];
-        // Enumerate candidate cells: k=0..len-1 (exclude terminal cell at k=len).
-        // k=0 is always the mirror/source cell, filtered by mirrorMap/invalidPositions.
-        for (let k = 0; k < seg.len; k++) {
-          const cx = seg.x1 + k * dx;
-          const cy = seg.y1 + k * dy;
-          const pk = posKey(cx, cy);
-          if (invalidPositions.has(pk)) continue;
-          if (cand.mirrorMap.has(pk)) continue;
+        for (const seg of group) {
+          const [dx, dy] = DELTAS[seg.dir];
+          // Enumerate candidate cells: k=0..len-1 (exclude terminal cell at k=len).
+          for (let k = 0; k < seg.len; k++) {
+            const cx = seg.x1 + k * dx;
+            const cy = seg.y1 + k * dy;
+            const pk = posKey(cx, cy);
+            if (invalidPositions.has(pk)) continue;
+            if (cand.mirrorMap.has(pk)) continue;
 
-          // Skip cells that also lie on a retained (non-frontier) segment: placing a
-          // mirror there would invalidate the retained path, corrupting the score.
-          let onRetained = false;
-          for (const s of cand.segs) {
-            if (frontierSet.has(s)) continue;
-            if (segContains(s, cx, cy) >= 0) { onRetained = true; break; }
-          }
-          if (onRetained) continue;
+            // Skip cells on retained segments (placing there corrupts retained score).
+            let occupied = false;
+            for (const s of cand.retainedSegs) {
+              if (segContains(s, cx, cy) >= 0) { occupied = true; break; }
+            }
+            if (occupied) continue;
 
-          for (const mtype of ['/', '\\']) {
-            const ns = applyMirror(cand, cx, cy, mtype, obstacleSet, resolvedGateMap, config.width, config.height);
-            if (!ns) continue;
+            // Skip cells on other frontier groups (placing there would change their
+            // contribution without updating the score for those groups).
+            for (let gj = 0; gj < cand.frontierGroups.length && !occupied; gj++) {
+              if (gj === gi) continue;
+              for (const s of cand.frontierGroups[gj]) {
+                if (segContains(s, cx, cy) >= 0) { occupied = true; break; }
+              }
+            }
+            if (occupied) continue;
 
-            if (ns.score > bestScore) { bestScore = ns.score; bestMirrors = ns.mirrors; }
+            for (const mtype of ['/', '\\']) {
+              const ns = applyMirror(
+                cand, gi, cx, cy, mtype,
+                obstacleSet, resolvedGateMap, resolvedSplitterMap,
+                config.width, config.height,
+              );
+              if (!ns) continue;
 
-            if (heap.size < beamWidth) {
-              heap.push(ns);
-            } else if (ns.score > heap.peek().score) {
-              heap.replaceMin(ns);
+              if (ns.score > bestScore) { bestScore = ns.score; bestMirrors = ns.mirrors; }
+
+              if (heap.size < beamWidth) {
+                heap.push(ns);
+              } else if (ns.score > heap.peek().score) {
+                heap.replaceMin(ns);
+              }
             }
           }
         }
