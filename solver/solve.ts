@@ -14,6 +14,7 @@
  *   npx tsx solve.ts 2026-01-22 --beam-width 3000
  *   npx tsx solve.ts 2026-01-22 --no-prune
  *   npx tsx solve.ts 2026-01-22 --quiet
+ *   npx tsx solve.ts 2026-01-22 --v2                # segment-based solver (simulator2)
  */
 
 const path = require('path');
@@ -34,6 +35,7 @@ function parseArgs(argv) {
     beamWidth: 12000,
     noPrune: false,
     workers: os.cpus().length,
+    v2: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -41,6 +43,7 @@ function parseArgs(argv) {
     if (a === '--list' || a === '-l') { opts.list = true; }
     else if (a === '--quiet' || a === '-q') { opts.quiet = true; }
     else if (a === '--no-prune') { opts.noPrune = true; }
+    else if (a === '--v2') { opts.v2 = true; }
     else if (a === '--beam-width') { opts.beamWidth = parseInt(args[++i], 10); }
     else if (a === '--workers') { opts.workers = parseInt(args[++i], 10); }
     else if (!a.startsWith('-')) { opts.puzzle = a; }
@@ -54,7 +57,7 @@ function parseArgs(argv) {
  * Run beam searches in parallel, one worker per mirror-count depth level.
  * Returns the best { score, mirrors } across all depths.
  */
-function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, usePathPruning) {
+function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, usePathPruning, useV2 = false) {
   return new Promise((resolve, reject) => {
     const depths = Array.from({ length: numMirrors }, (_, i) => i + 1);
     // Cap workers to avoid spawning more than needed
@@ -77,6 +80,7 @@ function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, useP
           targetDepth,
           beamWidth,
           usePathPruning,
+          useV2,
         },
       });
 
@@ -117,7 +121,7 @@ function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, useP
  * The main thread picks the best { score, mirrors } across all depths.
  *
  * @param {object} config  Puzzle config from PUZZLES (puzzles.ts).
- * @param {object} opts    { beamWidth?: number, workers?: number, noPrune?: boolean }
+ * @param {object} opts    { beamWidth?: number, workers?: number, noPrune?: boolean, v2?: boolean }
  * @returns {Promise<{ score: number, mirrors: Array }>}
  */
 async function solvePuzzle(config, opts = {}) {
@@ -125,6 +129,7 @@ async function solvePuzzle(config, opts = {}) {
     beamWidth = 8000,
     workers = os.cpus().length,
     noPrune = false,
+    v2 = false,
   } = opts;
 
   // Pre-compute shared data (passed to all workers)
@@ -157,7 +162,7 @@ async function solvePuzzle(config, opts = {}) {
   return runParallel(
     config, sharedData,
     config.numMirrors, workers,
-    beamWidth, !noPrune,
+    beamWidth, !noPrune, v2,
   );
 }
 
@@ -195,8 +200,9 @@ async function main() {
     const dirName = ['up','right','down','left'][config.laserDir];
     console.log(`Laser: (${config.laserX}, ${config.laserY}) -> ${dirName}`);
     const pruneStr = opts.noPrune ? ', no-prune' : '';
+    const v2Str = opts.v2 ? ', v2' : '';
     console.log();
-    console.log(`Solving with beam search (beam_width: ${opts.beamWidth}${pruneStr}, workers: ${opts.workers})...`);
+    console.log(`Solving with beam search (beam_width: ${opts.beamWidth}${pruneStr}${v2Str}, workers: ${opts.workers})...`);
   }
 
   // Pre-compute shared data (passed to all workers)
@@ -231,7 +237,7 @@ async function main() {
   const result = await runParallel(
     config, sharedData,
     config.numMirrors, opts.workers,
-    opts.beamWidth, !opts.noPrune,
+    opts.beamWidth, !opts.noPrune, opts.v2,
   );
   const elapsed = (Date.now() - startTime) / 1000;
 
