@@ -27,8 +27,7 @@
     "react-dom": "19.2.3"
   },
   "overrides": {
-    "minimatch": ">=10.2.1",
-    "ajv": ">=8.18.0"
+    "minimatch": ">=10.2.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

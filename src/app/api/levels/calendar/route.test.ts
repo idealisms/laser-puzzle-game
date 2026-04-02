@@ -12,6 +12,18 @@ beforeEach(() => {
 })
 
 describe('GET /api/levels/calendar', () => {
+  const originalEnv = process.env
+
+  beforeEach(() => {
+    jest.resetModules()
+    process.env = { ...originalEnv }
+    delete process.env.NEXT_PUBLIC_APP_MODE
+  })
+
+  afterEach(() => {
+    process.env = originalEnv
+  })
+
   it('returns calendar array with correct shape', async () => {
     ;(prisma.level.findMany as jest.Mock).mockResolvedValue([
       { date: '2026-01-01', optimalScore: 10 },
@@ -40,6 +52,20 @@ describe('GET /api/levels/calendar', () => {
     expect(prisma.level.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { date: { lte: expect.any(String) } },
+        orderBy: { date: 'desc' },
+      })
+    )
+  })
+
+  it('skips date filter in DEV mode', async () => {
+    process.env.NEXT_PUBLIC_APP_MODE = 'DEV'
+    ;(prisma.level.findMany as jest.Mock).mockResolvedValue([])
+
+    await GET()
+
+    expect(prisma.level.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {},
         orderBy: { date: 'desc' },
       })
     )

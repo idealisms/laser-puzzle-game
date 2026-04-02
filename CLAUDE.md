@@ -14,9 +14,8 @@ npm run build      # Create production build
 npm run lint       # Run ESLint
 npm run db:seed    # Seed database with 7 days of puzzle levels
 npm run db:reset   # Reset database and run migrations
+npm test           # Run tests with Jest
 ```
-
-No test suite is currently configured.
 
 ## Architecture
 
