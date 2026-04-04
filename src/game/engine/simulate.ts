@@ -114,7 +114,8 @@ function mirrorSide(dir: Direction, mirrorType: '/' | '\\'): 0 | 1 {
 export function resolveCollisions(
   streams: LaserStream[],
   streamOffsets: number[],
-  mirrors: Mirror[]
+  mirrors: Mirror[],
+  obstacles: Obstacle[] = []
 ): Position[] {
   // Map "x,y|globalTime" → arrivals (for same-cell detection)
   const byCellTime = new Map<string, ArrivalInfo[]>()
@@ -165,8 +166,16 @@ export function resolveCollisions(
           if (m) {
             if (mirrorSide(a.dir, m.type) !== mirrorSide(b.dir, m.type)) continue
           } else {
-            // Perpendicular beams in open space pass through each other
-            if (a.dir !== b.dir && a.dir !== oppositeDir(b.dir)) continue
+            const spl = obstacles.find((o) => o.type === 'splitter' && o.x === a.pos.x && o.y === a.pos.y)
+            if (spl) {
+              // At a splitter: collide unless at least one beam is hitting the wall face.
+              // The wall face (opposite of orientation) just stops the beam — no collision.
+              const wallDir = oppositeDir(spl.orientation ?? 'right')
+              if (a.dir === wallDir || b.dir === wallDir) continue
+            } else {
+              // Perpendicular beams in open space pass through each other
+              if (a.dir !== b.dir && a.dir !== oppositeDir(b.dir)) continue
+            }
           }
           const gTime = streamOffsets[a.si] + a.segi + 1
           tryCollision(gTime, a.pos, a, b)
@@ -311,7 +320,7 @@ export function calculateLaserPath(
     streamOffsets.push(globalOffset)
   }
 
-  const collisionPoints = resolveCollisions(streams, streamOffsets, mirrors)
+  const collisionPoints = resolveCollisions(streams, streamOffsets, mirrors, obstacles)
 
   // Count total segments after truncation; beams sharing a cell count independently
   const finalLength = streams.reduce((sum, st) => sum + st.segments.length, 0)

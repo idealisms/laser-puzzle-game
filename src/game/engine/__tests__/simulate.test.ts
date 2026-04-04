@@ -220,6 +220,30 @@ describe('resolveCollisions', () => {
     const result = resolveCollisions(streams, [0, 0], [])
     expect(result).toHaveLength(1)
   })
+
+  it('splitter: split-face vs wall-face arriving at same time — no collision', () => {
+    // Splitter at (7,7) orientation='right': wall face = LEFT.
+    // Stream 0 arrives going RIGHT (split face); stream 1 arrives going LEFT (wall face).
+    // Wall-face beam simply stops — must not be treated as a collision with the other beam.
+    const streams: LaserStream[] = [
+      { segments: [seg(6, 7, 7, 7, 'right')], generation: 0, colorIndex: 0 },
+      { segments: [seg(8, 7, 7, 7, 'left')],  generation: 1, colorIndex: 1 },
+    ]
+    const result = resolveCollisions(streams, [0, 0], [], [splitter(7, 7, 'right')])
+    expect(result).toHaveLength(0)
+  })
+
+  it('splitter: two reflect-face beams arriving head-on should collide', () => {
+    // Splitter at (7,7) orientation='right': reflect faces = UP and DOWN (both non-wall).
+    // Opposite arrivals on non-wall faces must collide.
+    const streams: LaserStream[] = [
+      { segments: [seg(7, 8, 7, 7, 'up')],   generation: 1, colorIndex: 1 },
+      { segments: [seg(7, 6, 7, 7, 'down')], generation: 1, colorIndex: 2 },
+    ]
+    const result = resolveCollisions(streams, [0, 0], [], [splitter(7, 7, 'right')])
+    expect(result).toHaveLength(1)
+    expect(result[0]).toEqual({ x: 7, y: 7 })
+  })
 })
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -459,5 +483,39 @@ describe('calculateLaserPath — collision detection', () => {
     const mirrors: Mirror[] = [mirror(6, 3, '/')]
     const result = calculateLaserPath(laser, mirrors, obstacles, { width: 13, height: 13 })
     expect(result.totalLength).toBe(23)
+  })
+
+  it('collision at splitter: two beams on reflect faces should collide', () => {
+    // Grid 15×20. Splitter B at (5,10) 'right' splits the primary beam (0,10 →RIGHT)
+    // into UP and DOWN sub-beams at gTime=5. Splitter A at (13,10) 'right' is the
+    // collision target.
+    //
+    // UP sub-beam (offset=5) — arrives at A going DOWN (reflect face):
+    //   '/' at (5,6):  UP→RIGHT
+    //   '\\' at (13,6): RIGHT→DOWN  → arrives at A going DOWN at gTime=21
+    //
+    // DOWN sub-beam (offset=5) — arrives at A going UP (reflect face):
+    //   '\\' at (5,14): DOWN→RIGHT
+    //   '/' at (13,14): RIGHT→UP   → arrives at A going UP at gTime=21
+    //
+    // DOWN and UP are both non-wall faces of the 'right'-oriented splitter A
+    // (wall face = LEFT). Both beams reflect to LEFT after A; they quickly reach B's
+    // wall face and stop. No secondary collisions.
+    //
+    // After truncation: primary(5) + UP-beam(16) + DOWN-beam(16) = 37 total.
+    const laser: LaserConfig = { x: 0, y: 10, direction: 'right' }
+    const obstacles: Obstacle[] = [
+      splitter(5,  10, 'right'),  // B: splits primary beam UP+DOWN
+      splitter(13, 10, 'right'),  // A: collision target
+    ]
+    const mirrors: Mirror[] = [
+      mirror(5,  6,  '/'),   // UP beam:   UP → RIGHT
+      mirror(13, 6,  '\\'),  // UP beam:   RIGHT → DOWN  (arrives at A going DOWN)
+      mirror(5,  14, '\\'),  // DOWN beam: DOWN → RIGHT
+      mirror(13, 14, '/'),   // DOWN beam: RIGHT → UP    (arrives at A going UP)
+    ]
+    const result = calculateLaserPath(laser, mirrors, obstacles, BOUNDS_15x20)
+    expect(result.collisionPoints).toHaveLength(1)
+    expect(result.collisionPoints[0]).toEqual({ x: 13, y: 10 })
   })
 })
