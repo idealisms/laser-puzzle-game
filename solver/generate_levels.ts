@@ -24,6 +24,7 @@ const MAX_SPLITTERS = 2;
 interface SolverOpts {
   beamWidth: number;
   workers: number;
+  v2: boolean;
 }
 
 interface PuzzleConfig {
@@ -144,6 +145,7 @@ function parseArgs(argv: string[]) {
     end: null as string | null,
     beamWidth: 12000,
     workers: os.cpus().length,
+    v2: false,
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -152,6 +154,7 @@ function parseArgs(argv: string[]) {
     else if (a === '--end')    opts.end       = args[++i];
     else if (a === '--beam-width') opts.beamWidth = parseInt(args[++i], 10);
     else if (a === '--workers')    opts.workers   = parseInt(args[++i], 10);
+    else if (a === '--v2')         opts.v2        = true;
     else { console.error(`Unknown argument: ${a}`); process.exit(1); }
   }
   return opts;
@@ -177,7 +180,7 @@ async function main() {
   const outputDir = path.join(__dirname, 'levels');
   fs.mkdirSync(outputDir, { recursive: true });
 
-  const solverOpts = { beamWidth: opts.beamWidth, workers: opts.workers };
+  const solverOpts = { beamWidth: opts.beamWidth, workers: opts.workers, v2: opts.v2 };
 
   try {
     if (opts.start && opts.end) {
