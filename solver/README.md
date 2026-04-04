@@ -17,7 +17,7 @@ Workers are parallelized across mirror-count depth levels: one worker per depth 
 | `puzzles.ts` | Loads `puzzles/*.json`; flattens into solver config objects keyed by date |
 | `puzzles/` | Source puzzle configs (one JSON per date) |
 | `simulator.ts` | Adapter over `src/game/engine/simulate.ts`; contains beam search and incremental solver |
-| `simulator2.ts` | Segment-based beam search with frontier pruning (experimental `--v2` mode) |
+| `simulator2.ts` | Segment-based beam search with frontier pruning (`--v2` mode, recommended for non-splitter puzzles) |
 | `worker.ts` | Worker thread: runs one `beamSearchForDepth` call per mirror-count depth |
 | `test_simulator.ts` | 19 unit tests for the simulator |
 | `benchmark.js` | Benchmarks single-worker vs multi-worker performance |
@@ -39,28 +39,28 @@ All commands must be run from inside the `solver/` directory.
 ### Solve a puzzle
 
 ```bash
-npx tsx solve.ts 2026-01-22
+# Recommended (no splitters)
+npx tsx solve.ts 2026-01-22 --v2 --beam-width 12000 --workers 12
 
-# With options
-npx tsx solve.ts 2026-01-22 --workers 12 --beam-width 6000
+# Splitter puzzles (slower — skip --v2)
+npx tsx solve.ts 2026-01-22 --beam-width 6000 --workers 12
+
+# Other options
 npx tsx solve.ts 2026-01-22 --quiet
-npx tsx solve.ts 2026-01-22 --v2          # segment-based solver (experimental)
-
-# List all available puzzles
 npx tsx solve.ts --list
 ```
 
 ### Generate level files
 
 ```bash
-# Single date
-npx tsx generate_levels.ts --date 2026-03-01
+# Recommended (no splitters)
+npx tsx generate_levels.ts --date 2026-03-01 --v2 --beam-width 12000 --workers 12
 
 # Date range
-npx tsx generate_levels.ts --start 2026-03-01 --end 2026-03-07
+npx tsx generate_levels.ts --start 2026-03-01 --end 2026-03-07 --v2 --beam-width 12000 --workers 12
 
-# With tuning options
-npx tsx generate_levels.ts --start 2026-03-01 --end 2026-03-07 --workers 12 --beam-width 6000
+# Splitter puzzles (slower — skip --v2)
+npx tsx generate_levels.ts --start 2026-03-01 --end 2026-03-07 --beam-width 6000 --workers 12
 ```
 
 Generated files are saved to `levels/` and include the puzzle config, optimal score, and optimal solution.
@@ -82,7 +82,7 @@ node --require tsx/cjs --test test_simulator.ts
 | `--no-prune` | Disable path-based pruning | Off |
 | `--quiet` / `-q` | Hide detailed progress | Off |
 | `--list` / `-l` | List all available puzzles | — |
-| `--v2` | Use segment-based solver (simulator2) | Off |
+| `--v2` | Use segment-based solver (simulator2) — recommended for non-splitter puzzles | Off |
 
 ### `generate_levels.ts`
 
@@ -93,15 +93,16 @@ node --require tsx/cjs --test test_simulator.ts
 | `--end DATE` | End of date range | — |
 | `--workers N` | Number of parallel worker threads | CPU count |
 | `--beam-width N` | Beam width for beam search | 12000 |
+| `--v2` | Use segment-based solver (simulator2) — recommended for non-splitter puzzles | Off |
 
 ## Recommended settings
 
 | Puzzle type | Recommended command |
 |-------------|---------------------|
-| No splitters/gates | `--workers 12` (defaults are fine) |
-| Splitters or gates | `--workers 12 --beam-width 6000` (~9 min/puzzle) |
+| No splitters | `--v2 --beam-width 12000 --workers 12` |
+| Splitters | `--beam-width 6000 --workers 12` (~9 min/puzzle) |
 
-Splitter and gate puzzles use full simulation at each beam search step (no incremental optimization), so they are significantly slower.
+Splitter puzzles use full simulation at each beam search step (no incremental optimization), so they are significantly slower. Gates are fine with `--v2`.
 
 ## Output
 

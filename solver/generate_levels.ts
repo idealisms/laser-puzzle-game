@@ -5,9 +5,9 @@
  * Computes optimal scores using beam search and outputs to solver/levels/
  *
  * Usage:
- *   npx tsx generate_levels.ts --date 2026-03-01           # Generate specific date
- *   npx tsx generate_levels.ts --start 2026-03-01 --end 2026-03-07  # Generate date range
- *   npx tsx generate_levels.ts --beam-width 2000 --workers 4  # Tuning options
+ *   npx tsx generate_levels.ts --date 2026-03-01 --v2 --beam-width 12000 --workers 12   # recommended (no splitters)
+ *   npx tsx generate_levels.ts --start 2026-03-01 --end 2026-03-07 --v2 --beam-width 12000 --workers 12
+ *   npx tsx generate_levels.ts --date 2026-03-01 --beam-width 6000 --workers 12         # splitter puzzles
  */
 
 const fs = require('fs');

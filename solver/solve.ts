@@ -8,13 +8,12 @@
  * the Python solver.  The main thread picks the best result.
  *
  * Usage:
- *   npx tsx solve.ts 2026-01-22                     # solve with defaults
+ *   npx tsx solve.ts 2026-01-22 --v2 --beam-width 12000 --workers 12  # recommended (no splitters)
+ *   npx tsx solve.ts 2026-01-22 --beam-width 6000 --workers 12        # splitter puzzles
  *   npx tsx solve.ts --list                          # list puzzles
  *   npx tsx solve.ts 2026-01-22 --workers 1         # single-threaded
- *   npx tsx solve.ts 2026-01-22 --beam-width 3000
  *   npx tsx solve.ts 2026-01-22 --no-prune
  *   npx tsx solve.ts 2026-01-22 --quiet
- *   npx tsx solve.ts 2026-01-22 --v2                # segment-based solver (simulator2)
  */
 
 const path = require('path');
