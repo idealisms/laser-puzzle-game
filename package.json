@@ -10,6 +10,8 @@
     "db:start": "docker start laser-postgres || echo 'Container not found. Run: docker run --name laser-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=laser_puzzle -p 5432:5432 -d postgres:16'",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "npx prisma migrate reset --force",
+    "prepare:pack": "npx tsx scripts/prepare-pack.ts",
+    "build:pack": "NEXT_PUBLIC_APP_MODE=pack next build",
     "test": "jest"
   },
   "prisma": {

@@ -62,6 +62,7 @@ export interface LevelConfig {
   mirrorsAvailable: number
   optimalScore: number
   optimalSolution?: OptimalMirror[]
+  name?: string
 }
 
 export interface GameState {

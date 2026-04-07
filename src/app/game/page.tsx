@@ -5,7 +5,9 @@ import Link from 'next/link'
 import { Card } from '@/components/ui/Card'
 import { Header } from '@/components/ui/Header'
 import { getLocalDateString } from '@/lib/date'
+import { isPackMode, getCalendarFetchUrl } from '@/lib/packMode'
 
+// Daily mode calendar entry (from /api/levels/calendar)
 interface CalendarEntry {
   date: string
   available: boolean
@@ -14,11 +16,114 @@ interface CalendarEntry {
   optimalScore: number
 }
 
+// Pack mode index entry (from /puzzles/index.json)
+interface PackIndexEntry {
+  date: string
+  name: string
+  number: number
+  optimalScore: number
+}
+
 interface LocalProgress {
   bestScore: number
 }
 
-export default function LevelSelectPage() {
+function getLocalProgress(): Record<string, LocalProgress> {
+  if (typeof window === 'undefined') return {}
+  try {
+    const stored = localStorage.getItem('laser-puzzle-progress')
+    return stored ? JSON.parse(stored) : {}
+  } catch {
+    return {}
+  }
+}
+
+function PackPuzzleGrid() {
+  const [puzzles, setPuzzles] = useState<PackIndexEntry[]>([])
+  const [loading, setLoading] = useState(true)
+  const packSubtitle = process.env.NEXT_PUBLIC_PACK_SUBTITLE
+  const dailySiteUrl = process.env.NEXT_PUBLIC_DAILY_SITE_URL
+  const dailySiteName = process.env.NEXT_PUBLIC_DAILY_SITE_NAME
+
+  useEffect(() => {
+    async function fetchIndex() {
+      try {
+        const res = await fetch(getCalendarFetchUrl())
+        if (res.ok) {
+          const data: PackIndexEntry[] = await res.json()
+          setPuzzles(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch puzzle index:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchIndex()
+  }, [])
+
+  const localProgress = getLocalProgress()
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header
+        subtitle={packSubtitle ?? undefined}
+        dailySiteUrl={dailySiteUrl ?? undefined}
+        dailySiteName={dailySiteName ?? undefined}
+      />
+
+      <main className="flex-1 p-6">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-bold mb-8">Select a Puzzle</h1>
+
+          {loading ? (
+            <div className="text-center text-gray-400 py-12">
+              Loading puzzles...
+            </div>
+          ) : puzzles.length === 0 ? (
+            <Card className="text-center py-12">
+              <p className="text-gray-400">No puzzles available.</p>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {puzzles.map((entry) => {
+                const progress = localProgress[entry.date]
+                const completed = !!progress
+                const bestScore = progress?.bestScore ?? null
+                const isPerfect = completed && bestScore === entry.optimalScore
+
+                return (
+                  <Link key={entry.date} href={`/game/${entry.date}`}>
+                    <Card
+                      padding="sm"
+                      className={`
+                        hover:border-emerald-500 transition-colors cursor-pointer text-center
+                        ${completed ? 'bg-gray-800/50' : ''}
+                      `}
+                    >
+                      <div className="text-xs text-gray-500 mb-1">#{entry.number}</div>
+                      <div className="font-semibold mb-2 text-sm leading-tight">{entry.name}</div>
+                      {completed && bestScore ? (
+                        <div className={`text-xs ${isPerfect ? 'text-yellow-400' : 'text-emerald-400'}`}>
+                          {isPerfect && '\u2605 '}{bestScore} pts ({Math.round((bestScore / entry.optimalScore) * 100)}%)
+                        </div>
+                      ) : (
+                        <div className="text-xs text-gray-500">Play</div>
+                      )}
+                    </Card>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  )
+}
+
+function DailyPuzzleGrid() {
   const [calendar, setCalendar] = useState<CalendarEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -36,7 +141,7 @@ export default function LevelSelectPage() {
 
     async function fetchCalendar() {
       try {
-        const res = await fetch('/api/levels/calendar')
+        const res = await fetch(getCalendarFetchUrl())
         if (res.ok) {
           const data = await res.json()
           let calendarData: CalendarEntry[] = data.calendar
@@ -70,16 +175,6 @@ export default function LevelSelectPage() {
 
     fetchCalendar()
   }, [])
-
-  function getLocalProgress(): Record<string, LocalProgress> {
-    if (typeof window === 'undefined') return {}
-    try {
-      const stored = localStorage.getItem('laser-puzzle-progress')
-      return stored ? JSON.parse(stored) : {}
-    } catch {
-      return {}
-    }
-  }
 
   const todayDate = getLocalDateString()
   const devMode = process.env.NEXT_PUBLIC_APP_MODE === 'DEV'
@@ -160,4 +255,11 @@ export default function LevelSelectPage() {
       </main>
     </div>
   )
+}
+
+export default function LevelSelectPage() {
+  if (isPackMode()) {
+    return <PackPuzzleGrid />
+  }
+  return <DailyPuzzleGrid />
 }

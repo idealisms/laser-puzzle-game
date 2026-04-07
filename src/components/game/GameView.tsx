@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Header } from '@/components/ui/Header'
 import { HowToPlayModal } from '@/components/ui/HowToPlayModal'
+import { isPackMode, getLevelFetchUrl, parseLevelResponse } from '@/lib/packMode'
 
 const DEFAULT_LEVEL: LevelConfig = {
   gridWidth: 15,
@@ -56,10 +57,11 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   useEffect(() => {
     const CACHE_KEY = 'laser-puzzle-today'
     const SITE_VERSION = process.env.NEXT_PUBLIC_SITE_VERSION ?? 'dev'
+    const packMode = isPackMode()
 
-    // Load from cache immediately for instant display
+    // Load from cache immediately for instant display (daily mode only)
     let cachedLevelJson: string | null = null
-    if (enableLevelCache) {
+    if (enableLevelCache && !packMode) {
       try {
         const cached = localStorage.getItem(CACHE_KEY)
         if (cached) {
@@ -83,25 +85,27 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
 
     async function fetchLevel() {
       try {
-        const res = await fetch(`/api/levels/${date}`)
+        const res = await fetch(getLevelFetchUrl(date))
         if (res.ok) {
-          // If the server is running a newer build than our JS, reload to pick up
-          // new code before applying potentially-incompatible level data.
-          const serverVersion = res.headers.get('X-Site-Version')
-          if (serverVersion && serverVersion !== SITE_VERSION) {
-            window.location.reload()
-            return
+          if (!packMode) {
+            // Check if server is running a newer build — reload to pick up new code
+            const serverVersion = res.headers.get('X-Site-Version')
+            if (serverVersion && serverVersion !== SITE_VERSION) {
+              window.location.reload()
+              return
+            }
           }
           const data = await res.json()
-          const freshJson = JSON.stringify(data.level)
+          const freshLevel = parseLevelResponse(data)
+          const freshJson = JSON.stringify(freshLevel)
           // Only reload game state if the level actually changed
           if (freshJson !== cachedLevelJson) {
-            setLevel(data.level)
-            loadLevel(data.level)
+            setLevel(freshLevel)
+            loadLevel(freshLevel)
           }
-          if (enableLevelCache) {
+          if (enableLevelCache && !packMode) {
             try {
-              localStorage.setItem(CACHE_KEY, JSON.stringify({ date, level: data.level, siteVersion: SITE_VERSION }))
+              localStorage.setItem(CACHE_KEY, JSON.stringify({ date, level: freshLevel, siteVersion: SITE_VERSION }))
             } catch {}
           }
         } else if (!cachedLevelJson) {
@@ -171,6 +175,16 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   }
 
   const handleSubmit = useCallback(async () => {
+    if (isPackMode()) {
+      // Pack mode: save locally only, no API call
+      saveLocalProgress(date, gameState.score, gameState.placedMirrors)
+      setBestSolution([...gameState.placedMirrors])
+      setSubmittedScore(gameState.score)
+      setHasSubmitted(true)
+      setShowComplete(true)
+      return
+    }
+
     const mirrorPayload = gameState.placedMirrors.map(m => ({
       x: m.position.x,
       y: m.position.y,
@@ -219,7 +233,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   }, [hasSubmitted, bestSolution, sessionBestSolution, loadSolution])
 
   const handleShowResults = useCallback(async () => {
-    if (!histogramData) {
+    if (!isPackMode() && !histogramData) {
       try {
         const res = await fetch(`/api/scores/histogram?date=${date}&anonId=${getOrCreateAnonId()}`)
         if (res.ok) {
@@ -247,6 +261,9 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     }
   }, [level, loadSolution])
 
+  const packMode = isPackMode()
+  const headerLabel = packMode ? (level?.name ?? date) : date
+
   if (!loading && (error || !level)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -263,14 +280,19 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header rightContent={
-        <div className="flex items-center gap-2">
-          {refreshing && (
-            <div className="w-3 h-3 border border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
-          )}
-          <span>{date}</span>
-        </div>
-      } />
+      <Header
+        subtitle={packMode ? (process.env.NEXT_PUBLIC_PACK_SUBTITLE ?? undefined) : undefined}
+        dailySiteUrl={packMode ? (process.env.NEXT_PUBLIC_DAILY_SITE_URL ?? undefined) : undefined}
+        dailySiteName={packMode ? (process.env.NEXT_PUBLIC_DAILY_SITE_NAME ?? undefined) : undefined}
+        rightContent={
+          <div className="flex items-center gap-2">
+            {refreshing && (
+              <div className="w-3 h-3 border border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
+            )}
+            <span>{headerLabel}</span>
+          </div>
+        }
+      />
 
       <main className="flex-1 p-6">
         <div className="max-w-6xl mx-auto">
