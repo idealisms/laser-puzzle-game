@@ -4,10 +4,11 @@ import { useState, useEffect, useRef } from 'react'
 
 interface UseResponsiveScaleProps {
   canvasWidth: number
+  canvasHeight: number
   padding?: number
 }
 
-export function useResponsiveScale({ canvasWidth, padding = 0 }: UseResponsiveScaleProps) {
+export function useResponsiveScale({ canvasWidth, canvasHeight, padding = 0 }: UseResponsiveScaleProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
 
@@ -16,22 +17,30 @@ export function useResponsiveScale({ canvasWidth, padding = 0 }: UseResponsiveSc
     if (!container) return
 
     const updateScale = () => {
-      const containerWidth = container.clientWidth
-      const availableWidth = containerWidth - padding
-      const newScale = Math.min(1, availableWidth / canvasWidth)
-      setScale(newScale)
+      const availableWidth = container.clientWidth - padding
+      const containerTop = container.getBoundingClientRect().top
+      const remPx = parseFloat(getComputedStyle(document.documentElement).fontSize)
+      const bottomPadding = 4 + 1.5 * remPx // 4px border + p-6 (1.5rem) from <main>
+      const availableHeight = window.innerHeight - containerTop - padding - bottomPadding
+
+      const widthScale = availableWidth / canvasWidth
+      const heightScale = availableHeight / canvasHeight
+      const scale = Math.min(1, widthScale, heightScale)
+
+      setScale(scale)
     }
 
     const resizeObserver = new ResizeObserver(updateScale)
     resizeObserver.observe(container)
+    window.addEventListener('resize', updateScale)
 
-    // Initial calculation
     updateScale()
 
     return () => {
       resizeObserver.disconnect()
+      window.removeEventListener('resize', updateScale)
     }
-  }, [canvasWidth, padding])
+  }, [canvasWidth, canvasHeight, padding])
 
   return { scale, containerRef }
 }

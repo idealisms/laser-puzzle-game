@@ -19,7 +19,7 @@ export function ResponsiveCanvas({
   const canvasWidth = gameState.level.gridWidth * CELL_SIZE
   const canvasHeight = gameState.level.gridHeight * CELL_SIZE
 
-  const { scale, containerRef } = useResponsiveScale({ canvasWidth })
+  const { scale, containerRef } = useResponsiveScale({ canvasWidth, canvasHeight })
 
   return (
     <div ref={containerRef} className="w-full flex justify-center">
