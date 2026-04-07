@@ -1,0 +1,72 @@
+{
+  "date": "2026-04-21",
+  "name": "The Reef",
+  "width": 21,
+  "height": 28,
+  "laser": {
+    "x": 10,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 11,
+  "obstacle_groups": [
+    {
+      "label": "Top-left 2x2 block",
+      "cells": [[1,1],[2,1],[1,2],[2,2]]
+    },
+    {
+      "label": "Top area horizontal bar (left of center)",
+      "cells": [[6,3],[7,3],[8,3]]
+    },
+    {
+      "label": "Top-right L-shape",
+      "cells": [[17,2],[18,2],[18,3]]
+    },
+    {
+      "label": "Left edge 2-cell stub",
+      "cells": [[0,11],[0,12]]
+    },
+    {
+      "label": "Left-center Z-shape",
+      "cells": [[3,15],[4,15],[4,16],[5,16]]
+    },
+    {
+      "label": "Upper-right T-shape",
+      "cells": [[15,8],[16,8],[17,8],[16,9]]
+    },
+    {
+      "label": "Center L-shape",
+      "cells": [[8,12],[9,12],[9,13]]
+    },
+    {
+      "label": "Right-center S-shape",
+      "cells": [[14,16],[15,16],[15,17],[16,17]]
+    },
+    {
+      "label": "Lower-left T-shape",
+      "cells": [[2,20],[3,20],[4,20],[3,21]]
+    },
+    {
+      "label": "Lower-center L-shape",
+      "cells": [[11,21],[12,21],[12,22]]
+    },
+    {
+      "label": "Right edge lower stub",
+      "cells": [[19,19],[20,19],[20,20]]
+    },
+    {
+      "label": "Bottom-left 2-cell",
+      "cells": [[1,25],[1,26]]
+    },
+    {
+      "label": "Bottom-center Z-shape",
+      "cells": [[8,25],[9,25],[9,26],[10,26]]
+    },
+    {
+      "label": "Bottom-right L-shape",
+      "cells": [[16,24],[17,24],[17,25],[17,26]]
+    }
+  ],
+  "splitters": [],
+  "gates": []
+}
