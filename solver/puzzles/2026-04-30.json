@@ -1,0 +1,59 @@
+{
+  "date": "2026-04-30",
+  "name": "Stagger",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 14, "y": 10, "dir": "left" },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Right bar 1 — y=2, x=7..14, touches right edge",
+      "cells": [[7,2],[8,2],[9,2],[10,2],[11,2],[12,2],[13,2],[14,2]]
+    },
+    {
+      "label": "Left bar 1 — y=4, x=0..7, touches left edge",
+      "cells": [[0,4],[1,4],[2,4],[3,4],[4,4],[5,4],[6,4],[7,4]]
+    },
+    {
+      "label": "Right bar 2 — y=6, x=7..14, touches right edge",
+      "cells": [[7,6],[8,6],[9,6],[10,6],[11,6],[12,6],[13,6],[14,6]]
+    },
+    {
+      "label": "Left bar 2 — y=8, x=0..7, touches left edge",
+      "cells": [[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8]]
+    },
+    {
+      "label": "Left bar 3 — y=12, x=0..7, touches left edge",
+      "cells": [[0,12],[1,12],[2,12],[3,12],[4,12],[5,12],[6,12],[7,12]]
+    },
+    {
+      "label": "Right bar 3 — y=14, x=7..14, touches right edge",
+      "cells": [[7,14],[8,14],[9,14],[10,14],[11,14],[12,14],[13,14],[14,14]]
+    },
+    {
+      "label": "Left bar 4 — y=16, x=0..7, touches left edge",
+      "cells": [[0,16],[1,16],[2,16],[3,16],[4,16],[5,16],[6,16],[7,16]]
+    },
+    {
+      "label": "Right bar 4 — y=18, x=7..14, touches right edge",
+      "cells": [[7,18],[8,18],[9,18],[10,18],[11,18],[12,18],[13,18],[14,18]]
+    },
+    {
+      "label": "Top-left corner — x=0..2, y=0..1, touches top and left edges",
+      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]]
+    },
+    {
+      "label": "Top-right corner — x=12..14, y=0..1, touches top and right edges",
+      "cells": [[12,0],[13,0],[14,0],[12,1],[13,1],[14,1]]
+    },
+    {
+      "label": "Bottom-left corner — x=0..2, y=18..19, touches bottom and left edges",
+      "cells": [[0,19],[1,19],[2,19]]
+    },
+    {
+      "label": "Bottom-right corner — x=12..14, y=19, touches bottom and right edges",
+      "cells": [[12,19],[13,19],[14,19]]
+    }
+  ],
+  "splitters": []
+}
