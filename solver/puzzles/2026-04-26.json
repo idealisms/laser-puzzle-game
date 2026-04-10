@@ -1,0 +1,31 @@
+{
+  "date": "2026-04-26",
+  "name": "Offset",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 7, "y": 0, "dir": "down" },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Upper-right staircase — steps from top-right corner toward center; touches top and right edges",
+      "cells": [[9,0],[10,0],[11,0],[12,0],[13,0],[14,0],[10,1],[11,1],[12,1],[13,1],[14,1],[11,2],[12,2],[13,2],[14,2],[12,3],[13,3],[14,3],[13,4],[14,4]]
+    },
+    {
+      "label": "Lower-left staircase — steps from bottom-left corner toward center; touches bottom and left edges",
+      "cells": [[0,15],[1,15],[0,16],[1,16],[2,16],[0,17],[1,17],[2,17],[3,17],[0,18],[1,18],[2,18],[3,18],[4,18],[0,19],[1,19],[2,19],[3,19],[4,19],[5,19]]
+    },
+    {
+      "label": "Left mid block — x=0..2, y=6..9, touches left edge",
+      "cells": [[0,6],[1,6],[2,6],[0,7],[1,7],[2,7],[0,8],[1,8],[2,8],[0,9],[1,9],[2,9]]
+    },
+    {
+      "label": "Right mid block — x=12..14, y=11..14, touches right edge",
+      "cells": [[12,11],[13,11],[14,11],[12,12],[13,12],[14,12],[12,13],[13,13],[14,13],[12,14],[13,14],[14,14]]
+    },
+    {
+      "label": "Central obstacle — x=6..8, y=9..10; first obstacle in laser path",
+      "cells": [[6,9],[7,9],[8,9],[6,10],[7,10],[8,10]]
+    }
+  ],
+  "splitters": []
+}
