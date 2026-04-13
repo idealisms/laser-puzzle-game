@@ -1,0 +1,43 @@
+{
+  "date": "2026-05-03",
+  "name": "Fork",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 0, "y": 10, "dir": "right" },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Top-left corner — x=0..2, y=0..1, touches top and left edges",
+      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]]
+    },
+    {
+      "label": "Top-right corner — x=12..14, y=0..1, touches top and right edges",
+      "cells": [[12,0],[13,0],[14,0],[12,1],[13,1],[14,1]]
+    },
+    {
+      "label": "Upper-right bar — x=10..14, y=2..3, touches right; offset above upper-left bar",
+      "cells": [[10,2],[11,2],[12,2],[13,2],[14,2],[10,3],[11,3],[12,3],[13,3],[14,3]]
+    },
+    {
+      "label": "Upper-left bar — x=0..8, y=5..6, touches left",
+      "cells": [[0,5],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5],[7,5],[8,5],[0,6],[1,6],[2,6],[3,6],[4,6],[5,6],[6,6],[7,6],[8,6]]
+    },
+    {
+      "label": "Lower-left bar — x=0..8, y=14..15, touches left",
+      "cells": [[0,14],[1,14],[2,14],[3,14],[4,14],[5,14],[6,14],[7,14],[8,14],[0,15],[1,15],[2,15],[3,15],[4,15],[5,15],[6,15],[7,15],[8,15]]
+    },
+    {
+      "label": "Lower-right bar — x=10..14, y=17..18, touches right; offset below lower-left bar",
+      "cells": [[10,17],[11,17],[12,17],[13,17],[14,17],[10,18],[11,18],[12,18],[13,18],[14,18]]
+    },
+    {
+      "label": "Bottom-left corner — x=0..2, y=18..19, touches bottom and left edges",
+      "cells": [[0,18],[1,18],[2,18],[0,19],[1,19],[2,19]]
+    },
+    {
+      "label": "Bottom-right corner — x=12..14, y=18..19, touches bottom and right edges",
+      "cells": [[12,18],[13,18],[14,18],[12,19],[13,19],[14,19]]
+    }
+  ],
+  "splitters": [{"x": 7, "y": 10, "dir": "right"}]
+}

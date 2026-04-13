@@ -1,0 +1,47 @@
+{
+  "date": "2026-05-05",
+  "name": "Ledge",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 14, "y": 7, "dir": "left" },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Top-left corner — x=0..2, y=0..1, touches top and left edges",
+      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]]
+    },
+    {
+      "label": "Top-right corner — x=11..14, y=0..1, touches top and right edges",
+      "cells": [[11,0],[12,0],[13,0],[14,0],[11,1],[12,1],[13,1],[14,1]]
+    },
+    {
+      "label": "Right ledge A — x=8..14, y=3..4, touches right edge",
+      "cells": [[8,3],[9,3],[10,3],[11,3],[12,3],[13,3],[14,3],[8,4],[9,4],[10,4],[11,4],[12,4],[13,4],[14,4]]
+    },
+    {
+      "label": "Left ledge A — x=0..6, y=6..7, touches left edge; first obstacle in laser path at x=6",
+      "cells": [[0,6],[1,6],[2,6],[3,6],[4,6],[5,6],[6,6],[0,7],[1,7],[2,7],[3,7],[4,7],[5,7],[6,7]]
+    },
+    {
+      "label": "Center bar — x=4..9, y=9..10; gap left and right",
+      "cells": [[4,9],[5,9],[6,9],[7,9],[8,9],[9,9],[4,10],[5,10],[6,10],[7,10],[8,10],[9,10]]
+    },
+    {
+      "label": "Right ledge B — x=8..14, y=12..13, touches right edge",
+      "cells": [[8,12],[9,12],[10,12],[11,12],[12,12],[13,12],[14,12],[8,13],[9,13],[10,13],[11,13],[12,13],[13,13],[14,13]]
+    },
+    {
+      "label": "Left ledge B — x=0..6, y=15..16, touches left edge",
+      "cells": [[0,15],[1,15],[2,15],[3,15],[4,15],[5,15],[6,15],[0,16],[1,16],[2,16],[3,16],[4,16],[5,16],[6,16]]
+    },
+    {
+      "label": "Bottom-left corner — x=0..2, y=18..19, touches bottom and left edges",
+      "cells": [[0,18],[1,18],[2,18],[0,19],[1,19],[2,19]]
+    },
+    {
+      "label": "Bottom-right corner — x=12..14, y=18..19, touches bottom and right edges",
+      "cells": [[12,18],[13,18],[14,18],[12,19],[13,19],[14,19]]
+    }
+  ],
+  "splitters": []
+}

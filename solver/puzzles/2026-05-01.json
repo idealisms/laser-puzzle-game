@@ -1,0 +1,43 @@
+{
+  "date": "2026-05-01",
+  "name": "Portcullis",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 7, "y": 0, "dir": "down" },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Top-left corner — x=0..2, y=0..1, touches top and left edges",
+      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]]
+    },
+    {
+      "label": "Top-right corner — x=12..14, y=0..1, touches top and right edges",
+      "cells": [[12,0],[13,0],[14,0],[12,1],[13,1],[14,1]]
+    },
+    {
+      "label": "Gate A — x=3..11, y=4..5; side gaps at x=0..2 and x=12..14; first obstacle in laser path",
+      "cells": [[3,4],[4,4],[5,4],[6,4],[7,4],[8,4],[9,4],[10,4],[11,4],[3,5],[4,5],[5,5],[6,5],[7,5],[8,5],[9,5],[10,5],[11,5]]
+    },
+    {
+      "label": "Gate B — x=4..10, y=8..9; wider side gaps",
+      "cells": [[4,8],[5,8],[6,8],[7,8],[8,8],[9,8],[10,8],[4,9],[5,9],[6,9],[7,9],[8,9],[9,9],[10,9]]
+    },
+    {
+      "label": "Gate C — x=3..11, y=12..13; matches Gate A width",
+      "cells": [[3,12],[4,12],[5,12],[6,12],[7,12],[8,12],[9,12],[10,12],[11,12],[3,13],[4,13],[5,13],[6,13],[7,13],[8,13],[9,13],[10,13],[11,13]]
+    },
+    {
+      "label": "Gate D — x=4..10, y=16..17; matches Gate B width",
+      "cells": [[4,16],[5,16],[6,16],[7,16],[8,16],[9,16],[10,16],[4,17],[5,17],[6,17],[7,17],[8,17],[9,17],[10,17]]
+    },
+    {
+      "label": "Bottom-left corner — x=0..2, y=18..19, touches bottom and left edges",
+      "cells": [[0,18],[1,18],[2,18],[0,19],[1,19],[2,19]]
+    },
+    {
+      "label": "Bottom-right corner — x=12..14, y=18..19, touches bottom and right edges",
+      "cells": [[12,18],[13,18],[14,18],[12,19],[13,19],[14,19]]
+    }
+  ],
+  "splitters": []
+}
