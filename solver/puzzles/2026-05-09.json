@@ -1,43 +1,45 @@
 {
   "date": "2026-05-09",
-  "name": "Fins",
+  "name": "Sluices",
   "width": 15,
   "height": 20,
-  "laser": { "x": 7, "y": 19, "dir": "up" },
+  "laser": { "x": 7, "y": 0, "dir": "down" },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Top fin A — x=6..7, y=0..3, hangs from top; first obstacle in laser path at x=7",
-      "cells": [[6,0],[7,0],[6,1],[7,1],[6,2],[7,2],[6,3],[7,3]]
+      "label": "Wall A left — y=4, x=0..5; full-width wall with downward gate at x=6..8",
+      "cells": [[0,4],[1,4],[2,4],[3,4],[4,4],[5,4]]
     },
     {
-      "label": "Top fin B — x=1..2, y=0..5, hangs from top-left; gap below y=6..19",
-      "cells": [[1,0],[2,0],[1,1],[2,1],[1,2],[2,2],[1,3],[2,3],[1,4],[2,4],[1,5],[2,5]]
+      "label": "Wall A right — y=4, x=9..14",
+      "cells": [[9,4],[10,4],[11,4],[12,4],[13,4],[14,4]]
     },
     {
-      "label": "Right gate A — x=9..14, y=4..5, extends from right; gap left x=0..8",
-      "cells": [[9,4],[10,4],[11,4],[12,4],[13,4],[14,4],[9,5],[10,5],[11,5],[12,5],[13,5],[14,5]]
+      "label": "Wall B left — y=9, x=0..3; full-width wall with downward gate at x=4..5",
+      "cells": [[0,9],[1,9],[2,9],[3,9]]
     },
     {
-      "label": "Left gate A — x=0..5, y=8..9, extends from left; gap right x=6..14",
-      "cells": [[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[0,9],[1,9],[2,9],[3,9],[4,9],[5,9]]
+      "label": "Wall B right — y=9, x=6..14",
+      "cells": [[6,9],[7,9],[8,9],[9,9],[10,9],[11,9],[12,9],[13,9],[14,9]]
     },
     {
-      "label": "Right gate B — x=8..14, y=11..12, extends from right; gap left x=0..7",
-      "cells": [[8,11],[9,11],[10,11],[11,11],[12,11],[13,11],[14,11],[8,12],[9,12],[10,12],[11,12],[12,12],[13,12],[14,12]]
+      "label": "Wall C left — y=14, x=0..8; full-width wall with downward gate at x=9..11",
+      "cells": [[0,14],[1,14],[2,14],[3,14],[4,14],[5,14],[6,14],[7,14],[8,14]]
     },
     {
-      "label": "Left gate B — x=0..5, y=14..15, extends from left; gap right x=6..14",
-      "cells": [[0,14],[1,14],[2,14],[3,14],[4,14],[5,14],[0,15],[1,15],[2,15],[3,15],[4,15],[5,15]]
-    },
-    {
-      "label": "Bottom fin A — x=3..4, y=16..19, rises from bottom; gap above y=0..15",
-      "cells": [[3,16],[4,16],[3,17],[4,17],[3,18],[4,18],[3,19],[4,19]]
-    },
-    {
-      "label": "Bottom fin B — x=10..11, y=16..19, rises from bottom; gap above y=0..15",
-      "cells": [[10,16],[11,16],[10,17],[11,17],[10,18],[11,18],[10,19],[11,19]]
+      "label": "Wall C right — y=14, x=12..14",
+      "cells": [[12,14],[13,14],[14,14]]
     }
   ],
-  "splitters": []
+  "splitters": [],
+  "gates": [
+    {"x": 6, "y": 4,  "dir": "down"},
+    {"x": 7, "y": 4,  "dir": "down"},
+    {"x": 8, "y": 4,  "dir": "down"},
+    {"x": 4, "y": 9,  "dir": "down"},
+    {"x": 5, "y": 9,  "dir": "down"},
+    {"x": 9, "y": 14, "dir": "down"},
+    {"x": 10, "y": 14, "dir": "down"},
+    {"x": 11, "y": 14, "dir": "down"}
+  ]
 }
