@@ -1,46 +1,33 @@
 {
   "date": "2026-05-08",
-  "name": "Turnstiles",
+  "name": "Eddies",
   "width": 15,
   "height": 20,
   "laser": { "x": 0, "y": 10, "dir": "right" },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Wall A top — x=4, y=0..8; full-height wall with rightward gate at y=9..11",
-      "cells": [[4,0],[4,1],[4,2],[4,3],[4,4],[4,5],[4,6],[4,7],[4,8]]
+      "label": "NW corner staircase — touches top and left edges",
+      "cells": [[0,0],[1,0],[2,0],[3,0],[4,0],[0,1],[1,1],[2,1],[3,1],[0,2],[1,2],[2,2],[0,3],[1,3],[0,4]]
     },
     {
-      "label": "Wall A bottom — x=4, y=12..19",
-      "cells": [[4,12],[4,13],[4,14],[4,15],[4,16],[4,17],[4,18],[4,19]]
+      "label": "NE corner staircase — touches top and right edges",
+      "cells": [[10,0],[11,0],[12,0],[13,0],[14,0],[11,1],[12,1],[13,1],[14,1],[12,2],[13,2],[14,2],[13,3],[14,3],[14,4]]
     },
     {
-      "label": "Wall B top — x=8, y=0..4; full-height wall with rightward gate at y=5..7",
-      "cells": [[8,0],[8,1],[8,2],[8,3],[8,4]]
+      "label": "SW corner staircase — touches bottom and left edges",
+      "cells": [[0,15],[0,16],[1,16],[0,17],[1,17],[2,17],[0,18],[1,18],[2,18],[3,18],[0,19],[1,19],[2,19],[3,19],[4,19]]
     },
     {
-      "label": "Wall B bottom — x=8, y=8..19",
-      "cells": [[8,8],[8,9],[8,10],[8,11],[8,12],[8,13],[8,14],[8,15],[8,16],[8,17],[8,18],[8,19]]
-    },
-    {
-      "label": "Wall C top — x=12, y=0..12; full-height wall with rightward gate at y=13..15",
-      "cells": [[12,0],[12,1],[12,2],[12,3],[12,4],[12,5],[12,6],[12,7],[12,8],[12,9],[12,10],[12,11],[12,12]]
-    },
-    {
-      "label": "Wall C bottom — x=12, y=16..19",
-      "cells": [[12,16],[12,17],[12,18],[12,19]]
+      "label": "SE corner staircase — touches bottom and right edges",
+      "cells": [[14,15],[13,16],[14,16],[12,17],[13,17],[14,17],[11,18],[12,18],[13,18],[14,18],[10,19],[11,19],[12,19],[13,19],[14,19]]
     }
   ],
   "splitters": [],
   "gates": [
-    {"x": 4, "y": 9,  "dir": "right"},
-    {"x": 4, "y": 10, "dir": "right"},
-    {"x": 4, "y": 11, "dir": "right"},
-    {"x": 8, "y": 5,  "dir": "right"},
-    {"x": 8, "y": 6,  "dir": "right"},
-    {"x": 8, "y": 7,  "dir": "right"},
-    {"x": 12, "y": 13, "dir": "right"},
-    {"x": 12, "y": 14, "dir": "right"},
-    {"x": 12, "y": 15, "dir": "right"}
+    {"x": 7, "y": 0,  "dir": "right", "note": "top gap — rightward only; blocks leftward travel back across"},
+    {"x": 14, "y": 8, "dir": "down",  "note": "right wall corridor — downward only"},
+    {"x": 7, "y": 19, "dir": "left",  "note": "bottom gap — leftward only; blocks rightward travel back across"},
+    {"x": 0, "y": 11, "dir": "up",    "note": "left wall corridor — upward only"}
   ]
 }

@@ -1,45 +1,36 @@
 {
   "date": "2026-05-09",
-  "name": "Sluices",
+  "name": "Inlet",
   "width": 15,
   "height": 20,
   "laser": { "x": 7, "y": 0, "dir": "down" },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Wall A left — y=4, x=0..5; full-width wall with downward gate at x=6..8",
-      "cells": [[0,4],[1,4],[2,4],[3,4],[4,4],[5,4]]
+      "label": "Upper-right corner — touches top and right edges",
+      "cells": [[12,0],[13,0],[14,0],[12,1],[13,1],[14,1],[12,2],[13,2],[14,2]]
     },
     {
-      "label": "Wall A right — y=4, x=9..14",
-      "cells": [[9,4],[10,4],[11,4],[12,4],[13,4],[14,4]]
+      "label": "Left mid-staircase — touches left edge, y=6..10",
+      "cells": [[0,6],[1,6],[2,6],[3,6],[4,6],[0,7],[1,7],[2,7],[3,7],[0,8],[1,8],[2,8],[0,9],[1,9],[0,10]]
     },
     {
-      "label": "Wall B left — y=9, x=0..3; full-width wall with downward gate at x=4..5",
-      "cells": [[0,9],[1,9],[2,9],[3,9]]
+      "label": "Central blob — first obstacle in laser path at x=7 going down",
+      "cells": [[6,9],[7,9],[8,9],[6,10],[7,10],[8,10]]
     },
     {
-      "label": "Wall B right — y=9, x=6..14",
-      "cells": [[6,9],[7,9],[8,9],[9,9],[10,9],[11,9],[12,9],[13,9],[14,9]]
+      "label": "Right mid-staircase — touches right edge, y=10..14",
+      "cells": [[14,10],[13,11],[14,11],[12,12],[13,12],[14,12],[11,13],[12,13],[13,13],[14,13],[10,14],[11,14],[12,14],[13,14],[14,14]]
     },
     {
-      "label": "Wall C left — y=14, x=0..8; full-width wall with downward gate at x=9..11",
-      "cells": [[0,14],[1,14],[2,14],[3,14],[4,14],[5,14],[6,14],[7,14],[8,14]]
-    },
-    {
-      "label": "Wall C right — y=14, x=12..14",
-      "cells": [[12,14],[13,14],[14,14]]
+      "label": "Lower-left corner — touches bottom and left edges",
+      "cells": [[0,17],[1,17],[2,17],[0,18],[1,18],[2,18],[0,19],[1,19],[2,19]]
     }
   ],
   "splitters": [],
   "gates": [
-    {"x": 6, "y": 4,  "dir": "down"},
-    {"x": 7, "y": 4,  "dir": "down"},
-    {"x": 8, "y": 4,  "dir": "down"},
-    {"x": 4, "y": 9,  "dir": "down"},
-    {"x": 5, "y": 9,  "dir": "down"},
-    {"x": 9, "y": 14, "dir": "down"},
-    {"x": 10, "y": 14, "dir": "down"},
-    {"x": 11, "y": 14, "dir": "down"}
+    {"x": 7, "y": 5,  "dir": "down", "note": "above central blob — laser passes through going down; blocks upward return"},
+    {"x": 0, "y": 5,  "dir": "up",   "note": "left wall above left staircase — upward only along left edge"},
+    {"x": 14, "y": 15, "dir": "down", "note": "right wall below right staircase — downward only along right edge"}
   ]
 }
