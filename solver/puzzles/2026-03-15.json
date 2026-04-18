@@ -31,5 +31,9 @@
       "cells": [[2,4],[2,5],[2,6],[2,14],[2,15],[2,16],[12,4],[12,5],[12,6],[12,14],[12,15],[12,16]]
     }
   ],
-  "splitters": []
+  "splitters": [],
+  "gates": [
+    {"x": 14, "y": 7,  "dir": "up",   "note": "right wall — only upward passes; blocks the long downward right-wall run"},
+    {"x": 14, "y": 13, "dir": "down", "note": "right wall — only downward passes; blocks the long upward right-wall run"}
+  ]
 }
