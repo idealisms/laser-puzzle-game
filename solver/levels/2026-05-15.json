@@ -1,5 +1,5 @@
 {
-  "date": "2026-03-15",
+  "date": "2026-05-15",
   "gridWidth": 15,
   "gridHeight": 20,
   "laserConfig": {
@@ -195,10 +195,22 @@
     {
       "x": 12,
       "y": 16
+    },
+    {
+      "x": 14,
+      "y": 7,
+      "type": "gate",
+      "orientation": "up"
+    },
+    {
+      "x": 14,
+      "y": 13,
+      "type": "gate",
+      "orientation": "down"
     }
   ],
   "mirrorsAvailable": 11,
-  "optimalScore": 118,
+  "optimalScore": 116,
   "optimalSolution": [
     {
       "x": 4,
@@ -221,39 +233,39 @@
       "type": "/"
     },
     {
-      "x": 0,
+      "x": 1,
       "y": 13,
       "type": "\\"
     },
     {
+      "x": 1,
+      "y": 11,
+      "type": "/"
+    },
+    {
+      "x": 14,
+      "y": 11,
+      "type": "/"
+    },
+    {
+      "x": 14,
+      "y": 0,
+      "type": "\\"
+    },
+    {
       "x": 0,
       "y": 0,
       "type": "/"
     },
     {
-      "x": 14,
-      "y": 0,
+      "x": 0,
+      "y": 12,
       "type": "\\"
     },
     {
-      "x": 14,
-      "y": 19,
+      "x": 13,
+      "y": 12,
       "type": "/"
-    },
-    {
-      "x": 13,
-      "y": 19,
-      "type": "\\"
-    },
-    {
-      "x": 13,
-      "y": 8,
-      "type": "\\"
-    },
-    {
-      "x": 1,
-      "y": 8,
-      "type": "\\"
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "date": "2026-03-17",
+  "date": "2026-05-17",
   "name": "Mosaic",
   "width": 15,
   "height": 20,
@@ -27,5 +27,9 @@
       "cells": [[1,17],[2,17],[4,17],[5,17],[8,17],[9,17],[11,17],[12,17]]
     }
   ],
-  "splitters": []
+  "splitters": [],
+  "gates": [
+    {"x": 0, "y": 10, "dir": "up",   "note": "left wall midpoint — only upward passes; blocks the 19-cell downward left-wall run"},
+    {"x": 7, "y": 10, "dir": "down", "note": "x=7 midpoint — only downward passes; blocks the 18-cell upward x=7 run"}
+  ]
 }
