@@ -29,7 +29,8 @@
   ],
   "splitters": [],
   "gates": [
-    {"x": 0, "y": 10, "dir": "up",   "note": "left wall midpoint — only upward passes; blocks the 19-cell downward left-wall run"},
-    {"x": 7, "y": 10, "dir": "down", "note": "x=7 midpoint — only downward passes; blocks the 18-cell upward x=7 run"}
+    {"x": 0,  "y": 10, "dir": "up", "note": "left wall midpoint — only upward passes; blocks the 19-cell downward left-wall run"},
+    {"x": 7,  "y": 10, "dir": "up", "note": "x=7 midpoint — only upward passes; blocks the downward x=7 run"},
+    {"x": 14, "y": 10, "dir": "up", "note": "right wall midpoint — only upward passes; blocks the downward right-wall run"}
   ]
 }
