@@ -1,0 +1,50 @@
+{
+  "date": "2026-05-20",
+  "name": "Transmission",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 0, "y": 10, "dir": "right" },
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {
+      "label": "Mast top — touches top wall, clear gap y=3-15 for split beams",
+      "cells": [[7,0],[7,1],[7,2]]
+    },
+    {
+      "label": "Mast bottom — touches bottom wall",
+      "cells": [[7,17],[7,18],[7,19]]
+    },
+    {
+      "label": "Upper-left wing — touches left wall",
+      "cells": [[0,5],[1,5],[2,5],[3,5],[4,5],
+                [0,6],[1,6],[2,6],[3,6],[4,6],
+                [0,7],[1,7],[2,7],[3,7],[4,7]]
+    },
+    {
+      "label": "Upper-right wing — touches right wall",
+      "cells": [[10,5],[11,5],[12,5],[13,5],[14,5],
+                [10,6],[11,6],[12,6],[13,6],[14,6],
+                [10,7],[11,7],[12,7],[13,7],[14,7]]
+    },
+    {
+      "label": "Lower-left wing — touches left wall",
+      "cells": [[0,12],[1,12],[2,12],[3,12],[4,12],
+                [0,13],[1,13],[2,13],[3,13],[4,13],
+                [0,14],[1,14],[2,14],[3,14],[4,14]]
+    },
+    {
+      "label": "Lower-right wing — touches right wall",
+      "cells": [[10,12],[11,12],[12,12],[13,12],[14,12],
+                [10,13],[11,13],[12,13],[13,13],[14,13],
+                [10,14],[11,14],[12,14],[13,14],[14,14]]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 7,
+      "y": 10,
+      "dir": "right",
+      "note": "Laser traveling RIGHT hits splitter → splits UP (through gap y=3-9) and DOWN (through gap y=11-16)"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "date": "2026-05-17",
+  "name": "Mosaic",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 5,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "Top tile row",
+      "cells": [[2,2],[3,2],[5,2],[6,2],[9,2],[10,2],[12,2],[13,2]]
+    },
+    {
+      "label": "Upper-mid tile row (offset)",
+      "cells": [[1,7],[2,7],[4,7],[5,7],[8,7],[9,7],[11,7],[12,7]]
+    },
+    {
+      "label": "Lower-mid tile row",
+      "cells": [[2,12],[3,12],[5,12],[6,12],[9,12],[10,12],[12,12],[13,12]]
+    },
+    {
+      "label": "Bottom tile row (offset)",
+      "cells": [[1,17],[2,17],[4,17],[5,17],[8,17],[9,17],[11,17],[12,17]]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {"x": 0,  "y": 10, "dir": "up", "note": "left wall midpoint — only upward passes; blocks the 19-cell downward left-wall run"},
+    {"x": 7,  "y": 10, "dir": "up", "note": "x=7 midpoint — only upward passes; blocks the downward x=7 run"},
+    {"x": 14, "y": 10, "dir": "up", "note": "right wall midpoint — only upward passes; blocks the downward right-wall run"}
+  ]
+}
