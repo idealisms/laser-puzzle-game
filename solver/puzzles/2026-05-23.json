@@ -1,0 +1,67 @@
+{
+  "date": "2026-05-23",
+  "name": "Tidepools",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 0, "y": 8, "dir": "right" },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW staircase step 1 — touches top and left walls",
+      "cells": [[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],
+                [0,1],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1]]
+    },
+    {
+      "label": "NW staircase step 2 — touches left wall",
+      "cells": [[0,2],[1,2],[2,2],[3,2],
+                [0,3],[1,3],[2,3],[3,3]]
+    },
+    {
+      "label": "NW staircase step 3 — touches left wall",
+      "cells": [[0,4],[1,4],[0,5],[1,5]]
+    },
+    {
+      "label": "SE staircase step 1 — touches right and bottom walls",
+      "cells": [[8,18],[9,18],[10,18],[11,18],[12,18],[13,18],[14,18],
+                [8,19],[9,19],[10,19],[11,19],[12,19],[13,19],[14,19]]
+    },
+    {
+      "label": "SE staircase step 2 — touches right wall",
+      "cells": [[11,16],[12,16],[13,16],[14,16],
+                [11,17],[12,17],[13,17],[14,17]]
+    },
+    {
+      "label": "SE staircase step 3 — touches right wall",
+      "cells": [[13,14],[14,14],[13,15],[14,15]]
+    },
+    {
+      "label": "Tidepool A",
+      "cells": [[5,7],[6,7]]
+    },
+    {
+      "label": "Tidepool B",
+      "cells": [[9,5],[10,5]]
+    },
+    {
+      "label": "Tidepool C",
+      "cells": [[4,10],[5,10],[4,11]]
+    },
+    {
+      "label": "Tidepool D",
+      "cells": [[9,11],[10,11]]
+    },
+    {
+      "label": "Tidepool E",
+      "cells": [[7,13],[8,13]]
+    },
+    {
+      "label": "Tidepool F",
+      "cells": [[3,16],[4,16],[3,17]]
+    },
+    {
+      "label": "Tidepool G",
+      "cells": [[10,8]]
+    }
+  ],
+  "splitters": []
+}
