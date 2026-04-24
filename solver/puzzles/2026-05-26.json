@@ -1,71 +1,316 @@
 {
   "date": "2026-05-26",
-  "name": "Floes",
+  "name": "Transmission",
   "width": 15,
   "height": 20,
-  "laser": { "x": 14, "y": 10, "dir": "left" },
-  "num_mirrors": 10,
+  "laser": {
+    "x": 0,
+    "y": 10,
+    "dir": "right"
+  },
+  "num_mirrors": 9,
   "obstacle_groups": [
     {
-      "label": "NE floe — touches top and right walls",
-      "cells": [[11,0],[12,0],[13,0],[14,0],[14,1],[14,2],[13,2]]
+      "label": "Mast top \u2014 touches top wall, clear gap y=3-15 for split beams",
+      "cells": [
+        [
+          7,
+          0
+        ],
+        [
+          7,
+          1
+        ],
+        [
+          7,
+          2
+        ]
+      ]
     },
     {
-      "label": "NW floe — touches top and left walls",
-      "cells": [[0,0],[1,0],[2,0],[0,1],[0,2],[1,2]]
+      "label": "Mast bottom \u2014 touches bottom wall",
+      "cells": [
+        [
+          7,
+          17
+        ],
+        [
+          7,
+          18
+        ],
+        [
+          7,
+          19
+        ]
+      ]
     },
     {
-      "label": "Upper-right floe — touches right wall",
-      "cells": [[13,5],[14,5],[14,6],[14,7]]
+      "label": "Upper-left wing \u2014 touches left wall",
+      "cells": [
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          0,
+          6
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          0,
+          7
+        ],
+        [
+          1,
+          7
+        ],
+        [
+          2,
+          7
+        ],
+        [
+          3,
+          7
+        ],
+        [
+          4,
+          7
+        ]
+      ]
     },
     {
-      "label": "Upper floe A",
-      "cells": [[4,2],[5,2]]
+      "label": "Upper-right wing \u2014 touches right wall",
+      "cells": [
+        [
+          10,
+          5
+        ],
+        [
+          11,
+          5
+        ],
+        [
+          12,
+          5
+        ],
+        [
+          13,
+          5
+        ],
+        [
+          14,
+          5
+        ],
+        [
+          10,
+          6
+        ],
+        [
+          11,
+          6
+        ],
+        [
+          12,
+          6
+        ],
+        [
+          13,
+          6
+        ],
+        [
+          14,
+          6
+        ],
+        [
+          10,
+          7
+        ],
+        [
+          11,
+          7
+        ],
+        [
+          12,
+          7
+        ],
+        [
+          13,
+          7
+        ],
+        [
+          14,
+          7
+        ]
+      ]
     },
     {
-      "label": "Upper floe B",
-      "cells": [[7,3],[8,3],[7,4]]
+      "label": "Lower-left wing \u2014 touches left wall",
+      "cells": [
+        [
+          0,
+          12
+        ],
+        [
+          1,
+          12
+        ],
+        [
+          2,
+          12
+        ],
+        [
+          3,
+          12
+        ],
+        [
+          4,
+          12
+        ],
+        [
+          0,
+          13
+        ],
+        [
+          1,
+          13
+        ],
+        [
+          2,
+          13
+        ],
+        [
+          3,
+          13
+        ],
+        [
+          4,
+          13
+        ],
+        [
+          0,
+          14
+        ],
+        [
+          1,
+          14
+        ],
+        [
+          2,
+          14
+        ],
+        [
+          3,
+          14
+        ],
+        [
+          4,
+          14
+        ]
+      ]
     },
     {
-      "label": "Upper floe C",
-      "cells": [[10,6],[11,6],[10,7]]
-    },
-    {
-      "label": "Left-mid floe — touches left wall",
-      "cells": [[0,8],[1,8],[0,9],[0,10],[1,10]]
-    },
-    {
-      "label": "Mid floe A",
-      "cells": [[4,8],[5,8],[4,9]]
-    },
-    {
-      "label": "Mid floe B",
-      "cells": [[8,11],[9,11],[9,12]]
-    },
-    {
-      "label": "Mid floe C",
-      "cells": [[5,12],[6,12],[5,13]]
-    },
-    {
-      "label": "Right-mid floe — touches right wall",
-      "cells": [[13,13],[14,13],[14,14],[14,15]]
-    },
-    {
-      "label": "Lower floe A",
-      "cells": [[3,15],[4,15],[3,16]]
-    },
-    {
-      "label": "Lower floe B",
-      "cells": [[7,16],[8,16],[8,17]]
-    },
-    {
-      "label": "SW floe — touches left and bottom walls",
-      "cells": [[0,17],[0,18],[0,19],[1,19],[2,19]]
-    },
-    {
-      "label": "SE floe — touches right and bottom walls",
-      "cells": [[11,18],[12,18],[13,18],[14,18],[14,19]]
+      "label": "Lower-right wing \u2014 touches right wall",
+      "cells": [
+        [
+          10,
+          12
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          12,
+          12
+        ],
+        [
+          13,
+          12
+        ],
+        [
+          14,
+          12
+        ],
+        [
+          10,
+          13
+        ],
+        [
+          11,
+          13
+        ],
+        [
+          12,
+          13
+        ],
+        [
+          13,
+          13
+        ],
+        [
+          14,
+          13
+        ],
+        [
+          10,
+          14
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          12,
+          14
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          14,
+          14
+        ]
+      ]
     }
   ],
-  "splitters": []
+  "splitters": [
+    {
+      "x": 7,
+      "y": 10,
+      "dir": "right",
+      "note": "Laser traveling RIGHT hits splitter \u2192 splits UP (through gap y=3-9) and DOWN (through gap y=11-16)"
+    }
+  ]
 }

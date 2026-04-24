@@ -1,67 +1,183 @@
 {
   "date": "2026-05-23",
-  "name": "Tidepools",
+  "name": "Mosaic",
   "width": 15,
   "height": 20,
-  "laser": { "x": 0, "y": 8, "dir": "right" },
+  "laser": {
+    "x": 0,
+    "y": 5,
+    "dir": "right"
+  },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW staircase step 1 — touches top and left walls",
-      "cells": [[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],
-                [0,1],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1]]
+      "label": "Top tile row",
+      "cells": [
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          9,
+          2
+        ],
+        [
+          10,
+          2
+        ],
+        [
+          12,
+          2
+        ],
+        [
+          13,
+          2
+        ]
+      ]
     },
     {
-      "label": "NW staircase step 2 — touches left wall",
-      "cells": [[0,2],[1,2],[2,2],[3,2],
-                [0,3],[1,3],[2,3],[3,3]]
+      "label": "Upper-mid tile row (offset)",
+      "cells": [
+        [
+          1,
+          7
+        ],
+        [
+          2,
+          7
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          8,
+          7
+        ],
+        [
+          9,
+          7
+        ],
+        [
+          11,
+          7
+        ],
+        [
+          12,
+          7
+        ]
+      ]
     },
     {
-      "label": "NW staircase step 3 — touches left wall",
-      "cells": [[0,4],[1,4],[0,5],[1,5]]
+      "label": "Lower-mid tile row",
+      "cells": [
+        [
+          2,
+          12
+        ],
+        [
+          3,
+          12
+        ],
+        [
+          5,
+          12
+        ],
+        [
+          6,
+          12
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          12
+        ],
+        [
+          12,
+          12
+        ],
+        [
+          13,
+          12
+        ]
+      ]
     },
     {
-      "label": "SE staircase step 1 — touches right and bottom walls",
-      "cells": [[8,18],[9,18],[10,18],[11,18],[12,18],[13,18],[14,18],
-                [8,19],[9,19],[10,19],[11,19],[12,19],[13,19],[14,19]]
-    },
-    {
-      "label": "SE staircase step 2 — touches right wall",
-      "cells": [[11,16],[12,16],[13,16],[14,16],
-                [11,17],[12,17],[13,17],[14,17]]
-    },
-    {
-      "label": "SE staircase step 3 — touches right wall",
-      "cells": [[13,14],[14,14],[13,15],[14,15]]
-    },
-    {
-      "label": "Tidepool A",
-      "cells": [[5,7],[6,7]]
-    },
-    {
-      "label": "Tidepool B",
-      "cells": [[9,5],[10,5]]
-    },
-    {
-      "label": "Tidepool C",
-      "cells": [[4,10],[5,10],[4,11]]
-    },
-    {
-      "label": "Tidepool D",
-      "cells": [[9,11],[10,11]]
-    },
-    {
-      "label": "Tidepool E",
-      "cells": [[7,13],[8,13]]
-    },
-    {
-      "label": "Tidepool F",
-      "cells": [[3,16],[4,16],[3,17]]
-    },
-    {
-      "label": "Tidepool G",
-      "cells": [[10,8]]
+      "label": "Bottom tile row (offset)",
+      "cells": [
+        [
+          1,
+          17
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          5,
+          17
+        ],
+        [
+          8,
+          17
+        ],
+        [
+          9,
+          17
+        ],
+        [
+          11,
+          17
+        ],
+        [
+          12,
+          17
+        ]
+      ]
     }
   ],
-  "splitters": []
+  "splitters": [],
+  "gates": [
+    {
+      "x": 0,
+      "y": 10,
+      "dir": "up",
+      "note": "left wall midpoint \u2014 only upward passes; blocks the 19-cell downward left-wall run"
+    },
+    {
+      "x": 7,
+      "y": 10,
+      "dir": "up",
+      "note": "x=7 midpoint \u2014 only upward passes; blocks the downward x=7 run"
+    },
+    {
+      "x": 14,
+      "y": 10,
+      "dir": "up",
+      "note": "right wall midpoint \u2014 only upward passes; blocks the downward right-wall run"
+    }
+  ]
 }

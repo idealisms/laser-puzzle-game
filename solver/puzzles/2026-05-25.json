@@ -1,70 +1,345 @@
 {
   "date": "2026-05-25",
-  "name": "Shingle",
+  "name": "Grotto",
   "width": 15,
   "height": 20,
-  "laser": { "x": 7, "y": 0, "dir": "down" },
+  "laser": {
+    "x": 14,
+    "y": 7,
+    "dir": "left"
+  },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Top-left corner — touches top and left walls",
-      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1]]
+      "label": "Left cave wall \u2014 touches top and left walls",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ]
+      ]
     },
     {
-      "label": "Top-right corner — touches top and right walls",
-      "cells": [[12,0],[13,0],[14,0],[14,1],[13,1]]
+      "label": "Left cave overhang \u2014 touches left wall",
+      "cells": [
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          0,
+          6
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          0,
+          7
+        ],
+        [
+          1,
+          7
+        ]
+      ]
     },
     {
-      "label": "Left wall upper — touches left wall",
-      "cells": [[0,5],[0,6],[0,7],[1,6],[1,7]]
+      "label": "Right cave wall \u2014 touches right and bottom walls",
+      "cells": [
+        [
+          11,
+          15
+        ],
+        [
+          12,
+          15
+        ],
+        [
+          13,
+          15
+        ],
+        [
+          14,
+          15
+        ],
+        [
+          11,
+          16
+        ],
+        [
+          12,
+          16
+        ],
+        [
+          13,
+          16
+        ],
+        [
+          14,
+          16
+        ],
+        [
+          11,
+          17
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          13,
+          17
+        ],
+        [
+          14,
+          17
+        ],
+        [
+          11,
+          18
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          11,
+          19
+        ],
+        [
+          12,
+          19
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
+        ]
+      ]
     },
     {
-      "label": "Right wall upper — touches right wall",
-      "cells": [[14,5],[14,6],[14,7],[13,6],[13,7]]
+      "label": "Right cave overhang \u2014 touches right wall",
+      "cells": [
+        [
+          13,
+          12
+        ],
+        [
+          14,
+          12
+        ],
+        [
+          13,
+          13
+        ],
+        [
+          14,
+          13
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          14,
+          14
+        ]
+      ]
     },
     {
-      "label": "Interior A",
-      "cells": [[4,3],[5,3],[4,4]]
+      "label": "Stalagmite A",
+      "cells": [
+        [
+          5,
+          3
+        ],
+        [
+          6,
+          3
+        ],
+        [
+          5,
+          4
+        ]
+      ]
     },
     {
-      "label": "Interior B",
-      "cells": [[9,3],[10,3],[10,4]]
+      "label": "Stalagmite B",
+      "cells": [
+        [
+          10,
+          3
+        ],
+        [
+          11,
+          3
+        ]
+      ]
     },
     {
-      "label": "Interior C",
-      "cells": [[3,8],[4,8],[3,9]]
+      "label": "Stalactite A",
+      "cells": [
+        [
+          5,
+          8
+        ],
+        [
+          6,
+          8
+        ]
+      ]
     },
     {
-      "label": "Interior D",
-      "cells": [[6,11],[7,11],[7,12]]
+      "label": "Stalactite B",
+      "cells": [
+        [
+          8,
+          8
+        ],
+        [
+          9,
+          8
+        ],
+        [
+          8,
+          9
+        ]
+      ]
     },
     {
-      "label": "Interior E",
-      "cells": [[10,9],[11,9],[10,10]]
+      "label": "Cave pool A",
+      "cells": [
+        [
+          3,
+          11
+        ],
+        [
+          4,
+          11
+        ],
+        [
+          3,
+          12
+        ]
+      ]
     },
     {
-      "label": "Interior F",
-      "cells": [[4,13],[5,13],[5,14]]
+      "label": "Cave pool B",
+      "cells": [
+        [
+          10,
+          11
+        ],
+        [
+          11,
+          11
+        ]
+      ]
     },
     {
-      "label": "Interior G",
-      "cells": [[9,14],[10,14],[9,15]]
-    },
-    {
-      "label": "Left wall lower — touches left wall",
-      "cells": [[0,13],[0,14],[0,15],[1,14],[1,15]]
-    },
-    {
-      "label": "Right wall lower — touches right wall",
-      "cells": [[14,13],[14,14],[14,15],[13,14],[13,15]]
-    },
-    {
-      "label": "Bottom-left corner — touches left and bottom walls",
-      "cells": [[0,18],[0,19],[1,19],[2,19]]
-    },
-    {
-      "label": "Bottom-right corner — touches right and bottom walls",
-      "cells": [[12,19],[13,19],[14,19],[14,18]]
+      "label": "Cave pool C",
+      "cells": [
+        [
+          5,
+          14
+        ],
+        [
+          6,
+          14
+        ]
+      ]
     }
   ],
   "splitters": []

@@ -3,84 +3,364 @@
   "name": "Reach",
   "width": 15,
   "height": 20,
-  "laser": { "x": 7, "y": 19, "dir": "up" },
+  "laser": {
+    "x": 7,
+    "y": 19,
+    "dir": "up"
+  },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW blob — touches top and left walls",
-      "cells": [[0,0],[1,0],[2,0],[3,0],
-                [0,1],[1,1],[2,1],
-                [0,2],[1,2],
-                [0,3]]
+      "label": "NW blob \u2014 touches top and left walls",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ]
+      ]
     },
     {
-      "label": "NE blob — touches top and right walls",
-      "cells": [[11,0],[12,0],[13,0],[14,0],
-                [12,1],[13,1],[14,1],
-                [13,2],[14,2],
-                [14,3]]
+      "label": "NE blob \u2014 touches top and right walls",
+      "cells": [
+        [
+          11,
+          0
+        ],
+        [
+          12,
+          0
+        ],
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          12,
+          1
+        ],
+        [
+          13,
+          1
+        ],
+        [
+          14,
+          1
+        ],
+        [
+          13,
+          2
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          14,
+          3
+        ]
+      ]
     },
     {
-      "label": "SW blob — touches left and bottom walls",
-      "cells": [[0,16],
-                [0,17],[1,17],
-                [0,18],[1,18],[2,18],
-                [0,19],[1,19],[2,19],[3,19]]
+      "label": "SW blob \u2014 touches left and bottom walls",
+      "cells": [
+        [
+          0,
+          16
+        ],
+        [
+          0,
+          17
+        ],
+        [
+          1,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          2,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ],
+        [
+          3,
+          19
+        ]
+      ]
     },
     {
-      "label": "SE blob — touches right and bottom walls",
-      "cells": [[14,16],
-                [13,17],[14,17],
-                [11,18],[12,18],[13,18],[14,18],
-                [11,19],[12,19],[13,19],[14,19]]
+      "label": "SE blob \u2014 touches right and bottom walls",
+      "cells": [
+        [
+          14,
+          16
+        ],
+        [
+          13,
+          17
+        ],
+        [
+          14,
+          17
+        ],
+        [
+          11,
+          18
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          11,
+          19
+        ],
+        [
+          12,
+          19
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
+        ]
+      ]
     },
     {
       "label": "Upper island A",
-      "cells": [[5,2],[6,2]]
+      "cells": [
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          2
+        ]
+      ]
     },
     {
       "label": "Upper island B",
-      "cells": [[9,2],[10,2]]
+      "cells": [
+        [
+          9,
+          2
+        ],
+        [
+          10,
+          2
+        ]
+      ]
     },
     {
       "label": "Mid-upper island A",
-      "cells": [[4,5],[5,5],[4,6]]
+      "cells": [
+        [
+          4,
+          5
+        ],
+        [
+          5,
+          5
+        ],
+        [
+          4,
+          6
+        ]
+      ]
     },
     {
       "label": "Mid-upper island B",
-      "cells": [[9,5],[10,5]]
+      "cells": [
+        [
+          9,
+          5
+        ],
+        [
+          10,
+          5
+        ]
+      ]
     },
     {
-      "label": "Center blocker — breaks long x=7 run",
-      "cells": [[7,8],[8,8]]
+      "label": "Center blocker \u2014 breaks long x=7 run",
+      "cells": [
+        [
+          7,
+          8
+        ],
+        [
+          8,
+          8
+        ]
+      ]
     },
     {
       "label": "Mid island A",
-      "cells": [[3,9],[4,9]]
+      "cells": [
+        [
+          3,
+          9
+        ],
+        [
+          4,
+          9
+        ]
+      ]
     },
     {
       "label": "Mid island B",
-      "cells": [[11,9],[12,9],[11,10]]
+      "cells": [
+        [
+          11,
+          9
+        ],
+        [
+          12,
+          9
+        ],
+        [
+          11,
+          10
+        ]
+      ]
     },
     {
       "label": "Center island",
-      "cells": [[5,11],[6,11]]
+      "cells": [
+        [
+          5,
+          11
+        ],
+        [
+          6,
+          11
+        ]
+      ]
     },
     {
       "label": "Lower island A",
-      "cells": [[4,13],[5,13],[4,14]]
+      "cells": [
+        [
+          4,
+          13
+        ],
+        [
+          5,
+          13
+        ],
+        [
+          4,
+          14
+        ]
+      ]
     },
     {
       "label": "Lower island B",
-      "cells": [[10,13],[11,13]]
+      "cells": [
+        [
+          10,
+          13
+        ],
+        [
+          11,
+          13
+        ]
+      ]
     },
     {
       "label": "Lower island C",
-      "cells": [[5,16],[6,16]]
+      "cells": [
+        [
+          5,
+          16
+        ],
+        [
+          6,
+          16
+        ]
+      ]
     },
     {
       "label": "Lower island D",
-      "cells": [[9,17],[10,17]]
+      "cells": [
+        [
+          9,
+          17
+        ],
+        [
+          10,
+          17
+        ]
+      ]
     }
   ],
   "splitters": []
