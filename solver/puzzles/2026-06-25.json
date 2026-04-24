@@ -1,0 +1,81 @@
+{
+  "date": "2026-06-25",
+  "name": "Lochs",
+  "width": 21,
+  "height": 28,
+  "laser": {
+    "x": 10,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 11,
+  "obstacle_groups": [
+    {
+      "label": "NW loch — touches top and left walls (10 cells)",
+      "cells": [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[0,2],[1,2],[0,3]]
+    },
+    {
+      "label": "NE loch — touches top and right walls (10 cells)",
+      "cells": [[17,0],[18,0],[19,0],[20,0],[17,1],[18,1],[19,1],[20,1],[19,2],[20,2]]
+    },
+    {
+      "label": "SW loch — touches left and bottom walls (10 cells)",
+      "cells": [[0,24],[0,25],[0,26],[0,27],[1,25],[1,26],[1,27],[2,26],[2,27],[3,27]]
+    },
+    {
+      "label": "SE loch — touches right and bottom walls (10 cells)",
+      "cells": [[17,27],[18,27],[19,27],[20,27],[18,26],[19,26],[20,26],[19,25],[20,25],[20,24]]
+    },
+    {
+      "label": "Left wall upper — touches left wall (6 cells)",
+      "cells": [[0,8],[1,8],[0,9],[1,9],[0,10],[1,10]]
+    },
+    {
+      "label": "Left wall lower — touches left wall (6 cells)",
+      "cells": [[0,17],[1,17],[0,18],[1,18],[0,19],[1,19]]
+    },
+    {
+      "label": "Right wall upper — touches right wall (6 cells)",
+      "cells": [[19,8],[20,8],[19,9],[20,9],[19,10],[20,10]]
+    },
+    {
+      "label": "Right wall lower — touches right wall (6 cells)",
+      "cells": [[19,17],[20,17],[19,18],[20,18],[19,19],[20,19]]
+    },
+    {
+      "label": "Upper-left loch (6 cells)",
+      "cells": [[4,4],[5,4],[6,4],[4,5],[5,5],[6,5]]
+    },
+    {
+      "label": "Upper-right loch (6 cells)",
+      "cells": [[14,4],[15,4],[16,4],[14,5],[15,5],[16,5]]
+    },
+    {
+      "label": "x=10 run shortener (3 cells)",
+      "cells": [[9,10],[10,10],[11,10]]
+    },
+    {
+      "label": "Lower-left loch (5 cells)",
+      "cells": [[4,19],[5,19],[6,19],[4,20],[5,20]]
+    },
+    {
+      "label": "Lower-right loch (5 cells)",
+      "cells": [[14,19],[15,19],[16,19],[15,20],[16,20]]
+    },
+    {
+      "label": "Center lower accent (4 cells)",
+      "cells": [[9,22],[10,22],[9,23],[10,23]]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {"x": 7, "y": 9, "dir": "up", "note": "blocks downward x=7 run — beam can only go up through here"},
+    {"x": 7, "y": 18, "dir": "down", "note": "blocks upward x=7 run — beam can only go down through here"},
+    {"x": 17, "y": 9, "dir": "up", "note": "blocks downward x=17 run — beam can only go up through here"},
+    {"x": 17, "y": 18, "dir": "down", "note": "blocks upward x=17 run — beam can only go down through here"},
+    {"x": 2, "y": 9, "dir": "up", "note": "blocks downward x=2 run — beam can only go up through here"},
+    {"x": 2, "y": 18, "dir": "down", "note": "blocks upward x=2 run — beam can only go down through here"},
+    {"x": 3, "y": 9, "dir": "up", "note": "blocks downward x=3 run — beam can only go up through here"},
+    {"x": 3, "y": 18, "dir": "down", "note": "blocks upward x=3 run — beam can only go down through here"}
+  ]
+}
