@@ -1,0 +1,67 @@
+{
+  "date": "2026-06-11",
+  "name": "Ledge",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 0, "y": 7, "dir": "right" },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW ledge — touches top and left walls (8 cells)",
+      "cells": [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[3,1]]
+    },
+    {
+      "label": "NE ledge — touches top and right walls (8 cells)",
+      "cells": [[11,0],[12,0],[13,0],[14,0],[11,1],[12,1],[13,1],[14,1]]
+    },
+    {
+      "label": "SW ledge — touches left and bottom walls (8 cells)",
+      "cells": [[0,18],[0,19],[1,18],[1,19],[2,18],[2,19],[3,18],[3,19]]
+    },
+    {
+      "label": "SE ledge — touches right and bottom walls (8 cells)",
+      "cells": [[11,18],[11,19],[12,18],[12,19],[13,18],[13,19],[14,18],[14,19]]
+    },
+    {
+      "label": "Top mid accent — touches top wall (3 cells)",
+      "cells": [[6,0],[7,0],[8,0]]
+    },
+    {
+      "label": "Bottom mid accent — touches bottom wall (3 cells)",
+      "cells": [[6,19],[7,19],[8,19]]
+    },
+    {
+      "label": "y=7 run shortener (3 cells)",
+      "cells": [[9,7],[10,7],[11,7]]
+    },
+    {
+      "label": "Upper-left island (4 cells)",
+      "cells": [[4,3],[5,3],[4,4],[5,4]]
+    },
+    {
+      "label": "Upper-right island (4 cells)",
+      "cells": [[9,3],[10,3],[9,4],[10,4]]
+    },
+    {
+      "label": "Center island (3 cells)",
+      "cells": [[6,10],[7,10],[8,10]]
+    },
+    {
+      "label": "Lower-left island (4 cells)",
+      "cells": [[4,13],[5,13],[4,14],[5,14]]
+    },
+    {
+      "label": "Lower-right island (4 cells)",
+      "cells": [[9,13],[10,13],[9,14],[10,14]]
+    },
+    {
+      "label": "Near-bottom left (2 cells)",
+      "cells": [[4,16],[5,16]]
+    },
+    {
+      "label": "Near-bottom right (2 cells)",
+      "cells": [[9,16],[10,16]]
+    }
+  ],
+  "splitters": []
+}

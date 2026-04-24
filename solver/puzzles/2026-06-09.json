@@ -1,0 +1,67 @@
+{
+  "date": "2026-06-09",
+  "name": "Flats",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 7, "y": 0, "dir": "down" },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW flat — touches top and left walls (6 cells)",
+      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]]
+    },
+    {
+      "label": "NE flat — touches top and right walls (6 cells)",
+      "cells": [[12,0],[13,0],[14,0],[12,1],[13,1],[14,1]]
+    },
+    {
+      "label": "SW flat — touches left and bottom walls (6 cells)",
+      "cells": [[0,17],[0,18],[0,19],[1,17],[1,18],[2,18]]
+    },
+    {
+      "label": "SE flat — touches right and bottom walls (6 cells)",
+      "cells": [[12,18],[13,18],[14,18],[12,19],[13,19],[14,19]]
+    },
+    {
+      "label": "Left wall mid — touches left wall (5 cells)",
+      "cells": [[0,8],[0,9],[1,8],[0,10],[1,10]]
+    },
+    {
+      "label": "Right wall mid — touches right wall (5 cells)",
+      "cells": [[13,8],[14,8],[14,9],[13,9],[14,10]]
+    },
+    {
+      "label": "x=7 blocker — blocks initial laser run (3 cells)",
+      "cells": [[6,11],[7,11],[8,11]]
+    },
+    {
+      "label": "Upper-left island (5 cells)",
+      "cells": [[3,3],[4,3],[5,3],[3,4],[4,4]]
+    },
+    {
+      "label": "Upper-right island (5 cells)",
+      "cells": [[9,3],[10,3],[11,3],[10,4],[11,4]]
+    },
+    {
+      "label": "Mid-left island (4 cells)",
+      "cells": [[2,6],[3,6],[2,7],[3,7]]
+    },
+    {
+      "label": "Mid-right island (4 cells)",
+      "cells": [[11,6],[12,6],[11,7],[12,7]]
+    },
+    {
+      "label": "Lower-left island (5 cells)",
+      "cells": [[3,13],[4,13],[5,13],[3,14],[4,14]]
+    },
+    {
+      "label": "Lower-right island (5 cells)",
+      "cells": [[9,13],[10,13],[11,13],[10,14],[11,14]]
+    },
+    {
+      "label": "Near-bottom accent (2 cells)",
+      "cells": [[6,16],[7,16]]
+    }
+  ],
+  "splitters": []
+}
