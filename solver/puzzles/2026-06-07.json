@@ -1,0 +1,79 @@
+{
+  "date": "2026-06-07",
+  "name": "Crags",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 0, "y": 15, "dir": "right" },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW crag — touches top and left walls (8 cells)",
+      "cells": [[0,0],[1,0],[2,0],[3,0],
+                [0,1],[1,1],[0,2],[0,3]]
+    },
+    {
+      "label": "NE crag — touches top and right walls (8 cells)",
+      "cells": [[11,0],[12,0],[13,0],[14,0],
+                [13,1],[14,1],[14,2],[14,3]]
+    },
+    {
+      "label": "SW crag — touches left and bottom walls (7 cells)",
+      "cells": [[0,16],[0,17],[0,18],[0,19],
+                [1,19],[2,19],[3,19]]
+    },
+    {
+      "label": "SE crag — touches right and bottom walls (7 cells)",
+      "cells": [[11,19],[12,19],[13,19],[14,19],
+                [14,18],[14,17],[14,16]]
+    },
+    {
+      "label": "Left wall mid — touches left wall (6 cells)",
+      "cells": [[0,7],[0,8],[1,8],[0,9],[1,9],[0,10]]
+    },
+    {
+      "label": "Right wall mid — touches right wall (6 cells)",
+      "cells": [[14,9],[14,10],[13,10],[14,11],[13,11],[14,12]]
+    },
+    {
+      "label": "Top mid — touches top wall (4 cells)",
+      "cells": [[5,0],[6,0],[7,0],[5,1]]
+    },
+    {
+      "label": "Interior upper-left L-crag (5 cells)",
+      "cells": [[4,4],[5,4],[6,4],[6,5],[6,6]]
+    },
+    {
+      "label": "Interior upper-right L-crag (5 cells)",
+      "cells": [[8,4],[9,4],[10,4],[8,5],[8,6]]
+    },
+    {
+      "label": "Interior center vertical — blocks x=7 runs (4 cells)",
+      "cells": [[6,8],[7,8],[7,9],[7,10]]
+    },
+    {
+      "label": "Interior lower-left L-crag (5 cells)",
+      "cells": [[3,12],[4,12],[5,12],[5,13],[5,14]]
+    },
+    {
+      "label": "Interior lower-right L-crag (5 cells)",
+      "cells": [[9,12],[10,12],[11,12],[9,13],[9,14]]
+    },
+    {
+      "label": "y=15 blocker — shortens initial laser run (2 cells)",
+      "cells": [[9,15],[10,15]]
+    },
+    {
+      "label": "Lower-left accent (2 cells)",
+      "cells": [[4,16],[5,16]]
+    },
+    {
+      "label": "Lower interior (2 cells)",
+      "cells": [[2,14],[3,14]]
+    },
+    {
+      "label": "Lower-right interior (2 cells)",
+      "cells": [[11,14],[12,14]]
+    }
+  ],
+  "splitters": []
+}
