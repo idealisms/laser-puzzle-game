@@ -63,5 +63,15 @@
       "cells": [[6,16],[7,16]]
     }
   ],
-  "splitters": []
+  "splitters": [],
+  "gates": [
+    {
+      "x": 7, "y": 12, "dir": "left",
+      "note": "blocks rightward y=12 run — beam can only go left through here"
+    },
+    {
+      "x": 7, "y": 15, "dir": "right",
+      "note": "blocks leftward y=15 run — beam can only go right through here"
+    }
+  ]
 }

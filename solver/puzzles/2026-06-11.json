@@ -63,5 +63,23 @@
       "cells": [[9,16],[10,16]]
     }
   ],
-  "splitters": []
+  "splitters": [],
+  "gates": [
+    {
+      "x": 0, "y": 6, "dir": "up",
+      "note": "blocks downward x=0 run — beam can only go up through here"
+    },
+    {
+      "x": 0, "y": 12, "dir": "down",
+      "note": "blocks upward x=0 run — beam can only go down through here"
+    },
+    {
+      "x": 14, "y": 6, "dir": "up",
+      "note": "blocks downward x=14 run — beam can only go up through here"
+    },
+    {
+      "x": 14, "y": 12, "dir": "down",
+      "note": "blocks upward x=14 run — beam can only go down through here"
+    }
+  ]
 }
