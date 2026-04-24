@@ -1,0 +1,67 @@
+{
+  "date": "2026-06-08",
+  "name": "Shoals",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 0, "y": 14, "dir": "right" },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW shoal — touches top and left walls (6 cells)",
+      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1],[0,2]]
+    },
+    {
+      "label": "NE shoal — touches top and right walls (6 cells)",
+      "cells": [[12,0],[13,0],[14,0],[13,1],[14,1],[14,2]]
+    },
+    {
+      "label": "SW shoal — touches left and bottom walls (5 cells)",
+      "cells": [[0,17],[0,18],[0,19],[1,18],[1,19]]
+    },
+    {
+      "label": "SE shoal — touches right and bottom walls (5 cells)",
+      "cells": [[12,19],[13,19],[14,19],[14,18],[14,17]]
+    },
+    {
+      "label": "Left wall upper — touches left wall (5 cells)",
+      "cells": [[0,5],[0,6],[1,5],[0,7],[1,7]]
+    },
+    {
+      "label": "Right wall upper — touches right wall (5 cells)",
+      "cells": [[13,4],[14,4],[14,5],[13,5],[14,6]]
+    },
+    {
+      "label": "Left wall lower — touches left wall (4 cells)",
+      "cells": [[0,11],[0,12],[1,11],[1,12]]
+    },
+    {
+      "label": "Right wall lower — touches right wall (4 cells)",
+      "cells": [[13,12],[14,12],[13,13],[14,13]]
+    },
+    {
+      "label": "Upper-left island (5 cells)",
+      "cells": [[4,2],[5,2],[6,2],[4,3],[5,3]]
+    },
+    {
+      "label": "Upper-right island (5 cells)",
+      "cells": [[8,2],[9,2],[10,2],[9,3],[10,3]]
+    },
+    {
+      "label": "Center vertical blocker (3 cells)",
+      "cells": [[6,9],[7,9],[8,9]]
+    },
+    {
+      "label": "y=14 run shortener (2 cells)",
+      "cells": [[9,14],[10,14]]
+    },
+    {
+      "label": "Lower-left island (4 cells)",
+      "cells": [[3,15],[4,15],[3,16],[4,16]]
+    },
+    {
+      "label": "Lower-right island (4 cells)",
+      "cells": [[9,16],[10,16],[9,17],[10,17]]
+    }
+  ],
+  "splitters": []
+}
