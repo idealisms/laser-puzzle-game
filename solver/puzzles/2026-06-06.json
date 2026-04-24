@@ -1,0 +1,68 @@
+{
+  "date": "2026-06-06",
+  "name": "Drift",
+  "width": 15,
+  "height": 20,
+  "laser": { "x": 7, "y": 19, "dir": "up" },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW drift — touches top and left walls (8 cells)",
+      "cells": [[0,0],[1,0],[2,0],
+                [0,1],[1,1],[2,1],
+                [0,2],[1,2]]
+    },
+    {
+      "label": "NE drift — touches top and right walls (7 cells)",
+      "cells": [[12,0],[13,0],[14,0],
+                [13,1],[14,1],[14,2],[13,2]]
+    },
+    {
+      "label": "SW drift — touches left and bottom walls (6 cells)",
+      "cells": [[0,17],[0,18],[0,19],
+                [1,18],[1,19],[2,19]]
+    },
+    {
+      "label": "SE drift — touches right and bottom walls (6 cells)",
+      "cells": [[12,19],[13,19],[14,19],
+                [14,18],[13,18],[14,17]]
+    },
+    {
+      "label": "Upper-left drift (5 cells)",
+      "cells": [[4,3],[5,3],[6,3],[4,4],[5,4]]
+    },
+    {
+      "label": "Upper-right drift (5 cells)",
+      "cells": [[8,2],[9,2],[10,2],[9,3],[10,3]]
+    },
+    {
+      "label": "Mid-left drift (5 cells)",
+      "cells": [[3,7],[4,7],[5,7],[3,8],[4,8]]
+    },
+    {
+      "label": "Mid-right drift (5 cells)",
+      "cells": [[9,7],[10,7],[11,7],[10,8],[11,8]]
+    },
+    {
+      "label": "Center blocker — blocks x=7 at y=12 (3 cells)",
+      "cells": [[6,12],[7,12],[8,12]]
+    },
+    {
+      "label": "Lower-left drift (5 cells)",
+      "cells": [[2,14],[3,14],[4,14],[2,15],[3,15]]
+    },
+    {
+      "label": "Lower-right drift (5 cells)",
+      "cells": [[10,14],[11,14],[12,14],[11,15],[12,15]]
+    },
+    {
+      "label": "Near-bottom left (2 cells)",
+      "cells": [[4,17],[5,17]]
+    },
+    {
+      "label": "Near-bottom right (2 cells)",
+      "cells": [[9,17],[10,17]]
+    }
+  ],
+  "splitters": []
+}
