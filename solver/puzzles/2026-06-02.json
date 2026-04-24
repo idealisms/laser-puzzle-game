@@ -3,73 +3,331 @@
   "name": "Skerry",
   "width": 15,
   "height": 20,
-  "laser": { "x": 7, "y": 0, "dir": "down" },
+  "laser": {
+    "x": 7,
+    "y": 0,
+    "dir": "down"
+  },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW cape — touches top and left walls (8 cells)",
-      "cells": [[0,0],[1,0],[2,0],[3,0],
-                [0,1],[1,1],
-                [0,2],[1,2]]
+      "label": "NW cape \u2014 touches top and left walls (8 cells)",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ]
+      ]
     },
     {
-      "label": "NE cape — touches top and right walls (7 cells)",
-      "cells": [[11,0],[12,0],[13,0],[14,0],
-                [13,1],[14,1],[14,2]]
+      "label": "NE cape \u2014 touches top and right walls (7 cells)",
+      "cells": [
+        [
+          11,
+          0
+        ],
+        [
+          12,
+          0
+        ],
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          13,
+          1
+        ],
+        [
+          14,
+          1
+        ],
+        [
+          14,
+          2
+        ]
+      ]
     },
     {
-      "label": "SW cape — touches left and bottom walls (7 cells)",
-      "cells": [[0,17],[0,18],[0,19],
-                [1,18],[1,19],[2,19],[3,19]]
+      "label": "SW cape \u2014 touches left and bottom walls (7 cells)",
+      "cells": [
+        [
+          0,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ],
+        [
+          3,
+          19
+        ]
+      ]
     },
     {
-      "label": "SE cape — touches right and bottom walls (7 cells)",
-      "cells": [[11,19],[12,19],[13,19],[14,19],
-                [13,18],[14,18],[14,17]]
+      "label": "SE cape \u2014 touches right and bottom walls (7 cells)",
+      "cells": [
+        [
+          11,
+          19
+        ],
+        [
+          12,
+          19
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          14,
+          17
+        ]
+      ]
     },
     {
-      "label": "Pinnacle — blocks straight x=7 run (2 cells)",
-      "cells": [[7,9],[7,10]]
+      "label": "Pinnacle \u2014 blocks straight x=7 run (2 cells)",
+      "cells": [
+        [
+          7,
+          9
+        ],
+        [
+          7,
+          10
+        ]
+      ]
     },
     {
       "label": "Interior upper-left (5 cells)",
-      "cells": [[3,5],[4,5],[5,5],[3,6],[4,6]]
+      "cells": [
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          5,
+          5
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ]
+      ]
     },
     {
       "label": "Interior upper-right (5 cells)",
-      "cells": [[9,5],[10,5],[11,5],[10,6],[11,6]]
+      "cells": [
+        [
+          9,
+          5
+        ],
+        [
+          10,
+          5
+        ],
+        [
+          11,
+          5
+        ],
+        [
+          10,
+          6
+        ],
+        [
+          11,
+          6
+        ]
+      ]
     },
     {
       "label": "Interior lower-left (4 cells)",
-      "cells": [[4,13],[5,13],[4,14],[5,14]]
+      "cells": [
+        [
+          4,
+          13
+        ],
+        [
+          5,
+          13
+        ],
+        [
+          4,
+          14
+        ],
+        [
+          5,
+          14
+        ]
+      ]
     },
     {
       "label": "Interior lower-right (4 cells)",
-      "cells": [[9,13],[10,13],[9,14],[10,14]]
+      "cells": [
+        [
+          9,
+          13
+        ],
+        [
+          10,
+          13
+        ],
+        [
+          9,
+          14
+        ],
+        [
+          10,
+          14
+        ]
+      ]
     },
     {
       "label": "Mid-left A (2 cells)",
-      "cells": [[5,8],[6,8]]
+      "cells": [
+        [
+          5,
+          8
+        ],
+        [
+          6,
+          8
+        ]
+      ]
     },
     {
       "label": "Mid-right A (2 cells)",
-      "cells": [[8,8],[9,8]]
+      "cells": [
+        [
+          8,
+          8
+        ],
+        [
+          9,
+          8
+        ]
+      ]
     },
     {
       "label": "Mid-left B (2 cells)",
-      "cells": [[5,11],[6,11]]
+      "cells": [
+        [
+          5,
+          11
+        ],
+        [
+          6,
+          11
+        ]
+      ]
     },
     {
       "label": "Mid-right B (2 cells)",
-      "cells": [[8,11],[9,11]]
+      "cells": [
+        [
+          8,
+          11
+        ],
+        [
+          9,
+          11
+        ]
+      ]
     },
     {
       "label": "Lower-left accent (2 cells)",
-      "cells": [[3,16],[4,16]]
+      "cells": [
+        [
+          3,
+          16
+        ],
+        [
+          4,
+          16
+        ]
+      ]
     },
     {
       "label": "Lower-right accent (2 cells)",
-      "cells": [[10,16],[11,16]]
+      "cells": [
+        [
+          10,
+          16
+        ],
+        [
+          11,
+          16
+        ]
+      ]
     }
   ],
   "splitters": []

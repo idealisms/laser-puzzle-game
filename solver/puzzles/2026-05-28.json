@@ -1,65 +1,357 @@
 {
   "date": "2026-05-28",
-  "name": "Berm",
+  "name": "Zipper",
   "width": 15,
   "height": 20,
-  "laser": { "x": 0, "y": 10, "dir": "right" },
+  "laser": {
+    "x": 14,
+    "y": 19,
+    "dir": "up"
+  },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "North berm — touches top and left walls",
-      "cells": [[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],
-                [0,1],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1],[7,1]]
+      "label": "Top teeth 1 \u2014 touch top and left edges",
+      "cells": [
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ]
+      ]
     },
     {
-      "label": "South berm — touches right and bottom walls",
-      "cells": [[7,18],[8,18],[9,18],[10,18],[11,18],[12,18],[13,18],[14,18],
-                [7,19],[8,19],[9,19],[10,19],[11,19],[12,19],[13,19],[14,19]]
+      "label": "Top teeth 2",
+      "cells": [
+        [
+          5,
+          0
+        ],
+        [
+          6,
+          0
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          6,
+          1
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          6,
+          3
+        ]
+      ]
     },
     {
-      "label": "Left wall mid — touches left wall",
-      "cells": [[0,4],[0,5],[1,5]]
+      "label": "Top teeth 3",
+      "cells": [
+        [
+          9,
+          0
+        ],
+        [
+          10,
+          0
+        ],
+        [
+          9,
+          1
+        ],
+        [
+          10,
+          1
+        ],
+        [
+          9,
+          2
+        ],
+        [
+          10,
+          2
+        ],
+        [
+          9,
+          3
+        ],
+        [
+          10,
+          3
+        ],
+        [
+          9,
+          4
+        ],
+        [
+          10,
+          4
+        ]
+      ]
     },
     {
-      "label": "Right wall mid — touches right wall",
-      "cells": [[14,13],[14,14],[13,13]]
+      "label": "Top teeth 4 \u2014 near right edge (gap at x=14 for laser)",
+      "cells": [
+        [
+          12,
+          0
+        ],
+        [
+          13,
+          0
+        ],
+        [
+          12,
+          1
+        ],
+        [
+          13,
+          1
+        ],
+        [
+          12,
+          2
+        ],
+        [
+          13,
+          2
+        ],
+        [
+          12,
+          3
+        ],
+        [
+          13,
+          3
+        ]
+      ]
     },
     {
-      "label": "Interior A",
-      "cells": [[4,4],[5,4]]
+      "label": "Bottom teeth 1 \u2014 touch bottom and left edges",
+      "cells": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          15
+        ],
+        [
+          0,
+          16
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          0,
+          17
+        ],
+        [
+          1,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ]
+      ]
     },
     {
-      "label": "Interior B",
-      "cells": [[9,3],[10,3]]
+      "label": "Bottom teeth 2",
+      "cells": [
+        [
+          4,
+          16
+        ],
+        [
+          5,
+          16
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          5,
+          17
+        ],
+        [
+          4,
+          18
+        ],
+        [
+          5,
+          18
+        ],
+        [
+          4,
+          19
+        ],
+        [
+          5,
+          19
+        ]
+      ]
     },
     {
-      "label": "Interior C",
-      "cells": [[3,7],[4,7],[3,8]]
+      "label": "Bottom teeth 3",
+      "cells": [
+        [
+          8,
+          15
+        ],
+        [
+          9,
+          15
+        ],
+        [
+          8,
+          16
+        ],
+        [
+          9,
+          16
+        ],
+        [
+          8,
+          17
+        ],
+        [
+          9,
+          17
+        ],
+        [
+          8,
+          18
+        ],
+        [
+          9,
+          18
+        ],
+        [
+          8,
+          19
+        ],
+        [
+          9,
+          19
+        ]
+      ]
     },
     {
-      "label": "Interior D",
-      "cells": [[9,7],[10,7],[10,8]]
-    },
-    {
-      "label": "Interior E",
-      "cells": [[5,11],[6,11]]
-    },
-    {
-      "label": "Interior F",
-      "cells": [[8,11],[9,11]]
-    },
-    {
-      "label": "Interior G",
-      "cells": [[4,14],[5,14],[4,15]]
-    },
-    {
-      "label": "Interior H",
-      "cells": [[10,14],[11,14]]
-    },
-    {
-      "label": "Interior I",
-      "cells": [[6,17],[7,17]]
+      "label": "Bottom teeth 4 \u2014 near right edge (gap at x=14 for laser)",
+      "cells": [
+        [
+          11,
+          16
+        ],
+        [
+          12,
+          16
+        ],
+        [
+          11,
+          17
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          11,
+          18
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          11,
+          19
+        ],
+        [
+          12,
+          19
+        ]
+      ]
     }
   ],
-  "splitters": []
+  "splitters": [],
+  "gates": [
+    {
+      "x": 3,
+      "y": 10,
+      "dir": "down",
+      "note": "x=3 corridor \u2014 only downward passes; blocks the 18-cell upward run"
+    },
+    {
+      "x": 4,
+      "y": 10,
+      "dir": "up",
+      "note": "x=4 corridor \u2014 only upward passes; blocks the 15-cell downward run"
+    }
+  ]
 }

@@ -1,79 +1,326 @@
 {
   "date": "2026-05-27",
-  "name": "Cay",
+  "name": "Floes",
   "width": 15,
   "height": 20,
-  "laser": { "x": 0, "y": 5, "dir": "right" },
+  "laser": {
+    "x": 14,
+    "y": 10,
+    "dir": "left"
+  },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NE cape — touches top and right walls",
-      "cells": [[11,0],[12,0],[13,0],[14,0],[14,1],[14,2],[13,2]]
+      "label": "NE floe \u2014 touches top and right walls",
+      "cells": [
+        [
+          11,
+          0
+        ],
+        [
+          12,
+          0
+        ],
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          14,
+          1
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          13,
+          2
+        ]
+      ]
     },
     {
-      "label": "NW corner — touches top and left walls",
-      "cells": [[0,0],[1,0],[2,0],[0,1],[0,2],[1,2]]
+      "label": "NW floe \u2014 touches top and left walls",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ]
+      ]
     },
     {
-      "label": "Upper interior A",
-      "cells": [[5,2],[6,2],[6,3]]
+      "label": "Upper-right floe \u2014 touches right wall",
+      "cells": [
+        [
+          13,
+          5
+        ],
+        [
+          14,
+          5
+        ],
+        [
+          14,
+          6
+        ],
+        [
+          14,
+          7
+        ]
+      ]
     },
     {
-      "label": "Upper interior B",
-      "cells": [[9,3],[10,3],[9,4]]
+      "label": "Upper floe A",
+      "cells": [
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ]
+      ]
     },
     {
-      "label": "Center marker — breaks x=7 run at y=5",
-      "cells": [[7,5]]
+      "label": "Upper floe B",
+      "cells": [
+        [
+          7,
+          3
+        ],
+        [
+          8,
+          3
+        ],
+        [
+          7,
+          4
+        ]
+      ]
     },
     {
-      "label": "Left wall mid — touches left wall",
-      "cells": [[0,8],[1,8],[0,9],[0,10],[0,11]]
+      "label": "Upper floe C",
+      "cells": [
+        [
+          10,
+          6
+        ],
+        [
+          11,
+          6
+        ],
+        [
+          10,
+          7
+        ]
+      ]
     },
     {
-      "label": "Right wall mid — touches right wall",
-      "cells": [[14,8],[14,9],[14,10],[13,10],[14,11]]
+      "label": "Left-mid floe \u2014 touches left wall",
+      "cells": [
+        [
+          0,
+          8
+        ],
+        [
+          1,
+          8
+        ],
+        [
+          0,
+          9
+        ],
+        [
+          0,
+          10
+        ],
+        [
+          1,
+          10
+        ]
+      ]
     },
     {
-      "label": "Mid interior A",
-      "cells": [[4,7],[5,7],[4,8]]
+      "label": "Mid floe A",
+      "cells": [
+        [
+          4,
+          8
+        ],
+        [
+          5,
+          8
+        ],
+        [
+          4,
+          9
+        ]
+      ]
     },
     {
-      "label": "Mid interior B",
-      "cells": [[8,7],[9,7],[9,8]]
+      "label": "Mid floe B",
+      "cells": [
+        [
+          8,
+          11
+        ],
+        [
+          9,
+          11
+        ],
+        [
+          9,
+          12
+        ]
+      ]
     },
     {
-      "label": "Mid interior C",
-      "cells": [[3,12],[4,12],[4,13]]
+      "label": "Mid floe C",
+      "cells": [
+        [
+          5,
+          12
+        ],
+        [
+          6,
+          12
+        ],
+        [
+          5,
+          13
+        ]
+      ]
     },
     {
-      "label": "Mid interior D",
-      "cells": [[7,11],[8,11],[7,12]]
+      "label": "Right-mid floe \u2014 touches right wall",
+      "cells": [
+        [
+          13,
+          13
+        ],
+        [
+          14,
+          13
+        ],
+        [
+          14,
+          14
+        ],
+        [
+          14,
+          15
+        ]
+      ]
     },
     {
-      "label": "Mid interior E",
-      "cells": [[10,13],[11,13],[10,14]]
+      "label": "Lower floe A",
+      "cells": [
+        [
+          3,
+          15
+        ],
+        [
+          4,
+          15
+        ],
+        [
+          3,
+          16
+        ]
+      ]
     },
     {
-      "label": "Lower interior A",
-      "cells": [[5,15],[6,15],[5,16]]
+      "label": "Lower floe B",
+      "cells": [
+        [
+          7,
+          16
+        ],
+        [
+          8,
+          16
+        ],
+        [
+          8,
+          17
+        ]
+      ]
     },
     {
-      "label": "Lower interior B",
-      "cells": [[9,16],[10,16],[9,17]]
+      "label": "SW floe \u2014 touches left and bottom walls",
+      "cells": [
+        [
+          0,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ]
+      ]
     },
     {
-      "label": "SW cape — touches left and bottom walls",
-      "cells": [[0,17],[0,18],[0,19],[1,19],[2,19]]
-    },
-    {
-      "label": "SE cape — touches right and bottom walls",
-      "cells": [[12,19],[13,19],[14,19],[14,18],[14,17]]
+      "label": "SE floe \u2014 touches right and bottom walls",
+      "cells": [
+        [
+          11,
+          18
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          14,
+          19
+        ]
+      ]
     }
   ],
-  "splitters": [],
-  "gates": [
-    {"x": 12, "y": 7,  "dir": "up",   "note": "blocks downward x=12 run — beam can only go up through here"},
-    {"x": 12, "y": 12, "dir": "down", "note": "blocks upward x=12 run — beam can only go down through here"}
-  ]
+  "splitters": []
 }

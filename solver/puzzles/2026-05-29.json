@@ -1,82 +1,316 @@
 {
   "date": "2026-05-29",
-  "name": "Pulse",
+  "name": "Berm",
   "width": 15,
   "height": 20,
-  "laser": { "x": 0, "y": 7, "dir": "right" },
-  "num_mirrors": 9,
+  "laser": {
+    "x": 0,
+    "y": 10,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NE anchor — touches top and right walls",
-      "cells": [[13,1],[14,1],[14,0]]
+      "label": "North berm \u2014 touches top and left walls",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          5,
+          0
+        ],
+        [
+          6,
+          0
+        ],
+        [
+          7,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          6,
+          1
+        ],
+        [
+          7,
+          1
+        ]
+      ]
     },
     {
-      "label": "Upper-left wall — touches left wall",
-      "cells": [[0,3],[0,4],[1,4]]
+      "label": "South berm \u2014 touches right and bottom walls",
+      "cells": [
+        [
+          7,
+          18
+        ],
+        [
+          8,
+          18
+        ],
+        [
+          9,
+          18
+        ],
+        [
+          10,
+          18
+        ],
+        [
+          11,
+          18
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          7,
+          19
+        ],
+        [
+          8,
+          19
+        ],
+        [
+          9,
+          19
+        ],
+        [
+          10,
+          19
+        ],
+        [
+          11,
+          19
+        ],
+        [
+          12,
+          19
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
+        ]
+      ]
     },
     {
-      "label": "Upper interior left",
-      "cells": [[4,2],[5,2],[4,3]]
+      "label": "Left wall mid \u2014 touches left wall",
+      "cells": [
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
     },
     {
-      "label": "Upper interior right",
-      "cells": [[10,2],[11,2],[10,3]]
+      "label": "Right wall mid \u2014 touches right wall",
+      "cells": [
+        [
+          14,
+          13
+        ],
+        [
+          14,
+          14
+        ],
+        [
+          13,
+          13
+        ]
+      ]
     },
     {
-      "label": "Right wall upper — touches right wall",
-      "cells": [[12,5],[13,5],[14,5]]
+      "label": "Interior A",
+      "cells": [
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ]
+      ]
     },
     {
-      "label": "Pre-split screen — just above laser row",
-      "cells": [[3,6],[4,6]]
+      "label": "Interior B",
+      "cells": [
+        [
+          9,
+          3
+        ],
+        [
+          10,
+          3
+        ]
+      ]
     },
     {
-      "label": "Lower interior near-split",
-      "cells": [[3,9],[4,9],[3,10]]
+      "label": "Interior C",
+      "cells": [
+        [
+          3,
+          7
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          3,
+          8
+        ]
+      ]
     },
     {
-      "label": "Lower interior right near-split",
-      "cells": [[10,9],[11,9],[10,10]]
+      "label": "Interior D",
+      "cells": [
+        [
+          9,
+          7
+        ],
+        [
+          10,
+          7
+        ],
+        [
+          10,
+          8
+        ]
+      ]
     },
     {
-      "label": "Left wall lower — touches left wall",
-      "cells": [[0,11],[0,12],[1,12]]
+      "label": "Interior E",
+      "cells": [
+        [
+          5,
+          11
+        ],
+        [
+          6,
+          11
+        ]
+      ]
     },
     {
-      "label": "Right wall lower — touches right wall",
-      "cells": [[12,12],[13,12],[14,12],[14,13]]
+      "label": "Interior F",
+      "cells": [
+        [
+          8,
+          11
+        ],
+        [
+          9,
+          11
+        ]
+      ]
     },
     {
-      "label": "Lower interior left",
-      "cells": [[5,14],[6,14]]
+      "label": "Interior G",
+      "cells": [
+        [
+          4,
+          14
+        ],
+        [
+          5,
+          14
+        ],
+        [
+          4,
+          15
+        ]
+      ]
     },
     {
-      "label": "Lower interior right",
-      "cells": [[9,15],[10,15]]
+      "label": "Interior H",
+      "cells": [
+        [
+          10,
+          14
+        ],
+        [
+          11,
+          14
+        ]
+      ]
     },
     {
-      "label": "Left wall bottom — touches left wall",
-      "cells": [[0,16],[0,17],[1,17]]
-    },
-    {
-      "label": "Right wall bottom — touches right wall",
-      "cells": [[13,16],[14,16],[14,17]]
-    },
-    {
-      "label": "Bottom anchor left — touches bottom wall",
-      "cells": [[2,19],[3,19],[4,19]]
-    },
-    {
-      "label": "Bottom anchor right — touches bottom wall",
-      "cells": [[10,18],[11,18],[12,18]]
+      "label": "Interior I",
+      "cells": [
+        [
+          6,
+          17
+        ],
+        [
+          7,
+          17
+        ]
+      ]
     }
   ],
-  "splitters": [
-    {
-      "x": 8,
-      "y": 7,
-      "dir": "right",
-      "note": "Laser traveling RIGHT hits splitter → splits UP (toward y=0) and DOWN (toward y=19)"
-    }
-  ]
+  "splitters": []
 }
