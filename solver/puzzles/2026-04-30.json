@@ -1,17 +1,50 @@
 {
   "date": "2026-04-30",
-  "name": "Cay",
+  "name": "Islands",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 0,
-    "y": 5,
-    "dir": "right"
+    "x": 7,
+    "y": 19,
+    "dir": "up"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NE cape \u2014 touches top and right walls",
+      "label": "Headland — 7 cells, top-left, touches top and left walls",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "Cape — 5 cells, top-right, touches top and right walls",
       "cells": [
         [
           11,
@@ -32,261 +65,189 @@
         [
           14,
           1
-        ],
-        [
-          14,
-          2
-        ],
-        [
-          13,
-          2
         ]
       ]
     },
     {
-      "label": "NW corner \u2014 touches top and left walls",
-      "cells": [
-        [
-          0,
-          0
-        ],
-        [
-          1,
-          0
-        ],
-        [
-          2,
-          0
-        ],
-        [
-          0,
-          1
-        ],
-        [
-          0,
-          2
-        ],
-        [
-          1,
-          2
-        ]
-      ]
-    },
-    {
-      "label": "Upper interior A",
+      "label": "Reef A — 3 cells, upper interior",
       "cells": [
         [
           5,
-          2
-        ],
-        [
-          6,
-          2
+          3
         ],
         [
           6,
           3
-        ]
-      ]
-    },
-    {
-      "label": "Upper interior B",
-      "cells": [
-        [
-          9,
-          3
         ],
         [
-          10,
-          3
-        ],
-        [
-          9,
+          5,
           4
         ]
       ]
     },
     {
-      "label": "Center marker \u2014 breaks x=7 run at y=5",
-      "cells": [
-        [
-          7,
-          5
-        ]
-      ]
-    },
-    {
-      "label": "Left wall mid \u2014 touches left wall",
-      "cells": [
-        [
-          0,
-          8
-        ],
-        [
-          1,
-          8
-        ],
-        [
-          0,
-          9
-        ],
-        [
-          0,
-          10
-        ],
-        [
-          0,
-          11
-        ]
-      ]
-    },
-    {
-      "label": "Right wall mid \u2014 touches right wall",
-      "cells": [
-        [
-          14,
-          8
-        ],
-        [
-          14,
-          9
-        ],
-        [
-          14,
-          10
-        ],
-        [
-          13,
-          10
-        ],
-        [
-          14,
-          11
-        ]
-      ]
-    },
-    {
-      "label": "Mid interior A",
-      "cells": [
-        [
-          4,
-          7
-        ],
-        [
-          5,
-          7
-        ],
-        [
-          4,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "Mid interior B",
-      "cells": [
-        [
-          8,
-          7
-        ],
-        [
-          9,
-          7
-        ],
-        [
-          9,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "Mid interior C",
-      "cells": [
-        [
-          3,
-          12
-        ],
-        [
-          4,
-          12
-        ],
-        [
-          4,
-          13
-        ]
-      ]
-    },
-    {
-      "label": "Mid interior D",
-      "cells": [
-        [
-          7,
-          11
-        ],
-        [
-          8,
-          11
-        ],
-        [
-          7,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Mid interior E",
+      "label": "Shoal — 2 cells, upper-right interior",
       "cells": [
         [
           10,
-          13
+          4
         ],
         [
           11,
-          13
+          4
+        ]
+      ]
+    },
+    {
+      "label": "Breakwater — 6 cells, left wall mid, touches left wall",
+      "cells": [
+        [
+          0,
+          6
         ],
         [
-          10,
+          0,
+          7
+        ],
+        [
+          0,
+          8
+        ],
+        [
+          0,
+          9
+        ],
+        [
+          0,
+          10
+        ],
+        [
+          1,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Stack — 4 cells, right wall upper, touches right wall",
+      "cells": [
+        [
+          13,
+          5
+        ],
+        [
+          14,
+          5
+        ],
+        [
+          14,
+          6
+        ],
+        [
+          14,
+          7
+        ]
+      ]
+    },
+    {
+      "label": "Pebble — 1 cell, interior",
+      "cells": [
+        [
+          8,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "Pinnacle — 2 cells, center, blocks x=7 run",
+      "cells": [
+        [
+          7,
+          9
+        ],
+        [
+          7,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Reef B — 4 cells, right-mid interior",
+      "cells": [
+        [
+          11,
+          10
+        ],
+        [
+          12,
+          10
+        ],
+        [
+          12,
+          11
+        ],
+        [
+          13,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "Atoll — 5 cells, center-lower interior",
+      "cells": [
+        [
+          5,
+          11
+        ],
+        [
+          6,
+          11
+        ],
+        [
+          5,
+          12
+        ],
+        [
+          6,
+          12
+        ],
+        [
+          6,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "Rock — 2 cells, lower-left interior",
+      "cells": [
+        [
+          3,
+          14
+        ],
+        [
+          4,
           14
         ]
       ]
     },
     {
-      "label": "Lower interior A",
+      "label": "Spit — 7 cells, left wall lower, touches left and bottom walls",
       "cells": [
         [
-          5,
+          0,
+          13
+        ],
+        [
+          0,
+          14
+        ],
+        [
+          0,
           15
         ],
         [
-          6,
-          15
-        ],
-        [
-          5,
-          16
-        ]
-      ]
-    },
-    {
-      "label": "Lower interior B",
-      "cells": [
-        [
-          9,
+          0,
           16
         ],
-        [
-          10,
-          16
-        ],
-        [
-          9,
-          17
-        ]
-      ]
-    },
-    {
-      "label": "SW cape \u2014 touches left and bottom walls",
-      "cells": [
         [
           0,
           17
@@ -298,31 +259,49 @@
         [
           0,
           19
-        ],
-        [
-          1,
-          19
-        ],
-        [
-          2,
-          19
         ]
       ]
     },
     {
-      "label": "SE cape \u2014 touches right and bottom walls",
+      "label": "Crag — 3 cells, lower-right, touches right wall",
       "cells": [
         [
           12,
-          19
+          15
         ],
         [
           13,
-          19
+          15
         ],
         [
           14,
-          19
+          15
+        ]
+      ]
+    },
+    {
+      "label": "Islet — 1 cell, lower interior",
+      "cells": [
+        [
+          9,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "Sandbar — 5 cells, bottom-right, touches right and bottom walls",
+      "cells": [
+        [
+          11,
+          18
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
         ],
         [
           14,
@@ -330,24 +309,10 @@
         ],
         [
           14,
-          17
+          19
         ]
       ]
     }
   ],
-  "splitters": [],
-  "gates": [
-    {
-      "x": 12,
-      "y": 7,
-      "dir": "up",
-      "note": "blocks downward x=12 run \u2014 beam can only go up through here"
-    },
-    {
-      "x": 12,
-      "y": 12,
-      "dir": "down",
-      "note": "blocks upward x=12 run \u2014 beam can only go down through here"
-    }
-  ]
+  "splitters": []
 }

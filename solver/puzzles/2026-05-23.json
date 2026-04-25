@@ -1,152 +1,111 @@
 {
   "date": "2026-05-23",
-  "name": "Mosaic",
+  "name": "Spider Web",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 0,
-    "y": 5,
-    "dir": "right"
+    "x": 14,
+    "y": 10,
+    "dir": "left"
   },
-  "num_mirrors": 10,
+  "num_mirrors": 11,
   "obstacle_groups": [
     {
-      "label": "Top tile row",
+      "label": "Vertical spoke",
       "cells": [
         [
-          2,
+          7,
+          1
+        ],
+        [
+          7,
           2
         ],
         [
-          3,
-          2
+          7,
+          3
         ],
         [
-          5,
-          2
+          7,
+          4
         ],
         [
-          6,
-          2
+          7,
+          16
         ],
         [
-          9,
-          2
+          7,
+          17
         ],
         [
-          10,
-          2
+          7,
+          18
         ],
         [
-          12,
-          2
-        ],
-        [
-          13,
-          2
+          7,
+          19
         ]
       ]
     },
     {
-      "label": "Upper-mid tile row (offset)",
+      "label": "Left stub of horizontal spoke",
       "cells": [
         [
           1,
-          7
+          10
         ],
         [
           2,
-          7
+          10
         ],
+        [
+          3,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Diagonal spokes",
+      "cells": [
         [
           4,
-          7
+          4
         ],
         [
-          5,
-          7
+          3,
+          3
         ],
         [
-          8,
-          7
+          2,
+          2
         ],
         [
-          9,
-          7
+          10,
+          4
         ],
         [
           11,
-          7
+          3
         ],
         [
           12,
-          7
-        ]
-      ]
-    },
-    {
-      "label": "Lower-mid tile row",
-      "cells": [
-        [
-          2,
-          12
-        ],
-        [
-          3,
-          12
-        ],
-        [
-          5,
-          12
-        ],
-        [
-          6,
-          12
-        ],
-        [
-          9,
-          12
-        ],
-        [
-          10,
-          12
-        ],
-        [
-          12,
-          12
-        ],
-        [
-          13,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Bottom tile row (offset)",
-      "cells": [
-        [
-          1,
-          17
-        ],
-        [
-          2,
-          17
+          2
         ],
         [
           4,
+          16
+        ],
+        [
+          3,
           17
         ],
         [
-          5,
-          17
+          2,
+          18
         ],
         [
-          8,
-          17
-        ],
-        [
-          9,
-          17
+          10,
+          16
         ],
         [
           11,
@@ -154,7 +113,113 @@
         ],
         [
           12,
-          17
+          18
+        ]
+      ]
+    },
+    {
+      "label": "Inner concentric ring",
+      "cells": [
+        [
+          5,
+          5
+        ],
+        [
+          6,
+          5
+        ],
+        [
+          8,
+          5
+        ],
+        [
+          9,
+          5
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          9,
+          6
+        ],
+        [
+          5,
+          14
+        ],
+        [
+          9,
+          14
+        ],
+        [
+          5,
+          15
+        ],
+        [
+          6,
+          15
+        ],
+        [
+          8,
+          15
+        ],
+        [
+          9,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "Outer concentric ring fragments",
+      "cells": [
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          2,
+          14
+        ],
+        [
+          2,
+          15
+        ],
+        [
+          2,
+          16
+        ],
+        [
+          12,
+          4
+        ],
+        [
+          12,
+          5
+        ],
+        [
+          12,
+          6
+        ],
+        [
+          12,
+          14
+        ],
+        [
+          12,
+          15
+        ],
+        [
+          12,
+          16
         ]
       ]
     }
@@ -162,22 +227,16 @@
   "splitters": [],
   "gates": [
     {
-      "x": 0,
-      "y": 10,
+      "x": 14,
+      "y": 7,
       "dir": "up",
-      "note": "left wall midpoint \u2014 only upward passes; blocks the 19-cell downward left-wall run"
-    },
-    {
-      "x": 7,
-      "y": 10,
-      "dir": "up",
-      "note": "x=7 midpoint \u2014 only upward passes; blocks the downward x=7 run"
+      "note": "right wall — only upward passes; blocks the long downward right-wall run"
     },
     {
       "x": 14,
-      "y": 10,
-      "dir": "up",
-      "note": "right wall midpoint \u2014 only upward passes; blocks the downward right-wall run"
+      "y": 13,
+      "dir": "down",
+      "note": "right wall — only downward passes; blocks the long upward right-wall run"
     }
   ]
 }

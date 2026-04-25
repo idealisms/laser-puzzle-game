@@ -1,17 +1,17 @@
 {
   "date": "2026-05-13",
-  "name": "Cleft",
+  "name": "Tors",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 7,
-    "y": 0,
-    "dir": "down"
+    "x": 14,
+    "y": 12,
+    "dir": "left"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Top-left corner \u2014 x=0..3, y=0..3, touches top and left edges",
+      "label": "NW tor — touches top and left walls (7 cells)",
       "cells": [
         [
           0,
@@ -40,47 +40,11 @@
         [
           2,
           1
-        ],
-        [
-          3,
-          1
-        ],
-        [
-          0,
-          2
-        ],
-        [
-          1,
-          2
-        ],
-        [
-          2,
-          2
-        ],
-        [
-          3,
-          2
-        ],
-        [
-          0,
-          3
-        ],
-        [
-          1,
-          3
-        ],
-        [
-          2,
-          3
-        ],
-        [
-          3,
-          3
         ]
       ]
     },
     {
-      "label": "Top-right corner \u2014 x=11..14, y=0..3, touches top and right edges",
+      "label": "NE tor — touches top and right walls (7 cells)",
       "cells": [
         [
           11,
@@ -99,10 +63,6 @@
           0
         ],
         [
-          11,
-          1
-        ],
-        [
           12,
           1
         ],
@@ -113,365 +73,340 @@
         [
           14,
           1
-        ],
-        [
-          11,
-          2
-        ],
-        [
-          12,
-          2
-        ],
-        [
-          13,
-          2
-        ],
-        [
-          14,
-          2
-        ],
-        [
-          11,
-          3
-        ],
-        [
-          12,
-          3
-        ],
-        [
-          13,
-          3
-        ],
-        [
-          14,
-          3
         ]
       ]
     },
     {
-      "label": "Left upper staircase \u2014 y=5..8, touches left; hypotenuse (4,5)\u2192(0,8)",
+      "label": "SW tor — touches left and bottom walls (7 cells)",
       "cells": [
         [
           0,
-          5
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          0,
+          19
         ],
         [
           1,
-          5
+          18
+        ],
+        [
+          1,
+          19
         ],
         [
           2,
-          5
+          19
         ],
         [
           3,
-          5
+          19
+        ]
+      ]
+    },
+    {
+      "label": "SE tor — touches right and bottom walls (7 cells)",
+      "cells": [
+        [
+          11,
+          19
+        ],
+        [
+          12,
+          19
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "Left wall mid — touches left wall (5 cells)",
+      "cells": [
+        [
+          0,
+          8
+        ],
+        [
+          0,
+          9
+        ],
+        [
+          0,
+          10
+        ],
+        [
+          1,
+          9
+        ],
+        [
+          1,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Right wall mid — touches right wall (5 cells)",
+      "cells": [
+        [
+          13,
+          6
+        ],
+        [
+          14,
+          6
+        ],
+        [
+          14,
+          7
+        ],
+        [
+          13,
+          7
+        ],
+        [
+          14,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "y=12 run shortener (2 cells)",
+      "cells": [
+        [
+          5,
+          12
+        ],
+        [
+          6,
+          12
+        ]
+      ]
+    },
+    {
+      "label": "Upper-left tor (5 cells)",
+      "cells": [
+        [
+          3,
+          3
         ],
         [
           4,
-          5
+          3
         ],
         [
-          0,
-          6
-        ],
-        [
-          1,
-          6
-        ],
-        [
-          2,
-          6
+          5,
+          3
         ],
         [
           3,
-          6
-        ],
-        [
-          0,
-          7
-        ],
-        [
-          1,
-          7
-        ],
-        [
-          2,
-          7
-        ],
-        [
-          0,
-          8
-        ],
-        [
-          1,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "Right upper staircase \u2014 y=5..8, touches right; hypotenuse (10,5)\u2192(14,8)",
-      "cells": [
-        [
-          10,
-          5
-        ],
-        [
-          11,
-          5
-        ],
-        [
-          12,
-          5
-        ],
-        [
-          13,
-          5
-        ],
-        [
-          14,
-          5
-        ],
-        [
-          11,
-          6
-        ],
-        [
-          12,
-          6
-        ],
-        [
-          13,
-          6
-        ],
-        [
-          14,
-          6
-        ],
-        [
-          12,
-          7
-        ],
-        [
-          13,
-          7
-        ],
-        [
-          14,
-          7
-        ],
-        [
-          13,
-          8
-        ],
-        [
-          14,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "Left lower staircase \u2014 y=14..17, touches left; hypotenuse (0,14)\u2192(4,17)",
-      "cells": [
-        [
-          0,
-          14
-        ],
-        [
-          1,
-          14
-        ],
-        [
-          0,
-          15
-        ],
-        [
-          1,
-          15
-        ],
-        [
-          2,
-          15
-        ],
-        [
-          0,
-          16
-        ],
-        [
-          1,
-          16
-        ],
-        [
-          2,
-          16
-        ],
-        [
-          3,
-          16
-        ],
-        [
-          0,
-          17
-        ],
-        [
-          1,
-          17
-        ],
-        [
-          2,
-          17
-        ],
-        [
-          3,
-          17
+          4
         ],
         [
           4,
-          17
+          4
         ]
       ]
     },
     {
-      "label": "Right lower staircase \u2014 y=14..17, touches right; hypotenuse (14,14)\u2192(10,17)",
+      "label": "Upper-right tor (5 cells)",
       "cells": [
         [
-          13,
-          14
-        ],
-        [
-          14,
-          14
-        ],
-        [
-          12,
-          15
-        ],
-        [
-          13,
-          15
-        ],
-        [
-          14,
-          15
-        ],
-        [
-          11,
-          16
-        ],
-        [
-          12,
-          16
-        ],
-        [
-          13,
-          16
-        ],
-        [
-          14,
-          16
+          9,
+          3
         ],
         [
           10,
-          17
+          3
         ],
         [
           11,
-          17
+          3
         ],
         [
-          12,
-          17
+          10,
+          4
         ],
         [
-          13,
-          17
-        ],
-        [
-          14,
-          17
+          11,
+          4
         ]
       ]
     },
     {
-      "label": "Bottom-left corner \u2014 x=0..3, y=18..19, touches bottom and left edges",
+      "label": "Mid tor (6 cells)",
       "cells": [
         [
-          0,
-          18
+          5,
+          7
         ],
         [
-          1,
-          18
+          6,
+          7
         ],
         [
-          2,
-          18
+          7,
+          7
         ],
         [
-          3,
-          18
+          5,
+          8
         ],
         [
-          0,
-          19
+          6,
+          8
         ],
         [
-          1,
-          19
-        ],
-        [
-          2,
-          19
-        ],
-        [
-          3,
-          19
+          7,
+          8
         ]
       ]
     },
     {
-      "label": "Bottom-right corner \u2014 x=11..14, y=18..19, touches bottom and right edges",
+      "label": "Small tor A (3 cells)",
       "cells": [
         [
+          6,
+          5
+        ],
+        [
+          7,
+          5
+        ],
+        [
+          8,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Small tor B (3 cells)",
+      "cells": [
+        [
+          6,
+          10
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          8,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Lower-left tor (5 cells)",
+      "cells": [
+        [
+          3,
+          14
+        ],
+        [
+          4,
+          14
+        ],
+        [
+          5,
+          14
+        ],
+        [
+          3,
+          15
+        ],
+        [
+          4,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "Lower-right tor (5 cells)",
+      "cells": [
+        [
+          9,
+          14
+        ],
+        [
+          10,
+          14
+        ],
+        [
           11,
-          18
+          14
         ],
         [
-          12,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          14,
-          18
+          10,
+          15
         ],
         [
           11,
-          19
+          15
+        ]
+      ]
+    },
+    {
+      "label": "Near-bottom accent (2 cells)",
+      "cells": [
+        [
+          6,
+          17
         ],
         [
-          12,
-          19
-        ],
-        [
-          13,
-          19
-        ],
-        [
-          14,
-          19
+          7,
+          17
         ]
       ]
     }
   ],
-  "splitters": [
+  "splitters": [],
+  "gates": [
     {
-      "x": 7,
+      "x": 2,
+      "y": 7,
+      "dir": "up",
+      "note": "blocks downward x=2 run — beam can only go up through here"
+    },
+    {
+      "x": 2,
       "y": 12,
-      "dir": "down"
+      "dir": "down",
+      "note": "blocks upward x=2 run — beam can only go down through here"
+    },
+    {
+      "x": 12,
+      "y": 7,
+      "dir": "up",
+      "note": "blocks downward x=12 run — beam can only go up through here"
+    },
+    {
+      "x": 12,
+      "y": 12,
+      "dir": "down",
+      "note": "blocks upward x=12 run — beam can only go down through here"
     }
   ]
 }

@@ -1,42 +1,349 @@
 {
   "date": "2026-06-07",
-  "name": "Swell",
+  "name": "Cascade",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 0,
+    "x": 14,
     "y": 10,
-    "dir": "right"
+    "dir": "left"
   },
-  "num_mirrors": 9,
+  "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Left wall upper \u2014 touches left wall (5 cells)",
+      "label": "Top-left staircase — NW corner, hypotenuse (4,0)→(0,4)",
       "cells": [
         [
           0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          0,
           4
-        ],
-        [
-          0,
-          5
-        ],
-        [
-          1,
-          5
-        ],
-        [
-          0,
-          6
-        ],
-        [
-          1,
-          6
         ]
       ]
     },
     {
-      "label": "Left wall lower \u2014 touches left wall (5 cells)",
+      "label": "Upper-right cascade — grows from x=14,y=2 toward center; hypotenuse (14,2)→(9,7)",
+      "cells": [
+        [
+          14,
+          2
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          12,
+          4
+        ],
+        [
+          13,
+          4
+        ],
+        [
+          14,
+          4
+        ],
+        [
+          11,
+          5
+        ],
+        [
+          12,
+          5
+        ],
+        [
+          13,
+          5
+        ],
+        [
+          14,
+          5
+        ],
+        [
+          10,
+          6
+        ],
+        [
+          11,
+          6
+        ],
+        [
+          12,
+          6
+        ],
+        [
+          13,
+          6
+        ],
+        [
+          14,
+          6
+        ],
+        [
+          9,
+          7
+        ],
+        [
+          10,
+          7
+        ],
+        [
+          11,
+          7
+        ],
+        [
+          12,
+          7
+        ],
+        [
+          13,
+          7
+        ],
+        [
+          14,
+          7
+        ]
+      ]
+    },
+    {
+      "label": "Left-mid cascade — shrinks from x=0..5,y=8 toward x=0,y=13; first obstacle in laser path at y=10",
+      "cells": [
+        [
+          0,
+          8
+        ],
+        [
+          1,
+          8
+        ],
+        [
+          2,
+          8
+        ],
+        [
+          3,
+          8
+        ],
+        [
+          4,
+          8
+        ],
+        [
+          5,
+          8
+        ],
+        [
+          0,
+          9
+        ],
+        [
+          1,
+          9
+        ],
+        [
+          2,
+          9
+        ],
+        [
+          3,
+          9
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          0,
+          10
+        ],
+        [
+          1,
+          10
+        ],
+        [
+          2,
+          10
+        ],
+        [
+          3,
+          10
+        ],
+        [
+          0,
+          11
+        ],
+        [
+          1,
+          11
+        ],
+        [
+          2,
+          11
+        ],
+        [
+          0,
+          12
+        ],
+        [
+          1,
+          12
+        ],
+        [
+          0,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "Lower-right cascade — grows from x=14,y=12 toward center; hypotenuse (14,12)→(9,17)",
+      "cells": [
+        [
+          14,
+          12
+        ],
+        [
+          13,
+          13
+        ],
+        [
+          14,
+          13
+        ],
+        [
+          12,
+          14
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          14,
+          14
+        ],
+        [
+          11,
+          15
+        ],
+        [
+          12,
+          15
+        ],
+        [
+          13,
+          15
+        ],
+        [
+          14,
+          15
+        ],
+        [
+          10,
+          16
+        ],
+        [
+          11,
+          16
+        ],
+        [
+          12,
+          16
+        ],
+        [
+          13,
+          16
+        ],
+        [
+          14,
+          16
+        ],
+        [
+          9,
+          17
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          17
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          13,
+          17
+        ],
+        [
+          14,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "Bottom-left staircase — grows from x=0,y=14 toward SE; hypotenuse (0,14)→(5,19)",
       "cells": [
         [
           0,
@@ -48,7 +355,7 @@
         ],
         [
           1,
-          14
+          15
         ],
         [
           0,
@@ -57,284 +364,73 @@
         [
           1,
           16
-        ]
-      ]
-    },
-    {
-      "label": "Right wall upper \u2014 touches right wall (5 cells)",
-      "cells": [
-        [
-          13,
-          3
         ],
         [
-          14,
-          3
-        ],
-        [
-          14,
-          4
-        ],
-        [
-          14,
-          5
-        ],
-        [
-          13,
-          5
-        ]
-      ]
-    },
-    {
-      "label": "Right wall lower \u2014 touches right wall (5 cells)",
-      "cells": [
-        [
-          13,
-          14
-        ],
-        [
-          14,
-          14
-        ],
-        [
-          14,
-          15
-        ],
-        [
-          14,
+          2,
           16
         ],
         [
-          13,
-          16
-        ]
-      ]
-    },
-    {
-      "label": "Top bar \u2014 touches top wall, blocks straight exit for UP arm (5 cells)",
-      "cells": [
-        [
-          5,
-          0
-        ],
-        [
-          6,
-          0
-        ],
-        [
-          7,
-          0
-        ],
-        [
-          8,
-          0
-        ],
-        [
-          9,
-          0
-        ]
-      ]
-    },
-    {
-      "label": "Bottom bar \u2014 touches bottom wall, blocks straight exit for DOWN arm (5 cells)",
-      "cells": [
-        [
-          5,
-          19
-        ],
-        [
-          6,
-          19
-        ],
-        [
-          7,
-          19
-        ],
-        [
-          8,
-          19
-        ],
-        [
-          9,
-          19
-        ]
-      ]
-    },
-    {
-      "label": "Upper-left quad (4 cells)",
-      "cells": [
-        [
-          4,
-          3
-        ],
-        [
-          5,
-          3
-        ],
-        [
-          4,
-          4
-        ],
-        [
-          5,
-          4
-        ]
-      ]
-    },
-    {
-      "label": "Upper-right quad (4 cells)",
-      "cells": [
-        [
-          9,
-          3
-        ],
-        [
-          10,
-          3
-        ],
-        [
-          9,
-          4
-        ],
-        [
-          10,
-          4
-        ]
-      ]
-    },
-    {
-      "label": "Upper-left near-split (4 cells)",
-      "cells": [
-        [
-          3,
-          7
-        ],
-        [
-          4,
-          7
-        ],
-        [
-          3,
-          8
-        ],
-        [
-          4,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "Upper-right near-split (4 cells)",
-      "cells": [
-        [
-          10,
-          7
-        ],
-        [
-          11,
-          7
-        ],
-        [
-          10,
-          8
-        ],
-        [
-          11,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "Lower-left near-split (4 cells)",
-      "cells": [
-        [
-          3,
-          11
-        ],
-        [
-          4,
-          11
-        ],
-        [
-          3,
-          12
-        ],
-        [
-          4,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Lower-right near-split (4 cells)",
-      "cells": [
-        [
-          10,
-          11
-        ],
-        [
-          11,
-          11
-        ],
-        [
-          10,
-          12
-        ],
-        [
-          11,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Lower-left quad (4 cells)",
-      "cells": [
-        [
-          4,
-          16
-        ],
-        [
-          5,
-          16
-        ],
-        [
-          4,
+          0,
           17
         ],
         [
+          1,
+          17
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          3,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          2,
+          18
+        ],
+        [
+          3,
+          18
+        ],
+        [
+          4,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ],
+        [
+          3,
+          19
+        ],
+        [
+          4,
+          19
+        ],
+        [
           5,
-          17
-        ]
-      ]
-    },
-    {
-      "label": "Lower-right quad (4 cells)",
-      "cells": [
-        [
-          9,
-          16
-        ],
-        [
-          10,
-          16
-        ],
-        [
-          9,
-          17
-        ],
-        [
-          10,
-          17
+          19
         ]
       ]
     }
   ],
-  "splitters": [
-    {
-      "x": 7,
-      "y": 10,
-      "dir": "right",
-      "note": "Laser traveling RIGHT splits into UP (x=7, toward y=0) and DOWN (x=7, toward y=19)"
-    }
-  ]
+  "splitters": []
 }

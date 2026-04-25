@@ -1,17 +1,17 @@
 {
   "date": "2026-05-18",
-  "name": "Islands",
+  "name": "Ramp",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 7,
-    "y": 19,
-    "dir": "up"
+    "x": 14,
+    "y": 10,
+    "dir": "left"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Headland \u2014 7 cells, top-left, touches top and left walls",
+      "label": "NW ramp — staircase from top-left corner, hypotenuse (5,0)→(0,5)",
       "cells": [
         [
           0,
@@ -26,6 +26,18 @@
           0
         ],
         [
+          3,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          5,
+          0
+        ],
+        [
           0,
           1
         ],
@@ -35,16 +47,60 @@
         ],
         [
           2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          4,
           1
         ],
         [
           0,
           2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          5
         ]
       ]
     },
     {
-      "label": "Cape \u2014 5 cells, top-right, touches top and right walls",
+      "label": "NE corner block — x=11..14, y=0..3, touches top and right edges",
       "cells": [
         [
           11,
@@ -63,58 +119,68 @@
           0
         ],
         [
+          11,
+          1
+        ],
+        [
+          12,
+          1
+        ],
+        [
+          13,
+          1
+        ],
+        [
           14,
           1
-        ]
-      ]
-    },
-    {
-      "label": "Reef A \u2014 3 cells, upper interior",
-      "cells": [
-        [
-          5,
-          3
-        ],
-        [
-          6,
-          3
-        ],
-        [
-          5,
-          4
-        ]
-      ]
-    },
-    {
-      "label": "Shoal \u2014 2 cells, upper-right interior",
-      "cells": [
-        [
-          10,
-          4
         ],
         [
           11,
-          4
+          2
+        ],
+        [
+          12,
+          2
+        ],
+        [
+          13,
+          2
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          11,
+          3
+        ],
+        [
+          12,
+          3
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          3
         ]
       ]
     },
     {
-      "label": "Breakwater \u2014 6 cells, left wall mid, touches left wall",
+      "label": "Left mid — x=0..2, y=9..11, touches left edge; first obstacle in laser path",
       "cells": [
         [
           0,
-          6
+          9
         ],
         [
-          0,
-          7
+          1,
+          9
         ],
         [
-          0,
-          8
-        ],
-        [
-          0,
+          2,
           9
         ],
         [
@@ -124,128 +190,42 @@
         [
           1,
           10
-        ]
-      ]
-    },
-    {
-      "label": "Stack \u2014 4 cells, right wall upper, touches right wall",
-      "cells": [
-        [
-          13,
-          5
         ],
         [
-          14,
-          5
-        ],
-        [
-          14,
-          6
-        ],
-        [
-          14,
-          7
-        ]
-      ]
-    },
-    {
-      "label": "Pebble \u2014 1 cell, interior",
-      "cells": [
-        [
-          8,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "Pinnacle \u2014 2 cells, center, blocks x=7 run",
-      "cells": [
-        [
-          7,
-          9
-        ],
-        [
-          7,
-          10
-        ]
-      ]
-    },
-    {
-      "label": "Reef B \u2014 4 cells, right-mid interior",
-      "cells": [
-        [
-          11,
+          2,
           10
         ],
         [
-          12,
-          10
-        ],
-        [
-          12,
+          0,
           11
         ],
         [
-          13,
+          1,
+          11
+        ],
+        [
+          2,
           11
         ]
       ]
     },
     {
-      "label": "Atoll \u2014 5 cells, center-lower interior",
+      "label": "SW corner block — x=0..3, y=16..19, touches bottom and left edges",
       "cells": [
         [
-          5,
-          11
+          0,
+          16
         ],
         [
-          6,
-          11
+          1,
+          16
         ],
         [
-          5,
-          12
+          2,
+          16
         ],
-        [
-          6,
-          12
-        ],
-        [
-          6,
-          13
-        ]
-      ]
-    },
-    {
-      "label": "Rock \u2014 2 cells, lower-left interior",
-      "cells": [
         [
           3,
-          14
-        ],
-        [
-          4,
-          14
-        ]
-      ]
-    },
-    {
-      "label": "Spit \u2014 7 cells, left wall lower, touches left and bottom walls",
-      "cells": [
-        [
-          0,
-          13
-        ],
-        [
-          0,
-          14
-        ],
-        [
-          0,
-          15
-        ],
-        [
-          0,
           16
         ],
         [
@@ -253,21 +233,57 @@
           17
         ],
         [
+          1,
+          17
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          3,
+          17
+        ],
+        [
           0,
+          18
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          2,
+          18
+        ],
+        [
+          3,
           18
         ],
         [
           0,
           19
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ],
+        [
+          3,
+          19
         ]
       ]
     },
     {
-      "label": "Crag \u2014 3 cells, lower-right, touches right wall",
+      "label": "SE ramp — staircase from bottom-right corner, hypotenuse (14,14)→(9,19)",
       "cells": [
         [
-          12,
-          15
+          14,
+          14
         ],
         [
           13,
@@ -276,21 +292,39 @@
         [
           14,
           15
-        ]
-      ]
-    },
-    {
-      "label": "Islet \u2014 1 cell, lower interior",
-      "cells": [
+        ],
         [
-          9,
+          12,
+          16
+        ],
+        [
+          13,
+          16
+        ],
+        [
+          14,
+          16
+        ],
+        [
+          11,
           17
-        ]
-      ]
-    },
-    {
-      "label": "Sandbar \u2014 5 cells, bottom-right, touches right and bottom walls",
-      "cells": [
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          13,
+          17
+        ],
+        [
+          14,
+          17
+        ],
+        [
+          10,
+          18
+        ],
         [
           11,
           18
@@ -306,6 +340,26 @@
         [
           14,
           18
+        ],
+        [
+          9,
+          19
+        ],
+        [
+          10,
+          19
+        ],
+        [
+          11,
+          19
+        ],
+        [
+          12,
+          19
+        ],
+        [
+          13,
+          19
         ],
         [
           14,
