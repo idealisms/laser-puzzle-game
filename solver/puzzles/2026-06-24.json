@@ -1,0 +1,65 @@
+{
+  "date": "2026-06-24",
+  "name": "Eskers",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 4,
+    "dir": "left"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW esker — touches top and left walls (9 cells)",
+      "cells": [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[0,2],[0,3]]
+    },
+    {
+      "label": "NE esker — touches top and right walls (9 cells)",
+      "cells": [[11,0],[12,0],[13,0],[14,0],[12,1],[13,1],[14,1],[14,2],[14,3]]
+    },
+    {
+      "label": "SW esker — touches left and bottom walls (7 cells)",
+      "cells": [[0,16],[0,17],[0,18],[0,19],[1,17],[1,18],[1,19]]
+    },
+    {
+      "label": "SE esker — touches right and bottom walls (6 cells)",
+      "cells": [[12,19],[13,19],[14,19],[14,18],[13,18],[14,17]]
+    },
+    {
+      "label": "Right wall lower — touches right wall (5 cells)",
+      "cells": [[13,7],[14,7],[14,8],[13,8],[14,9]]
+    },
+    {
+      "label": "Left wall upper — touches left wall (5 cells)",
+      "cells": [[0,5],[0,6],[1,5],[0,7],[1,7]]
+    },
+    {
+      "label": "Left wall lower — touches left wall (5 cells)",
+      "cells": [[0,12],[0,13],[1,12],[0,14],[1,14]]
+    },
+    {
+      "label": "Upper esker ridge (5 cells)",
+      "cells": [[5,3],[6,3],[7,3],[5,4],[6,4]]
+    },
+    {
+      "label": "Lower esker ridge (5 cells)",
+      "cells": [[7,14],[8,14],[9,14],[9,15],[10,15]]
+    },
+    {
+      "label": "Mid-left island (4 cells)",
+      "cells": [[2,10],[3,10],[2,11],[3,11]]
+    },
+    {
+      "label": "Mid-right island (4 cells)",
+      "cells": [[10,10],[11,10],[10,11],[11,11]]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {"x": 4, "y": 6, "dir": "up", "note": "blocks downward x=4 run — beam can only go up through here"},
+    {"x": 4, "y": 14, "dir": "down", "note": "blocks upward x=4 run — beam can only go down through here"},
+    {"x": 12, "y": 6, "dir": "up", "note": "blocks downward x=12 run — beam can only go up through here"},
+    {"x": 12, "y": 14, "dir": "down", "note": "blocks upward x=12 run — beam can only go down through here"}
+  ]
+}

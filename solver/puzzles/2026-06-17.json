@@ -1,0 +1,125 @@
+{
+  "date": "2026-06-17",
+  "name": "Tarns",
+  "width": 21,
+  "height": 28,
+  "laser": {
+    "x": 0,
+    "y": 14,
+    "dir": "right"
+  },
+  "num_mirrors": 11,
+  "obstacle_groups": [
+    {
+      "label": "NW tarn — touches top and left walls (10 cells)",
+      "cells": [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[0,2],[1,2],[0,3]]
+    },
+    {
+      "label": "NE tarn — touches top and right walls (10 cells)",
+      "cells": [[16,0],[17,0],[18,0],[19,0],[20,0],[18,1],[19,1],[20,1],[19,2],[20,2]]
+    },
+    {
+      "label": "SW tarn — touches left and bottom walls (10 cells)",
+      "cells": [[0,24],[0,25],[0,26],[0,27],[1,25],[1,26],[1,27],[2,26],[2,27],[3,27]]
+    },
+    {
+      "label": "SE tarn — touches right and bottom walls (10 cells)",
+      "cells": [[17,27],[18,27],[19,27],[20,27],[18,26],[19,26],[20,26],[19,25],[20,25],[20,24]]
+    },
+    {
+      "label": "Left wall upper — touches left wall (6 cells)",
+      "cells": [[0,8],[1,8],[0,9],[1,9],[0,10],[1,10]]
+    },
+    {
+      "label": "Left wall lower — touches left wall (6 cells)",
+      "cells": [[0,17],[1,17],[0,18],[1,18],[0,19],[1,19]]
+    },
+    {
+      "label": "Right wall upper — touches right wall (6 cells)",
+      "cells": [[19,8],[20,8],[19,9],[20,9],[19,10],[20,10]]
+    },
+    {
+      "label": "Right wall lower — touches right wall (6 cells)",
+      "cells": [[19,17],[20,17],[19,18],[20,18],[19,19],[20,19]]
+    },
+    {
+      "label": "Upper-left tarn (6 cells)",
+      "cells": [[5,4],[6,4],[7,4],[5,5],[6,5],[7,5]]
+    },
+    {
+      "label": "Upper-right tarn (6 cells)",
+      "cells": [[13,4],[14,4],[15,4],[13,5],[14,5],[15,5]]
+    },
+    {
+      "label": "Left mid tarn (4 cells)",
+      "cells": [[3,12],[4,12],[3,13],[4,13]]
+    },
+    {
+      "label": "Right mid tarn (4 cells)",
+      "cells": [[15,12],[16,12],[15,13],[16,13]]
+    },
+    {
+      "label": "y=14 run shortener (2 cells)",
+      "cells": [[9,14],[10,14]]
+    },
+    {
+      "label": "Lower tarn (6 cells)",
+      "cells": [[9,19],[10,19],[11,19],[9,20],[10,20],[11,20]]
+    },
+    {
+      "label": "Lower accent (4 cells)",
+      "cells": [[9,22],[10,22],[9,23],[10,23]]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {
+      "x": 12,
+      "y": 9,
+      "dir": "up",
+      "note": "blocks downward x=12 run — beam can only go up through here"
+    },
+    {
+      "x": 12,
+      "y": 18,
+      "dir": "down",
+      "note": "blocks upward x=12 run — beam can only go down through here"
+    },
+    {
+      "x": 17,
+      "y": 9,
+      "dir": "up",
+      "note": "blocks downward x=17 run — beam can only go up through here"
+    },
+    {
+      "x": 17,
+      "y": 18,
+      "dir": "down",
+      "note": "blocks upward x=17 run — beam can only go down through here"
+    },
+    {
+      "x": 2,
+      "y": 9,
+      "dir": "up",
+      "note": "blocks downward x=2 run — beam can only go up through here"
+    },
+    {
+      "x": 2,
+      "y": 18,
+      "dir": "down",
+      "note": "blocks upward x=2 run — beam can only go down through here"
+    },
+    {
+      "x": 5,
+      "y": 12,
+      "dir": "up",
+      "note": "blocks downward x=5 run — beam can only go up through here"
+    },
+    {
+      "x": 5,
+      "y": 20,
+      "dir": "down",
+      "note": "blocks upward x=5 run — beam can only go down through here"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "date": "2026-06-20",
+  "name": "Inlets",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 14,
+    "dir": "left"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW inlet — touches top and left walls (6 cells)",
+      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1],[0,2]]
+    },
+    {
+      "label": "NE inlet — touches top and right walls (6 cells)",
+      "cells": [[12,0],[13,0],[14,0],[13,1],[14,1],[14,2]]
+    },
+    {
+      "label": "SW inlet — touches left and bottom walls (6 cells)",
+      "cells": [[0,17],[0,18],[0,19],[1,18],[1,19],[2,19]]
+    },
+    {
+      "label": "SE inlet — touches right and bottom walls (6 cells)",
+      "cells": [[12,19],[13,19],[14,19],[14,18],[13,18],[14,17]]
+    },
+    {
+      "label": "Left wall mid — touches left wall (5 cells)",
+      "cells": [[0,10],[0,11],[1,10],[0,12],[1,12]]
+    },
+    {
+      "label": "Right wall upper — touches right wall (5 cells)",
+      "cells": [[13,6],[14,6],[14,7],[13,7],[14,8]]
+    },
+    {
+      "label": "Right wall lower — touches right wall (5 cells)",
+      "cells": [[13,10],[14,10],[14,11],[13,11],[14,12]]
+    },
+    {
+      "label": "Upper-left island (5 cells)",
+      "cells": [[3,4],[4,4],[5,4],[3,5],[4,5]]
+    },
+    {
+      "label": "Upper-right island (5 cells)",
+      "cells": [[9,4],[10,4],[11,4],[10,5],[11,5]]
+    },
+    {
+      "label": "Lower-left island (4 cells)",
+      "cells": [[3,16],[4,16],[3,17],[4,17]]
+    },
+    {
+      "label": "Lower-right island (4 cells)",
+      "cells": [[9,16],[10,16],[9,17],[10,17]]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 6,
+      "y": 14,
+      "dir": "left",
+      "note": "laser going left triggers split — up+down beams emerge at x=6"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "date": "2026-06-19",
+  "name": "Coves",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 7,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW cove — touches top and left walls (8 cells)",
+      "cells": [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[0,2]]
+    },
+    {
+      "label": "NE cove — touches top and right walls (8 cells)",
+      "cells": [[11,0],[12,0],[13,0],[14,0],[12,1],[13,1],[14,1],[14,2]]
+    },
+    {
+      "label": "SW cove — touches left and bottom walls (6 cells)",
+      "cells": [[0,17],[0,18],[0,19],[1,18],[1,19],[2,19]]
+    },
+    {
+      "label": "SE cove — touches right and bottom walls (6 cells)",
+      "cells": [[12,19],[13,19],[14,19],[14,18],[13,18],[14,17]]
+    },
+    {
+      "label": "Left wall mid — touches left wall (5 cells)",
+      "cells": [[0,9],[0,10],[1,9],[0,11],[1,11]]
+    },
+    {
+      "label": "Right wall mid — touches right wall (5 cells)",
+      "cells": [[13,9],[14,9],[14,10],[13,10],[14,11]]
+    },
+    {
+      "label": "Upper-left cove island (5 cells)",
+      "cells": [[3,4],[4,4],[5,4],[3,5],[4,5]]
+    },
+    {
+      "label": "Upper-right cove island (5 cells)",
+      "cells": [[9,4],[10,4],[11,4],[10,5],[11,5]]
+    },
+    {
+      "label": "x=7 run shortener (3 cells)",
+      "cells": [[6,10],[7,10],[8,10]]
+    },
+    {
+      "label": "Lower-left cove island (5 cells)",
+      "cells": [[3,14],[4,14],[5,14],[3,15],[4,15]]
+    },
+    {
+      "label": "Lower-right cove island (5 cells)",
+      "cells": [[9,14],[10,14],[11,14],[10,15],[11,15]]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {
+      "x": 2,
+      "y": 6,
+      "dir": "up",
+      "note": "blocks downward x=2 run — beam can only go up through here"
+    },
+    {
+      "x": 2,
+      "y": 13,
+      "dir": "down",
+      "note": "blocks upward x=2 run — beam can only go down through here"
+    },
+    {
+      "x": 12,
+      "y": 6,
+      "dir": "up",
+      "note": "blocks downward x=12 run — beam can only go up through here"
+    },
+    {
+      "x": 12,
+      "y": 13,
+      "dir": "down",
+      "note": "blocks upward x=12 run — beam can only go down through here"
+    }
+  ]
+}

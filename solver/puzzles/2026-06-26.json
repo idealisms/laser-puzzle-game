@@ -1,0 +1,70 @@
+{
+  "date": "2026-06-26",
+  "name": "Drumlins",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 15,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW drumlin — touches top and left walls (6 cells)",
+      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1],[0,2]]
+    },
+    {
+      "label": "NE drumlin — touches top and right walls (6 cells)",
+      "cells": [[12,0],[13,0],[14,0],[13,1],[14,1],[14,2]]
+    },
+    {
+      "label": "SW drumlin — touches left and bottom walls (6 cells)",
+      "cells": [[0,17],[0,18],[0,19],[1,18],[1,19],[2,19]]
+    },
+    {
+      "label": "SE drumlin — touches right and bottom walls (6 cells)",
+      "cells": [[12,19],[13,19],[14,19],[14,18],[13,18],[14,17]]
+    },
+    {
+      "label": "Left wall upper — touches left wall (5 cells)",
+      "cells": [[0,8],[0,9],[1,8],[0,10],[1,10]]
+    },
+    {
+      "label": "Right wall upper — touches right wall (5 cells)",
+      "cells": [[13,4],[14,4],[14,5],[13,5],[14,6]]
+    },
+    {
+      "label": "Right wall lower — touches right wall (5 cells)",
+      "cells": [[13,10],[14,10],[14,11],[13,11],[14,12]]
+    },
+    {
+      "label": "Upper-left drumlin (5 cells)",
+      "cells": [[3,4],[4,4],[5,4],[4,5],[5,5]]
+    },
+    {
+      "label": "Upper-right drumlin (5 cells)",
+      "cells": [[9,4],[10,4],[11,4],[9,5],[10,5]]
+    },
+    {
+      "label": "Upper mid blocker (2 cells)",
+      "cells": [[7,8],[8,8]]
+    },
+    {
+      "label": "Lower-left drumlin (4 cells)",
+      "cells": [[3,16],[4,16],[3,17],[4,17]]
+    },
+    {
+      "label": "Lower-right drumlin (4 cells)",
+      "cells": [[9,16],[10,16],[9,17],[10,17]]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 8,
+      "y": 15,
+      "dir": "right",
+      "note": "laser going right triggers split — up+down beams emerge at x=8"
+    }
+  ]
+}
