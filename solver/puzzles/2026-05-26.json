@@ -1,316 +1,305 @@
 {
   "date": "2026-05-26",
-  "name": "Transmission",
+  "name": "Inlets",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 0,
-    "y": 10,
-    "dir": "right"
+    "x": 14,
+    "y": 14,
+    "dir": "left"
   },
-  "num_mirrors": 9,
+  "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Mast top \u2014 touches top wall, clear gap y=3-15 for split beams",
+      "label": "NW inlet — touches top and left walls (6 cells)",
       "cells": [
         [
-          7,
+          0,
           0
         ],
         [
-          7,
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          0,
           1
         ],
         [
-          7,
+          1,
+          1
+        ],
+        [
+          0,
           2
         ]
       ]
     },
     {
-      "label": "Mast bottom \u2014 touches bottom wall",
+      "label": "NE inlet — touches top and right walls (6 cells)",
       "cells": [
         [
-          7,
+          12,
+          0
+        ],
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          13,
+          1
+        ],
+        [
+          14,
+          1
+        ],
+        [
+          14,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "SW inlet — touches left and bottom walls (6 cells)",
+      "cells": [
+        [
+          0,
           17
         ],
         [
-          7,
+          0,
           18
         ],
         [
-          7,
+          0,
+          19
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
           19
         ]
       ]
     },
     {
-      "label": "Upper-left wing \u2014 touches left wall",
+      "label": "SE inlet — touches right and bottom walls (6 cells)",
       "cells": [
         [
-          0,
-          5
+          12,
+          19
         ],
         [
-          1,
-          5
+          13,
+          19
         ],
         [
-          2,
-          5
+          14,
+          19
         ],
         [
-          3,
-          5
+          14,
+          18
         ],
         [
-          4,
-          5
+          13,
+          18
         ],
         [
-          0,
-          6
-        ],
-        [
-          1,
-          6
-        ],
-        [
-          2,
-          6
-        ],
-        [
-          3,
-          6
-        ],
-        [
-          4,
-          6
-        ],
-        [
-          0,
-          7
-        ],
-        [
-          1,
-          7
-        ],
-        [
-          2,
-          7
-        ],
-        [
-          3,
-          7
-        ],
-        [
-          4,
-          7
+          14,
+          17
         ]
       ]
     },
     {
-      "label": "Upper-right wing \u2014 touches right wall",
+      "label": "Left wall mid — touches left wall (5 cells)",
       "cells": [
         [
-          10,
-          5
+          0,
+          10
         ],
         [
-          11,
-          5
+          0,
+          11
         ],
         [
-          12,
-          5
+          1,
+          10
         ],
         [
-          13,
-          5
+          0,
+          12
         ],
         [
-          14,
-          5
-        ],
-        [
-          10,
-          6
-        ],
-        [
-          11,
-          6
-        ],
-        [
-          12,
-          6
-        ],
-        [
-          13,
-          6
-        ],
-        [
-          14,
-          6
-        ],
-        [
-          10,
-          7
-        ],
-        [
-          11,
-          7
-        ],
-        [
-          12,
-          7
-        ],
-        [
-          13,
-          7
-        ],
-        [
-          14,
-          7
+          1,
+          12
         ]
       ]
     },
     {
-      "label": "Lower-left wing \u2014 touches left wall",
+      "label": "Right wall upper — touches right wall (5 cells)",
       "cells": [
         [
-          0,
-          12
+          13,
+          6
         ],
         [
-          1,
-          12
+          14,
+          6
         ],
         [
-          2,
-          12
+          14,
+          7
         ],
         [
-          3,
-          12
+          13,
+          7
         ],
         [
-          4,
-          12
-        ],
-        [
-          0,
-          13
-        ],
-        [
-          1,
-          13
-        ],
-        [
-          2,
-          13
-        ],
-        [
-          3,
-          13
-        ],
-        [
-          4,
-          13
-        ],
-        [
-          0,
-          14
-        ],
-        [
-          1,
-          14
-        ],
-        [
-          2,
-          14
-        ],
-        [
-          3,
-          14
-        ],
-        [
-          4,
-          14
+          14,
+          8
         ]
       ]
     },
     {
-      "label": "Lower-right wing \u2014 touches right wall",
+      "label": "Right wall lower — touches right wall (5 cells)",
       "cells": [
         [
-          10,
-          12
+          13,
+          10
         ],
         [
-          11,
-          12
+          14,
+          10
         ],
         [
-          12,
-          12
+          14,
+          11
         ],
         [
           13,
-          12
+          11
         ],
         [
           14,
           12
+        ]
+      ]
+    },
+    {
+      "label": "Upper-left island (5 cells)",
+      "cells": [
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Upper-right island (5 cells)",
+      "cells": [
+        [
+          9,
+          4
         ],
         [
           10,
-          13
+          4
         ],
         [
           11,
-          13
-        ],
-        [
-          12,
-          13
-        ],
-        [
-          13,
-          13
-        ],
-        [
-          14,
-          13
+          4
         ],
         [
           10,
-          14
+          5
         ],
         [
           11,
-          14
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Lower-left island (4 cells)",
+      "cells": [
+        [
+          3,
+          16
         ],
         [
-          12,
-          14
+          4,
+          16
         ],
         [
-          13,
-          14
+          3,
+          17
         ],
         [
-          14,
-          14
+          4,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "Lower-right island (4 cells)",
+      "cells": [
+        [
+          9,
+          16
+        ],
+        [
+          10,
+          16
+        ],
+        [
+          9,
+          17
+        ],
+        [
+          10,
+          17
         ]
       ]
     }
   ],
   "splitters": [
     {
-      "x": 7,
-      "y": 10,
-      "dir": "right",
-      "note": "Laser traveling RIGHT hits splitter \u2192 splits UP (through gap y=3-9) and DOWN (through gap y=11-16)"
+      "x": 6,
+      "y": 14,
+      "dir": "left",
+      "note": "laser going left triggers split — up+down beams emerge at x=6"
     }
   ]
 }

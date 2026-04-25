@@ -1,17 +1,17 @@
 {
   "date": "2026-06-08",
-  "name": "Drift",
+  "name": "Ghylls",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 7,
-    "y": 19,
-    "dir": "up"
+    "x": 0,
+    "y": 8,
+    "dir": "right"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW drift \u2014 touches top and left walls (8 cells)",
+      "label": "NW ghyll — touches top and left walls (9 cells)",
       "cells": [
         [
           0,
@@ -26,6 +26,10 @@
           0
         ],
         [
+          3,
+          0
+        ],
+        [
           0,
           1
         ],
@@ -42,14 +46,18 @@
           2
         ],
         [
-          1,
-          2
+          0,
+          3
         ]
       ]
     },
     {
-      "label": "NE drift \u2014 touches top and right walls (7 cells)",
+      "label": "NE ghyll — touches top and right walls (9 cells)",
       "cells": [
+        [
+          11,
+          0
+        ],
         [
           12,
           0
@@ -63,6 +71,10 @@
           0
         ],
         [
+          12,
+          1
+        ],
+        [
           13,
           1
         ],
@@ -75,14 +87,18 @@
           2
         ],
         [
-          13,
-          2
+          14,
+          3
         ]
       ]
     },
     {
-      "label": "SW drift \u2014 touches left and bottom walls (6 cells)",
+      "label": "SW ghyll — touches left and bottom walls (7 cells)",
       "cells": [
+        [
+          0,
+          16
+        ],
         [
           0,
           17
@@ -97,20 +113,20 @@
         ],
         [
           1,
+          17
+        ],
+        [
+          1,
           18
         ],
         [
           1,
           19
-        ],
-        [
-          2,
-          19
         ]
       ]
     },
     {
-      "label": "SE drift \u2014 touches right and bottom walls (6 cells)",
+      "label": "SE ghyll — touches right and bottom walls (6 cells)",
       "cells": [
         [
           12,
@@ -139,8 +155,87 @@
       ]
     },
     {
-      "label": "Upper-left drift (5 cells)",
+      "label": "Left wall upper — touches left wall (5 cells)",
       "cells": [
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ]
+    },
+    {
+      "label": "Left wall lower — touches left wall (5 cells)",
+      "cells": [
+        [
+          0,
+          11
+        ],
+        [
+          0,
+          12
+        ],
+        [
+          1,
+          11
+        ],
+        [
+          0,
+          13
+        ],
+        [
+          1,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "Right wall mid — touches right wall (5 cells)",
+      "cells": [
+        [
+          13,
+          10
+        ],
+        [
+          14,
+          10
+        ],
+        [
+          14,
+          11
+        ],
+        [
+          13,
+          11
+        ],
+        [
+          14,
+          12
+        ]
+      ]
+    },
+    {
+      "label": "Upper-left island (5 cells)",
+      "cells": [
+        [
+          3,
+          3
+        ],
         [
           4,
           3
@@ -150,139 +245,72 @@
           3
         ],
         [
-          6,
-          3
+          3,
+          4
         ],
         [
           4,
           4
+        ]
+      ]
+    },
+    {
+      "label": "Upper-right island (5 cells)",
+      "cells": [
+        [
+          9,
+          3
         ],
         [
-          5,
+          10,
+          3
+        ],
+        [
+          11,
+          3
+        ],
+        [
+          10,
+          4
+        ],
+        [
+          11,
           4
         ]
       ]
     },
     {
-      "label": "Upper-right drift (5 cells)",
-      "cells": [
-        [
-          8,
-          2
-        ],
-        [
-          9,
-          2
-        ],
-        [
-          10,
-          2
-        ],
-        [
-          9,
-          3
-        ],
-        [
-          10,
-          3
-        ]
-      ]
-    },
-    {
-      "label": "Mid-left drift (5 cells)",
+      "label": "Lower-left island (5 cells)",
       "cells": [
         [
           3,
-          7
+          14
         ],
         [
           4,
-          7
+          14
         ],
         [
           5,
-          7
+          14
         ],
         [
           3,
-          8
+          15
         ],
         [
           4,
-          8
+          15
         ]
       ]
     },
     {
-      "label": "Mid-right drift (5 cells)",
+      "label": "Lower-right island (5 cells)",
       "cells": [
         [
           9,
-          7
-        ],
-        [
-          10,
-          7
-        ],
-        [
-          11,
-          7
-        ],
-        [
-          10,
-          8
-        ],
-        [
-          11,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "Center blocker \u2014 blocks x=7 at y=12 (3 cells)",
-      "cells": [
-        [
-          6,
-          12
-        ],
-        [
-          7,
-          12
-        ],
-        [
-          8,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Lower-left drift (5 cells)",
-      "cells": [
-        [
-          2,
           14
         ],
-        [
-          3,
-          14
-        ],
-        [
-          4,
-          14
-        ],
-        [
-          2,
-          15
-        ],
-        [
-          3,
-          15
-        ]
-      ]
-    },
-    {
-      "label": "Lower-right drift (5 cells)",
-      "cells": [
         [
           10,
           14
@@ -292,45 +320,54 @@
           14
         ],
         [
-          12,
-          14
+          10,
+          15
         ],
         [
           11,
           15
-        ],
-        [
-          12,
-          15
         ]
       ]
     },
     {
-      "label": "Near-bottom left (2 cells)",
-      "cells": [
-        [
-          4,
-          17
-        ],
-        [
-          5,
-          17
-        ]
-      ]
-    },
-    {
-      "label": "Near-bottom right (2 cells)",
+      "label": "y=8 run shortener (2 cells)",
       "cells": [
         [
           9,
-          17
+          8
         ],
         [
           10,
-          17
+          8
         ]
       ]
     }
   ],
-  "splitters": []
+  "splitters": [],
+  "gates": [
+    {
+      "x": 2,
+      "y": 6,
+      "dir": "up",
+      "note": "blocks downward x=2 run — beam can only go up through here"
+    },
+    {
+      "x": 2,
+      "y": 13,
+      "dir": "down",
+      "note": "blocks upward x=2 run — beam can only go down through here"
+    },
+    {
+      "x": 8,
+      "y": 6,
+      "dir": "up",
+      "note": "blocks downward x=8 run — beam can only go up through here"
+    },
+    {
+      "x": 8,
+      "y": 13,
+      "dir": "down",
+      "note": "blocks upward x=8 run — beam can only go down through here"
+    }
+  ]
 }

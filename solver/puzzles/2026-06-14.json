@@ -1,17 +1,17 @@
 {
   "date": "2026-06-14",
-  "name": "Banks",
+  "name": "Reach",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 14,
-    "y": 8,
-    "dir": "left"
+    "x": 7,
+    "y": 19,
+    "dir": "up"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW bank \u2014 touches top and left walls (7 cells)",
+      "label": "NW blob — touches top and left walls",
       "cells": [
         [
           0,
@@ -40,11 +40,23 @@
         [
           2,
           1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
         ]
       ]
     },
     {
-      "label": "NE bank \u2014 touches top and right walls (5 cells)",
+      "label": "NE blob — touches top and right walls",
       "cells": [
         [
           11,
@@ -63,16 +75,56 @@
           0
         ],
         [
+          12,
+          1
+        ],
+        [
+          13,
+          1
+        ],
+        [
           14,
           1
+        ],
+        [
+          13,
+          2
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          14,
+          3
         ]
       ]
     },
     {
-      "label": "SW bank \u2014 touches left and bottom walls (5 cells)",
+      "label": "SW blob — touches left and bottom walls",
       "cells": [
         [
           0,
+          16
+        ],
+        [
+          0,
+          17
+        ],
+        [
+          1,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          2,
           18
         ],
         [
@@ -94,8 +146,36 @@
       ]
     },
     {
-      "label": "SE bank \u2014 touches right and bottom walls (7 cells)",
+      "label": "SE blob — touches right and bottom walls",
       "cells": [
+        [
+          14,
+          16
+        ],
+        [
+          13,
+          17
+        ],
+        [
+          14,
+          17
+        ],
+        [
+          11,
+          18
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          18
+        ],
         [
           11,
           19
@@ -111,242 +191,167 @@
         [
           14,
           19
-        ],
-        [
-          12,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          14,
-          18
         ]
       ]
     },
     {
-      "label": "Top-left wall \u2014 touches left wall (5 cells)",
+      "label": "Upper island A",
       "cells": [
         [
-          0,
-          4
+          5,
+          2
         ],
         [
-          1,
-          4
+          6,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "Upper island B",
+      "cells": [
+        [
+          9,
+          2
         ],
         [
-          0,
+          10,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "Mid-upper island A",
+      "cells": [
+        [
+          4,
           5
         ],
         [
-          1,
+          5,
           5
         ],
         [
-          0,
+          4,
           6
         ]
       ]
     },
     {
-      "label": "Bottom-left wall \u2014 touches left wall (4 cells)",
+      "label": "Mid-upper island B",
       "cells": [
         [
-          0,
-          13
+          9,
+          5
         ],
         [
-          0,
-          14
-        ],
-        [
-          0,
-          15
-        ],
-        [
-          1,
-          14
-        ]
-      ]
-    },
-    {
-      "label": "Top-right wall \u2014 touches right wall (4 cells)",
-      "cells": [
-        [
-          13,
-          3
-        ],
-        [
-          14,
-          3
-        ],
-        [
-          14,
-          4
-        ],
-        [
-          14,
+          10,
           5
         ]
       ]
     },
     {
-      "label": "Bottom-right wall \u2014 touches right wall (5 cells)",
+      "label": "Center blocker — breaks long x=7 run",
       "cells": [
         [
-          13,
-          14
+          7,
+          8
         ],
         [
-          14,
-          14
-        ],
-        [
-          14,
-          15
-        ],
-        [
-          13,
-          15
-        ],
-        [
-          14,
-          16
+          8,
+          8
         ]
       ]
     },
     {
-      "label": "Right wall mid \u2014 touches right wall (3 cells)",
+      "label": "Mid island A",
       "cells": [
         [
-          13,
+          3,
           9
         ],
         [
-          14,
+          4,
+          9
+        ]
+      ]
+    },
+    {
+      "label": "Mid island B",
+      "cells": [
+        [
+          11,
           9
         ],
         [
-          14,
+          12,
+          9
+        ],
+        [
+          11,
           10
         ]
       ]
     },
     {
-      "label": "y=8 run shortener (2 cells)",
+      "label": "Center island",
       "cells": [
         [
           5,
-          8
-        ],
-        [
-          6,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "Upper-left island (4 cells)",
-      "cells": [
-        [
-          4,
-          2
-        ],
-        [
-          5,
-          2
-        ],
-        [
-          4,
-          3
-        ],
-        [
-          5,
-          3
-        ]
-      ]
-    },
-    {
-      "label": "Upper-right island (4 cells)",
-      "cells": [
-        [
-          9,
-          2
-        ],
-        [
-          10,
-          2
-        ],
-        [
-          9,
-          3
-        ],
-        [
-          10,
-          3
-        ]
-      ]
-    },
-    {
-      "label": "Mid island (5 cells)",
-      "cells": [
-        [
-          6,
-          11
-        ],
-        [
-          7,
-          11
-        ],
-        [
-          8,
           11
         ],
         [
           6,
-          12
-        ],
-        [
-          7,
-          12
+          11
         ]
       ]
     },
     {
-      "label": "Lower-left island (4 cells)",
+      "label": "Lower island A",
       "cells": [
         [
-          3,
-          16
+          4,
+          13
+        ],
+        [
+          5,
+          13
         ],
         [
           4,
-          16
-        ],
-        [
-          3,
-          17
-        ],
-        [
-          4,
-          17
+          14
         ]
       ]
     },
     {
-      "label": "Lower-right island (4 cells)",
+      "label": "Lower island B",
       "cells": [
-        [
-          9,
-          16
-        ],
         [
           10,
+          13
+        ],
+        [
+          11,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "Lower island C",
+      "cells": [
+        [
+          5,
           16
         ],
+        [
+          6,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "Lower island D",
+      "cells": [
         [
           9,
           17

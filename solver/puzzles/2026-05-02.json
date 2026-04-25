@@ -1,17 +1,17 @@
 {
   "date": "2026-05-02",
-  "name": "Fork",
-  "width": 15,
-  "height": 20,
+  "name": "Lochs",
+  "width": 21,
+  "height": 28,
   "laser": {
-    "x": 0,
-    "y": 10,
-    "dir": "right"
+    "x": 10,
+    "y": 0,
+    "dir": "down"
   },
-  "num_mirrors": 10,
+  "num_mirrors": 11,
   "obstacle_groups": [
     {
-      "label": "Top-left corner \u2014 x=0..2, y=0..1, touches top and left edges",
+      "label": "NW loch — touches top and left walls (10 cells)",
       "cells": [
         [
           0,
@@ -24,113 +24,302 @@
         [
           2,
           0
-        ],
-        [
-          0,
-          1
-        ],
-        [
-          1,
-          1
-        ],
-        [
-          2,
-          1
-        ]
-      ]
-    },
-    {
-      "label": "Top-right corner \u2014 x=12..14, y=0..1, touches top and right edges",
-      "cells": [
-        [
-          12,
-          0
-        ],
-        [
-          13,
-          0
-        ],
-        [
-          14,
-          0
-        ],
-        [
-          12,
-          1
-        ],
-        [
-          13,
-          1
-        ],
-        [
-          14,
-          1
-        ]
-      ]
-    },
-    {
-      "label": "Upper-right bar \u2014 x=10..14, y=2..3, touches right; offset above upper-left bar",
-      "cells": [
-        [
-          10,
-          2
-        ],
-        [
-          11,
-          2
-        ],
-        [
-          12,
-          2
-        ],
-        [
-          13,
-          2
-        ],
-        [
-          14,
-          2
-        ],
-        [
-          10,
-          3
-        ],
-        [
-          11,
-          3
-        ],
-        [
-          12,
-          3
-        ],
-        [
-          13,
-          3
-        ],
-        [
-          14,
-          3
-        ]
-      ]
-    },
-    {
-      "label": "Upper-left bar \u2014 x=0..8, y=5..6, touches left",
-      "cells": [
-        [
-          0,
-          5
-        ],
-        [
-          1,
-          5
-        ],
-        [
-          2,
-          5
         ],
         [
           3,
-          5
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "NE loch — touches top and right walls (10 cells)",
+      "cells": [
+        [
+          17,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          19,
+          0
+        ],
+        [
+          20,
+          0
+        ],
+        [
+          17,
+          1
+        ],
+        [
+          18,
+          1
+        ],
+        [
+          19,
+          1
+        ],
+        [
+          20,
+          1
+        ],
+        [
+          19,
+          2
+        ],
+        [
+          20,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "SW loch — touches left and bottom walls (10 cells)",
+      "cells": [
+        [
+          0,
+          24
+        ],
+        [
+          0,
+          25
+        ],
+        [
+          0,
+          26
+        ],
+        [
+          0,
+          27
+        ],
+        [
+          1,
+          25
+        ],
+        [
+          1,
+          26
+        ],
+        [
+          1,
+          27
+        ],
+        [
+          2,
+          26
+        ],
+        [
+          2,
+          27
+        ],
+        [
+          3,
+          27
+        ]
+      ]
+    },
+    {
+      "label": "SE loch — touches right and bottom walls (10 cells)",
+      "cells": [
+        [
+          17,
+          27
+        ],
+        [
+          18,
+          27
+        ],
+        [
+          19,
+          27
+        ],
+        [
+          20,
+          27
+        ],
+        [
+          18,
+          26
+        ],
+        [
+          19,
+          26
+        ],
+        [
+          20,
+          26
+        ],
+        [
+          19,
+          25
+        ],
+        [
+          20,
+          25
+        ],
+        [
+          20,
+          24
+        ]
+      ]
+    },
+    {
+      "label": "Left wall upper — touches left wall (6 cells)",
+      "cells": [
+        [
+          0,
+          8
+        ],
+        [
+          1,
+          8
+        ],
+        [
+          0,
+          9
+        ],
+        [
+          1,
+          9
+        ],
+        [
+          0,
+          10
+        ],
+        [
+          1,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Left wall lower — touches left wall (6 cells)",
+      "cells": [
+        [
+          0,
+          17
+        ],
+        [
+          1,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "Right wall upper — touches right wall (6 cells)",
+      "cells": [
+        [
+          19,
+          8
+        ],
+        [
+          20,
+          8
+        ],
+        [
+          19,
+          9
+        ],
+        [
+          20,
+          9
+        ],
+        [
+          19,
+          10
+        ],
+        [
+          20,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Right wall lower — touches right wall (6 cells)",
+      "cells": [
+        [
+          19,
+          17
+        ],
+        [
+          20,
+          17
+        ],
+        [
+          19,
+          18
+        ],
+        [
+          20,
+          18
+        ],
+        [
+          19,
+          19
+        ],
+        [
+          20,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "Upper-left loch (6 cells)",
+      "cells": [
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          6,
+          4
         ],
         [
           4,
@@ -143,239 +332,176 @@
         [
           6,
           5
+        ]
+      ]
+    },
+    {
+      "label": "Upper-right loch (6 cells)",
+      "cells": [
+        [
+          14,
+          4
         ],
         [
-          7,
+          15,
+          4
+        ],
+        [
+          16,
+          4
+        ],
+        [
+          14,
           5
         ],
         [
-          8,
+          15,
           5
         ],
         [
-          0,
-          6
-        ],
-        [
-          1,
-          6
-        ],
-        [
-          2,
-          6
-        ],
-        [
-          3,
-          6
-        ],
-        [
-          4,
-          6
-        ],
-        [
-          5,
-          6
-        ],
-        [
-          6,
-          6
-        ],
-        [
-          7,
-          6
-        ],
-        [
-          8,
-          6
+          16,
+          5
         ]
       ]
     },
     {
-      "label": "Lower-left bar \u2014 x=0..8, y=14..15, touches left",
+      "label": "x=10 run shortener (3 cells)",
       "cells": [
         [
-          0,
-          14
-        ],
-        [
-          1,
-          14
-        ],
-        [
-          2,
-          14
-        ],
-        [
-          3,
-          14
-        ],
-        [
-          4,
-          14
-        ],
-        [
-          5,
-          14
-        ],
-        [
-          6,
-          14
-        ],
-        [
-          7,
-          14
-        ],
-        [
-          8,
-          14
-        ],
-        [
-          0,
-          15
-        ],
-        [
-          1,
-          15
-        ],
-        [
-          2,
-          15
-        ],
-        [
-          3,
-          15
-        ],
-        [
-          4,
-          15
-        ],
-        [
-          5,
-          15
-        ],
-        [
-          6,
-          15
-        ],
-        [
-          7,
-          15
-        ],
-        [
-          8,
-          15
-        ]
-      ]
-    },
-    {
-      "label": "Lower-right bar \u2014 x=10..14, y=17..18, touches right; offset below lower-left bar",
-      "cells": [
-        [
-          10,
-          17
-        ],
-        [
-          11,
-          17
-        ],
-        [
-          12,
-          17
-        ],
-        [
-          13,
-          17
-        ],
-        [
-          14,
-          17
+          9,
+          10
         ],
         [
           10,
-          18
+          10
         ],
         [
           11,
-          18
-        ],
-        [
-          12,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          14,
-          18
+          10
         ]
       ]
     },
     {
-      "label": "Bottom-left corner \u2014 x=0..2, y=18..19, touches bottom and left edges",
+      "label": "Lower-left loch (5 cells)",
       "cells": [
         [
-          0,
-          18
-        ],
-        [
-          1,
-          18
-        ],
-        [
-          2,
-          18
-        ],
-        [
-          0,
+          4,
           19
         ],
         [
-          1,
+          5,
           19
         ],
         [
-          2,
+          6,
           19
+        ],
+        [
+          4,
+          20
+        ],
+        [
+          5,
+          20
         ]
       ]
     },
     {
-      "label": "Bottom-right corner \u2014 x=12..14, y=18..19, touches bottom and right edges",
+      "label": "Lower-right loch (5 cells)",
       "cells": [
         [
-          12,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          14,
-          18
-        ],
-        [
-          12,
-          19
-        ],
-        [
-          13,
-          19
-        ],
-        [
           14,
           19
+        ],
+        [
+          15,
+          19
+        ],
+        [
+          16,
+          19
+        ],
+        [
+          15,
+          20
+        ],
+        [
+          16,
+          20
+        ]
+      ]
+    },
+    {
+      "label": "Center lower accent (4 cells)",
+      "cells": [
+        [
+          9,
+          22
+        ],
+        [
+          10,
+          22
+        ],
+        [
+          9,
+          23
+        ],
+        [
+          10,
+          23
         ]
       ]
     }
   ],
-  "splitters": [
+  "splitters": [],
+  "gates": [
     {
       "x": 7,
-      "y": 10,
-      "dir": "right"
+      "y": 9,
+      "dir": "up",
+      "note": "blocks downward x=7 run — beam can only go up through here"
+    },
+    {
+      "x": 7,
+      "y": 18,
+      "dir": "down",
+      "note": "blocks upward x=7 run — beam can only go down through here"
+    },
+    {
+      "x": 17,
+      "y": 9,
+      "dir": "up",
+      "note": "blocks downward x=17 run — beam can only go up through here"
+    },
+    {
+      "x": 17,
+      "y": 18,
+      "dir": "down",
+      "note": "blocks upward x=17 run — beam can only go down through here"
+    },
+    {
+      "x": 2,
+      "y": 9,
+      "dir": "up",
+      "note": "blocks downward x=2 run — beam can only go up through here"
+    },
+    {
+      "x": 2,
+      "y": 18,
+      "dir": "down",
+      "note": "blocks upward x=2 run — beam can only go down through here"
+    },
+    {
+      "x": 3,
+      "y": 9,
+      "dir": "up",
+      "note": "blocks downward x=3 run — beam can only go up through here"
+    },
+    {
+      "x": 3,
+      "y": 18,
+      "dir": "down",
+      "note": "blocks upward x=3 run — beam can only go down through here"
     }
   ]
 }

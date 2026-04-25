@@ -1,171 +1,191 @@
 {
   "date": "2026-05-21",
-  "name": "Terraces",
+  "name": "Atoll",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 7,
-    "y": 0,
-    "dir": "down"
+    "x": 0,
+    "y": 10,
+    "dir": "right"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Right-top terrace wide step \u2014 touches top and right walls",
+      "label": "NW large — touches top and left walls (10 cells)",
       "cells": [
         [
-          9,
+          0,
           0
         ],
         [
-          10,
+          1,
           0
         ],
         [
-          11,
+          2,
           0
         ],
         [
-          12,
+          3,
           0
         ],
         [
-          13,
-          0
-        ],
-        [
-          14,
-          0
-        ],
-        [
-          9,
+          0,
           1
         ],
         [
-          10,
+          1,
           1
         ],
         [
-          11,
+          2,
           1
         ],
         [
-          12,
-          1
-        ],
-        [
-          13,
-          1
-        ],
-        [
-          14,
-          1
-        ],
-        [
-          9,
+          0,
           2
         ],
         [
-          10,
+          1,
           2
         ],
         [
-          11,
-          2
-        ],
-        [
-          12,
-          2
-        ],
-        [
-          13,
-          2
-        ],
-        [
-          14,
-          2
-        ],
-        [
-          9,
+          0,
           3
-        ],
-        [
-          10,
-          3
-        ],
-        [
-          11,
-          3
-        ],
-        [
-          12,
-          3
-        ],
-        [
-          13,
-          3
-        ],
-        [
-          14,
-          3
-        ],
-        [
-          9,
-          4
-        ],
-        [
-          10,
-          4
-        ],
-        [
-          11,
-          4
-        ],
-        [
-          12,
-          4
-        ],
-        [
-          13,
-          4
-        ],
-        [
-          14,
-          4
-        ],
-        [
-          9,
-          5
-        ],
-        [
-          10,
-          5
-        ],
-        [
-          11,
-          5
-        ],
-        [
-          12,
-          5
-        ],
-        [
-          13,
-          5
-        ],
-        [
-          14,
-          5
         ]
       ]
     },
     {
-      "label": "Right-top terrace narrow step \u2014 touches right wall",
+      "label": "NE large — touches top and right walls (8 cells)",
       "cells": [
         [
+          11,
+          0
+        ],
+        [
           12,
+          0
+        ],
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          13,
+          1
+        ],
+        [
+          14,
+          1
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          14,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "SW medium — touches left and bottom walls (6 cells)",
+      "cells": [
+        [
+          0,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "SE large — touches right and bottom walls (8 cells)",
+      "cells": [
+        [
+          14,
+          16
+        ],
+        [
+          14,
+          17
+        ],
+        [
+          13,
+          17
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          12,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "Left wall mid — touches left wall (5 cells)",
+      "cells": [
+        [
+          0,
           6
         ],
+        [
+          0,
+          7
+        ],
+        [
+          1,
+          7
+        ],
+        [
+          0,
+          8
+        ],
+        [
+          1,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "Right wall mid — touches right wall (5 cells)",
+      "cells": [
         [
           13,
           6
@@ -175,7 +195,7 @@
           6
         ],
         [
-          12,
+          14,
           7
         ],
         [
@@ -184,233 +204,136 @@
         ],
         [
           14,
-          7
-        ],
-        [
-          12,
           8
+        ]
+      ]
+    },
+    {
+      "label": "Interior upper-left (3 cells)",
+      "cells": [
+        [
+          5,
+          3
         ],
         [
-          13,
-          8
+          6,
+          3
         ],
         [
-          14,
-          8
+          5,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "Interior upper-right (3 cells)",
+      "cells": [
+        [
+          8,
+          3
         ],
         [
-          12,
+          9,
+          3
+        ],
+        [
+          9,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "Interior mid-left (2 cells)",
+      "cells": [
+        [
+          5,
           9
         ],
         [
-          13,
-          9
-        ],
-        [
-          14,
+          6,
           9
         ]
       ]
     },
     {
-      "label": "Left-bottom terrace wide step \u2014 touches left and bottom walls",
+      "label": "Interior mid-right (2 cells)",
       "cells": [
         [
-          0,
-          14
+          8,
+          9
         ],
         [
-          1,
-          14
-        ],
-        [
-          2,
-          14
-        ],
-        [
-          3,
-          14
-        ],
-        [
-          4,
-          14
-        ],
-        [
-          5,
-          14
-        ],
-        [
-          0,
-          15
-        ],
-        [
-          1,
-          15
-        ],
-        [
-          2,
-          15
-        ],
-        [
-          3,
-          15
-        ],
-        [
-          4,
-          15
-        ],
-        [
-          5,
-          15
-        ],
-        [
-          0,
-          16
-        ],
-        [
-          1,
-          16
-        ],
-        [
-          2,
-          16
-        ],
-        [
-          3,
-          16
-        ],
-        [
-          4,
-          16
-        ],
-        [
-          5,
-          16
-        ],
-        [
-          0,
-          17
-        ],
-        [
-          1,
-          17
-        ],
-        [
-          2,
-          17
-        ],
-        [
-          3,
-          17
-        ],
-        [
-          4,
-          17
-        ],
-        [
-          5,
-          17
-        ],
-        [
-          0,
-          18
-        ],
-        [
-          1,
-          18
-        ],
-        [
-          2,
-          18
-        ],
-        [
-          3,
-          18
-        ],
-        [
-          4,
-          18
-        ],
-        [
-          5,
-          18
-        ],
-        [
-          0,
-          19
-        ],
-        [
-          1,
-          19
-        ],
-        [
-          2,
-          19
-        ],
-        [
-          3,
-          19
-        ],
-        [
-          4,
-          19
-        ],
-        [
-          5,
-          19
+          9,
+          9
         ]
       ]
     },
     {
-      "label": "Left-bottom terrace narrow step \u2014 touches left wall",
+      "label": "Center blocker — breaks full-width y=10 run (1 cell)",
       "cells": [
         [
-          0,
+          7,
           10
-        ],
+        ]
+      ]
+    },
+    {
+      "label": "Interior lower-left (3 cells)",
+      "cells": [
         [
-          1,
-          10
-        ],
-        [
-          2,
-          10
-        ],
-        [
-          0,
-          11
-        ],
-        [
-          1,
-          11
-        ],
-        [
-          2,
-          11
-        ],
-        [
-          0,
-          12
-        ],
-        [
-          1,
-          12
-        ],
-        [
-          2,
-          12
-        ],
-        [
-          0,
+          5,
           13
         ],
         [
-          1,
+          6,
           13
         ],
         [
-          2,
+          5,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "Interior lower-right (3 cells)",
+      "cells": [
+        [
+          8,
           13
+        ],
+        [
+          9,
+          13
+        ],
+        [
+          9,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "Interior bottom-left (2 cells)",
+      "cells": [
+        [
+          4,
+          16
+        ],
+        [
+          5,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "Interior bottom-right (2 cells)",
+      "cells": [
+        [
+          9,
+          16
+        ],
+        [
+          10,
+          16
         ]
       ]
     }

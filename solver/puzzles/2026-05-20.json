@@ -1,304 +1,336 @@
 {
   "date": "2026-05-20",
-  "name": "Prism",
+  "name": "Drift",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 14,
-    "y": 10,
-    "dir": "left"
+    "x": 7,
+    "y": 19,
+    "dir": "up"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Apex \u2014 rightmost, narrowest layer",
+      "label": "NW drift — touches top and left walls (8 cells)",
       "cells": [
         [
-          9,
-          9
+          0,
+          0
         ],
         [
-          9,
-          10
+          1,
+          0
         ],
         [
-          9,
-          11
+          2,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
         ]
       ]
     },
     {
-      "label": "Layer 2",
+      "label": "NE drift — touches top and right walls (7 cells)",
       "cells": [
         [
-          7,
-          7
+          12,
+          0
         ],
         [
-          7,
-          8
+          13,
+          0
         ],
         [
-          7,
-          9
+          14,
+          0
         ],
         [
-          7,
-          10
+          13,
+          1
         ],
         [
-          7,
-          11
+          14,
+          1
         ],
         [
-          7,
-          12
+          14,
+          2
         ],
         [
-          7,
-          13
+          13,
+          2
         ]
       ]
     },
     {
-      "label": "Layer 3",
+      "label": "SW drift — touches left and bottom walls (6 cells)",
       "cells": [
         [
-          5,
-          5
+          0,
+          17
         ],
         [
-          5,
-          6
+          0,
+          18
         ],
         [
-          5,
-          7
+          0,
+          19
         ],
         [
-          5,
-          8
+          1,
+          18
         ],
         [
-          5,
-          9
+          1,
+          19
         ],
         [
-          5,
-          10
-        ],
-        [
-          5,
-          11
-        ],
-        [
-          5,
-          12
-        ],
-        [
-          5,
-          13
-        ],
-        [
-          5,
-          14
-        ],
-        [
-          5,
-          15
+          2,
+          19
         ]
       ]
     },
     {
-      "label": "Base \u2014 near left edge, almost full height",
+      "label": "SE drift — touches right and bottom walls (6 cells)",
       "cells": [
         [
-          3,
-          3
+          12,
+          19
         ],
         [
-          3,
-          4
+          13,
+          19
         ],
         [
-          3,
-          5
+          14,
+          19
         ],
         [
-          3,
-          6
+          14,
+          18
         ],
         [
-          3,
-          7
+          13,
+          18
         ],
         [
-          3,
-          8
-        ],
-        [
-          3,
-          9
-        ],
-        [
-          3,
-          10
-        ],
-        [
-          3,
-          11
-        ],
-        [
-          3,
-          12
-        ],
-        [
-          3,
-          13
-        ],
-        [
-          3,
-          14
-        ],
-        [
-          3,
-          15
-        ],
-        [
-          3,
-          16
-        ],
-        [
-          3,
+          14,
           17
         ]
       ]
     },
     {
-      "label": "Top perimeter block",
+      "label": "Upper-left drift (5 cells)",
       "cells": [
         [
-          11,
-          0
-        ],
-        [
-          12,
-          0
-        ],
-        [
-          13,
-          0
-        ],
-        [
-          11,
-          1
-        ],
-        [
-          12,
-          1
-        ],
-        [
-          13,
-          1
-        ]
-      ]
-    },
-    {
-      "label": "Bottom perimeter block",
-      "cells": [
-        [
-          11,
-          18
-        ],
-        [
-          12,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          11,
-          19
-        ],
-        [
-          12,
-          19
-        ],
-        [
-          13,
-          19
-        ]
-      ]
-    },
-    {
-      "label": "Right column \u2014 gap at y=9..11 for laser",
-      "cells": [
-        [
-          13,
+          4,
           3
         ],
         [
-          13,
+          5,
+          3
+        ],
+        [
+          6,
+          3
+        ],
+        [
+          4,
           4
         ],
         [
-          13,
-          5
+          5,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "Upper-right drift (5 cells)",
+      "cells": [
+        [
+          8,
+          2
         ],
         [
-          13,
-          6
+          9,
+          2
         ],
         [
-          13,
+          10,
+          2
+        ],
+        [
+          9,
+          3
+        ],
+        [
+          10,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "Mid-left drift (5 cells)",
+      "cells": [
+        [
+          3,
           7
         ],
         [
-          13,
+          4,
+          7
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          3,
           8
         ],
         [
-          13,
+          4,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "Mid-right drift (5 cells)",
+      "cells": [
+        [
+          9,
+          7
+        ],
+        [
+          10,
+          7
+        ],
+        [
+          11,
+          7
+        ],
+        [
+          10,
+          8
+        ],
+        [
+          11,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "Center blocker — blocks x=7 at y=12 (3 cells)",
+      "cells": [
+        [
+          6,
           12
         ],
         [
-          13,
-          13
+          7,
+          12
         ],
         [
-          13,
+          8,
+          12
+        ]
+      ]
+    },
+    {
+      "label": "Lower-left drift (5 cells)",
+      "cells": [
+        [
+          2,
           14
         ],
         [
-          13,
+          3,
+          14
+        ],
+        [
+          4,
+          14
+        ],
+        [
+          2,
           15
         ],
         [
-          13,
-          16
+          3,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "Lower-right drift (5 cells)",
+      "cells": [
+        [
+          10,
+          14
         ],
         [
-          13,
+          11,
+          14
+        ],
+        [
+          12,
+          14
+        ],
+        [
+          11,
+          15
+        ],
+        [
+          12,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "Near-bottom left (2 cells)",
+      "cells": [
+        [
+          4,
+          17
+        ],
+        [
+          5,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "Near-bottom right (2 cells)",
+      "cells": [
+        [
+          9,
+          17
+        ],
+        [
+          10,
           17
         ]
       ]
     }
   ],
-  "splitters": [],
-  "gates": [
-    {
-      "x": 0,
-      "y": 10,
-      "dir": "up",
-      "note": "left edge midpoint \u2014 only upward beams pass, downward is blocked"
-    },
-    {
-      "x": 10,
-      "y": 10,
-      "dir": "down",
-      "note": "right interior midpoint \u2014 only downward beams pass, upward is blocked"
-    }
-  ]
+  "splitters": []
 }

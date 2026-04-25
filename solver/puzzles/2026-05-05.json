@@ -1,255 +1,295 @@
 {
   "date": "2026-05-05",
-  "name": "Totem",
+  "name": "Cloughs",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 7,
+    "x": 6,
     "y": 19,
     "dir": "up"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Totem head",
+      "label": "NW clough — touches top and left walls (6 cells)",
       "cells": [
         [
-          5,
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          0,
           1
         ],
         [
-          6,
+          1,
           1
         ],
         [
-          8,
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "NE clough — touches top and right walls (6 cells)",
+      "cells": [
+        [
+          12,
+          0
+        ],
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          13,
           1
         ],
         [
-          9,
+          14,
           1
         ],
         [
-          5,
+          14,
           2
+        ]
+      ]
+    },
+    {
+      "label": "SW clough — touches left and bottom walls (6 cells)",
+      "cells": [
+        [
+          0,
+          17
         ],
         [
-          6,
-          2
+          0,
+          18
         ],
         [
-          8,
-          2
+          0,
+          19
         ],
         [
-          9,
-          2
+          1,
+          18
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "SE clough — touches right and bottom walls (6 cells)",
+      "cells": [
+        [
+          12,
+          19
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "Left wall upper — touches left wall (5 cells)",
+      "cells": [
+        [
+          0,
+          5
+        ],
+        [
+          0,
+          6
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          0,
+          7
+        ],
+        [
+          1,
+          7
+        ]
+      ]
+    },
+    {
+      "label": "Left wall lower — touches left wall (5 cells)",
+      "cells": [
+        [
+          0,
+          12
+        ],
+        [
+          0,
+          13
+        ],
+        [
+          1,
+          12
+        ],
+        [
+          0,
+          14
+        ],
+        [
+          1,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "Right wall upper — touches right wall (5 cells)",
+      "cells": [
+        [
+          13,
+          4
+        ],
+        [
+          14,
+          4
+        ],
+        [
+          14,
+          5
+        ],
+        [
+          13,
+          5
+        ],
+        [
+          14,
+          6
+        ]
+      ]
+    },
+    {
+      "label": "Right wall lower — touches right wall (5 cells)",
+      "cells": [
+        [
+          13,
+          12
+        ],
+        [
+          14,
+          12
+        ],
+        [
+          14,
+          13
+        ],
+        [
+          13,
+          13
+        ],
+        [
+          14,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "Upper island (5 cells)",
+      "cells": [
+        [
+          4,
+          3
         ],
         [
           5,
           3
         ],
         [
+          6,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "Upper-right island (5 cells)",
+      "cells": [
+        [
           9,
           3
-        ]
-      ]
-    },
-    {
-      "label": "Upper arms (wide, reaching near edges)",
-      "cells": [
-        [
-          1,
-          5
-        ],
-        [
-          2,
-          5
-        ],
-        [
-          3,
-          5
-        ],
-        [
-          4,
-          5
-        ],
-        [
-          6,
-          5
-        ],
-        [
-          8,
-          5
         ],
         [
           10,
-          5
+          3
         ],
         [
           11,
-          5
-        ],
-        [
-          12,
-          5
-        ],
-        [
-          13,
-          5
-        ]
-      ]
-    },
-    {
-      "label": "Upper body",
-      "cells": [
-        [
-          5,
-          6
-        ],
-        [
-          6,
-          6
-        ],
-        [
-          8,
-          6
-        ],
-        [
-          9,
-          6
-        ],
-        [
-          5,
-          7
-        ],
-        [
-          9,
-          7
-        ]
-      ]
-    },
-    {
-      "label": "Wide belt (spans most of grid width)",
-      "cells": [
-        [
-          2,
-          9
-        ],
-        [
-          3,
-          9
-        ],
-        [
-          4,
-          9
-        ],
-        [
-          5,
-          9
-        ],
-        [
-          9,
-          9
+          3
         ],
         [
           10,
-          9
+          4
         ],
         [
           11,
-          9
-        ],
-        [
-          12,
-          9
+          4
         ]
       ]
     },
     {
-      "label": "Lower body",
+      "label": "Lower-left island (5 cells)",
       "cells": [
-        [
-          5,
-          11
-        ],
-        [
-          6,
-          11
-        ],
-        [
-          8,
-          11
-        ],
-        [
-          9,
-          11
-        ],
-        [
-          5,
-          12
-        ],
-        [
-          9,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Lower arms (wide)",
-      "cells": [
-        [
-          1,
-          14
-        ],
-        [
-          2,
-          14
-        ],
         [
           3,
-          14
+          15
         ],
         [
           4,
-          14
+          15
         ],
         [
           5,
-          14
-        ],
-        [
-          9,
-          14
-        ],
-        [
-          10,
-          14
-        ],
-        [
-          11,
-          14
-        ],
-        [
-          12,
-          14
-        ],
-        [
-          13,
-          14
-        ]
-      ]
-    },
-    {
-      "label": "Feet (near edges)",
-      "cells": [
-        [
-          1,
-          16
-        ],
-        [
-          2,
-          16
+          15
         ],
         [
           3,
@@ -258,6 +298,23 @@
         [
           4,
           16
+        ]
+      ]
+    },
+    {
+      "label": "Lower-right island (5 cells)",
+      "cells": [
+        [
+          9,
+          15
+        ],
+        [
+          10,
+          15
+        ],
+        [
+          11,
+          15
         ],
         [
           10,
@@ -265,40 +322,17 @@
         ],
         [
           11,
-          16
-        ],
-        [
-          12,
-          16
-        ],
-        [
-          13,
           16
         ]
       ]
     }
   ],
-  "splitters": [],
-  "gates": [
+  "splitters": [
     {
-      "x": 3,
-      "y": 0,
-      "dir": "right"
-    },
-    {
-      "x": 11,
-      "y": 0,
-      "dir": "left"
-    },
-    {
-      "x": 0,
-      "y": 18,
-      "dir": "up"
-    },
-    {
-      "x": 14,
-      "y": 18,
-      "dir": "up"
+      "x": 6,
+      "y": 9,
+      "dir": "up",
+      "note": "laser going up triggers split — left+right beams emerge at y=9"
     }
   ]
 }

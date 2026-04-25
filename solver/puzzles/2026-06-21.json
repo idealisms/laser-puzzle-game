@@ -1,85 +1,183 @@
 {
   "date": "2026-06-21",
-  "name": "Spits",
+  "name": "Mosaic",
   "width": 15,
   "height": 20,
   "laser": {
     "x": 0,
-    "y": 13,
+    "y": 5,
     "dir": "right"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW spit — touches top and left walls (8 cells)",
-      "cells": [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[0,2]]
+      "label": "Top tile row",
+      "cells": [
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          9,
+          2
+        ],
+        [
+          10,
+          2
+        ],
+        [
+          12,
+          2
+        ],
+        [
+          13,
+          2
+        ]
+      ]
     },
     {
-      "label": "NE spit — touches top and right walls (8 cells)",
-      "cells": [[11,0],[12,0],[13,0],[14,0],[12,1],[13,1],[14,1],[14,2]]
+      "label": "Upper-mid tile row (offset)",
+      "cells": [
+        [
+          1,
+          7
+        ],
+        [
+          2,
+          7
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          8,
+          7
+        ],
+        [
+          9,
+          7
+        ],
+        [
+          11,
+          7
+        ],
+        [
+          12,
+          7
+        ]
+      ]
     },
     {
-      "label": "SW spit — touches left and bottom walls (7 cells)",
-      "cells": [[0,16],[0,17],[0,18],[0,19],[1,18],[1,19],[2,19]]
+      "label": "Lower-mid tile row",
+      "cells": [
+        [
+          2,
+          12
+        ],
+        [
+          3,
+          12
+        ],
+        [
+          5,
+          12
+        ],
+        [
+          6,
+          12
+        ],
+        [
+          9,
+          12
+        ],
+        [
+          10,
+          12
+        ],
+        [
+          12,
+          12
+        ],
+        [
+          13,
+          12
+        ]
+      ]
     },
     {
-      "label": "SE spit — touches right and bottom walls (6 cells)",
-      "cells": [[12,19],[13,19],[14,19],[14,18],[13,18],[14,17]]
-    },
-    {
-      "label": "Left wall upper — touches left wall (5 cells)",
-      "cells": [[0,5],[0,6],[1,5],[0,7],[1,7]]
-    },
-    {
-      "label": "Left wall lower — touches left wall (5 cells)",
-      "cells": [[0,9],[0,10],[1,9],[0,11],[1,11]]
-    },
-    {
-      "label": "Right wall upper — touches right wall (5 cells)",
-      "cells": [[13,5],[14,5],[14,6],[13,6],[14,7]]
-    },
-    {
-      "label": "Right wall lower — touches right wall (5 cells)",
-      "cells": [[13,14],[14,14],[14,15],[13,15],[14,16]]
-    },
-    {
-      "label": "Upper-left spit island (5 cells)",
-      "cells": [[4,3],[5,3],[6,3],[4,4],[5,4]]
-    },
-    {
-      "label": "Upper-right spit island (5 cells)",
-      "cells": [[8,3],[9,3],[10,3],[9,4],[10,4]]
-    },
-    {
-      "label": "y=13 run shortener (2 cells)",
-      "cells": [[9,13],[10,13]]
+      "label": "Bottom tile row (offset)",
+      "cells": [
+        [
+          1,
+          17
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          4,
+          17
+        ],
+        [
+          5,
+          17
+        ],
+        [
+          8,
+          17
+        ],
+        [
+          9,
+          17
+        ],
+        [
+          11,
+          17
+        ],
+        [
+          12,
+          17
+        ]
+      ]
     }
   ],
   "splitters": [],
   "gates": [
     {
-      "x": 3,
-      "y": 6,
+      "x": 0,
+      "y": 10,
       "dir": "up",
-      "note": "blocks downward x=3 run — beam can only go up through here"
+      "note": "left wall midpoint — only upward passes; blocks the 19-cell downward left-wall run"
     },
     {
-      "x": 3,
-      "y": 14,
-      "dir": "down",
-      "note": "blocks upward x=3 run — beam can only go down through here"
-    },
-    {
-      "x": 11,
-      "y": 6,
+      "x": 7,
+      "y": 10,
       "dir": "up",
-      "note": "blocks downward x=11 run — beam can only go up through here"
+      "note": "x=7 midpoint — only upward passes; blocks the downward x=7 run"
     },
     {
-      "x": 11,
-      "y": 14,
-      "dir": "down",
-      "note": "blocks upward x=11 run — beam can only go down through here"
+      "x": 14,
+      "y": 10,
+      "dir": "up",
+      "note": "right wall midpoint — only upward passes; blocks the downward right-wall run"
     }
   ]
 }

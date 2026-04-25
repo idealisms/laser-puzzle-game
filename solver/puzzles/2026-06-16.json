@@ -1,70 +1,353 @@
 {
   "date": "2026-06-16",
-  "name": "Rills",
+  "name": "Shoal",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 0,
-    "y": 10,
-    "dir": "right"
+    "x": 7,
+    "y": 19,
+    "dir": "up"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW rill — touches top and left walls (6 cells)",
-      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1],[0,2]]
+      "label": "NW shoal — irregular, touches top and left edges",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ]
     },
     {
-      "label": "NE rill — touches top and right walls (6 cells)",
-      "cells": [[12,0],[13,0],[14,0],[13,1],[14,1],[14,2]]
+      "label": "NE shoal — irregular, touches top and right edges",
+      "cells": [
+        [
+          12,
+          0
+        ],
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          13,
+          1
+        ],
+        [
+          14,
+          1
+        ],
+        [
+          14,
+          2
+        ]
+      ]
     },
     {
-      "label": "SW rill — touches left and bottom walls (6 cells)",
-      "cells": [[0,17],[0,18],[0,19],[1,18],[1,19],[2,19]]
+      "label": "N mid shoal — irregular, near top center",
+      "cells": [
+        [
+          5,
+          0
+        ],
+        [
+          6,
+          0
+        ],
+        [
+          7,
+          0
+        ],
+        [
+          6,
+          1
+        ],
+        [
+          7,
+          1
+        ],
+        [
+          7,
+          2
+        ]
+      ]
     },
     {
-      "label": "SE rill — touches right and bottom walls (6 cells)",
-      "cells": [[12,19],[13,19],[14,19],[14,18],[13,18],[14,17]]
+      "label": "W upper shoal — irregular, touches left edge",
+      "cells": [
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          2,
+          7
+        ]
+      ]
     },
     {
-      "label": "Left wall upper — touches left wall (4 cells)",
-      "cells": [[0,5],[0,6],[1,5],[0,7]]
+      "label": "E upper shoal — irregular, touches right edge",
+      "cells": [
+        [
+          12,
+          5
+        ],
+        [
+          13,
+          5
+        ],
+        [
+          14,
+          5
+        ],
+        [
+          12,
+          6
+        ],
+        [
+          13,
+          6
+        ],
+        [
+          14,
+          7
+        ]
+      ]
     },
     {
-      "label": "Left wall lower — touches left wall (4 cells)",
-      "cells": [[0,13],[0,14],[1,13],[0,15]]
+      "label": "Central shoal — irregular blob; first obstacle in laser path",
+      "cells": [
+        [
+          6,
+          9
+        ],
+        [
+          7,
+          9
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          6,
+          10
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          8,
+          10
+        ],
+        [
+          7,
+          11
+        ]
+      ]
     },
     {
-      "label": "Right wall upper — touches right wall (5 cells)",
-      "cells": [[13,4],[14,4],[14,5],[13,5],[14,6]]
+      "label": "W lower shoal — irregular, touches left edge",
+      "cells": [
+        [
+          0,
+          12
+        ],
+        [
+          1,
+          12
+        ],
+        [
+          2,
+          12
+        ],
+        [
+          0,
+          13
+        ],
+        [
+          1,
+          13
+        ],
+        [
+          1,
+          14
+        ]
+      ]
     },
     {
-      "label": "Right wall lower — touches right wall (5 cells)",
-      "cells": [[13,14],[14,14],[14,15],[13,15],[14,16]]
+      "label": "E lower shoal — irregular, touches right edge",
+      "cells": [
+        [
+          12,
+          12
+        ],
+        [
+          13,
+          12
+        ],
+        [
+          14,
+          12
+        ],
+        [
+          13,
+          13
+        ],
+        [
+          14,
+          13
+        ],
+        [
+          14,
+          14
+        ]
+      ]
     },
     {
-      "label": "Upper-left island (5 cells)",
-      "cells": [[3,3],[4,3],[5,3],[3,4],[4,4]]
+      "label": "SW shoal — irregular, touches bottom and left edges",
+      "cells": [
+        [
+          0,
+          16
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          0,
+          17
+        ],
+        [
+          1,
+          17
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          2,
+          18
+        ],
+        [
+          3,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ]
+      ]
     },
     {
-      "label": "Upper-right island (4 cells)",
-      "cells": [[9,3],[10,3],[9,4],[10,4]]
-    },
-    {
-      "label": "Lower-left island (5 cells)",
-      "cells": [[3,14],[4,14],[5,14],[3,15],[4,15]]
-    },
-    {
-      "label": "Lower-right island (4 cells)",
-      "cells": [[9,16],[10,16],[9,17],[10,17]]
+      "label": "SE shoal — irregular, touches bottom and right edges",
+      "cells": [
+        [
+          13,
+          16
+        ],
+        [
+          14,
+          16
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          13,
+          17
+        ],
+        [
+          14,
+          17
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          12,
+          19
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
+        ]
+      ]
     }
   ],
-  "splitters": [
-    {
-      "x": 9,
-      "y": 10,
-      "dir": "right",
-      "note": "laser going right triggers split — up+down beams emerge"
-    }
-  ]
+  "splitters": []
 }
