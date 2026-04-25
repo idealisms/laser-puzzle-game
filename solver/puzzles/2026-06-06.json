@@ -1,17 +1,99 @@
 {
   "date": "2026-06-06",
-  "name": "Knoll",
+  "name": "Cleave",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 14,
+    "x": 0,
     "y": 7,
-    "dir": "left"
+    "dir": "right"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "Left wall upper \u2014 touches left wall (6 cells)",
+      "label": "Top-left blob — irregular, touches top and left edges",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "Top-right blob — irregular, touches top and right edges",
+      "cells": [
+        [
+          11,
+          0
+        ],
+        [
+          12,
+          0
+        ],
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          12,
+          1
+        ],
+        [
+          13,
+          1
+        ],
+        [
+          14,
+          1
+        ],
+        [
+          13,
+          2
+        ],
+        [
+          14,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "Gate A — x=0..10, y=2..3, touches left edge; gap x=11..14; up-beam hits this after split",
       "cells": [
         [
           0,
@@ -22,249 +104,105 @@
           2
         ],
         [
-          0,
-          3
+          2,
+          2
         ],
-        [
-          1,
-          3
-        ],
-        [
-          0,
-          4
-        ],
-        [
-          1,
-          4
-        ]
-      ]
-    },
-    {
-      "label": "Left wall lower \u2014 touches left wall (6 cells)",
-      "cells": [
-        [
-          0,
-          13
-        ],
-        [
-          1,
-          13
-        ],
-        [
-          0,
-          14
-        ],
-        [
-          1,
-          14
-        ],
-        [
-          0,
-          15
-        ],
-        [
-          1,
-          15
-        ]
-      ]
-    },
-    {
-      "label": "Right wall upper \u2014 touches right wall (6 cells)",
-      "cells": [
-        [
-          13,
-          3
-        ],
-        [
-          14,
-          3
-        ],
-        [
-          13,
-          4
-        ],
-        [
-          14,
-          4
-        ],
-        [
-          13,
-          5
-        ],
-        [
-          14,
-          5
-        ]
-      ]
-    },
-    {
-      "label": "Right wall lower \u2014 touches right wall (6 cells)",
-      "cells": [
-        [
-          13,
-          14
-        ],
-        [
-          14,
-          14
-        ],
-        [
-          13,
-          15
-        ],
-        [
-          14,
-          15
-        ],
-        [
-          13,
-          16
-        ],
-        [
-          14,
-          16
-        ]
-      ]
-    },
-    {
-      "label": "Top left \u2014 touches top wall (5 cells)",
-      "cells": [
         [
           3,
-          0
+          2
         ],
         [
           4,
-          0
+          2
         ],
         [
           5,
-          0
-        ],
-        [
-          3,
-          1
-        ],
-        [
-          4,
-          1
-        ]
-      ]
-    },
-    {
-      "label": "Top right \u2014 touches top wall (5 cells)",
-      "cells": [
-        [
-          9,
-          0
-        ],
-        [
-          10,
-          0
-        ],
-        [
-          11,
-          0
-        ],
-        [
-          10,
-          1
-        ],
-        [
-          11,
-          1
-        ]
-      ]
-    },
-    {
-      "label": "Bottom left \u2014 touches bottom wall (5 cells)",
-      "cells": [
-        [
-          3,
-          19
-        ],
-        [
-          4,
-          19
-        ],
-        [
-          5,
-          19
-        ],
-        [
-          3,
-          18
-        ],
-        [
-          4,
-          18
-        ]
-      ]
-    },
-    {
-      "label": "Bottom right \u2014 touches bottom wall (5 cells)",
-      "cells": [
-        [
-          9,
-          19
-        ],
-        [
-          10,
-          19
-        ],
-        [
-          11,
-          19
-        ],
-        [
-          10,
-          18
-        ],
-        [
-          11,
-          18
-        ]
-      ]
-    },
-    {
-      "label": "Interior upper blocker \u2014 breaks y=7 laser run (5 cells)",
-      "cells": [
-        [
-          5,
-          7
+          2
         ],
         [
           6,
-          7
+          2
         ],
         [
           7,
-          7
-        ],
-        [
-          5,
-          8
-        ],
-        [
-          6,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "Interior center (5 cells)",
-      "cells": [
-        [
-          7,
-          11
+          2
         ],
         [
           8,
-          11
+          2
         ],
         [
           9,
-          11
+          2
+        ],
+        [
+          10,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          6,
+          3
+        ],
+        [
+          7,
+          3
+        ],
+        [
+          8,
+          3
+        ],
+        [
+          9,
+          3
+        ],
+        [
+          10,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "Gate B — x=4..14, y=12..13, touches right edge; gap x=0..3; down-beam hits this after split",
+      "cells": [
+        [
+          4,
+          12
+        ],
+        [
+          5,
+          12
+        ],
+        [
+          6,
+          12
+        ],
+        [
+          7,
+          12
         ],
         [
           8,
@@ -273,120 +211,161 @@
         [
           9,
           12
-        ]
-      ]
-    },
-    {
-      "label": "Interior upper-left (4 cells)",
-      "cells": [
-        [
-          3,
-          9
-        ],
-        [
-          4,
-          9
-        ],
-        [
-          3,
-          10
-        ],
-        [
-          4,
-          10
-        ]
-      ]
-    },
-    {
-      "label": "Interior upper-right (4 cells)",
-      "cells": [
-        [
-          10,
-          9
-        ],
-        [
-          11,
-          9
         ],
         [
           10,
-          10
+          12
         ],
         [
           11,
-          10
-        ]
-      ]
-    },
-    {
-      "label": "Interior accent left (2 cells)",
-      "cells": [
+          12
+        ],
+        [
+          12,
+          12
+        ],
+        [
+          13,
+          12
+        ],
+        [
+          14,
+          12
+        ],
+        [
+          4,
+          13
+        ],
         [
           5,
-          5
+          13
         ],
         [
           6,
-          5
-        ]
-      ]
-    },
-    {
-      "label": "Interior accent right (2 cells)",
-      "cells": [
-        [
-          8,
-          5
-        ],
-        [
-          9,
-          5
-        ]
-      ]
-    },
-    {
-      "label": "Interior accent lower-left (2 cells)",
-      "cells": [
-        [
-          5,
-          14
-        ],
-        [
-          6,
-          14
-        ]
-      ]
-    },
-    {
-      "label": "Interior accent lower-right (2 cells)",
-      "cells": [
-        [
-          8,
-          14
-        ],
-        [
-          9,
-          14
-        ]
-      ]
-    },
-    {
-      "label": "Bottom interior (3 cells)",
-      "cells": [
-        [
-          6,
-          17
+          13
         ],
         [
           7,
-          17
+          13
         ],
         [
           8,
+          13
+        ],
+        [
+          9,
+          13
+        ],
+        [
+          10,
+          13
+        ],
+        [
+          11,
+          13
+        ],
+        [
+          12,
+          13
+        ],
+        [
+          13,
+          13
+        ],
+        [
+          14,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "Bottom-left blob — irregular, touches bottom and left edges",
+      "cells": [
+        [
+          0,
           17
+        ],
+        [
+          1,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          2,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ],
+        [
+          3,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "Bottom-right blob — irregular, touches bottom and right edges",
+      "cells": [
+        [
+          11,
+          17
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          13,
+          17
+        ],
+        [
+          14,
+          17
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
         ]
       ]
     }
   ],
-  "splitters": []
+  "splitters": [
+    {
+      "x": 7,
+      "y": 7,
+      "dir": "right"
+    }
+  ]
 }

@@ -1,17 +1,17 @@
 {
   "date": "2026-06-12",
-  "name": "Shoals",
+  "name": "Drumlins",
   "width": 15,
   "height": 20,
   "laser": {
     "x": 0,
-    "y": 14,
+    "y": 15,
     "dir": "right"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW shoal \u2014 touches top and left walls (6 cells)",
+      "label": "NW drumlin — touches top and left walls (6 cells)",
       "cells": [
         [
           0,
@@ -40,7 +40,7 @@
       ]
     },
     {
-      "label": "NE shoal \u2014 touches top and right walls (6 cells)",
+      "label": "NE drumlin — touches top and right walls (6 cells)",
       "cells": [
         [
           12,
@@ -69,7 +69,7 @@
       ]
     },
     {
-      "label": "SW shoal \u2014 touches left and bottom walls (5 cells)",
+      "label": "SW drumlin — touches left and bottom walls (6 cells)",
       "cells": [
         [
           0,
@@ -90,11 +90,15 @@
         [
           1,
           19
+        ],
+        [
+          2,
+          19
         ]
       ]
     },
     {
-      "label": "SE shoal \u2014 touches right and bottom walls (5 cells)",
+      "label": "SE drumlin — touches right and bottom walls (6 cells)",
       "cells": [
         [
           12,
@@ -113,194 +117,156 @@
           18
         ],
         [
+          13,
+          18
+        ],
+        [
           14,
           17
         ]
       ]
     },
     {
-      "label": "Left wall upper \u2014 touches left wall (5 cells)",
+      "label": "Left wall upper — touches left wall (5 cells)",
       "cells": [
         [
           0,
-          5
+          8
         ],
         [
           0,
-          6
-        ],
-        [
-          1,
-          5
-        ],
-        [
-          0,
-          7
-        ],
-        [
-          1,
-          7
-        ]
-      ]
-    },
-    {
-      "label": "Right wall upper \u2014 touches right wall (5 cells)",
-      "cells": [
-        [
-          13,
-          4
-        ],
-        [
-          14,
-          4
-        ],
-        [
-          14,
-          5
-        ],
-        [
-          13,
-          5
-        ],
-        [
-          14,
-          6
-        ]
-      ]
-    },
-    {
-      "label": "Left wall lower \u2014 touches left wall (4 cells)",
-      "cells": [
-        [
-          0,
-          11
-        ],
-        [
-          0,
-          12
-        ],
-        [
-          1,
-          11
-        ],
-        [
-          1,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Right wall lower \u2014 touches right wall (4 cells)",
-      "cells": [
-        [
-          13,
-          12
-        ],
-        [
-          14,
-          12
-        ],
-        [
-          13,
-          13
-        ],
-        [
-          14,
-          13
-        ]
-      ]
-    },
-    {
-      "label": "Upper-left island (5 cells)",
-      "cells": [
-        [
-          4,
-          2
-        ],
-        [
-          5,
-          2
-        ],
-        [
-          6,
-          2
-        ],
-        [
-          4,
-          3
-        ],
-        [
-          5,
-          3
-        ]
-      ]
-    },
-    {
-      "label": "Upper-right island (5 cells)",
-      "cells": [
-        [
-          8,
-          2
-        ],
-        [
-          9,
-          2
-        ],
-        [
-          10,
-          2
-        ],
-        [
-          9,
-          3
-        ],
-        [
-          10,
-          3
-        ]
-      ]
-    },
-    {
-      "label": "Center vertical blocker (3 cells)",
-      "cells": [
-        [
-          6,
           9
         ],
+        [
+          1,
+          8
+        ],
+        [
+          0,
+          10
+        ],
+        [
+          1,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Right wall upper — touches right wall (5 cells)",
+      "cells": [
+        [
+          13,
+          4
+        ],
+        [
+          14,
+          4
+        ],
+        [
+          14,
+          5
+        ],
+        [
+          13,
+          5
+        ],
+        [
+          14,
+          6
+        ]
+      ]
+    },
+    {
+      "label": "Right wall lower — touches right wall (5 cells)",
+      "cells": [
+        [
+          13,
+          10
+        ],
+        [
+          14,
+          10
+        ],
+        [
+          14,
+          11
+        ],
+        [
+          13,
+          11
+        ],
+        [
+          14,
+          12
+        ]
+      ]
+    },
+    {
+      "label": "Upper-left drumlin (5 cells)",
+      "cells": [
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          5,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Upper-right drumlin (5 cells)",
+      "cells": [
+        [
+          9,
+          4
+        ],
+        [
+          10,
+          4
+        ],
+        [
+          11,
+          4
+        ],
+        [
+          9,
+          5
+        ],
+        [
+          10,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Upper mid blocker (2 cells)",
+      "cells": [
         [
           7,
-          9
+          8
         ],
         [
           8,
-          9
+          8
         ]
       ]
     },
     {
-      "label": "y=14 run shortener (2 cells)",
+      "label": "Lower-left drumlin (4 cells)",
       "cells": [
-        [
-          9,
-          14
-        ],
-        [
-          10,
-          14
-        ]
-      ]
-    },
-    {
-      "label": "Lower-left island (4 cells)",
-      "cells": [
-        [
-          3,
-          15
-        ],
-        [
-          4,
-          15
-        ],
         [
           3,
           16
@@ -308,11 +274,19 @@
         [
           4,
           16
+        ],
+        [
+          3,
+          17
+        ],
+        [
+          4,
+          17
         ]
       ]
     },
     {
-      "label": "Lower-right island (4 cells)",
+      "label": "Lower-right drumlin (4 cells)",
       "cells": [
         [
           9,
@@ -333,5 +307,12 @@
       ]
     }
   ],
-  "splitters": []
+  "splitters": [
+    {
+      "x": 8,
+      "y": 15,
+      "dir": "right",
+      "note": "laser going right triggers split — up+down beams emerge at x=8"
+    }
+  ]
 }

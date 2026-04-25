@@ -1,357 +1,200 @@
 {
   "date": "2026-06-10",
-  "name": "Crags",
+  "name": "Pulse",
   "width": 15,
   "height": 20,
   "laser": {
     "x": 0,
-    "y": 15,
+    "y": 7,
     "dir": "right"
   },
-  "num_mirrors": 10,
+  "num_mirrors": 9,
   "obstacle_groups": [
     {
-      "label": "NW crag \u2014 touches top and left walls (8 cells)",
+      "label": "NE anchor — touches top and right walls",
+      "cells": [
+        [
+          13,
+          1
+        ],
+        [
+          14,
+          1
+        ],
+        [
+          14,
+          0
+        ]
+      ]
+    },
+    {
+      "label": "Upper-left wall — touches left wall",
       "cells": [
         [
           0,
-          0
-        ],
-        [
-          1,
-          0
-        ],
-        [
-          2,
-          0
-        ],
-        [
-          3,
-          0
+          3
         ],
         [
           0,
-          1
+          4
         ],
         [
           1,
-          1
-        ],
+          4
+        ]
+      ]
+    },
+    {
+      "label": "Upper interior left",
+      "cells": [
         [
-          0,
+          4,
           2
         ],
         [
-          0,
+          5,
+          2
+        ],
+        [
+          4,
           3
         ]
       ]
     },
     {
-      "label": "NE crag \u2014 touches top and right walls (8 cells)",
+      "label": "Upper interior right",
       "cells": [
         [
-          11,
-          0
-        ],
-        [
-          12,
-          0
-        ],
-        [
-          13,
-          0
-        ],
-        [
-          14,
-          0
-        ],
-        [
-          13,
-          1
-        ],
-        [
-          14,
-          1
-        ],
-        [
-          14,
+          10,
           2
         ],
         [
-          14,
+          11,
+          2
+        ],
+        [
+          10,
           3
         ]
       ]
     },
     {
-      "label": "SW crag \u2014 touches left and bottom walls (7 cells)",
+      "label": "Right wall upper — touches right wall",
       "cells": [
-        [
-          0,
-          16
-        ],
-        [
-          0,
-          17
-        ],
-        [
-          0,
-          18
-        ],
-        [
-          0,
-          19
-        ],
-        [
-          1,
-          19
-        ],
-        [
-          2,
-          19
-        ],
-        [
-          3,
-          19
-        ]
-      ]
-    },
-    {
-      "label": "SE crag \u2014 touches right and bottom walls (7 cells)",
-      "cells": [
-        [
-          11,
-          19
-        ],
         [
           12,
-          19
-        ],
-        [
-          13,
-          19
-        ],
-        [
-          14,
-          19
-        ],
-        [
-          14,
-          18
-        ],
-        [
-          14,
-          17
-        ],
-        [
-          14,
-          16
-        ]
-      ]
-    },
-    {
-      "label": "Left wall mid \u2014 touches left wall (6 cells)",
-      "cells": [
-        [
-          0,
-          7
-        ],
-        [
-          0,
-          8
-        ],
-        [
-          1,
-          8
-        ],
-        [
-          0,
-          9
-        ],
-        [
-          1,
-          9
-        ],
-        [
-          0,
-          10
-        ]
-      ]
-    },
-    {
-      "label": "Right wall mid \u2014 touches right wall (6 cells)",
-      "cells": [
-        [
-          14,
-          9
-        ],
-        [
-          14,
-          10
-        ],
-        [
-          13,
-          10
-        ],
-        [
-          14,
-          11
-        ],
-        [
-          13,
-          11
-        ],
-        [
-          14,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Top mid \u2014 touches top wall (4 cells)",
-      "cells": [
-        [
-          5,
-          0
-        ],
-        [
-          6,
-          0
-        ],
-        [
-          7,
-          0
-        ],
-        [
-          5,
-          1
-        ]
-      ]
-    },
-    {
-      "label": "Interior upper-left L-crag (5 cells)",
-      "cells": [
-        [
-          4,
-          4
-        ],
-        [
-          5,
-          4
-        ],
-        [
-          6,
-          4
-        ],
-        [
-          6,
           5
         ],
         [
-          6,
-          6
-        ]
-      ]
-    },
-    {
-      "label": "Interior upper-right L-crag (5 cells)",
-      "cells": [
-        [
-          8,
-          4
-        ],
-        [
-          9,
-          4
-        ],
-        [
-          10,
-          4
-        ],
-        [
-          8,
+          13,
           5
         ],
         [
-          8,
-          6
+          14,
+          5
         ]
       ]
     },
     {
-      "label": "Interior center vertical \u2014 blocks x=7 runs (4 cells)",
-      "cells": [
-        [
-          6,
-          8
-        ],
-        [
-          7,
-          8
-        ],
-        [
-          7,
-          9
-        ],
-        [
-          7,
-          10
-        ]
-      ]
-    },
-    {
-      "label": "Interior lower-left L-crag (5 cells)",
+      "label": "Pre-split screen — just above laser row",
       "cells": [
         [
           3,
-          12
+          6
         ],
         [
           4,
-          12
-        ],
-        [
-          5,
-          12
-        ],
-        [
-          5,
-          13
-        ],
-        [
-          5,
-          14
+          6
         ]
       ]
     },
     {
-      "label": "Interior lower-right L-crag (5 cells)",
+      "label": "Lower interior near-split",
       "cells": [
         [
-          9,
-          12
+          3,
+          9
         ],
         [
+          4,
+          9
+        ],
+        [
+          3,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Lower interior right near-split",
+      "cells": [
+        [
           10,
-          12
+          9
         ],
         [
           11,
+          9
+        ],
+        [
+          10,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Left wall lower — touches left wall",
+      "cells": [
+        [
+          0,
+          11
+        ],
+        [
+          0,
           12
         ],
         [
-          9,
-          13
+          1,
+          12
+        ]
+      ]
+    },
+    {
+      "label": "Right wall lower — touches right wall",
+      "cells": [
+        [
+          12,
+          12
         ],
         [
-          9,
+          13,
+          12
+        ],
+        [
+          14,
+          12
+        ],
+        [
+          14,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "Lower interior left",
+      "cells": [
+        [
+          5,
+          14
+        ],
+        [
+          6,
           14
         ]
       ]
     },
     {
-      "label": "y=15 blocker \u2014 shortens initial laser run (2 cells)",
+      "label": "Lower interior right",
       "cells": [
         [
           9,
@@ -364,44 +207,80 @@
       ]
     },
     {
-      "label": "Lower-left accent (2 cells)",
+      "label": "Left wall bottom — touches left wall",
       "cells": [
         [
-          4,
+          0,
           16
         ],
         [
-          5,
-          16
+          0,
+          17
+        ],
+        [
+          1,
+          17
         ]
       ]
     },
     {
-      "label": "Lower interior (2 cells)",
+      "label": "Right wall bottom — touches right wall",
+      "cells": [
+        [
+          13,
+          16
+        ],
+        [
+          14,
+          16
+        ],
+        [
+          14,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "Bottom anchor left — touches bottom wall",
       "cells": [
         [
           2,
-          14
+          19
         ],
         [
           3,
-          14
+          19
+        ],
+        [
+          4,
+          19
         ]
       ]
     },
     {
-      "label": "Lower-right interior (2 cells)",
+      "label": "Bottom anchor right — touches bottom wall",
       "cells": [
         [
+          10,
+          18
+        ],
+        [
           11,
-          14
+          18
         ],
         [
           12,
-          14
+          18
         ]
       ]
     }
   ],
-  "splitters": []
+  "splitters": [
+    {
+      "x": 8,
+      "y": 7,
+      "dir": "right",
+      "note": "Laser traveling RIGHT hits splitter → splits UP (toward y=0) and DOWN (toward y=19)"
+    }
+  ]
 }

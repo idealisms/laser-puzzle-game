@@ -1,286 +1,365 @@
 {
   "date": "2026-06-03",
-  "name": "Pulse",
+  "name": "Bights",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 0,
-    "y": 7,
-    "dir": "right"
+    "x": 14,
+    "y": 16,
+    "dir": "left"
   },
-  "num_mirrors": 9,
+  "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NE anchor \u2014 touches top and right walls",
+      "label": "NW bight — touches top and left walls (8 cells)",
       "cells": [
         [
-          13,
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          0,
           1
         ],
         [
-          14,
+          1,
           1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "NE bight — touches top and right walls (8 cells)",
+      "cells": [
+        [
+          11,
+          0
+        ],
+        [
+          12,
+          0
+        ],
+        [
+          13,
+          0
         ],
         [
           14,
           0
-        ]
-      ]
-    },
-    {
-      "label": "Upper-left wall \u2014 touches left wall",
-      "cells": [
-        [
-          0,
-          3
         ],
-        [
-          0,
-          4
-        ],
-        [
-          1,
-          4
-        ]
-      ]
-    },
-    {
-      "label": "Upper interior left",
-      "cells": [
-        [
-          4,
-          2
-        ],
-        [
-          5,
-          2
-        ],
-        [
-          4,
-          3
-        ]
-      ]
-    },
-    {
-      "label": "Upper interior right",
-      "cells": [
-        [
-          10,
-          2
-        ],
-        [
-          11,
-          2
-        ],
-        [
-          10,
-          3
-        ]
-      ]
-    },
-    {
-      "label": "Right wall upper \u2014 touches right wall",
-      "cells": [
         [
           12,
-          5
+          1
         ],
         [
           13,
-          5
+          1
         ],
         [
           14,
-          5
+          1
+        ],
+        [
+          14,
+          2
         ]
       ]
     },
     {
-      "label": "Pre-split screen \u2014 just above laser row",
+      "label": "SW bight — touches left and bottom walls (8 cells)",
       "cells": [
         [
-          3,
-          6
+          0,
+          16
         ],
         [
-          4,
-          6
+          0,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          17
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
         ]
       ]
     },
     {
-      "label": "Lower interior near-split",
+      "label": "SE bight — touches right and bottom walls (6 cells)",
       "cells": [
         [
-          3,
+          12,
+          19
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "Left wall upper — touches left wall (5 cells)",
+      "cells": [
+        [
+          0,
           9
         ],
         [
-          4,
-          9
-        ],
-        [
-          3,
+          0,
           10
-        ]
-      ]
-    },
-    {
-      "label": "Lower interior right near-split",
-      "cells": [
-        [
-          10,
-          9
         ],
         [
-          11,
+          1,
           9
         ],
-        [
-          10,
-          10
-        ]
-      ]
-    },
-    {
-      "label": "Left wall lower \u2014 touches left wall",
-      "cells": [
         [
           0,
           11
         ],
         [
-          0,
-          12
-        ],
-        [
           1,
-          12
+          11
         ]
       ]
     },
     {
-      "label": "Right wall lower \u2014 touches right wall",
+      "label": "Left wall lower — touches left wall (5 cells)",
       "cells": [
         [
-          12,
-          12
+          0,
+          13
+        ],
+        [
+          0,
+          14
+        ],
+        [
+          1,
+          13
+        ],
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "Right wall upper — touches right wall (5 cells)",
+      "cells": [
+        [
+          13,
+          5
+        ],
+        [
+          14,
+          5
+        ],
+        [
+          14,
+          6
         ],
         [
           13,
-          12
+          6
         ],
         [
           14,
-          12
+          7
+        ]
+      ]
+    },
+    {
+      "label": "Right wall mid — touches right wall (5 cells)",
+      "cells": [
+        [
+          13,
+          9
         ],
         [
           14,
+          9
+        ],
+        [
+          14,
+          10
+        ],
+        [
+          13,
+          10
+        ],
+        [
+          14,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "Upper-left bight island (5 cells)",
+      "cells": [
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Upper-right bight island (5 cells)",
+      "cells": [
+        [
+          9,
+          4
+        ],
+        [
+          10,
+          4
+        ],
+        [
+          11,
+          4
+        ],
+        [
+          10,
+          5
+        ],
+        [
+          11,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Mid island (4 cells)",
+      "cells": [
+        [
+          6,
+          12
+        ],
+        [
+          7,
+          12
+        ],
+        [
+          6,
+          13
+        ],
+        [
+          7,
           13
         ]
       ]
     },
     {
-      "label": "Lower interior left",
+      "label": "y=16 run shortener (2 cells)",
       "cells": [
-        [
-          5,
-          14
-        ],
-        [
-          6,
-          14
-        ]
-      ]
-    },
-    {
-      "label": "Lower interior right",
-      "cells": [
-        [
-          9,
-          15
-        ],
-        [
-          10,
-          15
-        ]
-      ]
-    },
-    {
-      "label": "Left wall bottom \u2014 touches left wall",
-      "cells": [
-        [
-          0,
-          16
-        ],
-        [
-          0,
-          17
-        ],
-        [
-          1,
-          17
-        ]
-      ]
-    },
-    {
-      "label": "Right wall bottom \u2014 touches right wall",
-      "cells": [
-        [
-          13,
-          16
-        ],
-        [
-          14,
-          16
-        ],
-        [
-          14,
-          17
-        ]
-      ]
-    },
-    {
-      "label": "Bottom anchor left \u2014 touches bottom wall",
-      "cells": [
-        [
-          2,
-          19
-        ],
-        [
-          3,
-          19
-        ],
         [
           4,
-          19
-        ]
-      ]
-    },
-    {
-      "label": "Bottom anchor right \u2014 touches bottom wall",
-      "cells": [
-        [
-          10,
-          18
+          16
         ],
         [
-          11,
-          18
-        ],
-        [
-          12,
-          18
+          5,
+          16
         ]
       ]
     }
   ],
-  "splitters": [
+  "splitters": [],
+  "gates": [
+    {
+      "x": 2,
+      "y": 6,
+      "dir": "up",
+      "note": "blocks downward x=2 run — beam can only go up through here"
+    },
+    {
+      "x": 2,
+      "y": 14,
+      "dir": "down",
+      "note": "blocks upward x=2 run — beam can only go down through here"
+    },
     {
       "x": 8,
-      "y": 7,
-      "dir": "right",
-      "note": "Laser traveling RIGHT hits splitter \u2192 splits UP (toward y=0) and DOWN (toward y=19)"
+      "y": 6,
+      "dir": "up",
+      "note": "blocks downward x=8 run — beam can only go up through here"
+    },
+    {
+      "x": 8,
+      "y": 14,
+      "dir": "down",
+      "note": "blocks upward x=8 run — beam can only go down through here"
     }
   ]
 }

@@ -1,17 +1,17 @@
 {
   "date": "2026-06-13",
-  "name": "Meres",
+  "name": "Forelands",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 7,
-    "y": 19,
-    "dir": "up"
+    "x": 0,
+    "y": 5,
+    "dir": "right"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW mere \u2014 touches top and left walls (6 cells)",
+      "label": "NW foreland — touches top and left walls (8 cells)",
       "cells": [
         [
           0,
@@ -26,11 +26,19 @@
           0
         ],
         [
+          3,
+          0
+        ],
+        [
           0,
           1
         ],
         [
           1,
+          1
+        ],
+        [
+          2,
           1
         ],
         [
@@ -40,8 +48,12 @@
       ]
     },
     {
-      "label": "NE mere \u2014 touches top and right walls (6 cells)",
+      "label": "NE foreland — touches top and right walls (8 cells)",
       "cells": [
+        [
+          11,
+          0
+        ],
         [
           12,
           0
@@ -53,6 +65,10 @@
         [
           14,
           0
+        ],
+        [
+          12,
+          1
         ],
         [
           13,
@@ -69,7 +85,7 @@
       ]
     },
     {
-      "label": "SW mere \u2014 touches left and bottom walls (6 cells)",
+      "label": "SW foreland — touches left and bottom walls (6 cells)",
       "cells": [
         [
           0,
@@ -98,7 +114,7 @@
       ]
     },
     {
-      "label": "SE mere \u2014 touches right and bottom walls (6 cells)",
+      "label": "SE foreland — touches right and bottom walls (6 cells)",
       "cells": [
         [
           12,
@@ -127,19 +143,11 @@
       ]
     },
     {
-      "label": "Left wall mid \u2014 touches left wall (5 cells)",
+      "label": "Left wall lower — touches left wall (5 cells)",
       "cells": [
         [
           0,
-          7
-        ],
-        [
-          0,
           8
-        ],
-        [
-          1,
-          7
         ],
         [
           0,
@@ -147,151 +155,130 @@
         ],
         [
           1,
-          9
+          8
+        ],
+        [
+          0,
+          10
+        ],
+        [
+          1,
+          10
         ]
       ]
     },
     {
-      "label": "Right wall mid \u2014 touches right wall (5 cells)",
+      "label": "Right wall upper — touches right wall (4 cells)",
       "cells": [
         [
           13,
-          7
+          3
         ],
         [
           14,
-          7
+          3
         ],
         [
           14,
-          8
+          4
         ],
         [
           13,
-          8
-        ],
-        [
-          14,
-          9
+          4
         ]
       ]
     },
     {
-      "label": "x=7 blocker \u2014 blocks initial laser run (3 cells)",
+      "label": "Right wall lower — touches right wall (5 cells)",
       "cells": [
         [
-          6,
-          8
+          13,
+          11
         ],
         [
-          7,
-          8
+          14,
+          11
         ],
+        [
+          14,
+          12
+        ],
+        [
+          13,
+          12
+        ],
+        [
+          14,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "Upper-left foreland (5 cells)",
+      "cells": [
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "Upper-right foreland (5 cells)",
+      "cells": [
+        [
+          9,
+          3
+        ],
+        [
+          10,
+          3
+        ],
+        [
+          11,
+          3
+        ],
+        [
+          10,
+          4
+        ],
+        [
+          11,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "y=5 run shortener (2 cells)",
+      "cells": [
         [
           8,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "Upper-left mere (5 cells)",
-      "cells": [
-        [
-          4,
-          3
-        ],
-        [
-          5,
-          3
-        ],
-        [
-          6,
-          3
-        ],
-        [
-          4,
-          4
-        ],
-        [
-          5,
-          4
-        ]
-      ]
-    },
-    {
-      "label": "Upper-right mere (5 cells)",
-      "cells": [
-        [
-          8,
-          3
+          5
         ],
         [
           9,
-          3
-        ],
-        [
-          10,
-          3
-        ],
-        [
-          9,
-          4
-        ],
-        [
-          10,
-          4
+          5
         ]
       ]
     },
     {
-      "label": "Mid-left mere (4 cells)",
+      "label": "Lower-left foreland (5 cells)",
       "cells": [
-        [
-          3,
-          11
-        ],
-        [
-          4,
-          11
-        ],
-        [
-          3,
-          12
-        ],
-        [
-          4,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Mid-right mere (4 cells)",
-      "cells": [
-        [
-          10,
-          11
-        ],
-        [
-          11,
-          11
-        ],
-        [
-          10,
-          12
-        ],
-        [
-          11,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Lower-left mere (5 cells)",
-      "cells": [
-        [
-          2,
-          14
-        ],
         [
           3,
           14
@@ -299,68 +286,72 @@
         [
           4,
           14
-        ],
-        [
-          2,
-          15
-        ],
-        [
-          3,
-          15
-        ]
-      ]
-    },
-    {
-      "label": "Lower-right mere (5 cells)",
-      "cells": [
-        [
-          10,
-          14
-        ],
-        [
-          11,
-          14
-        ],
-        [
-          12,
-          14
-        ],
-        [
-          11,
-          15
-        ],
-        [
-          12,
-          15
-        ]
-      ]
-    },
-    {
-      "label": "Near-bottom left (2 cells)",
-      "cells": [
-        [
-          4,
-          17
         ],
         [
           5,
-          17
+          14
+        ],
+        [
+          3,
+          15
+        ],
+        [
+          4,
+          15
         ]
       ]
     },
     {
-      "label": "Near-bottom right (2 cells)",
+      "label": "Lower-right foreland (5 cells)",
       "cells": [
         [
           9,
-          17
+          14
         ],
         [
           10,
-          17
+          14
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          10,
+          15
+        ],
+        [
+          11,
+          15
         ]
       ]
     }
   ],
-  "splitters": []
+  "splitters": [],
+  "gates": [
+    {
+      "x": 6,
+      "y": 6,
+      "dir": "up",
+      "note": "blocks downward x=6 run — beam can only go up through here"
+    },
+    {
+      "x": 6,
+      "y": 14,
+      "dir": "down",
+      "note": "blocks upward x=6 run — beam can only go down through here"
+    },
+    {
+      "x": 12,
+      "y": 6,
+      "dir": "up",
+      "note": "blocks downward x=12 run — beam can only go up through here"
+    },
+    {
+      "x": 12,
+      "y": 14,
+      "dir": "down",
+      "note": "blocks upward x=12 run — beam can only go down through here"
+    }
+  ]
 }

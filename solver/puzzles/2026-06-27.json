@@ -1,69 +1,440 @@
 {
   "date": "2026-06-27",
-  "name": "Bights",
+  "name": "Drawbridge",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 14,
-    "y": 16,
-    "dir": "left"
+    "x": 0,
+    "y": 10,
+    "dir": "right"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW bight — touches top and left walls (8 cells)",
-      "cells": [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[0,2]]
+      "label": "Bar A — x=4..5, y=0..14, touches top; gap y=15..19 below; first obstacle in laser path",
+      "cells": [
+        [
+          4,
+          0
+        ],
+        [
+          5,
+          0
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          5,
+          5
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          4,
+          8
+        ],
+        [
+          5,
+          8
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          5,
+          9
+        ],
+        [
+          4,
+          10
+        ],
+        [
+          5,
+          10
+        ],
+        [
+          4,
+          11
+        ],
+        [
+          5,
+          11
+        ],
+        [
+          4,
+          12
+        ],
+        [
+          5,
+          12
+        ],
+        [
+          4,
+          13
+        ],
+        [
+          5,
+          13
+        ],
+        [
+          4,
+          14
+        ],
+        [
+          5,
+          14
+        ]
+      ]
     },
     {
-      "label": "NE bight — touches top and right walls (8 cells)",
-      "cells": [[11,0],[12,0],[13,0],[14,0],[12,1],[13,1],[14,1],[14,2]]
+      "label": "Bar B — x=9..10, y=0..6, touches top; gap y=7..19 below",
+      "cells": [
+        [
+          9,
+          0
+        ],
+        [
+          10,
+          0
+        ],
+        [
+          9,
+          1
+        ],
+        [
+          10,
+          1
+        ],
+        [
+          9,
+          2
+        ],
+        [
+          10,
+          2
+        ],
+        [
+          9,
+          3
+        ],
+        [
+          10,
+          3
+        ],
+        [
+          9,
+          4
+        ],
+        [
+          10,
+          4
+        ],
+        [
+          9,
+          5
+        ],
+        [
+          10,
+          5
+        ],
+        [
+          9,
+          6
+        ],
+        [
+          10,
+          6
+        ]
+      ]
     },
     {
-      "label": "SW bight — touches left and bottom walls (8 cells)",
-      "cells": [[0,16],[0,17],[0,18],[0,19],[1,17],[1,18],[1,19],[2,19]]
+      "label": "Bar C — x=13..14, y=0..10, touches top and right edges; gap y=11..19 below",
+      "cells": [
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          13,
+          1
+        ],
+        [
+          14,
+          1
+        ],
+        [
+          13,
+          2
+        ],
+        [
+          14,
+          2
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          13,
+          4
+        ],
+        [
+          14,
+          4
+        ],
+        [
+          13,
+          5
+        ],
+        [
+          14,
+          5
+        ],
+        [
+          13,
+          6
+        ],
+        [
+          14,
+          6
+        ],
+        [
+          13,
+          7
+        ],
+        [
+          14,
+          7
+        ],
+        [
+          13,
+          8
+        ],
+        [
+          14,
+          8
+        ],
+        [
+          13,
+          9
+        ],
+        [
+          14,
+          9
+        ],
+        [
+          13,
+          10
+        ],
+        [
+          14,
+          10
+        ]
+      ]
     },
     {
-      "label": "SE bight — touches right and bottom walls (6 cells)",
-      "cells": [[12,19],[13,19],[14,19],[14,18],[13,18],[14,17]]
+      "label": "Bottom-left staircase — SW corner, hypotenuse (0,15)→(4,19)",
+      "cells": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          15
+        ],
+        [
+          0,
+          16
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          2,
+          16
+        ],
+        [
+          0,
+          17
+        ],
+        [
+          1,
+          17
+        ],
+        [
+          2,
+          17
+        ],
+        [
+          3,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          2,
+          18
+        ],
+        [
+          3,
+          18
+        ],
+        [
+          4,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ],
+        [
+          3,
+          19
+        ],
+        [
+          4,
+          19
+        ],
+        [
+          5,
+          19
+        ]
+      ]
     },
     {
-      "label": "Left wall upper — touches left wall (5 cells)",
-      "cells": [[0,9],[0,10],[1,9],[0,11],[1,11]]
-    },
-    {
-      "label": "Left wall lower — touches left wall (5 cells)",
-      "cells": [[0,13],[0,14],[1,13],[0,15],[1,15]]
-    },
-    {
-      "label": "Right wall upper — touches right wall (5 cells)",
-      "cells": [[13,5],[14,5],[14,6],[13,6],[14,7]]
-    },
-    {
-      "label": "Right wall mid — touches right wall (5 cells)",
-      "cells": [[13,9],[14,9],[14,10],[13,10],[14,11]]
-    },
-    {
-      "label": "Upper-left bight island (5 cells)",
-      "cells": [[3,4],[4,4],[5,4],[3,5],[4,5]]
-    },
-    {
-      "label": "Upper-right bight island (5 cells)",
-      "cells": [[9,4],[10,4],[11,4],[10,5],[11,5]]
-    },
-    {
-      "label": "Mid island (4 cells)",
-      "cells": [[6,12],[7,12],[6,13],[7,13]]
-    },
-    {
-      "label": "y=16 run shortener (2 cells)",
-      "cells": [[4,16],[5,16]]
+      "label": "Bottom-right staircase — SE corner, hypotenuse (14,15)→(10,19)",
+      "cells": [
+        [
+          13,
+          15
+        ],
+        [
+          14,
+          15
+        ],
+        [
+          12,
+          16
+        ],
+        [
+          13,
+          16
+        ],
+        [
+          14,
+          16
+        ],
+        [
+          11,
+          17
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          13,
+          17
+        ],
+        [
+          14,
+          17
+        ],
+        [
+          10,
+          18
+        ],
+        [
+          11,
+          18
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          18
+        ]
+      ]
     }
   ],
-  "splitters": [],
-  "gates": [
-    {"x": 2, "y": 6, "dir": "up", "note": "blocks downward x=2 run — beam can only go up through here"},
-    {"x": 2, "y": 14, "dir": "down", "note": "blocks upward x=2 run — beam can only go down through here"},
-    {"x": 8, "y": 6, "dir": "up", "note": "blocks downward x=8 run — beam can only go up through here"},
-    {"x": 8, "y": 14, "dir": "down", "note": "blocks upward x=8 run — beam can only go down through here"}
-  ]
+  "splitters": []
 }

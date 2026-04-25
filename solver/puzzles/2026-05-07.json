@@ -1,350 +1,389 @@
 {
   "date": "2026-05-07",
-  "name": "Shoal",
+  "name": "Knoll",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 7,
-    "y": 19,
-    "dir": "up"
+    "x": 14,
+    "y": 7,
+    "dir": "left"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW shoal \u2014 irregular, touches top and left edges",
+      "label": "Left wall upper — touches left wall (6 cells)",
       "cells": [
         [
           0,
-          0
-        ],
-        [
-          1,
-          0
-        ],
-        [
-          2,
-          0
-        ],
-        [
-          0,
-          1
-        ],
-        [
-          1,
-          1
-        ],
-        [
-          0,
           2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
         ]
       ]
     },
     {
-      "label": "NE shoal \u2014 irregular, touches top and right edges",
+      "label": "Left wall lower — touches left wall (6 cells)",
       "cells": [
         [
-          12,
-          0
+          0,
+          13
         ],
         [
-          13,
-          0
+          1,
+          13
         ],
         [
-          14,
-          0
+          0,
+          14
         ],
         [
-          13,
-          1
+          1,
+          14
         ],
         [
-          14,
-          1
+          0,
+          15
         ],
         [
-          14,
-          2
+          1,
+          15
         ]
       ]
     },
     {
-      "label": "N mid shoal \u2014 irregular, near top center",
+      "label": "Right wall upper — touches right wall (6 cells)",
       "cells": [
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          13,
+          4
+        ],
+        [
+          14,
+          4
+        ],
+        [
+          13,
+          5
+        ],
+        [
+          14,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Right wall lower — touches right wall (6 cells)",
+      "cells": [
+        [
+          13,
+          14
+        ],
+        [
+          14,
+          14
+        ],
+        [
+          13,
+          15
+        ],
+        [
+          14,
+          15
+        ],
+        [
+          13,
+          16
+        ],
+        [
+          14,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "Top left — touches top wall (5 cells)",
+      "cells": [
+        [
+          3,
+          0
+        ],
+        [
+          4,
+          0
+        ],
         [
           5,
           0
         ],
         [
-          6,
-          0
-        ],
-        [
-          7,
-          0
-        ],
-        [
-          6,
+          3,
           1
         ],
         [
-          7,
+          4,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "Top right — touches top wall (5 cells)",
+      "cells": [
+        [
+          9,
+          0
+        ],
+        [
+          10,
+          0
+        ],
+        [
+          11,
+          0
+        ],
+        [
+          10,
           1
         ],
         [
-          7,
-          2
+          11,
+          1
         ]
       ]
     },
     {
-      "label": "W upper shoal \u2014 irregular, touches left edge",
+      "label": "Bottom left — touches bottom wall (5 cells)",
       "cells": [
         [
-          0,
-          5
+          3,
+          19
         ],
         [
-          1,
-          5
+          4,
+          19
         ],
         [
-          2,
-          5
-        ],
-        [
-          1,
-          6
-        ],
-        [
-          2,
-          6
-        ],
-        [
-          2,
-          7
-        ]
-      ]
-    },
-    {
-      "label": "E upper shoal \u2014 irregular, touches right edge",
-      "cells": [
-        [
-          12,
-          5
-        ],
-        [
-          13,
-          5
-        ],
-        [
-          14,
-          5
-        ],
-        [
-          12,
-          6
-        ],
-        [
-          13,
-          6
-        ],
-        [
-          14,
-          7
-        ]
-      ]
-    },
-    {
-      "label": "Central shoal \u2014 irregular blob; first obstacle in laser path",
-      "cells": [
-        [
-          6,
-          9
-        ],
-        [
-          7,
-          9
-        ],
-        [
-          8,
-          9
-        ],
-        [
-          6,
-          10
-        ],
-        [
-          7,
-          10
-        ],
-        [
-          8,
-          10
-        ],
-        [
-          7,
-          11
-        ]
-      ]
-    },
-    {
-      "label": "W lower shoal \u2014 irregular, touches left edge",
-      "cells": [
-        [
-          0,
-          12
-        ],
-        [
-          1,
-          12
-        ],
-        [
-          2,
-          12
-        ],
-        [
-          0,
-          13
-        ],
-        [
-          1,
-          13
-        ],
-        [
-          1,
-          14
-        ]
-      ]
-    },
-    {
-      "label": "E lower shoal \u2014 irregular, touches right edge",
-      "cells": [
-        [
-          12,
-          12
-        ],
-        [
-          13,
-          12
-        ],
-        [
-          14,
-          12
-        ],
-        [
-          13,
-          13
-        ],
-        [
-          14,
-          13
-        ],
-        [
-          14,
-          14
-        ]
-      ]
-    },
-    {
-      "label": "SW shoal \u2014 irregular, touches bottom and left edges",
-      "cells": [
-        [
-          0,
-          16
-        ],
-        [
-          1,
-          16
-        ],
-        [
-          0,
-          17
-        ],
-        [
-          1,
-          17
-        ],
-        [
-          2,
-          17
-        ],
-        [
-          0,
-          18
-        ],
-        [
-          1,
-          18
-        ],
-        [
-          2,
-          18
+          5,
+          19
         ],
         [
           3,
           18
         ],
         [
-          0,
-          19
-        ],
-        [
-          1,
-          19
-        ],
-        [
-          2,
-          19
+          4,
+          18
         ]
       ]
     },
     {
-      "label": "SE shoal \u2014 irregular, touches bottom and right edges",
+      "label": "Bottom right — touches bottom wall (5 cells)",
       "cells": [
         [
-          13,
-          16
-        ],
-        [
-          14,
-          16
-        ],
-        [
-          12,
-          17
-        ],
-        [
-          13,
-          17
-        ],
-        [
-          14,
-          17
-        ],
-        [
-          12,
-          18
-        ],
-        [
-          13,
-          18
-        ],
-        [
-          14,
-          18
-        ],
-        [
-          12,
+          9,
           19
         ],
         [
-          13,
+          10,
           19
         ],
         [
-          14,
+          11,
           19
+        ],
+        [
+          10,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ]
+    },
+    {
+      "label": "Interior upper blocker — breaks y=7 laser run (5 cells)",
+      "cells": [
+        [
+          5,
+          7
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          7
+        ],
+        [
+          5,
+          8
+        ],
+        [
+          6,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "Interior center (5 cells)",
+      "cells": [
+        [
+          7,
+          11
+        ],
+        [
+          8,
+          11
+        ],
+        [
+          9,
+          11
+        ],
+        [
+          8,
+          12
+        ],
+        [
+          9,
+          12
+        ]
+      ]
+    },
+    {
+      "label": "Interior upper-left (4 cells)",
+      "cells": [
+        [
+          3,
+          9
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          3,
+          10
+        ],
+        [
+          4,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Interior upper-right (4 cells)",
+      "cells": [
+        [
+          10,
+          9
+        ],
+        [
+          11,
+          9
+        ],
+        [
+          10,
+          10
+        ],
+        [
+          11,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Interior accent left (2 cells)",
+      "cells": [
+        [
+          5,
+          5
+        ],
+        [
+          6,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Interior accent right (2 cells)",
+      "cells": [
+        [
+          8,
+          5
+        ],
+        [
+          9,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Interior accent lower-left (2 cells)",
+      "cells": [
+        [
+          5,
+          14
+        ],
+        [
+          6,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "Interior accent lower-right (2 cells)",
+      "cells": [
+        [
+          8,
+          14
+        ],
+        [
+          9,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "Bottom interior (3 cells)",
+      "cells": [
+        [
+          6,
+          17
+        ],
+        [
+          7,
+          17
+        ],
+        [
+          8,
+          17
         ]
       ]
     }

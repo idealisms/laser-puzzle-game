@@ -1,105 +1,326 @@
 {
   "date": "2026-06-15",
-  "name": "Fjords",
+  "name": "Shingle",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 14,
-    "y": 11,
-    "dir": "left"
+    "x": 7,
+    "y": 0,
+    "dir": "down"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW fjord — touches top and left walls (9 cells)",
-      "cells": [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[0,2],[0,3]]
+      "label": "Top-left corner — touches top and left walls",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
     },
     {
-      "label": "NE fjord — touches top and right walls (9 cells)",
-      "cells": [[11,0],[12,0],[13,0],[14,0],[12,1],[13,1],[14,1],[14,2],[14,3]]
+      "label": "Top-right corner — touches top and right walls",
+      "cells": [
+        [
+          12,
+          0
+        ],
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          14,
+          1
+        ],
+        [
+          13,
+          1
+        ]
+      ]
     },
     {
-      "label": "SW fjord — touches left and bottom walls (7 cells)",
-      "cells": [[0,16],[0,17],[0,18],[0,19],[1,17],[1,18],[1,19]]
+      "label": "Left wall upper — touches left wall",
+      "cells": [
+        [
+          0,
+          5
+        ],
+        [
+          0,
+          6
+        ],
+        [
+          0,
+          7
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          1,
+          7
+        ]
+      ]
     },
     {
-      "label": "SE fjord — touches right and bottom walls (7 cells)",
-      "cells": [[11,19],[12,19],[13,19],[14,19],[12,18],[13,18],[14,17]]
+      "label": "Right wall upper — touches right wall",
+      "cells": [
+        [
+          14,
+          5
+        ],
+        [
+          14,
+          6
+        ],
+        [
+          14,
+          7
+        ],
+        [
+          13,
+          6
+        ],
+        [
+          13,
+          7
+        ]
+      ]
     },
     {
-      "label": "Left wall mid — touches left wall (5 cells)",
-      "cells": [[0,8],[0,9],[1,8],[0,10],[1,10]]
+      "label": "Interior A",
+      "cells": [
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          4,
+          4
+        ]
+      ]
     },
     {
-      "label": "Right wall upper — touches right wall (5 cells)",
-      "cells": [[13,5],[14,5],[14,6],[13,6],[14,7]]
+      "label": "Interior B",
+      "cells": [
+        [
+          9,
+          3
+        ],
+        [
+          10,
+          3
+        ],
+        [
+          10,
+          4
+        ]
+      ]
     },
     {
-      "label": "Right wall lower — touches right wall (5 cells)",
-      "cells": [[13,13],[14,13],[14,14],[13,14],[14,15]]
+      "label": "Interior C",
+      "cells": [
+        [
+          3,
+          8
+        ],
+        [
+          4,
+          8
+        ],
+        [
+          3,
+          9
+        ]
+      ]
     },
     {
-      "label": "Upper interior stack (5 cells)",
-      "cells": [[5,3],[6,3],[7,3],[5,4],[6,4]]
+      "label": "Interior D",
+      "cells": [
+        [
+          6,
+          11
+        ],
+        [
+          7,
+          11
+        ],
+        [
+          7,
+          12
+        ]
+      ]
     },
     {
-      "label": "Lower interior stack (5 cells)",
-      "cells": [[7,15],[8,15],[9,15],[8,16],[9,16]]
+      "label": "Interior E",
+      "cells": [
+        [
+          10,
+          9
+        ],
+        [
+          11,
+          9
+        ],
+        [
+          10,
+          10
+        ]
+      ]
     },
     {
-      "label": "y=11 run shortener (2 cells)",
-      "cells": [[5,11],[6,11]]
+      "label": "Interior F",
+      "cells": [
+        [
+          4,
+          13
+        ],
+        [
+          5,
+          13
+        ],
+        [
+          5,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "Interior G",
+      "cells": [
+        [
+          9,
+          14
+        ],
+        [
+          10,
+          14
+        ],
+        [
+          9,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "Left wall lower — touches left wall",
+      "cells": [
+        [
+          0,
+          13
+        ],
+        [
+          0,
+          14
+        ],
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          14
+        ],
+        [
+          1,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "Right wall lower — touches right wall",
+      "cells": [
+        [
+          14,
+          13
+        ],
+        [
+          14,
+          14
+        ],
+        [
+          14,
+          15
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          13,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "Bottom-left corner — touches left and bottom walls",
+      "cells": [
+        [
+          0,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "Bottom-right corner — touches right and bottom walls",
+      "cells": [
+        [
+          12,
+          19
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          14,
+          18
+        ]
+      ]
     }
   ],
-  "splitters": [],
-  "gates": [
-    {
-      "x": 3,
-      "y": 6,
-      "dir": "up",
-      "note": "blocks downward x=3 run — beam can only go up through here"
-    },
-    {
-      "x": 3,
-      "y": 14,
-      "dir": "down",
-      "note": "blocks upward x=3 run — beam can only go down through here"
-    },
-    {
-      "x": 10,
-      "y": 6,
-      "dir": "up",
-      "note": "blocks downward x=10 run — beam can only go up through here"
-    },
-    {
-      "x": 10,
-      "y": 14,
-      "dir": "down",
-      "note": "blocks upward x=10 run — beam can only go down through here"
-    },
-    {
-      "x": 2,
-      "y": 6,
-      "dir": "up",
-      "note": "blocks downward x=2 run — beam can only go up through here"
-    },
-    {
-      "x": 2,
-      "y": 14,
-      "dir": "down",
-      "note": "blocks upward x=2 run — beam can only go down through here"
-    },
-    {
-      "x": 11,
-      "y": 6,
-      "dir": "up",
-      "note": "blocks downward x=11 run — beam can only go up through here"
-    },
-    {
-      "x": 11,
-      "y": 14,
-      "dir": "down",
-      "note": "blocks upward x=11 run — beam can only go down through here"
-    }
-  ]
+  "splitters": []
 }
