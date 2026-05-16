@@ -1,0 +1,93 @@
+{
+  "date": "2026-07-23",
+  "name": "Marsh",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 9,
+    "dir": "left"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[12,0],[13,0],[14,0],[14,1]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,3],[0,4],[1,4]]
+    },
+    {
+      "label": "Upper-left island (flanks x=6 above gate)",
+      "cells": [[4,2],[5,2],[4,3]]
+    },
+    {
+      "label": "Upper-right island (flanks x=9 above gate)",
+      "cells": [[10,2],[11,2],[10,3]]
+    },
+    {
+      "label": "E wall upper — touches right",
+      "cells": [[13,5],[14,5],[14,6],[14,7]]
+    },
+    {
+      "label": "Mid interior (between x=6 and x=9 corridors)",
+      "cells": [[7,7],[8,7],[7,8]]
+    },
+    {
+      "label": "y=9 run-breaker",
+      "cells": [[4,9],[4,10]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,12],[0,13],[1,13]]
+    },
+    {
+      "label": "Lower-left island (flanks x=6 below gate)",
+      "cells": [[4,15],[5,15],[4,16]]
+    },
+    {
+      "label": "Lower-right island (flanks x=9 below gate)",
+      "cells": [[10,15],[11,15],[10,16]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[0,18],[1,18],[0,19]]
+    },
+    {
+      "label": "SE — touches right+bottom",
+      "cells": [[12,17],[13,17],[14,17],[14,18]]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {
+      "x": 6,
+      "y": 4,
+      "dir": "up",
+      "note": "x=6 upper gate — beam must travel UP; downward blocked"
+    },
+    {
+      "x": 6,
+      "y": 14,
+      "dir": "down",
+      "note": "x=6 lower gate — beam must travel DOWN; upward blocked"
+    },
+    {
+      "x": 9,
+      "y": 4,
+      "dir": "up",
+      "note": "x=9 upper gate — beam must travel UP; downward blocked"
+    },
+    {
+      "x": 9,
+      "y": 14,
+      "dir": "down",
+      "note": "x=9 lower gate — beam must travel DOWN; upward blocked"
+    }
+  ]
+}

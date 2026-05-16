@@ -1,0 +1,75 @@
+{
+  "date": "2026-07-24",
+  "name": "Beck",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 3,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1]]
+    },
+    {
+      "label": "N wall — touches top",
+      "cells": [[7,0],[8,0],[7,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[12,0],[13,0],[14,0],[14,1],[14,2]]
+    },
+    {
+      "label": "y=3 run-breaker",
+      "cells": [[4,3],[4,4]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,2],[1,2],[0,3]]
+    },
+    {
+      "label": "Upper interior",
+      "cells": [[9,2],[10,2],[9,3]]
+    },
+    {
+      "label": "E wall upper — touches right",
+      "cells": [[13,3],[14,3],[14,4],[14,5]]
+    },
+    {
+      "label": "Mid interior A",
+      "cells": [[5,7],[6,7],[5,8]]
+    },
+    {
+      "label": "Mid interior B",
+      "cells": [[10,8],[11,8],[10,9]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,10],[0,11],[1,11]]
+    },
+    {
+      "label": "Interior lower A",
+      "cells": [[4,12],[5,12],[4,13]]
+    },
+    {
+      "label": "Interior lower B",
+      "cells": [[9,13],[10,13],[9,14]]
+    },
+    {
+      "label": "E wall lower — touches right",
+      "cells": [[13,13],[14,13],[14,14],[14,15]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[0,18],[1,18],[0,19]]
+    },
+    {
+      "label": "S wall — touches bottom",
+      "cells": [[8,18],[9,18],[9,19],[10,19]]
+    }
+  ],
+  "splitters": []
+}

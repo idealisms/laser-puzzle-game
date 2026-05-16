@@ -1,0 +1,71 @@
+{
+  "date": "2026-07-22",
+  "name": "Glade",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 2,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[11,0],[12,0],[13,0],[14,0],[14,1]]
+    },
+    {
+      "label": "x=2 run-breaker",
+      "cells": [[2,6],[3,6]]
+    },
+    {
+      "label": "W wall mid — touches left",
+      "cells": [[0,5],[0,6],[1,5]]
+    },
+    {
+      "label": "Upper interior A",
+      "cells": [[5,3],[6,3],[5,4]]
+    },
+    {
+      "label": "Upper interior B",
+      "cells": [[9,2],[10,2],[10,3]]
+    },
+    {
+      "label": "E wall upper — touches right",
+      "cells": [[13,3],[14,3],[14,4],[14,5]]
+    },
+    {
+      "label": "Mid interior A",
+      "cells": [[4,9],[5,9],[4,10]]
+    },
+    {
+      "label": "Mid interior B",
+      "cells": [[8,9],[9,9],[9,10]]
+    },
+    {
+      "label": "E wall lower — touches right",
+      "cells": [[13,11],[14,11],[14,12],[14,13]]
+    },
+    {
+      "label": "Interior lower A",
+      "cells": [[3,13],[4,13],[3,14]]
+    },
+    {
+      "label": "Interior lower B",
+      "cells": [[8,14],[9,14],[8,15]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[0,18],[1,18],[0,19]]
+    },
+    {
+      "label": "S wall — touches bottom",
+      "cells": [[7,18],[8,18],[7,19]]
+    }
+  ],
+  "splitters": []
+}

@@ -1,0 +1,75 @@
+{
+  "date": "2026-07-19",
+  "name": "Spinney",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 11,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1],[1,1]]
+    },
+    {
+      "label": "N wall — touches top",
+      "cells": [[8,0],[9,0],[9,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[13,0],[14,0],[14,1]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,4],[0,5],[1,5]]
+    },
+    {
+      "label": "Upper interior A",
+      "cells": [[4,3],[5,3],[4,4]]
+    },
+    {
+      "label": "Upper interior B",
+      "cells": [[10,3],[11,3],[11,4]]
+    },
+    {
+      "label": "E wall upper — touches right",
+      "cells": [[13,4],[14,4],[14,5],[14,6]]
+    },
+    {
+      "label": "Mid interior A",
+      "cells": [[5,7],[6,7],[5,8]]
+    },
+    {
+      "label": "y=11 run-breaker",
+      "cells": [[8,11],[8,12]]
+    },
+    {
+      "label": "Mid-right island",
+      "cells": [[10,8],[11,8],[10,9]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,13],[0,14],[1,14]]
+    },
+    {
+      "label": "Interior lower A",
+      "cells": [[4,14],[5,14],[4,15]]
+    },
+    {
+      "label": "Interior lower B",
+      "cells": [[9,15],[10,15],[9,16]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[0,18],[1,18],[0,19]]
+    },
+    {
+      "label": "SE — touches right+bottom",
+      "cells": [[12,17],[13,17],[14,17],[14,18]]
+    }
+  ],
+  "splitters": []
+}
