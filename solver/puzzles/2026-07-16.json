@@ -1,0 +1,74 @@
+{
+  "date": "2026-07-16",
+  "name": "Weald",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 6,
+    "dir": "right"
+  },
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1],[0,2]]
+    },
+    {
+      "label": "N wall — touches top",
+      "cells": [[6,0],[7,0],[8,0],[7,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[12,0],[13,0],[14,0],[14,1]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,4],[0,5],[1,4]]
+    },
+    {
+      "label": "Upper interior A",
+      "cells": [[4,3],[5,3],[4,4]]
+    },
+    {
+      "label": "Upper interior B",
+      "cells": [[10,3],[11,3],[10,4]]
+    },
+    {
+      "label": "y=6 run-breaker",
+      "cells": [[5,6],[6,6]]
+    },
+    {
+      "label": "E wall mid — touches right",
+      "cells": [[13,5],[14,5],[14,6],[14,7]]
+    },
+    {
+      "label": "Interior lower A",
+      "cells": [[3,12],[4,12],[3,13]]
+    },
+    {
+      "label": "Interior lower B",
+      "cells": [[9,13],[10,13],[9,14]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,14],[0,15],[1,15]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[1,17],[0,18],[0,19]]
+    },
+    {
+      "label": "S wall — touches bottom",
+      "cells": [[7,18],[8,18],[8,19],[9,19]]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 9,
+      "y": 6,
+      "dir": "right",
+      "note": "laser going RIGHT → splits UP (y=0..5) and DOWN (y=7..19)"
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "date": "2026-07-13",
+  "name": "Brakes",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 10,
+    "dir": "left"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1],[1,1]]
+    },
+    {
+      "label": "N wall — touches top",
+      "cells": [[7,0],[8,0],[7,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[13,0],[14,0],[14,1],[14,2]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,4],[0,5],[1,5]]
+    },
+    {
+      "label": "Upper interior A (flanks y=4 gate row)",
+      "cells": [[4,2],[5,2],[5,3]]
+    },
+    {
+      "label": "Upper interior B (flanks y=4 gate row)",
+      "cells": [[9,2],[10,2],[9,3]]
+    },
+    {
+      "label": "y=10 run-breaker",
+      "cells": [[7,10],[7,11]]
+    },
+    {
+      "label": "E wall mid — touches right",
+      "cells": [[13,7],[14,7],[14,8],[14,9]]
+    },
+    {
+      "label": "Lower interior A (flanks y=15 gate row)",
+      "cells": [[4,16],[5,16],[4,17]]
+    },
+    {
+      "label": "Lower interior B (flanks y=15 gate row)",
+      "cells": [[9,16],[10,16],[9,17]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,13],[0,14],[1,14]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,18],[1,18],[0,19],[1,19]]
+    },
+    {
+      "label": "SE — touches right+bottom",
+      "cells": [[12,18],[13,18],[14,18],[14,19]]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {
+      "x": 3,
+      "y": 4,
+      "dir": "right",
+      "note": "y=4 left gate — beam must go RIGHT; leftward blocked"
+    },
+    {
+      "x": 11,
+      "y": 4,
+      "dir": "left",
+      "note": "y=4 right gate — beam must go LEFT; rightward blocked"
+    },
+    {
+      "x": 3,
+      "y": 15,
+      "dir": "right",
+      "note": "y=15 left gate — beam must go RIGHT; leftward blocked"
+    },
+    {
+      "x": 11,
+      "y": 15,
+      "dir": "left",
+      "note": "y=15 right gate — beam must go LEFT; rightward blocked"
+    }
+  ]
+}

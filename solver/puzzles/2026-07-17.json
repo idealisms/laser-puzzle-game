@@ -1,0 +1,71 @@
+{
+  "date": "2026-07-17",
+  "name": "Coppice",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 16,
+    "dir": "left"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1]]
+    },
+    {
+      "label": "N wall — touches top",
+      "cells": [[7,0],[8,0],[8,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[12,0],[13,0],[14,0],[14,1],[14,2]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,3],[0,4],[1,4]]
+    },
+    {
+      "label": "Upper interior A",
+      "cells": [[4,3],[5,3],[5,4]]
+    },
+    {
+      "label": "Upper interior B",
+      "cells": [[9,4],[10,4],[9,5]]
+    },
+    {
+      "label": "E wall mid — touches right",
+      "cells": [[13,7],[14,7],[14,8],[14,9]]
+    },
+    {
+      "label": "Mid interior A",
+      "cells": [[4,9],[5,9],[4,10]]
+    },
+    {
+      "label": "Mid interior B",
+      "cells": [[8,10],[9,10],[8,11]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,12],[1,12],[0,13]]
+    },
+    {
+      "label": "y=16 run-breaker",
+      "cells": [[8,16],[8,17]]
+    },
+    {
+      "label": "Interior lower",
+      "cells": [[5,14],[6,14],[5,15]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[0,18],[1,18],[0,19]]
+    },
+    {
+      "label": "S wall — touches bottom",
+      "cells": [[10,18],[11,18],[11,19],[12,19]]
+    }
+  ],
+  "splitters": []
+}
