@@ -1,0 +1,75 @@
+{
+  "date": "2026-07-29",
+  "name": "Linn",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 3,
+    "dir": "left"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1],[0,2]]
+    },
+    {
+      "label": "N wall — touches top",
+      "cells": [[7,0],[8,0],[7,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[13,0],[14,0],[14,1],[14,2]]
+    },
+    {
+      "label": "y=3 run-breaker",
+      "cells": [[7,3],[8,3]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,3],[0,4],[1,4]]
+    },
+    {
+      "label": "Upper interior A",
+      "cells": [[3,2],[4,2],[4,3]]
+    },
+    {
+      "label": "Upper interior B",
+      "cells": [[10,4],[11,4],[10,5]]
+    },
+    {
+      "label": "E wall mid — touches right",
+      "cells": [[13,6],[14,6],[14,7],[14,8]]
+    },
+    {
+      "label": "Mid interior A",
+      "cells": [[4,8],[5,8],[4,9]]
+    },
+    {
+      "label": "Mid interior B",
+      "cells": [[8,9],[9,9],[9,10]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,12],[1,12],[0,13]]
+    },
+    {
+      "label": "Interior lower A",
+      "cells": [[5,13],[6,13],[5,14]]
+    },
+    {
+      "label": "Interior lower B",
+      "cells": [[10,14],[11,14],[10,15]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[0,18],[1,18],[0,19]]
+    },
+    {
+      "label": "S wall — touches bottom",
+      "cells": [[9,18],[10,18],[10,19],[11,19]]
+    }
+  ],
+  "splitters": []
+}

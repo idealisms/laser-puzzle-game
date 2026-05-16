@@ -1,0 +1,71 @@
+{
+  "date": "2026-07-27",
+  "name": "Gill",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 15,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1]]
+    },
+    {
+      "label": "N wall — touches top",
+      "cells": [[6,0],[7,0],[6,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[12,0],[13,0],[14,0],[14,1],[14,2]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,3],[0,4],[1,3]]
+    },
+    {
+      "label": "Upper interior A",
+      "cells": [[4,2],[5,2],[4,3]]
+    },
+    {
+      "label": "Upper interior B",
+      "cells": [[9,3],[10,3],[9,4]]
+    },
+    {
+      "label": "E wall upper — touches right",
+      "cells": [[13,5],[14,5],[14,6],[14,7]]
+    },
+    {
+      "label": "Mid interior A",
+      "cells": [[3,8],[4,8],[3,9]]
+    },
+    {
+      "label": "Mid interior B",
+      "cells": [[8,8],[9,8],[8,9]]
+    },
+    {
+      "label": "E wall lower — touches right",
+      "cells": [[13,11],[14,11],[14,12],[14,13]]
+    },
+    {
+      "label": "y=15 run-breaker",
+      "cells": [[6,15],[7,15]]
+    },
+    {
+      "label": "Interior lower",
+      "cells": [[3,13],[4,13],[3,14]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[0,18],[1,17],[0,19]]
+    },
+    {
+      "label": "SE — touches right+bottom",
+      "cells": [[12,18],[13,18],[14,18],[14,19]]
+    }
+  ],
+  "splitters": []
+}

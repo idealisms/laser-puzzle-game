@@ -1,0 +1,93 @@
+{
+  "date": "2026-07-28",
+  "name": "Force",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 10,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[12,0],[13,0],[14,0],[14,1],[14,2]]
+    },
+    {
+      "label": "Upper-left flanks (above x=5 gate at y=3)",
+      "cells": [[3,1],[4,1],[3,2]]
+    },
+    {
+      "label": "Upper-right flanks (above x=10 gate at y=3)",
+      "cells": [[11,1],[12,1],[11,2]]
+    },
+    {
+      "label": "W wall mid — touches left",
+      "cells": [[0,4],[0,5],[1,5]]
+    },
+    {
+      "label": "E wall mid — touches right",
+      "cells": [[13,7],[14,7],[14,8],[14,9]]
+    },
+    {
+      "label": "y=10 run-breaker",
+      "cells": [[7,10],[7,11]]
+    },
+    {
+      "label": "Mid interior",
+      "cells": [[5,12],[6,12],[5,13]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,14],[0,15],[1,15]]
+    },
+    {
+      "label": "Lower-left flanks (below x=5 gate at y=16)",
+      "cells": [[3,17],[4,17],[3,18]]
+    },
+    {
+      "label": "Lower-right flanks (below x=10 gate at y=16)",
+      "cells": [[11,17],[12,17],[11,18]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,18],[1,18],[0,19],[1,19]]
+    },
+    {
+      "label": "S wall — touches bottom",
+      "cells": [[7,18],[8,18],[8,19]]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {
+      "x": 5,
+      "y": 3,
+      "dir": "up",
+      "note": "x=5 upper gate — beam must travel UP; downward blocked"
+    },
+    {
+      "x": 5,
+      "y": 16,
+      "dir": "down",
+      "note": "x=5 lower gate — beam must travel DOWN; upward blocked"
+    },
+    {
+      "x": 10,
+      "y": 3,
+      "dir": "up",
+      "note": "x=10 upper gate — beam must travel UP; downward blocked"
+    },
+    {
+      "x": 10,
+      "y": 16,
+      "dir": "down",
+      "note": "x=10 lower gate — beam must travel DOWN; upward blocked"
+    }
+  ]
+}
