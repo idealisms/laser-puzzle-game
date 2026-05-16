@@ -34,7 +34,7 @@ const REFLECT: Record<string, number[]> = {
 const DIR_TO_INT: Record<string, number> = { up: UP, right: RIGHT, down: DOWN, left: LEFT };
 
 function posKey(x: number, y: number): number { return x * 100 + y; }
-function stateKey(x: number, y: number, dir: number): number { return (x * 20 + y) * 4 + dir; }
+function stateKey(x: number, y: number, dir: number): number { return (x * 100 + y) * 4 + dir; }
 
 // ── Segment ───────────────────────────────────────────────────────────────────
 // A laser beam traveling from (x1,y1) in direction `dir` for `len` steps.
