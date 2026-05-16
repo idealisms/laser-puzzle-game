@@ -1,0 +1,93 @@
+{
+  "date": "2026-07-09",
+  "name": "Vales",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 7,
+    "y": 19,
+    "dir": "up"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[13,0],[14,0],[14,1],[14,2]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,3],[0,4],[1,4]]
+    },
+    {
+      "label": "Upper interior A (above y=5 gate row)",
+      "cells": [[4,2],[5,2],[4,3]]
+    },
+    {
+      "label": "Upper interior B (above y=5 gate row)",
+      "cells": [[9,2],[10,2],[9,3]]
+    },
+    {
+      "label": "E wall mid — touches right",
+      "cells": [[13,6],[14,6],[14,7],[14,8]]
+    },
+    {
+      "label": "Mid interior",
+      "cells": [[4,8],[5,8],[5,9]]
+    },
+    {
+      "label": "x=7 run-breaker",
+      "cells": [[7,11],[8,11]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,12],[1,12],[0,13]]
+    },
+    {
+      "label": "Lower interior A (below y=14 gate row)",
+      "cells": [[4,16],[5,16],[4,17]]
+    },
+    {
+      "label": "Lower interior B (below y=14 gate row)",
+      "cells": [[9,16],[10,16],[9,17]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,18],[1,18],[0,19],[1,19]]
+    },
+    {
+      "label": "SE — touches right+bottom",
+      "cells": [[12,18],[13,18],[14,18],[14,19]]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {
+      "x": 3,
+      "y": 5,
+      "dir": "right",
+      "note": "y=5 corridor left gate — beam must go RIGHT; leftward blocked"
+    },
+    {
+      "x": 11,
+      "y": 5,
+      "dir": "left",
+      "note": "y=5 corridor right gate — beam must go LEFT; rightward blocked"
+    },
+    {
+      "x": 3,
+      "y": 14,
+      "dir": "right",
+      "note": "y=14 corridor left gate — beam must go RIGHT; leftward blocked"
+    },
+    {
+      "x": 11,
+      "y": 14,
+      "dir": "left",
+      "note": "y=14 corridor right gate — beam must go LEFT; rightward blocked"
+    }
+  ]
+}

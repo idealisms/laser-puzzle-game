@@ -1,0 +1,67 @@
+{
+  "date": "2026-07-08",
+  "name": "Moors",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 14,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1]]
+    },
+    {
+      "label": "N wall mid — touches top",
+      "cells": [[6,0],[7,0],[7,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[12,0],[13,0],[14,0],[14,1],[14,2]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,4],[0,5],[1,4]]
+    },
+    {
+      "label": "Upper interior A",
+      "cells": [[4,3],[5,3],[5,4]]
+    },
+    {
+      "label": "Upper interior B",
+      "cells": [[9,4],[10,4],[9,5]]
+    },
+    {
+      "label": "Mid interior",
+      "cells": [[6,8],[7,8],[7,9]]
+    },
+    {
+      "label": "E wall mid — touches right",
+      "cells": [[13,9],[14,9],[14,10],[14,11]]
+    },
+    {
+      "label": "y=14 run-breaker",
+      "cells": [[7,14],[7,15]]
+    },
+    {
+      "label": "Lower-left island",
+      "cells": [[3,15],[4,15],[3,16]]
+    },
+    {
+      "label": "Lower-right island",
+      "cells": [[10,16],[11,16],[10,17]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[0,18],[0,19],[1,19]]
+    },
+    {
+      "label": "SE — touches right+bottom",
+      "cells": [[13,17],[14,17],[14,18],[14,19]]
+    }
+  ],
+  "splitters": []
+}

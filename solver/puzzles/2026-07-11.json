@@ -1,0 +1,71 @@
+{
+  "date": "2026-07-11",
+  "name": "Holms",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 3,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1],[1,1]]
+    },
+    {
+      "label": "NE L — touches top+right",
+      "cells": [[11,0],[12,0],[13,0],[14,0],[14,1]]
+    },
+    {
+      "label": "x=3 run-breaker",
+      "cells": [[3,5],[4,5]]
+    },
+    {
+      "label": "W wall mid — touches left",
+      "cells": [[0,5],[0,6],[1,6]]
+    },
+    {
+      "label": "Upper interior A",
+      "cells": [[7,2],[8,2],[7,3]]
+    },
+    {
+      "label": "Upper interior B",
+      "cells": [[10,4],[11,4],[11,5]]
+    },
+    {
+      "label": "E wall upper — touches right",
+      "cells": [[13,3],[14,3],[14,4],[14,5]]
+    },
+    {
+      "label": "Mid interior",
+      "cells": [[5,9],[6,9],[6,10]]
+    },
+    {
+      "label": "Mid-right island",
+      "cells": [[10,9],[11,9],[10,10]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,13],[0,14],[1,14]]
+    },
+    {
+      "label": "Interior lower A",
+      "cells": [[5,13],[6,13],[5,14]]
+    },
+    {
+      "label": "Interior lower B",
+      "cells": [[9,15],[10,15],[9,16]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[1,17],[0,18],[0,19]]
+    },
+    {
+      "label": "SE — touches right+bottom",
+      "cells": [[12,17],[13,17],[14,17],[14,18]]
+    }
+  ],
+  "splitters": []
+}

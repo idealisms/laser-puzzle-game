@@ -1,0 +1,74 @@
+{
+  "date": "2026-07-12",
+  "name": "Glens",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 8,
+    "dir": "left"
+  },
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1],[0,2]]
+    },
+    {
+      "label": "N wall — touches top",
+      "cells": [[6,0],[7,0],[6,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[12,0],[13,0],[14,0],[14,1]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,4],[1,4],[0,5]]
+    },
+    {
+      "label": "Upper interior A",
+      "cells": [[4,3],[5,3],[5,4]]
+    },
+    {
+      "label": "Upper interior B",
+      "cells": [[9,3],[10,3],[9,4]]
+    },
+    {
+      "label": "y=8 run-breaker",
+      "cells": [[7,8],[7,9]]
+    },
+    {
+      "label": "Mid-right island",
+      "cells": [[11,6],[12,6],[11,7]]
+    },
+    {
+      "label": "Interior lower A",
+      "cells": [[3,12],[4,12],[3,13]]
+    },
+    {
+      "label": "Interior lower B",
+      "cells": [[9,12],[10,12],[10,13]]
+    },
+    {
+      "label": "E wall lower — touches right",
+      "cells": [[13,13],[14,13],[14,14],[14,15]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,16],[0,17],[1,17],[0,18]]
+    },
+    {
+      "label": "S wall — touches bottom",
+      "cells": [[7,18],[8,18],[8,19],[9,19]]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 4,
+      "y": 8,
+      "dir": "left",
+      "note": "laser going LEFT → splits UP (y=0..7) and DOWN (y=9..19)"
+    }
+  ]
+}

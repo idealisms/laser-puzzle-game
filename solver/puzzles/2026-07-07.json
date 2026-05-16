@@ -1,0 +1,74 @@
+{
+  "date": "2026-07-07",
+  "name": "Bogs",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 7,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {
+      "label": "NW block — touches top+left",
+      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[12,0],[13,0],[14,0],[14,1]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,4],[0,5],[1,5]]
+    },
+    {
+      "label": "Upper-left island",
+      "cells": [[3,3],[4,3],[4,4]]
+    },
+    {
+      "label": "Upper-right island",
+      "cells": [[10,3],[11,3],[10,4]]
+    },
+    {
+      "label": "E wall upper — touches right",
+      "cells": [[13,5],[14,5],[14,6],[14,7]]
+    },
+    {
+      "label": "Mid-left island",
+      "cells": [[2,9],[3,9],[2,10]]
+    },
+    {
+      "label": "Mid-right island",
+      "cells": [[11,8],[12,8],[12,9]]
+    },
+    {
+      "label": "Interior centre",
+      "cells": [[6,12],[7,12],[6,13]]
+    },
+    {
+      "label": "Lower-left island",
+      "cells": [[3,14],[4,14],[3,15]]
+    },
+    {
+      "label": "Lower-right island",
+      "cells": [[10,14],[11,14],[11,15]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[0,18],[1,17],[0,19]]
+    },
+    {
+      "label": "S wall — touches bottom",
+      "cells": [[8,18],[9,18],[8,19],[9,19]]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 7,
+      "y": 8,
+      "dir": "down",
+      "note": "laser going DOWN → splits LEFT (x=0..6) and RIGHT (x=8..14)"
+    }
+  ]
+}
