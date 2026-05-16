@@ -1,0 +1,93 @@
+{
+  "date": "2026-07-04",
+  "name": "Wolds",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 8,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1]]
+    },
+    {
+      "label": "N mid — touches top",
+      "cells": [[7,0],[8,0],[8,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[12,0],[13,0],[14,0],[14,1]]
+    },
+    {
+      "label": "Upper-left island (flanks x=4 corridor)",
+      "cells": [[2,3],[3,3],[2,4]]
+    },
+    {
+      "label": "Upper-right island (flanks x=11 corridor)",
+      "cells": [[8,3],[9,3],[9,4]]
+    },
+    {
+      "label": "E wall upper — touches right",
+      "cells": [[13,5],[14,5],[14,6],[14,7]]
+    },
+    {
+      "label": "y=8 run-breaker",
+      "cells": [[6,8],[7,8]]
+    },
+    {
+      "label": "Mid-left island",
+      "cells": [[2,11],[3,11],[3,12]]
+    },
+    {
+      "label": "Mid-right island (avoids x=11)",
+      "cells": [[9,10],[10,10],[10,11]]
+    },
+    {
+      "label": "Lower-left island (flanks x=4 corridor)",
+      "cells": [[2,15],[3,15],[2,16]]
+    },
+    {
+      "label": "Lower-right island (flanks x=11 corridor)",
+      "cells": [[9,15],[10,15],[10,16]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[0,18],[1,18],[0,19]]
+    },
+    {
+      "label": "SE — touches right+bottom",
+      "cells": [[12,17],[13,17],[14,17],[14,18]]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {
+      "x": 4,
+      "y": 4,
+      "dir": "up",
+      "note": "x=4 upper gate — beam must travel UP to pass; DOWN is blocked"
+    },
+    {
+      "x": 4,
+      "y": 14,
+      "dir": "down",
+      "note": "x=4 lower gate — beam must travel DOWN to pass; UP is blocked"
+    },
+    {
+      "x": 11,
+      "y": 4,
+      "dir": "up",
+      "note": "x=11 upper gate — beam must travel UP to pass; DOWN is blocked"
+    },
+    {
+      "x": 11,
+      "y": 14,
+      "dir": "down",
+      "note": "x=11 lower gate — beam must travel DOWN to pass; UP is blocked"
+    }
+  ]
+}

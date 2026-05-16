@@ -1,0 +1,71 @@
+{
+  "date": "2026-07-06",
+  "name": "Fens",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 11,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW — touches top+left",
+      "cells": [[0,0],[1,0],[0,1],[1,1]]
+    },
+    {
+      "label": "N wall left — touches top",
+      "cells": [[4,0],[5,0],[4,1]]
+    },
+    {
+      "label": "NE — touches top+right",
+      "cells": [[13,0],[14,0],[14,1]]
+    },
+    {
+      "label": "W wall upper — touches left",
+      "cells": [[0,4],[0,5],[1,5]]
+    },
+    {
+      "label": "Upper interior A",
+      "cells": [[7,3],[8,3],[7,4]]
+    },
+    {
+      "label": "Upper interior B",
+      "cells": [[3,6],[4,6],[3,7]]
+    },
+    {
+      "label": "x=11 run-breaker",
+      "cells": [[11,6],[12,6]]
+    },
+    {
+      "label": "E wall mid — touches right",
+      "cells": [[13,7],[14,7],[14,8],[14,9]]
+    },
+    {
+      "label": "Mid interior",
+      "cells": [[6,10],[7,10],[6,11]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,12],[1,12],[0,13]]
+    },
+    {
+      "label": "Interior lower A",
+      "cells": [[4,13],[5,13],[5,14]]
+    },
+    {
+      "label": "Interior lower B",
+      "cells": [[9,14],[10,14],[9,15]]
+    },
+    {
+      "label": "SW — touches left+bottom",
+      "cells": [[0,17],[1,17],[0,18],[0,19]]
+    },
+    {
+      "label": "SE — touches right+bottom",
+      "cells": [[12,17],[13,17],[14,17],[14,18]]
+    }
+  ],
+  "splitters": []
+}
