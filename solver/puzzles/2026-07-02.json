@@ -11,48 +11,44 @@
   "num_mirrors": 9,
   "obstacle_groups": [
     {
-      "label": "NW dot",
-      "cells": [[1,0],[2,0],[2,1]]
+      "label": "Upper-left wing — blocks UL zone, forces beam through center",
+      "cells": [[0,6],[1,6],[2,6],[3,6],[4,6],[0,7],[1,7],[2,7],[3,7]]
     },
     {
-      "label": "N wall right — touches top",
-      "cells": [[10,0],[11,0],[12,0],[11,1]]
+      "label": "Upper-right wing — mirrors UL wing",
+      "cells": [[10,6],[11,6],[12,6],[13,6],[14,6],[11,7],[12,7],[13,7],[14,7]]
     },
     {
-      "label": "W wall upper — touches left",
-      "cells": [[0,4],[1,4],[1,5]]
+      "label": "Lower-left wing — blocks LL zone",
+      "cells": [[0,13],[1,13],[2,13],[3,13],[4,13],[0,14],[1,14],[2,14],[3,14]]
     },
     {
-      "label": "Upper interior",
-      "cells": [[5,3],[6,3],[6,4]]
+      "label": "Lower-right wing — mirrors LL wing",
+      "cells": [[10,13],[11,13],[12,13],[13,13],[14,13],[11,14],[12,14],[13,14],[14,14]]
     },
     {
-      "label": "NE interior",
-      "cells": [[9,4],[10,4],[9,5]]
+      "label": "Top mast — channels upper-center zone",
+      "cells": [[7,1],[7,2],[7,3]]
     },
     {
-      "label": "E wall mid — touches right",
-      "cells": [[14,8],[14,9],[13,9]]
+      "label": "Bottom mast — channels lower-center zone",
+      "cells": [[7,16],[7,17],[7,18]]
     },
     {
-      "label": "Lower interior A",
-      "cells": [[4,13],[5,13],[4,14]]
+      "label": "Upper-center island A",
+      "cells": [[4,3],[5,3]]
     },
     {
-      "label": "Lower interior B",
-      "cells": [[9,14],[10,14],[9,15]]
+      "label": "Upper-center island B",
+      "cells": [[9,4],[10,4]]
     },
     {
-      "label": "E wall lower — touches right",
-      "cells": [[13,14],[14,14],[14,15],[14,16]]
+      "label": "Lower-center island A",
+      "cells": [[4,15],[5,15]]
     },
     {
-      "label": "SW island",
-      "cells": [[1,16],[2,16],[1,17]]
-    },
-    {
-      "label": "S wall — touches bottom",
-      "cells": [[7,18],[8,18],[8,19],[9,19]]
+      "label": "Lower-center island B",
+      "cells": [[9,15],[10,15]]
     }
   ],
   "splitters": [
@@ -60,7 +56,7 @@
       "x": 7,
       "y": 10,
       "dir": "right",
-      "note": "laser going RIGHT → splits UP (y=0..9) and DOWN (y=11..19)"
+      "note": "laser going RIGHT splits UP into upper-center zone and DOWN into lower-center zone"
     }
   ]
 }

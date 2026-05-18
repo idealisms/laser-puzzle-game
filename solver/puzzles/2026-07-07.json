@@ -11,64 +11,52 @@
   "num_mirrors": 9,
   "obstacle_groups": [
     {
-      "label": "NW block — touches top+left",
-      "cells": [[0,0],[1,0],[2,0],[0,1],[1,1]]
+      "label": "Upper-left wing — blocks UL corner",
+      "cells": [[0,3],[1,3],[2,3],[3,3],[4,3],[0,4],[1,4],[2,4],[3,4]]
     },
     {
-      "label": "NE — touches top+right",
-      "cells": [[12,0],[13,0],[14,0],[14,1]]
+      "label": "Upper-right wing — mirrors UL wing",
+      "cells": [[10,3],[11,3],[12,3],[13,3],[14,3],[11,4],[12,4],[13,4],[14,4]]
     },
     {
-      "label": "W wall upper — touches left",
-      "cells": [[0,4],[0,5],[1,5]]
+      "label": "Lower-left wing — blocks LL corner",
+      "cells": [[0,15],[1,15],[2,15],[3,15],[4,15],[0,16],[1,16],[2,16],[3,16]]
     },
     {
-      "label": "Upper-left island",
-      "cells": [[3,3],[4,3],[4,4]]
+      "label": "Lower-right wing — mirrors LL wing",
+      "cells": [[10,15],[11,15],[12,15],[13,15],[14,15],[11,16],[12,16],[13,16],[14,16]]
     },
     {
-      "label": "Upper-right island",
-      "cells": [[10,3],[11,3],[10,4]]
+      "label": "Top-center island A",
+      "cells": [[4,1],[5,1]]
     },
     {
-      "label": "E wall upper — touches right",
-      "cells": [[13,5],[14,5],[14,6],[14,7]]
+      "label": "Top-center island B",
+      "cells": [[9,1],[10,1]]
     },
     {
       "label": "Mid-left island",
-      "cells": [[2,9],[3,9],[2,10]]
+      "cells": [[1,7],[2,7]]
     },
     {
       "label": "Mid-right island",
-      "cells": [[11,8],[12,8],[12,9]]
+      "cells": [[12,7],[13,7]]
     },
     {
-      "label": "Interior centre",
-      "cells": [[6,12],[7,12],[6,13]]
+      "label": "Bottom-center island A",
+      "cells": [[4,18],[5,18]]
     },
     {
-      "label": "Lower-left island",
-      "cells": [[3,14],[4,14],[3,15]]
-    },
-    {
-      "label": "Lower-right island",
-      "cells": [[10,14],[11,14],[11,15]]
-    },
-    {
-      "label": "SW — touches left+bottom",
-      "cells": [[0,17],[0,18],[1,17],[0,19]]
-    },
-    {
-      "label": "S wall — touches bottom",
-      "cells": [[8,18],[9,18],[8,19],[9,19]]
+      "label": "Bottom-center island B",
+      "cells": [[9,18],[10,18]]
     }
   ],
   "splitters": [
     {
       "x": 7,
-      "y": 8,
+      "y": 10,
       "dir": "down",
-      "note": "laser going DOWN → splits LEFT (x=0..6) and RIGHT (x=8..14)"
+      "note": "laser going DOWN splits LEFT into left-center zone and RIGHT into right-center zone"
     }
   ]
 }
