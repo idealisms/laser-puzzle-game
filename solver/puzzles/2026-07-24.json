@@ -11,64 +11,44 @@
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW — touches top+left",
-      "cells": [[0,0],[1,0],[0,1]]
+      "label": "Top-left wide staircase — broad top row stepping in",
+      "cells": [[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[0,1],[1,1]]
     },
     {
-      "label": "N wall — touches top",
-      "cells": [[7,0],[8,0],[7,1]]
+      "label": "Top-right + right wall — touches top and right",
+      "cells": [[14,0],[14,1],[14,2],[14,3],[14,4],[9,0],[10,0],[11,0],[12,0]]
     },
     {
-      "label": "NE — touches top+right",
-      "cells": [[12,0],[13,0],[14,0],[14,1],[14,2]]
+      "label": "SW staircase — steps up-right",
+      "cells": [[0,17],[1,17],[0,18],[1,18],[2,18],[0,19],[1,19],[2,19],[3,19]]
     },
     {
-      "label": "y=3 run-breaker",
-      "cells": [[4,3],[4,4]]
+      "label": "SE staircase — steps up-left",
+      "cells": [[13,17],[14,17],[12,18],[13,18],[14,18],[11,19],[12,19],[13,19],[14,19]]
     },
     {
-      "label": "W wall upper — touches left",
-      "cells": [[0,2],[1,2],[0,3]]
+      "label": "Left mid wall — touches left",
+      "cells": [[0,9],[0,10],[0,11]]
     },
     {
-      "label": "Upper interior",
-      "cells": [[9,2],[10,2],[9,3]]
+      "label": "Right mid wall — touches right",
+      "cells": [[14,8],[14,9],[14,10]]
     },
     {
-      "label": "E wall upper — touches right",
-      "cells": [[13,3],[14,3],[14,4],[14,5]]
+      "label": "Laser row run-breaker",
+      "cells": [[6,3],[6,4]]
     },
     {
-      "label": "Mid interior A",
-      "cells": [[5,7],[6,7],[5,8]]
+      "label": "Upper right island",
+      "cells": [[9,2],[10,2]]
     },
     {
-      "label": "Mid interior B",
-      "cells": [[10,8],[11,8],[10,9]]
+      "label": "Mid center island",
+      "cells": [[7,9],[8,9]]
     },
     {
-      "label": "W wall lower — touches left",
-      "cells": [[0,10],[0,11],[1,11]]
-    },
-    {
-      "label": "Interior lower A",
-      "cells": [[4,12],[5,12],[4,13]]
-    },
-    {
-      "label": "Interior lower B",
-      "cells": [[9,13],[10,13],[9,14]]
-    },
-    {
-      "label": "E wall lower — touches right",
-      "cells": [[13,13],[14,13],[14,14],[14,15]]
-    },
-    {
-      "label": "SW — touches left+bottom",
-      "cells": [[0,17],[0,18],[1,18],[0,19]]
-    },
-    {
-      "label": "S wall — touches bottom",
-      "cells": [[8,18],[9,18],[9,19],[10,19]]
+      "label": "Lower center island",
+      "cells": [[6,14],[7,14]]
     }
   ],
   "splitters": []
