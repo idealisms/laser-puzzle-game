@@ -11,52 +11,44 @@
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW corner — touches top+left",
-      "cells": [[0,0],[1,0],[0,1],[1,1]]
+      "label": "NW staircase — steps down-right",
+      "cells": [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[2,1],[0,2],[1,2]]
     },
     {
-      "label": "NE group — touches top+right",
-      "cells": [[12,0],[13,0],[14,0],[14,1],[13,1]]
+      "label": "NE staircase — steps down-left",
+      "cells": [[11,0],[12,0],[13,0],[14,0],[12,1],[13,1],[14,1],[13,2],[14,2]]
     },
     {
-      "label": "W wall mid — touches left",
-      "cells": [[0,5],[0,6],[1,6]]
+      "label": "SW staircase — steps up-right",
+      "cells": [[0,17],[1,17],[0,18],[1,18],[2,18],[0,19],[1,19],[2,19],[3,19]]
     },
     {
-      "label": "Upper interior A",
-      "cells": [[8,2],[9,2],[8,3]]
+      "label": "SE staircase — steps up-left",
+      "cells": [[13,17],[14,17],[12,18],[13,18],[14,18],[11,19],[12,19],[13,19],[14,19]]
     },
     {
-      "label": "Upper interior B",
-      "cells": [[3,4],[4,4],[3,5]]
+      "label": "Left mid wall — touches left",
+      "cells": [[0,8],[0,9],[0,10]]
     },
     {
-      "label": "E wall upper — touches right",
-      "cells": [[13,4],[14,4],[14,5],[14,6]]
+      "label": "Right mid wall — touches right",
+      "cells": [[14,8],[14,9],[14,10]]
     },
     {
-      "label": "Mid interior",
-      "cells": [[7,9],[8,9],[7,10]]
+      "label": "Upper island A",
+      "cells": [[7,3],[8,3]]
     },
     {
-      "label": "W wall lower — touches left",
-      "cells": [[0,12],[1,12],[0,13]]
+      "label": "Upper island B",
+      "cells": [[3,6],[4,6]]
     },
     {
-      "label": "Interior lower A",
-      "cells": [[4,13],[5,13],[4,14]]
+      "label": "Lower island A",
+      "cells": [[10,13],[11,13]]
     },
     {
-      "label": "Interior lower B",
-      "cells": [[10,11],[11,11],[10,12]]
-    },
-    {
-      "label": "SW — touches left+bottom",
-      "cells": [[0,17],[0,18],[1,17],[0,19]]
-    },
-    {
-      "label": "S wall — touches bottom",
-      "cells": [[8,18],[9,18],[9,19],[10,19]]
+      "label": "Lower island B",
+      "cells": [[6,16],[7,16]]
     }
   ],
   "splitters": []
