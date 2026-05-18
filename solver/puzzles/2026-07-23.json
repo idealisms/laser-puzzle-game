@@ -11,56 +11,44 @@
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW — touches top+left",
-      "cells": [[0,0],[1,0],[0,1]]
+      "label": "NW corner block",
+      "cells": [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[0,2]]
     },
     {
-      "label": "NE — touches top+right",
-      "cells": [[12,0],[13,0],[14,0],[14,1]]
+      "label": "NE corner block",
+      "cells": [[11,0],[12,0],[13,0],[14,0],[13,1],[14,1],[14,2]]
     },
     {
-      "label": "W wall upper — touches left",
-      "cells": [[0,3],[0,4],[1,4]]
+      "label": "SW corner block",
+      "cells": [[0,17],[0,18],[1,18],[0,19],[1,19],[2,19],[3,19]]
     },
     {
-      "label": "Upper-left island (flanks x=6 above gate)",
-      "cells": [[4,2],[5,2],[4,3]]
+      "label": "SE corner block",
+      "cells": [[11,19],[12,19],[13,19],[14,19],[13,18],[14,18],[14,17]]
     },
     {
-      "label": "Upper-right island (flanks x=9 above gate)",
-      "cells": [[10,2],[11,2],[10,3]]
+      "label": "W mid wall — touches left between gate rows",
+      "cells": [[0,5],[0,6],[0,7],[0,8]]
     },
     {
-      "label": "E wall upper — touches right",
-      "cells": [[13,5],[14,5],[14,6],[14,7]]
+      "label": "E mid wall — touches right near laser",
+      "cells": [[14,5],[14,6],[14,7],[14,8]]
     },
     {
-      "label": "Mid interior (between x=6 and x=9 corridors)",
-      "cells": [[7,7],[8,7],[7,8]]
+      "label": "Upper-left flank — near x=6 y=4 gate",
+      "cells": [[4,3],[5,3]]
     },
     {
-      "label": "y=9 run-breaker",
-      "cells": [[4,9],[4,10]]
+      "label": "Upper-right flank — near x=9 y=4 gate",
+      "cells": [[10,3],[11,3]]
     },
     {
-      "label": "W wall lower — touches left",
-      "cells": [[0,12],[0,13],[1,13]]
+      "label": "Lower-left flank — near x=6 y=14 gate",
+      "cells": [[4,15],[5,15]]
     },
     {
-      "label": "Lower-left island (flanks x=6 below gate)",
-      "cells": [[4,15],[5,15],[4,16]]
-    },
-    {
-      "label": "Lower-right island (flanks x=9 below gate)",
-      "cells": [[10,15],[11,15],[10,16]]
-    },
-    {
-      "label": "SW — touches left+bottom",
-      "cells": [[0,17],[0,18],[1,18],[0,19]]
-    },
-    {
-      "label": "SE — touches right+bottom",
-      "cells": [[12,17],[13,17],[14,17],[14,18]]
+      "label": "Lower-right flank — near x=9 y=14 gate",
+      "cells": [[10,15],[11,15]]
     }
   ],
   "splitters": [],

@@ -11,56 +11,44 @@
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW — touches top+left",
-      "cells": [[0,0],[1,0],[0,1],[1,1]]
+      "label": "NW L-wall — vertical left leg, horizontal top leg",
+      "cells": [[0,0],[0,1],[0,2],[0,3],[0,4],[1,0],[2,0],[3,0],[4,0]]
     },
     {
-      "label": "N wall — touches top",
-      "cells": [[7,0],[8,0],[7,1]]
+      "label": "NE L-wall — vertical right leg, horizontal top leg",
+      "cells": [[14,0],[14,1],[14,2],[14,3],[14,4],[10,0],[11,0],[12,0],[13,0]]
     },
     {
-      "label": "NE — touches top+right",
-      "cells": [[13,0],[14,0],[14,1],[14,2]]
+      "label": "SW L-wall — vertical left leg, horizontal bottom leg",
+      "cells": [[0,15],[0,16],[0,17],[0,18],[0,19],[1,19],[2,19],[3,19],[4,19]]
     },
     {
-      "label": "W wall upper — touches left",
-      "cells": [[0,4],[0,5],[1,5]]
+      "label": "SE L-wall — vertical right leg, horizontal bottom leg",
+      "cells": [[14,15],[14,16],[14,17],[14,18],[14,19],[10,19],[11,19],[12,19],[13,19]]
     },
     {
-      "label": "Upper interior A (flanks y=4 gate row)",
-      "cells": [[4,2],[5,2],[5,3]]
+      "label": "Left mid wall — touches left between gate rows",
+      "cells": [[0,7],[0,8],[0,9]]
     },
     {
-      "label": "Upper interior B (flanks y=4 gate row)",
-      "cells": [[9,2],[10,2],[9,3]]
+      "label": "Right mid wall — touches right near laser",
+      "cells": [[14,7],[14,8],[14,9]]
     },
     {
-      "label": "y=10 run-breaker",
-      "cells": [[7,10],[7,11]]
+      "label": "Upper-left flank — near y=4 left gate",
+      "cells": [[5,2],[6,2]]
     },
     {
-      "label": "E wall mid — touches right",
-      "cells": [[13,7],[14,7],[14,8],[14,9]]
+      "label": "Upper-right flank — near y=4 right gate",
+      "cells": [[8,2],[9,2]]
     },
     {
-      "label": "Lower interior A (flanks y=15 gate row)",
-      "cells": [[4,16],[5,16],[4,17]]
+      "label": "Lower-left flank — near y=15 left gate",
+      "cells": [[5,17],[6,17]]
     },
     {
-      "label": "Lower interior B (flanks y=15 gate row)",
-      "cells": [[9,16],[10,16],[9,17]]
-    },
-    {
-      "label": "W wall lower — touches left",
-      "cells": [[0,13],[0,14],[1,14]]
-    },
-    {
-      "label": "SW — touches left+bottom",
-      "cells": [[0,18],[1,18],[0,19],[1,19]]
-    },
-    {
-      "label": "SE — touches right+bottom",
-      "cells": [[12,18],[13,18],[14,18],[14,19]]
+      "label": "Lower-right flank — near y=15 right gate",
+      "cells": [[8,17],[9,17]]
     }
   ],
   "splitters": [],
