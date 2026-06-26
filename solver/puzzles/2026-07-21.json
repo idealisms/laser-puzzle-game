@@ -11,44 +11,68 @@
   "num_mirrors": 9,
   "obstacle_groups": [
     {
-      "label": "NW L-wall — vertical leg left, horizontal leg top",
-      "cells": [[0,0],[0,1],[0,2],[0,3],[0,4],[1,0],[2,0],[3,0],[4,0]]
+      "label": "NW corner — touches top+left",
+      "cells": [[0,0],[1,0],[0,1],[1,1]]
     },
     {
-      "label": "NE L-wall — vertical leg right, horizontal leg top",
-      "cells": [[14,0],[14,1],[14,2],[14,3],[14,4],[10,0],[11,0],[12,0],[13,0]]
+      "label": "N wall — touches top",
+      "cells": [[7,0],[8,0],[8,1]]
     },
     {
-      "label": "SW L-wall — vertical leg left, horizontal leg bottom",
-      "cells": [[0,15],[0,16],[0,17],[0,18],[0,19],[1,19],[2,19],[3,19],[4,19]]
+      "label": "NE corner — touches top+right",
+      "cells": [[13,0],[14,0],[14,1]]
     },
     {
-      "label": "SE L-wall — vertical leg right, horizontal leg bottom",
-      "cells": [[14,15],[14,16],[14,17],[14,18],[14,19],[10,19],[11,19],[12,19],[13,19]]
+      "label": "W wall upper — touches left",
+      "cells": [[0,3],[0,4],[1,4]]
     },
     {
-      "label": "Left mid wall — touches left edge below laser",
-      "cells": [[0,10],[0,11],[0,12]]
+      "label": "Upper interior A — blocks x=4 band",
+      "cells": [[4,2],[5,2],[4,3]]
     },
     {
-      "label": "Right mid wall — touches right edge near laser",
-      "cells": [[14,6],[14,7],[14,8]]
+      "label": "Upper interior B — blocks x=11 band",
+      "cells": [[11,2],[12,2],[11,3]]
     },
     {
-      "label": "Upper center A",
-      "cells": [[6,3],[7,3]]
+      "label": "E wall upper — touches right",
+      "cells": [[13,4],[14,4],[14,5]]
     },
     {
-      "label": "Upper center B",
-      "cells": [[9,3],[9,4]]
+      "label": "Upper interior C — blocks x=6 band, away from splitter column",
+      "cells": [[6,6],[7,6],[6,7]]
     },
     {
-      "label": "Lower center A",
-      "cells": [[5,16],[6,16]]
+      "label": "Left mid wall — touches left below laser row",
+      "cells": [[0,10],[0,11],[1,11]]
     },
     {
-      "label": "Lower center B",
-      "cells": [[8,16],[9,16]]
+      "label": "Right mid wall — touches right below splitter row",
+      "cells": [[13,10],[14,10],[14,11]]
+    },
+    {
+      "label": "Lower interior A — blocks x=4 band",
+      "cells": [[4,13],[5,13],[4,14]]
+    },
+    {
+      "label": "Lower interior B — blocks x=11 band",
+      "cells": [[11,14],[12,14],[11,15]]
+    },
+    {
+      "label": "Lower interior C — blocks x=7 band",
+      "cells": [[7,16],[8,16],[7,17]]
+    },
+    {
+      "label": "W wall lower — touches left",
+      "cells": [[0,16],[1,16],[0,17]]
+    },
+    {
+      "label": "SW corner — touches left+bottom",
+      "cells": [[0,18],[0,19],[1,19]]
+    },
+    {
+      "label": "SE corner — touches right+bottom",
+      "cells": [[12,17],[13,17],[14,17],[14,18]]
     }
   ],
   "splitters": [
