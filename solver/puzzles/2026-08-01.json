@@ -1,0 +1,292 @@
+{
+  "date": "2026-08-01",
+  "name": "Clough",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 11,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW corner",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "N wall",
+      "cells": [
+        [
+          8,
+          0
+        ],
+        [
+          9,
+          0
+        ],
+        [
+          9,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "NE corner",
+      "cells": [
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          14,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "W wall upper",
+      "cells": [
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "Upper interior A",
+      "cells": [
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          5,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "Upper interior B",
+      "cells": [
+        [
+          9,
+          2
+        ],
+        [
+          10,
+          2
+        ],
+        [
+          10,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "E wall upper",
+      "cells": [
+        [
+          13,
+          4
+        ],
+        [
+          14,
+          4
+        ],
+        [
+          14,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Mid interior A",
+      "cells": [
+        [
+          4,
+          7
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          5,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "Mid interior B",
+      "cells": [
+        [
+          10,
+          7
+        ],
+        [
+          11,
+          7
+        ],
+        [
+          10,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "E wall mid",
+      "cells": [
+        [
+          13,
+          9
+        ],
+        [
+          14,
+          9
+        ],
+        [
+          14,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "y=11 run-breaker",
+      "cells": [
+        [
+          7,
+          11
+        ],
+        [
+          8,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "W wall mid",
+      "cells": [
+        [
+          0,
+          13
+        ],
+        [
+          0,
+          14
+        ],
+        [
+          1,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "Interior lower A",
+      "cells": [
+        [
+          4,
+          15
+        ],
+        [
+          5,
+          15
+        ],
+        [
+          4,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "Interior lower B",
+      "cells": [
+        [
+          10,
+          15
+        ],
+        [
+          11,
+          15
+        ],
+        [
+          10,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "SW corner",
+      "cells": [
+        [
+          0,
+          17
+        ],
+        [
+          0,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "SE corner",
+      "cells": [
+        [
+          13,
+          17
+        ],
+        [
+          14,
+          17
+        ],
+        [
+          14,
+          18
+        ]
+      ]
+    }
+  ],
+  "splitters": [],
+  "gates": []
+}

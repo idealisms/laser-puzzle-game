@@ -1,0 +1,305 @@
+{
+  "date": "2026-08-19",
+  "name": "Breck",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 6,
+    "dir": "left"
+  },
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {
+      "label": "NW block",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "NE block",
+      "cells": [
+        [
+          12,
+          0
+        ],
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          12,
+          1
+        ],
+        [
+          13,
+          1
+        ],
+        [
+          14,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "N bar",
+      "cells": [
+        [
+          5,
+          0
+        ],
+        [
+          6,
+          0
+        ],
+        [
+          7,
+          0
+        ],
+        [
+          8,
+          0
+        ],
+        [
+          9,
+          0
+        ]
+      ]
+    },
+    {
+      "label": "SW block",
+      "cells": [
+        [
+          0,
+          18
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          2,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ],
+        [
+          2,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "SE block",
+      "cells": [
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          12,
+          19
+        ],
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "S bar",
+      "cells": [
+        [
+          5,
+          19
+        ],
+        [
+          6,
+          19
+        ],
+        [
+          7,
+          19
+        ],
+        [
+          8,
+          19
+        ],
+        [
+          9,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "W wall mid",
+      "cells": [
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "E wall mid",
+      "cells": [
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          14,
+          4
+        ],
+        [
+          14,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "Upper zone island A",
+      "cells": [
+        [
+          6,
+          3
+        ],
+        [
+          7,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "Upper zone island B",
+      "cells": [
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "Lower zone island A",
+      "cells": [
+        [
+          6,
+          10
+        ],
+        [
+          7,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Lower zone island B",
+      "cells": [
+        [
+          3,
+          11
+        ],
+        [
+          4,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "Upper-right island",
+      "cells": [
+        [
+          10,
+          3
+        ],
+        [
+          11,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "Lower-right island",
+      "cells": [
+        [
+          10,
+          10
+        ],
+        [
+          11,
+          10
+        ]
+      ]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 5,
+      "y": 6,
+      "dir": "left",
+      "note": "laser going LEFT splits UP into upper zone and DOWN into lower zone"
+    }
+  ],
+  "gates": []
+}

@@ -1,0 +1,303 @@
+{
+  "date": "2026-08-02",
+  "name": "Tarn",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 14,
+    "dir": "left"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "NW corner",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "N wall",
+      "cells": [
+        [
+          5,
+          0
+        ],
+        [
+          6,
+          0
+        ],
+        [
+          7,
+          0
+        ]
+      ]
+    },
+    {
+      "label": "NE corner",
+      "cells": [
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          14,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "Upper-left flank",
+      "cells": [
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "Upper-right flank",
+      "cells": [
+        [
+          11,
+          3
+        ],
+        [
+          12,
+          3
+        ],
+        [
+          11,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "W wall mid",
+      "cells": [
+        [
+          0,
+          7
+        ],
+        [
+          0,
+          8
+        ],
+        [
+          0,
+          9
+        ],
+        [
+          0,
+          10
+        ],
+        [
+          0,
+          11
+        ],
+        [
+          0,
+          12
+        ]
+      ]
+    },
+    {
+      "label": "E wall mid",
+      "cells": [
+        [
+          14,
+          7
+        ],
+        [
+          14,
+          8
+        ],
+        [
+          14,
+          9
+        ],
+        [
+          14,
+          10
+        ],
+        [
+          14,
+          11
+        ],
+        [
+          14,
+          12
+        ]
+      ]
+    },
+    {
+      "label": "y=14 run-breaker",
+      "cells": [
+        [
+          7,
+          14
+        ],
+        [
+          8,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "Mid interior",
+      "cells": [
+        [
+          6,
+          9
+        ],
+        [
+          7,
+          9
+        ],
+        [
+          6,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "Lower-left flank",
+      "cells": [
+        [
+          2,
+          16
+        ],
+        [
+          3,
+          16
+        ],
+        [
+          3,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "Lower-right flank",
+      "cells": [
+        [
+          11,
+          16
+        ],
+        [
+          12,
+          16
+        ],
+        [
+          11,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "SW corner",
+      "cells": [
+        [
+          0,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "S wall",
+      "cells": [
+        [
+          7,
+          19
+        ],
+        [
+          8,
+          19
+        ],
+        [
+          9,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "SE corner",
+      "cells": [
+        [
+          12,
+          18
+        ],
+        [
+          13,
+          18
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          14,
+          19
+        ]
+      ]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {
+      "x": 4,
+      "y": 5,
+      "dir": "up",
+      "note": "col x=4 upper gate \u2014 UP passes; DOWN blocked"
+    },
+    {
+      "x": 4,
+      "y": 15,
+      "dir": "down",
+      "note": "col x=4 lower gate \u2014 DOWN passes; UP blocked"
+    },
+    {
+      "x": 10,
+      "y": 5,
+      "dir": "up",
+      "note": "col x=10 upper gate \u2014 UP passes; DOWN blocked"
+    },
+    {
+      "x": 10,
+      "y": 15,
+      "dir": "down",
+      "note": "col x=10 lower gate \u2014 DOWN passes; UP blocked"
+    }
+  ]
+}
