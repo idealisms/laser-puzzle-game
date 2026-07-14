@@ -2,7 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-
 ## Project Overview
 
 A daily laser puzzle game built with Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, and Prisma with SQLite. Players place mirrors on a grid to redirect a laser beam, aiming for the longest path possible.
