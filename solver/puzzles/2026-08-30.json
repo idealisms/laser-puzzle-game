@@ -11,7 +11,7 @@
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW corner",
+      "label": "NW corner \u2014 touches top+left",
       "cells": [
         [
           0,
@@ -19,10 +19,6 @@
         ],
         [
           1,
-          0
-        ],
-        [
-          2,
           0
         ],
         [
@@ -36,7 +32,24 @@
       ]
     },
     {
-      "label": "NE corner",
+      "label": "N wall \u2014 touches top",
+      "cells": [
+        [
+          6,
+          0
+        ],
+        [
+          7,
+          0
+        ],
+        [
+          7,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "NE corner \u2014 touches top+right",
       "cells": [
         [
           14,
@@ -49,15 +62,11 @@
         [
           14,
           2
-        ],
-        [
-          14,
-          3
         ]
       ]
     },
     {
-      "label": "W wall upper",
+      "label": "W wall upper \u2014 touches left",
       "cells": [
         [
           0,
@@ -77,16 +86,16 @@
       "label": "Upper interior A",
       "cells": [
         [
-          5,
-          2
+          3,
+          4
         ],
         [
-          6,
-          2
+          4,
+          4
         ],
         [
-          5,
-          3
+          3,
+          5
         ]
       ]
     },
@@ -94,11 +103,11 @@
       "label": "Upper interior B",
       "cells": [
         [
-          9,
+          8,
           3
         ],
         [
-          10,
+          9,
           3
         ],
         [
@@ -108,36 +117,19 @@
       ]
     },
     {
-      "label": "x=13 upper break",
+      "label": "E wall upper \u2014 touches right",
       "cells": [
-        [
-          13,
-          4
-        ],
         [
           12,
           4
         ],
         [
-          12,
-          5
-        ]
-      ]
-    },
-    {
-      "label": "E wall upper",
-      "cells": [
-        [
-          14,
-          5
-        ],
-        [
-          14,
-          6
-        ],
-        [
           13,
-          6
+          4
+        ],
+        [
+          14,
+          4
         ]
       ]
     },
@@ -145,16 +137,16 @@
       "label": "Mid interior A",
       "cells": [
         [
-          5,
-          8
-        ],
-        [
-          6,
-          8
-        ],
-        [
-          5,
+          3,
           9
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          4,
+          10
         ]
       ]
     },
@@ -162,21 +154,21 @@
       "label": "Mid interior B",
       "cells": [
         [
-          9,
-          8
-        ],
-        [
-          10,
-          8
-        ],
-        [
-          10,
+          8,
           9
+        ],
+        [
+          9,
+          9
+        ],
+        [
+          8,
+          10
         ]
       ]
     },
     {
-      "label": "W wall mid",
+      "label": "W wall mid \u2014 touches left",
       "cells": [
         [
           0,
@@ -193,65 +185,48 @@
       ]
     },
     {
-      "label": "x=13 mid break",
+      "label": "E wall mid \u2014 touches right",
       "cells": [
         [
           13,
           10
         ],
         [
-          12,
+          14,
           10
         ],
         [
-          12,
+          14,
           11
         ]
       ]
     },
     {
-      "label": "E wall mid",
+      "label": "Lower interior A",
       "cells": [
         [
-          14,
-          11
-        ],
-        [
-          14,
-          12
-        ],
-        [
-          13,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Interior lower A",
-      "cells": [
-        [
-          5,
+          3,
           13
         ],
         [
-          6,
+          4,
           13
         ],
         [
-          6,
+          3,
           14
         ]
       ]
     },
     {
-      "label": "Interior lower B",
+      "label": "Lower interior B",
       "cells": [
         [
-          9,
+          8,
           13
         ],
         [
-          10,
+          9,
           13
         ],
         [
@@ -261,24 +236,24 @@
       ]
     },
     {
-      "label": "W wall lower",
+      "label": "W wall lower \u2014 touches left",
       "cells": [
+        [
+          0,
+          14
+        ],
         [
           0,
           15
         ],
         [
-          0,
-          16
-        ],
-        [
           1,
-          16
+          15
         ]
       ]
     },
     {
-      "label": "SW corner",
+      "label": "SW corner \u2014 touches left+bottom",
       "cells": [
         [
           0,
@@ -299,11 +274,15 @@
       ]
     },
     {
-      "label": "SE corner",
+      "label": "SE corner \u2014 touches right+bottom",
       "cells": [
         [
           13,
-          18
+          17
+        ],
+        [
+          14,
+          17
         ],
         [
           14,

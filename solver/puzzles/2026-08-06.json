@@ -11,7 +11,7 @@
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW corner",
+      "label": "NW corner \u2014 touches top+left",
       "cells": [
         [
           0,
@@ -32,7 +32,41 @@
       ]
     },
     {
-      "label": "NE corner",
+      "label": "N wall left \u2014 touches top",
+      "cells": [
+        [
+          4,
+          0
+        ],
+        [
+          5,
+          0
+        ],
+        [
+          5,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "N wall right \u2014 touches top",
+      "cells": [
+        [
+          8,
+          0
+        ],
+        [
+          9,
+          0
+        ],
+        [
+          8,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "NE corner \u2014 touches top+right",
       "cells": [
         [
           13,
@@ -49,7 +83,7 @@
       ]
     },
     {
-      "label": "W wall upper",
+      "label": "W wall upper \u2014 touches left",
       "cells": [
         [
           0,
@@ -87,28 +121,24 @@
       "cells": [
         [
           10,
-          2
-        ],
-        [
-          11,
-          2
+          3
         ],
         [
           11,
           3
+        ],
+        [
+          11,
+          4
         ]
       ]
     },
     {
-      "label": "E wall upper",
+      "label": "E wall upper \u2014 touches right",
       "cells": [
         [
           13,
-          3
-        ],
-        [
-          14,
-          3
+          4
         ],
         [
           14,
@@ -116,19 +146,6 @@
         ],
         [
           14,
-          5
-        ]
-      ]
-    },
-    {
-      "label": "x=6 upper break",
-      "cells": [
-        [
-          6,
-          5
-        ],
-        [
-          7,
           5
         ]
       ]
@@ -145,7 +162,7 @@
           8
         ],
         [
-          4,
+          3,
           9
         ]
       ]
@@ -154,21 +171,21 @@
       "label": "Mid interior B",
       "cells": [
         [
-          11,
-          8
-        ],
-        [
-          12,
+          10,
           8
         ],
         [
           11,
+          8
+        ],
+        [
+          10,
           9
         ]
       ]
     },
     {
-      "label": "W wall mid",
+      "label": "W wall mid \u2014 touches left",
       "cells": [
         [
           0,
@@ -185,54 +202,41 @@
       ]
     },
     {
-      "label": "E wall mid",
+      "label": "E wall mid \u2014 touches right",
       "cells": [
         [
           13,
-          10
+          9
+        ],
+        [
+          14,
+          9
         ],
         [
           14,
           10
-        ],
-        [
-          14,
-          11
         ]
       ]
     },
     {
-      "label": "x=6 lower break",
-      "cells": [
-        [
-          6,
-          12
-        ],
-        [
-          7,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "Interior lower A",
+      "label": "Lower interior A",
       "cells": [
         [
           3,
-          14
+          13
+        ],
+        [
+          4,
+          13
         ],
         [
           4,
           14
-        ],
-        [
-          3,
-          15
         ]
       ]
     },
     {
-      "label": "Interior lower B",
+      "label": "Lower interior B",
       "cells": [
         [
           10,
@@ -243,13 +247,30 @@
           14
         ],
         [
-          11,
+          10,
           15
         ]
       ]
     },
     {
-      "label": "SW corner",
+      "label": "W wall lower \u2014 touches left",
+      "cells": [
+        [
+          0,
+          14
+        ],
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "SW corner \u2014 touches left+bottom",
       "cells": [
         [
           0,
@@ -265,17 +286,13 @@
         ],
         [
           1,
-          18
+          19
         ]
       ]
     },
     {
-      "label": "SE corner",
+      "label": "SE corner \u2014 touches right+bottom",
       "cells": [
-        [
-          12,
-          17
-        ],
         [
           13,
           17
@@ -287,6 +304,10 @@
         [
           14,
           18
+        ],
+        [
+          14,
+          19
         ]
       ]
     }
