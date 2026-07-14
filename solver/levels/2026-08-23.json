@@ -121,6 +121,10 @@
       "y": 8
     },
     {
+      "x": 11,
+      "y": 8
+    },
+    {
       "x": 9,
       "y": 9
     },
@@ -242,7 +246,7 @@
     }
   ],
   "mirrorsAvailable": 10,
-  "optimalScore": 126,
+  "optimalScore": 117,
   "optimalSolution": [
     {
       "x": 12,
@@ -291,7 +295,7 @@
     },
     {
       "x": 11,
-      "y": 2,
+      "y": 10,
       "type": "\\"
     }
   ]
