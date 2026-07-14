@@ -11,294 +11,66 @@
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW corner",
-      "cells": [
-        [
-          0,
-          0
-        ],
-        [
-          1,
-          0
-        ],
-        [
-          0,
-          1
-        ]
-      ]
+      "label": "NW corner — touches top+left",
+      "cells": [[0,0],[1,0],[2,0],[0,1],[0,2]]
     },
     {
-      "label": "N wall",
-      "cells": [
-        [
-          6,
-          0
-        ],
-        [
-          7,
-          0
-        ],
-        [
-          7,
-          1
-        ],
-        [
-          8,
-          0
-        ]
-      ]
+      "label": "N wall — touches top",
+      "cells": [[7,0],[8,0],[8,1]]
     },
     {
-      "label": "NE corner",
-      "cells": [
-        [
-          13,
-          0
-        ],
-        [
-          14,
-          0
-        ],
-        [
-          14,
-          1
-        ],
-        [
-          14,
-          2
-        ]
-      ]
+      "label": "NE corner — touches top+right",
+      "cells": [[13,0],[14,0],[14,1],[14,2]]
     },
     {
-      "label": "Upper-left flank",
-      "cells": [
-        [
-          2,
-          2
-        ],
-        [
-          3,
-          2
-        ],
-        [
-          3,
-          3
-        ]
-      ]
+      "label": "W wall upper — touches left",
+      "cells": [[0,3],[0,4],[0,5]]
     },
     {
-      "label": "Upper-right flank",
-      "cells": [
-        [
-          11,
-          2
-        ],
-        [
-          12,
-          2
-        ],
-        [
-          12,
-          3
-        ]
-      ]
+      "label": "Upper interior A",
+      "cells": [[5,2],[6,2],[5,3]]
     },
     {
-      "label": "W wall upper",
-      "cells": [
-        [
-          0,
-          3
-        ],
-        [
-          0,
-          4
-        ],
-        [
-          0,
-          5
-        ]
-      ]
+      "label": "Upper interior B",
+      "cells": [[10,4],[11,4],[11,5]]
     },
     {
-      "label": "E wall upper",
-      "cells": [
-        [
-          13,
-          5
-        ],
-        [
-          14,
-          5
-        ],
-        [
-          14,
-          6
-        ]
-      ]
+      "label": "E wall upper — touches right",
+      "cells": [[13,3],[14,3],[14,4]]
     },
     {
       "label": "y=7 run-breaker",
-      "cells": [
-        [
-          8,
-          7
-        ],
-        [
-          9,
-          7
-        ]
-      ]
+      "cells": [[8,7],[9,7]]
     },
     {
       "label": "Mid interior",
-      "cells": [
-        [
-          6,
-          9
-        ],
-        [
-          7,
-          9
-        ],
-        [
-          7,
-          10
-        ]
-      ]
+      "cells": [[5,9],[6,9],[5,10]]
     },
     {
-      "label": "W wall lower",
-      "cells": [
-        [
-          0,
-          11
-        ],
-        [
-          0,
-          12
-        ],
-        [
-          1,
-          12
-        ]
-      ]
+      "label": "W wall lower — touches left",
+      "cells": [[0,11],[0,12],[0,13],[1,13]]
     },
     {
-      "label": "E wall lower",
-      "cells": [
-        [
-          13,
-          11
-        ],
-        [
-          14,
-          11
-        ],
-        [
-          14,
-          12
-        ]
-      ]
+      "label": "E wall lower — touches right",
+      "cells": [[13,10],[14,10],[14,11]]
     },
     {
-      "label": "Lower-left flank",
-      "cells": [
-        [
-          2,
-          15
-        ],
-        [
-          3,
-          15
-        ],
-        [
-          3,
-          16
-        ]
-      ]
+      "label": "Lower interior A",
+      "cells": [[5,13],[6,13],[6,14]]
     },
     {
-      "label": "Lower-right flank",
-      "cells": [
-        [
-          11,
-          15
-        ],
-        [
-          12,
-          15
-        ],
-        [
-          12,
-          16
-        ]
-      ]
+      "label": "Lower interior B",
+      "cells": [[10,12],[11,12],[10,13]]
     },
     {
-      "label": "SW corner",
-      "cells": [
-        [
-          0,
-          17
-        ],
-        [
-          0,
-          18
-        ],
-        [
-          0,
-          19
-        ],
-        [
-          1,
-          19
-        ]
-      ]
+      "label": "SW corner — touches left+bottom",
+      "cells": [[0,17],[0,18],[0,19],[1,19]]
     },
     {
-      "label": "SE corner",
-      "cells": [
-        [
-          13,
-          18
-        ],
-        [
-          14,
-          18
-        ],
-        [
-          14,
-          19
-        ]
-      ]
+      "label": "SE corner — touches right+bottom",
+      "cells": [[12,18],[13,18],[14,18],[14,19]]
     }
   ],
   "splitters": [],
-  "gates": [
-    {
-      "x": 4,
-      "y": 4,
-      "dir": "right",
-      "note": "y=4 left gate \u2014 RIGHT passes; LEFT blocked"
-    },
-    {
-      "x": 10,
-      "y": 4,
-      "dir": "left",
-      "note": "y=4 right gate \u2014 LEFT passes; RIGHT blocked"
-    },
-    {
-      "x": 4,
-      "y": 14,
-      "dir": "right",
-      "note": "y=14 left gate \u2014 RIGHT passes; LEFT blocked"
-    },
-    {
-      "x": 10,
-      "y": 14,
-      "dir": "left",
-      "note": "y=14 right gate \u2014 LEFT passes; RIGHT blocked"
-    }
-  ]
+  "gates": []
 }
