@@ -215,10 +215,16 @@
     {
       "x": 14,
       "y": 18
+    },
+    {
+      "x": 8,
+      "y": 10,
+      "type": "gate",
+      "orientation": "down"
     }
   ],
   "mirrorsAvailable": 10,
-  "optimalScore": 127,
+  "optimalScore": 126,
   "optimalSolution": [
     {
       "x": 10,
@@ -256,19 +262,19 @@
       "type": "/"
     },
     {
-      "x": 9,
+      "x": 8,
       "y": 1,
+      "type": "\\"
+    },
+    {
+      "x": 8,
+      "y": 19,
       "type": "\\"
     },
     {
       "x": 9,
       "y": 19,
       "type": "/"
-    },
-    {
-      "x": 8,
-      "y": 19,
-      "type": "\\"
     }
   ]
 }

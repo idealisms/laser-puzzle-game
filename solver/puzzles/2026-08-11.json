@@ -222,6 +222,10 @@
       "label": "Interior lower A",
       "cells": [
         [
+          4,
+          14
+        ],
+        [
           5,
           14
         ],
@@ -292,5 +296,7 @@
     }
   ],
   "splitters": [],
-  "gates": []
+  "gates": [
+    {"x": 12, "y": 9, "dir": "down", "note": "col x=12 mid gate — DOWN passes; UP blocked"}
+  ]
 }

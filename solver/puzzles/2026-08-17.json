@@ -302,6 +302,12 @@
       "y": 14,
       "dir": "left",
       "note": "y=14 right gate \u2014 LEFT passes; RIGHT blocked"
+    },
+    {
+      "x": 1,
+      "y": 10,
+      "dir": "up",
+      "note": "col x=1 mid gate \u2014 UP passes; DOWN blocked"
     }
   ]
 }
