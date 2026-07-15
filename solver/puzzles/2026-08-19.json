@@ -301,5 +301,7 @@
       "note": "laser going LEFT splits UP into upper zone and DOWN into lower zone"
     }
   ],
-  "gates": []
+  "gates": [
+    {"x": 2, "y": 10, "dir": "down", "note": "col x=2 mid gate — DOWN passes; UP blocked"}
+  ]
 }

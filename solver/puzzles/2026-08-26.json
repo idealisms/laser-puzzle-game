@@ -21,5 +21,7 @@
     {"label": "bottom pair", "cells": [[6,16],[7,16]]}
   ],
   "splitters": [],
-  "gates": []
+  "gates": [
+    {"x": 14, "y": 9, "dir": "down", "note": "col x=14 mid gate — DOWN passes; UP blocked"}
+  ]
 }

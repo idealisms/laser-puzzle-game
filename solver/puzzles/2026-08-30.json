@@ -22,6 +22,7 @@
   ],
   "splitters": [],
   "gates": [
-    {"x": 0, "y": 9, "dir": "right"}
+    {"x": 0, "y": 9, "dir": "right"},
+    {"x": 2, "y": 10, "dir": "down", "note": "col x=2 mid gate — DOWN passes; UP blocked"}
   ]
 }

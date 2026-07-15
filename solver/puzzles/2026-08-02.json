@@ -298,6 +298,12 @@
       "y": 15,
       "dir": "down",
       "note": "col x=10 lower gate \u2014 DOWN passes; UP blocked"
+    },
+    {
+      "x": 1,
+      "y": 9,
+      "dir": "down",
+      "note": "col x=1 mid gate \u2014 DOWN passes; UP blocked"
     }
   ]
 }

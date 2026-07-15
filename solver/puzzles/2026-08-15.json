@@ -21,9 +21,9 @@
   ],
   "splitters": [],
   "gates": [
-    {"x": 0, "y": 7, "dir": "right"},
-    {"x": 0, "y": 14, "dir": "right"},
-    {"x": 14, "y": 9, "dir": "left"},
-    {"x": 14, "y": 15, "dir": "left"}
+    {"x": 0, "y": 7, "dir": "up"},
+    {"x": 0, "y": 14, "dir": "down"},
+    {"x": 14, "y": 9, "dir": "up"},
+    {"x": 14, "y": 15, "dir": "down"}
   ]
 }

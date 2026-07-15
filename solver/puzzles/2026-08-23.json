@@ -22,5 +22,7 @@
     {"label": "bottom-right L", "cells": [[11,13],[12,13],[11,14]]}
   ],
   "splitters": [],
-  "gates": []
+  "gates": [
+    {"x": 13, "y": 9, "dir": "up", "note": "col x=13 mid gate — UP passes; DOWN blocked"}
+  ]
 }
