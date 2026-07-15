@@ -317,7 +317,5 @@
     }
   ],
   "splitters": [],
-  "gates": [
-    {"x": 6, "y": 9, "dir": "down", "note": "col x=6 mid gate — DOWN passes; UP blocked"}
-  ]
+  "gates": []
 }
