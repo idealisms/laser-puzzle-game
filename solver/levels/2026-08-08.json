@@ -148,29 +148,29 @@
       "x": 0,
       "y": 9,
       "type": "gate",
-      "orientation": "right"
+      "orientation": "up"
     },
     {
       "x": 0,
       "y": 15,
       "type": "gate",
-      "orientation": "right"
+      "orientation": "down"
     },
     {
       "x": 14,
       "y": 6,
       "type": "gate",
-      "orientation": "left"
+      "orientation": "up"
     },
     {
       "x": 14,
       "y": 13,
       "type": "gate",
-      "orientation": "left"
+      "orientation": "down"
     }
   ],
   "mirrorsAvailable": 10,
-  "optimalScore": 106,
+  "optimalScore": 110,
   "optimalSolution": [
     {
       "x": 4,
@@ -178,48 +178,48 @@
       "type": "/"
     },
     {
-      "x": 13,
+      "x": 14,
       "y": 11,
-      "type": "\\"
-    },
-    {
-      "x": 13,
-      "y": 18,
       "type": "/"
     },
     {
-      "x": 1,
-      "y": 18,
+      "x": 14,
+      "y": 2,
       "type": "\\"
     },
     {
-      "x": 1,
-      "y": 9,
+      "x": 0,
+      "y": 2,
       "type": "/"
     },
     {
-      "x": 12,
-      "y": 9,
-      "type": "\\"
-    },
-    {
-      "x": 12,
-      "y": 19,
-      "type": "/"
-    },
-    {
-      "x": 5,
-      "y": 19,
-      "type": "\\"
-    },
-    {
-      "x": 5,
+      "x": 0,
       "y": 6,
-      "type": "/"
+      "type": "\\"
     },
     {
       "x": 11,
       "y": 6,
+      "type": "\\"
+    },
+    {
+      "x": 11,
+      "y": 18,
+      "type": "/"
+    },
+    {
+      "x": 1,
+      "y": 18,
+      "type": "\\"
+    },
+    {
+      "x": 1,
+      "y": 9,
+      "type": "/"
+    },
+    {
+      "x": 13,
+      "y": 9,
       "type": "\\"
     }
   ]

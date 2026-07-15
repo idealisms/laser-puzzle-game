@@ -213,19 +213,20 @@
       "y": 9,
       "type": "splitter",
       "orientation": "right"
+    },
+    {
+      "x": 8,
+      "y": 10,
+      "type": "gate",
+      "orientation": "down"
     }
   ],
   "mirrorsAvailable": 9,
-  "optimalScore": 117,
+  "optimalScore": 123,
   "optimalSolution": [
     {
       "x": 9,
-      "y": 6,
-      "type": "\\"
-    },
-    {
-      "x": 0,
-      "y": 6,
+      "y": 13,
       "type": "/"
     },
     {
@@ -235,27 +236,27 @@
     },
     {
       "x": 9,
-      "y": 16,
-      "type": "/"
-    },
-    {
-      "x": 14,
-      "y": 13,
-      "type": "/"
-    },
-    {
-      "x": 14,
-      "y": 2,
+      "y": 5,
       "type": "\\"
     },
     {
       "x": 6,
+      "y": 5,
+      "type": "/"
+    },
+    {
+      "x": 0,
       "y": 2,
       "type": "/"
     },
     {
       "x": 6,
       "y": 19,
+      "type": "\\"
+    },
+    {
+      "x": 8,
+      "y": 2,
       "type": "\\"
     },
     {

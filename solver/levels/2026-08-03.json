@@ -156,58 +156,63 @@
       "x": 0,
       "y": 8,
       "type": "gate",
-      "orientation": "right"
+      "orientation": "up"
     },
     {
       "x": 0,
       "y": 14,
       "type": "gate",
-      "orientation": "right"
+      "orientation": "down"
     },
     {
       "x": 14,
       "y": 5,
       "type": "gate",
-      "orientation": "left"
+      "orientation": "up"
     },
     {
       "x": 14,
       "y": 13,
       "type": "gate",
-      "orientation": "left"
+      "orientation": "down"
     }
   ],
   "mirrorsAvailable": 10,
-  "optimalScore": 115,
+  "optimalScore": 120,
   "optimalSolution": [
     {
       "x": 5,
-      "y": 13,
+      "y": 11,
+      "type": "\\"
+    },
+    {
+      "x": 2,
+      "y": 11,
+      "type": "\\"
+    },
+    {
+      "x": 2,
+      "y": 0,
       "type": "/"
     },
     {
       "x": 12,
-      "y": 13,
+      "y": 0,
       "type": "\\"
     },
     {
       "x": 12,
-      "y": 18,
+      "y": 9,
       "type": "/"
     },
     {
-      "x": 1,
-      "y": 18,
-      "type": "\\"
-    },
-    {
-      "x": 1,
-      "y": 1,
+      "x": 0,
+      "y": 9,
       "type": "/"
     },
     {
-      "x": 13,
-      "y": 1,
+      "x": 0,
+      "y": 17,
       "type": "\\"
     },
     {
@@ -216,19 +221,14 @@
       "type": "/"
     },
     {
-      "x": 6,
-      "y": 17,
+      "x": 13,
+      "y": 1,
       "type": "\\"
     },
     {
-      "x": 6,
-      "y": 0,
+      "x": 1,
+      "y": 1,
       "type": "/"
-    },
-    {
-      "x": 12,
-      "y": 0,
-      "type": "\\"
     }
   ]
 }
