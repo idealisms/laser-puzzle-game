@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { parseMirrorList } from '@/lib/mirrorFormat'
 
 interface RouteParams {
   params: Promise<{ date: string }>
@@ -59,7 +60,9 @@ export async function GET(request: Request, { params }: RouteParams) {
         obstacles: JSON.parse(level.obstacles),
         mirrorsAvailable: level.mirrorsAvailable,
         optimalScore: level.optimalScore,
-        optimalSolution: level.optimalSolution ? JSON.parse(level.optimalSolution) : null,
+        optimalSolution: level.optimalSolution
+          ? parseMirrorList(JSON.parse(level.optimalSolution))
+          : null,
       },
     }, {
       headers: {

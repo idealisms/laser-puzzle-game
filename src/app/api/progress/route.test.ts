@@ -109,7 +109,7 @@ describe('POST /api/progress', () => {
     expect(res.status).toBe(409)
   })
 
-  it('stores mirrors in flat {x, y, type} format matching optimalSolution shape', async () => {
+  it('stores mirrors in compact [[x, y, type]] format', async () => {
     ;(prisma.level.findUnique as jest.Mock).mockResolvedValue(mockLevel)
     ;(prisma.scoreSubmission.findUnique as jest.Mock).mockResolvedValue(null)
     ;(prisma.scoreSubmission.create as jest.Mock).mockResolvedValue({})
@@ -125,7 +125,7 @@ describe('POST /api/progress', () => {
 
     const createCall = (prisma.scoreSubmission.create as jest.Mock).mock.calls[0][0]
     const storedMirrors = JSON.parse(createCall.data.mirrors)
-    expect(storedMirrors).toEqual([{ x: 2, y: 2, type: '/' }])
+    expect(storedMirrors).toEqual([[2, 2, '/']])
   })
 
   it('stores all mirrors when multiple are placed', async () => {
@@ -134,18 +134,17 @@ describe('POST /api/progress', () => {
     ;(prisma.scoreSubmission.create as jest.Mock).mockResolvedValue({})
     ;(prisma.scoreSubmission.groupBy as jest.Mock).mockResolvedValue([])
 
-    const mirrors = [
-      { x: 1, y: 1, type: '/' },
-      { x: 3, y: 3, type: '\\' },
-    ]
     await POST(
-      makeRequest({ levelDate: '2026-01-01', mirrors, anonId: validAnonId })
+      makeRequest({
+        levelDate: '2026-01-01',
+        mirrors: [{ x: 1, y: 1, type: '/' }, { x: 3, y: 3, type: '\\' }],
+        anonId: validAnonId,
+      })
     )
 
     const createCall = (prisma.scoreSubmission.create as jest.Mock).mock.calls[0][0]
     const storedMirrors = JSON.parse(createCall.data.mirrors)
-    expect(storedMirrors).toHaveLength(2)
-    expect(storedMirrors).toEqual(expect.arrayContaining(mirrors))
+    expect(storedMirrors).toEqual([[1, 1, '/'], [3, 3, '\\']])
   })
 
   it('stores empty array when no mirrors are placed', async () => {
@@ -163,7 +162,7 @@ describe('POST /api/progress', () => {
     expect(storedMirrors).toEqual([])
   })
 
-  it('does not store nested position object format', async () => {
+  it('does not store nested position object or verbose key format', async () => {
     ;(prisma.level.findUnique as jest.Mock).mockResolvedValue(mockLevel)
     ;(prisma.scoreSubmission.findUnique as jest.Mock).mockResolvedValue(null)
     ;(prisma.scoreSubmission.create as jest.Mock).mockResolvedValue({})
@@ -179,8 +178,8 @@ describe('POST /api/progress', () => {
 
     const createCall = (prisma.scoreSubmission.create as jest.Mock).mock.calls[0][0]
     const storedMirrors = JSON.parse(createCall.data.mirrors)
-    // Should be flat {x, y, type}, not the engine's nested {position: {x, y}, type}
-    expect(storedMirrors[0]).not.toHaveProperty('position')
+    // Compact array format, not {x,y,type} objects or {position:{x,y},type}
+    expect(Array.isArray(storedMirrors[0])).toBe(true)
   })
 
   it('returns 400 for invalid mirrors', async () => {

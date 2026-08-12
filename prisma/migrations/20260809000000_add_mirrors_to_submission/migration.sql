@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE "ScoreSubmission" ADD COLUMN "mirrors" TEXT;
+ALTER TABLE "ScoreSubmission" ADD COLUMN IF NOT EXISTS "mirrors" TEXT;

@@ -4,6 +4,7 @@ import { PrismaPg } from '@prisma/adapter-pg'
 import pg from 'pg'
 import * as fs from 'fs'
 import * as path from 'path'
+import { formatMirrorList } from '../src/lib/mirrorFormat'
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL })
 const adapter = new PrismaPg(pool)
@@ -58,7 +59,7 @@ async function main() {
         mirrorsAvailable: level.mirrorsAvailable,
         starThresholds: JSON.stringify([]),
         optimalScore: level.optimalScore,
-        optimalSolution: level.optimalSolution ? JSON.stringify(level.optimalSolution) : null,
+        optimalSolution: level.optimalSolution ? formatMirrorList(level.optimalSolution) : null,
       },
       create: {
         date: level.date,
@@ -69,7 +70,7 @@ async function main() {
         mirrorsAvailable: level.mirrorsAvailable,
         starThresholds: JSON.stringify([]),
         optimalScore: level.optimalScore,
-        optimalSolution: level.optimalSolution ? JSON.stringify(level.optimalSolution) : null,
+        optimalSolution: level.optimalSolution ? formatMirrorList(level.optimalSolution) : null,
       },
     })
     console.log(`Upserted level for ${level.date}`)

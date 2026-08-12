@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { validateMirrors, computeScore } from '@/lib/scoring'
+import { formatMirrorList } from '@/lib/mirrorFormat'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -64,7 +65,7 @@ export async function POST(request: Request) {
         levelId: level.id,
         playerId: anonId,
         score,
-        mirrors: JSON.stringify(
+        mirrors: formatMirrorList(
           validation.mirrors.map(m => ({ x: m.position.x, y: m.position.y, type: m.type }))
         ),
       },
