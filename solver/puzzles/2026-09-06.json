@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-06",
+  "name": "Toft",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 9, "y": 0, "dir": "down"},
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1],[1,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "upper-left L", "cells": [[3,3],[4,3],[3,4]]},
+    {"label": "upper-right L", "cells": [[11,2],[12,2],[12,3]]},
+    {"label": "W wall upper", "cells": [[0,6],[0,7],[1,7]]},
+    {"label": "mid-left Z", "cells": [[2,8],[3,8],[3,9],[4,9]]},
+    {"label": "run-breaker x=9", "cells": [[9,9],[9,10]]},
+    {"label": "mid-right L", "cells": [[11,7],[12,7],[12,8]]},
+    {"label": "lower-left S", "cells": [[3,13],[4,13],[4,14],[5,14]]},
+    {"label": "lower-right Z", "cells": [[10,13],[11,13],[11,14],[12,14]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[13,18],[14,18],[14,19]]}
+  ],
+  "splitters": [],
+  "gates": []
+}

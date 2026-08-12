@@ -1,0 +1,25 @@
+{
+  "date": "2026-09-10",
+  "name": "Gill",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 3, "y": 0, "dir": "down"},
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "W wall upper", "cells": [[0,4],[0,5],[1,5]]},
+    {"label": "upper-right L", "cells": [[9,2],[10,2],[10,3]]},
+    {"label": "upper-mid Z", "cells": [[6,4],[7,4],[7,5],[8,5]]},
+    {"label": "E wall upper", "cells": [[14,4],[14,5]]},
+    {"label": "run-breaker x=3", "cells": [[3,9],[3,10]]},
+    {"label": "mid-right pair", "cells": [[12,8],[12,9]]},
+    {"label": "lower-left L", "cells": [[2,13],[3,13],[2,14]]},
+    {"label": "lower-right Z", "cells": [[9,13],[10,13],[10,14],[11,14]]},
+    {"label": "bottom pair", "cells": [[5,16],[6,16]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[13,18],[14,18],[14,19]]}
+  ],
+  "splitters": [],
+  "gates": []
+}

@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-05",
+  "name": "Nook",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 0, "y": 13, "dir": "right"},
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "upper-left L", "cells": [[2,4],[3,4],[2,5]]},
+    {"label": "upper-right S", "cells": [[9,3],[10,3],[10,4],[11,4]]},
+    {"label": "mid-left Z", "cells": [[2,8],[3,8],[3,9],[4,9]]},
+    {"label": "mid-right L", "cells": [[11,8],[12,8],[12,9]]},
+    {"label": "run-breaker y=13", "cells": [[6,13],[7,13]]},
+    {"label": "lower-left pair", "cells": [[2,16],[2,17]]},
+    {"label": "lower-right L", "cells": [[10,15],[11,15],[11,16]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[13,18],[14,18],[14,19]]}
+  ],
+  "splitters": [],
+  "gates": []
+}

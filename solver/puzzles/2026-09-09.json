@@ -1,0 +1,25 @@
+{
+  "date": "2026-09-09",
+  "name": "Beck",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 0, "y": 5, "dir": "right"},
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "upper-left L", "cells": [[2,3],[3,3],[3,4]]},
+    {"label": "E wall upper", "cells": [[13,5],[14,5],[14,6]]},
+    {"label": "upper-right Z", "cells": [[10,3],[11,3],[11,4],[12,4]]},
+    {"label": "run-breaker y=5", "cells": [[7,5],[8,5]]},
+    {"label": "mid-left pair", "cells": [[2,8],[2,9]]},
+    {"label": "mid-right pair", "cells": [[12,8],[12,9]]},
+    {"label": "center L", "cells": [[6,9],[7,9],[7,10]]},
+    {"label": "lower-left L", "cells": [[3,13],[4,13],[3,14]]},
+    {"label": "lower-right Z", "cells": [[9,13],[10,13],[10,14],[11,14]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[13,18],[14,18],[14,19]]}
+  ],
+  "splitters": [],
+  "gates": []
+}
