@@ -29,6 +29,7 @@ model ScoreSubmission {
   level     Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
   playerId  String
   score     Int
+  mirrors   String?  // JSON: [{ x, y, type }] - the mirror placement that produced the score
   createdAt DateTime @default(now())
 
   @@unique([levelId, playerId])

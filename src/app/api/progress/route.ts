@@ -64,6 +64,9 @@ export async function POST(request: Request) {
         levelId: level.id,
         playerId: anonId,
         score,
+        mirrors: JSON.stringify(
+          validation.mirrors.map(m => ({ x: m.position.x, y: m.position.y, type: m.type }))
+        ),
       },
     })
 
