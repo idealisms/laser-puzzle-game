@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-27",
+  "name": "Knott",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 14, "y": 6, "dir": "left"},
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "upper-left Z", "cells": [[3,3],[4,3],[4,4],[5,4]]},
+    {"label": "upper-right L", "cells": [[10,2],[11,2],[11,3]]},
+    {"label": "W wall upper", "cells": [[0,5],[0,6],[1,6]]},
+    {"label": "run-breaker y=6", "cells": [[7,6],[8,6]]},
+    {"label": "mid-left L", "cells": [[2,9],[3,9],[2,10]]},
+    {"label": "mid-right Z", "cells": [[10,8],[11,8],[11,9],[12,9]]},
+    {"label": "lower-left L", "cells": [[3,13],[4,13],[3,14]]},
+    {"label": "lower-right S", "cells": [[9,14],[10,14],[10,15],[11,15]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[13,18],[14,18],[14,19]]}
+  ],
+  "splitters": [],
+  "gates": []
+}

@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-20",
+  "name": "Glen",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 12, "y": 0, "dir": "down"},
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1],[1,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "upper-left L", "cells": [[3,3],[4,3],[3,4]]},
+    {"label": "upper-center L", "cells": [[7,3],[8,3],[7,4]]},
+    {"label": "mid-left pair", "cells": [[2,8],[2,9]]},
+    {"label": "mid-right S", "cells": [[11,6],[12,6],[12,7],[13,7]]},
+    {"label": "run-breaker x=12", "cells": [[11,9],[12,9]]},
+    {"label": "lower-left L", "cells": [[3,13],[4,13],[4,14]]},
+    {"label": "lower-right L", "cells": [[10,13],[11,13],[10,14]]},
+    {"label": "bottom pair", "cells": [[6,16],[7,16]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[13,18],[14,18],[14,19]]}
+  ],
+  "splitters": [],
+  "gates": []
+}

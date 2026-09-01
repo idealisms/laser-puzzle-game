@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-30",
+  "name": "Fen",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 5, "y": 19, "dir": "up"},
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1],[1,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "upper-left L", "cells": [[2,3],[3,3],[2,4]]},
+    {"label": "upper-right Z", "cells": [[10,3],[11,3],[11,4],[12,4]]},
+    {"label": "mid-left pair", "cells": [[1,9],[1,10]]},
+    {"label": "run-breaker x=5", "cells": [[4,10],[5,10]]},
+    {"label": "mid-right L", "cells": [[11,8],[12,8],[11,9]]},
+    {"label": "lower-left L", "cells": [[3,14],[4,14],[3,15]]},
+    {"label": "lower-right Z", "cells": [[9,13],[10,13],[10,14],[11,14]]},
+    {"label": "bottom pair", "cells": [[7,16],[8,16]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[13,17],[14,17],[14,18]]}
+  ],
+  "splitters": [],
+  "gates": []
+}

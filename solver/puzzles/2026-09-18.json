@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-18",
+  "name": "Vale",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 10, "y": 19, "dir": "up"},
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "upper-left L", "cells": [[3,3],[4,3],[3,4]]},
+    {"label": "upper-right Z", "cells": [[9,2],[10,2],[10,3],[11,3]]},
+    {"label": "mid-left Z", "cells": [[2,8],[3,8],[3,9],[4,9]]},
+    {"label": "run-breaker x=10", "cells": [[9,10],[10,10]]},
+    {"label": "mid-right L", "cells": [[11,8],[12,8],[11,9]]},
+    {"label": "lower-left L", "cells": [[3,14],[4,14],[3,15]]},
+    {"label": "lower-right Z", "cells": [[9,13],[10,13],[10,14],[11,14]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[12,17],[13,17],[14,17],[14,18]]}
+  ],
+  "splitters": [],
+  "gates": []
+}

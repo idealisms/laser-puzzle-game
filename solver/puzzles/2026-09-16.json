@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-16",
+  "name": "Moor",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 6, "y": 0, "dir": "down"},
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "upper-left L", "cells": [[2,3],[3,3],[2,4]]},
+    {"label": "upper-right Z", "cells": [[10,3],[11,3],[11,4],[12,4]]},
+    {"label": "W wall mid", "cells": [[0,8],[0,9],[1,9]]},
+    {"label": "E wall mid", "cells": [[14,7],[14,8]]},
+    {"label": "run-breaker x=6", "cells": [[6,9],[6,10]]},
+    {"label": "lower-left L", "cells": [[3,13],[4,13],[3,14]]},
+    {"label": "lower-right L", "cells": [[10,13],[11,13],[11,14]]},
+    {"label": "bottom pair", "cells": [[7,16],[8,16]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[13,18],[14,18],[14,19]]}
+  ],
+  "splitters": [],
+  "gates": []
+}
