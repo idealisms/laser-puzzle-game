@@ -3,8 +3,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useGame } from '@/hooks/useGame'
-import { LevelConfig, Mirror } from '@/game/types'
+import { LevelConfig, Mirror, LaserPath } from '@/game/types'
 import { getOrCreateAnonId } from '@/lib/anonId'
+import { computeAchievements, Achievement } from '@/game/achievements'
+import { calculateLaserPath } from '@/game/engine/Laser'
 import { HistogramData } from '@/components/game/LevelComplete'
 import { ResponsiveCanvas } from '@/components/game/ResponsiveCanvas'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
@@ -42,6 +44,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   const [sessionBestSolution, setSessionBestSolution] = useState<Mirror[] | null>(null)
   const [showHowToPlay, setShowHowToPlay] = useState(false)
   const [histogramData, setHistogramData] = useState<HistogramData | null>(null)
+  const [achievements, setAchievements] = useState<Achievement[]>([])
 
   const {
     gameState,
@@ -145,7 +148,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     }
   }, [level, gameState.score, gameState.placedMirrors, hasSubmitted, sessionBestScore])
 
-  function getLocalProgress(): Record<string, { bestScore: number; bestSolution?: Mirror[] }> {
+  function getLocalProgress(): Record<string, { bestScore: number; bestSolution?: Mirror[]; optimalScore?: number }> {
     if (typeof window === 'undefined') return {}
     try {
       const stored = localStorage.getItem('laser-puzzle-progress')
@@ -155,12 +158,12 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     }
   }
 
-  function saveLocalProgress(levelDate: string, score: number, solution: Mirror[]) {
+  function saveLocalProgress(levelDate: string, score: number, solution: Mirror[], optimalScore: number) {
     try {
       const progress = getLocalProgress()
       const existing = progress[levelDate]
       if (!existing || score > existing.bestScore) {
-        progress[levelDate] = { bestScore: score, bestSolution: solution }
+        progress[levelDate] = { bestScore: score, bestSolution: solution, optimalScore }
         localStorage.setItem('laser-puzzle-progress', JSON.stringify(progress))
         return true // isNewBest
       }
@@ -169,6 +172,54 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       return false
     }
   }
+
+  // Whether the player also submitted a score for the calendar day before `levelDate`.
+  function getPlayedPreviousDay(levelDate: string): boolean {
+    const progress = getLocalProgress()
+    const previous = new Date(levelDate + 'T00:00:00')
+    previous.setDate(previous.getDate() - 1)
+    const previousDate = previous.toISOString().split('T')[0]
+    return Boolean(progress[previousDate])
+  }
+
+  // Player's average percentage score across all other days played (excludes `levelDate`).
+  function getAveragePercentage(levelDate: string): number | null {
+    const progress = getLocalProgress()
+    const percentages = Object.entries(progress)
+      .filter(([date, entry]) => date !== levelDate && entry.optimalScore)
+      .map(([, entry]) => (entry.bestScore / entry.optimalScore!) * 100)
+    if (percentages.length === 0) return null
+    return percentages.reduce((sum, p) => sum + p, 0) / percentages.length
+  }
+
+  // Builds the achievement list for a solution. Reused both right after submission
+  // (where we already have a laserPath from gameState) and when re-opening the results
+  // modal for a previously-submitted solution (where we recompute the laserPath).
+  const buildAchievements = useCallback(
+    (mirrors: Mirror[], score: number, laserPath: LaserPath | null, levelConfig: LevelConfig | null) => {
+      const optimalScore = levelConfig?.optimalScore ?? DEFAULT_LEVEL.optimalScore
+      const resolvedLaserPath =
+        laserPath ??
+        (levelConfig
+          ? calculateLaserPath(levelConfig.laserConfig, mirrors, levelConfig.obstacles, {
+              width: levelConfig.gridWidth,
+              height: levelConfig.gridHeight,
+            })
+          : null)
+
+      return computeAchievements({
+        score,
+        optimalScore,
+        mirrors,
+        mirrorsAvailable: levelConfig?.mirrorsAvailable ?? DEFAULT_LEVEL.mirrorsAvailable,
+        optimalSolution: levelConfig?.optimalSolution,
+        laserPath: resolvedLaserPath,
+        playedPreviousDay: getPlayedPreviousDay(date),
+        averagePercentage: getAveragePercentage(date),
+      })
+    },
+    [date]
+  )
 
   const handleSubmit = useCallback(async () => {
     const mirrorPayload = gameState.placedMirrors.map(m => ({
@@ -203,12 +254,18 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       setSubmittedScore(gameState.score)
     }
 
+    const optimalScore = level?.optimalScore ?? DEFAULT_LEVEL.optimalScore
+
+    setAchievements(
+      buildAchievements(gameState.placedMirrors, gameState.score, gameState.laserPath, level)
+    )
+
     // Also save to localStorage for offline access
-    saveLocalProgress(date, gameState.score, gameState.placedMirrors)
+    saveLocalProgress(date, gameState.score, gameState.placedMirrors, optimalScore)
     setBestSolution([...gameState.placedMirrors])
     setHasSubmitted(true)
     setShowComplete(true)
-  }, [date, gameState])
+  }, [date, level, gameState, buildAchievements])
 
   const handleRestoreBest = useCallback(() => {
     if (hasSubmitted && bestSolution) {
@@ -219,6 +276,12 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   }, [hasSubmitted, bestSolution, sessionBestSolution, loadSolution])
 
   const handleShowResults = useCallback(async () => {
+    // If this session never computed achievements (e.g. results reopened after a
+    // page reload), recompute them from the stored best solution.
+    if (achievements.length === 0 && bestSolution) {
+      setAchievements(buildAchievements(bestSolution, submittedScore, null, level))
+    }
+
     if (!histogramData) {
       try {
         const res = await fetch(`/api/scores/histogram?date=${date}&anonId=${getOrCreateAnonId()}`)
@@ -234,7 +297,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       }
     }
     setShowComplete(true)
-  }, [histogramData, date])
+  }, [histogramData, date, achievements, bestSolution, submittedScore, level, buildAchievements])
 
   const handleShowOptimal = useCallback(() => {
     if (level?.optimalSolution) {
@@ -323,6 +386,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
         optimalScore={level?.optimalScore ?? DEFAULT_LEVEL.optimalScore}
         date={date}
         histogram={histogramData}
+        achievements={achievements}
       />
 
       <HowToPlayModal

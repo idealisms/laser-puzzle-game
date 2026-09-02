@@ -1,0 +1,108 @@
+import { LaserPath, Mirror, OptimalMirror } from './types'
+
+export interface Achievement {
+  id: string
+  emoji: string
+  label: string
+}
+
+export interface AchievementContext {
+  score: number
+  optimalScore: number
+  mirrors: Mirror[]
+  mirrorsAvailable: number
+  optimalSolution?: OptimalMirror[]
+  laserPath: LaserPath | null
+  playedPreviousDay: boolean
+  averagePercentage: number | null // player's average % on other days, excluding today
+}
+
+const NUMBER_EMOJI = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟']
+
+// A run of consecutive segments in the same direction, within a single stream,
+// this long counts as a "long path".
+const LONG_PATH_RUN_LENGTH = 20
+
+function mirrorKey(x: number, y: number, type: string): string {
+  return `${x},${y},${type}`
+}
+
+function solutionsMatch(mirrors: Mirror[], optimal: OptimalMirror[]): boolean {
+  if (mirrors.length !== optimal.length) return false
+  const optimalKeys = new Set(optimal.map((m) => mirrorKey(m.x, m.y, m.type)))
+  return mirrors.every((m) => optimalKeys.has(mirrorKey(m.position.x, m.position.y, m.type)))
+}
+
+function countMatchingPositions(mirrors: Mirror[], optimal: OptimalMirror[]): number {
+  const optimalPositions = new Set(optimal.map((m) => `${m.x},${m.y}`))
+  return mirrors.filter((m) => optimalPositions.has(`${m.position.x},${m.position.y}`)).length
+}
+
+function hasLongPath(laserPath: LaserPath | null): boolean {
+  if (!laserPath) return false
+  for (const stream of laserPath.streams) {
+    let runLength = 0
+    let runDirection: string | null = null
+    for (const segment of stream.segments) {
+      if (segment.direction === runDirection) {
+        runLength++
+      } else {
+        runDirection = segment.direction
+        runLength = 1
+      }
+      if (runLength >= LONG_PATH_RUN_LENGTH) return true
+    }
+  }
+  return false
+}
+
+export function computeAchievements(ctx: AchievementContext): Achievement[] {
+  const achievements: Achievement[] = []
+  const isPerfect = ctx.score >= ctx.optimalScore
+
+  if (isPerfect) {
+    achievements.push({ id: 'perfect-score', emoji: '💯', label: 'Perfect Score' })
+
+    if (ctx.optimalSolution) {
+      if (solutionsMatch(ctx.mirrors, ctx.optimalSolution)) {
+        achievements.push({ id: 'matching-solution', emoji: '🪞', label: 'Matching Solution' })
+      } else {
+        achievements.push({ id: 'different-solution', emoji: '🦄', label: 'Different Solution' })
+      }
+    }
+  }
+
+  if (ctx.score > ctx.optimalScore) {
+    achievements.push({ id: 'better-than-me', emoji: '🤯', label: 'Better than me' })
+  }
+
+  if (ctx.averagePercentage !== null) {
+    const percentage = (ctx.score / ctx.optimalScore) * 100
+    if (percentage > ctx.averagePercentage) {
+      achievements.push({ id: 'better-than-average', emoji: '📈', label: 'Better than Average' })
+    }
+  }
+
+  if (ctx.optimalSolution) {
+    const matchingMirrors = Math.min(countMatchingPositions(ctx.mirrors, ctx.optimalSolution), 10)
+    achievements.push({
+      id: 'matching-mirrors',
+      emoji: NUMBER_EMOJI[matchingMirrors],
+      label: `${matchingMirrors} Matching Mirror${matchingMirrors === 1 ? '' : 's'}`,
+    })
+  }
+
+  if (ctx.playedPreviousDay) {
+    achievements.push({ id: 'streak', emoji: '🔥', label: 'Streak' })
+  }
+
+  if (ctx.mirrors.length < ctx.mirrorsAvailable) {
+    achievements.push({ id: 'forgot-something', emoji: '🙄', label: 'Forgot something' })
+  }
+
+  if (hasLongPath(ctx.laserPath)) {
+    achievements.push({ id: 'long-path', emoji: '🛣️', label: 'Long path' })
+  }
+
+  return achievements
+}
