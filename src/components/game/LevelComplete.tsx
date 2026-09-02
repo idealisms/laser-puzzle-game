@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Histogram } from './Histogram'
+import { Achievement } from '@/game/achievements'
 
 export interface HistogramData {
   distribution: Record<number, number>
@@ -17,6 +18,7 @@ interface LevelCompleteProps {
   optimalScore: number
   date: string
   histogram?: HistogramData | null
+  achievements?: Achievement[]
 }
 
 export function LevelComplete({
@@ -26,6 +28,7 @@ export function LevelComplete({
   optimalScore,
   date,
   histogram,
+  achievements = [],
 }: LevelCompleteProps) {
   const [copied, setCopied] = useState(false)
   const percentage = Math.round((score / optimalScore) * 100)
@@ -33,7 +36,8 @@ export function LevelComplete({
 
   const handleShare = async () => {
     const formattedDate = date.replace(/-/g, '/')
-    const percentLine = isPerfect ? `${percentage}% 💯` : `${percentage}%`
+    const emojiSuffix = achievements.length > 0 ? ` ${achievements.map((a) => a.emoji).join('')}` : ''
+    const percentLine = `${percentage}%${emojiSuffix}`
     const shareText = `Laser Puzzle ${formattedDate}\n${percentLine}\nlaser-puzzle-game.vercel.app`
 
     try {
@@ -81,6 +85,21 @@ export function LevelComplete({
             {isPerfect ? 'Perfect!' : `Optimal: ${optimalScore}`}
           </div>
         </div>
+
+        {achievements.length > 0 && (
+          <div className="flex flex-wrap justify-center gap-2 mb-2">
+            {achievements.map((achievement) => (
+              <div
+                key={achievement.id}
+                title={achievement.label}
+                className="flex items-center gap-1.5 bg-gray-800/70 border border-gray-700 rounded-full px-3 py-1 text-sm"
+              >
+                <span className="text-base leading-none">{achievement.emoji}</span>
+                <span className="text-gray-300">{achievement.label}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="flex justify-center mt-6">
           <Button variant="primary" onClick={handleShare}>
