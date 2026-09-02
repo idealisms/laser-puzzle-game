@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-24",
+  "name": "Moss",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 4, "y": 0, "dir": "down"},
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "W wall upper", "cells": [[0,4],[0,5],[1,5]]},
+    {"label": "upper-right L", "cells": [[10,3],[11,3],[10,4]]},
+    {"label": "upper-mid Z", "cells": [[7,4],[8,4],[8,5],[9,5]]},
+    {"label": "run-breaker x=4", "cells": [[4,9],[4,10]]},
+    {"label": "mid-right pair", "cells": [[12,9],[12,10]]},
+    {"label": "lower-left Z", "cells": [[3,13],[4,13],[4,14],[5,14]]},
+    {"label": "lower-right L", "cells": [[10,13],[11,13],[11,14]]},
+    {"label": "bottom pair", "cells": [[7,16],[8,16]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[13,18],[14,18],[14,19]]}
+  ],
+  "splitters": [],
+  "gates": []
+}

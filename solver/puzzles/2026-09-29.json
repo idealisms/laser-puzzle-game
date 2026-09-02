@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-29",
+  "name": "Wyke",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 0, "y": 11, "dir": "right"},
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "upper-left L", "cells": [[2,4],[3,4],[2,5]]},
+    {"label": "upper-right S", "cells": [[9,3],[10,3],[10,4],[11,4]]},
+    {"label": "mid-left pair", "cells": [[2,8],[2,9]]},
+    {"label": "E wall mid", "cells": [[14,8],[14,9]]},
+    {"label": "center L", "cells": [[5,9],[6,9],[6,10]]},
+    {"label": "run-breaker y=11", "cells": [[7,11],[8,11]]},
+    {"label": "lower-left Z", "cells": [[3,14],[4,14],[4,15],[5,15]]},
+    {"label": "lower-right L", "cells": [[10,14],[11,14],[10,15]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[13,18],[14,18],[14,19]]}
+  ],
+  "splitters": [],
+  "gates": []
+}

@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-19",
+  "name": "Scree",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 14, "y": 9, "dir": "left"},
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1],[1,1]]},
+    {"label": "NE corner", "cells": [[13,0],[14,0],[14,1]]},
+    {"label": "upper-left S", "cells": [[3,3],[4,3],[4,4],[5,4]]},
+    {"label": "upper-right L", "cells": [[10,3],[11,3],[10,4]]},
+    {"label": "W wall mid", "cells": [[0,7],[0,8],[1,8]]},
+    {"label": "mid-right pair", "cells": [[12,7],[12,8]]},
+    {"label": "run-breaker y=9", "cells": [[6,9],[7,9]]},
+    {"label": "center L", "cells": [[5,11],[6,11],[6,12]]},
+    {"label": "lower-left Z", "cells": [[2,14],[3,14],[3,15],[4,15]]},
+    {"label": "lower-right L", "cells": [[10,14],[11,14],[11,15]]},
+    {"label": "SW corner", "cells": [[0,17],[0,18],[0,19],[1,19]]},
+    {"label": "SE corner", "cells": [[13,18],[14,18],[14,19]]}
+  ],
+  "splitters": [],
+  "gates": []
+}
