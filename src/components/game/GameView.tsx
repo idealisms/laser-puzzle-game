@@ -7,6 +7,7 @@ import { LevelConfig, Mirror, LaserPath } from '@/game/types'
 import { getOrCreateAnonId } from '@/lib/anonId'
 import { computeAchievements, Achievement } from '@/game/achievements'
 import { calculateLaserPath } from '@/game/engine/Laser'
+import { createForegroundTimer, ForegroundTimer } from '@/lib/foregroundTimer'
 import { HistogramData } from '@/components/game/LevelComplete'
 import { ResponsiveCanvas } from '@/components/game/ResponsiveCanvas'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
@@ -60,30 +61,20 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   const resetCountRef = useRef(0)
 
   // Tracks foreground (visible-tab) time spent on the puzzle, from mount to submission.
-  // activeMsRef accumulates completed visible spans; visibleSinceRef marks the start of
-  // the current one (null while the tab is hidden).
-  const activeMsRef = useRef(0)
-  const visibleSinceRef = useRef<number | null>(
-    typeof document !== 'undefined' && document.visibilityState === 'visible' ? Date.now() : null
-  )
+  const foregroundTimerRef = useRef<ForegroundTimer | null>(null)
+  if (foregroundTimerRef.current === null) {
+    foregroundTimerRef.current = createForegroundTimer(
+      typeof document !== 'undefined' && document.visibilityState === 'visible'
+    )
+  }
 
   useEffect(() => {
     function handleVisibilityChange() {
-      if (document.visibilityState === 'visible') {
-        visibleSinceRef.current = Date.now()
-      } else if (visibleSinceRef.current !== null) {
-        activeMsRef.current += Date.now() - visibleSinceRef.current
-        visibleSinceRef.current = null
-      }
+      foregroundTimerRef.current?.onVisibilityChange(document.visibilityState === 'visible')
     }
     document.addEventListener('visibilitychange', handleVisibilityChange)
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
-
-  function getForegroundSeconds(): number {
-    const openMs = visibleSinceRef.current !== null ? Date.now() - visibleSinceRef.current : 0
-    return Math.round((activeMsRef.current + openMs) / 1000)
-  }
 
   const onReset = useCallback(() => {
     resetCountRef.current += 1
@@ -267,7 +258,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       levelDate: date,
       mirrors: mirrorPayload,
       anonId: getOrCreateAnonId(),
-      timeSpentSeconds: getForegroundSeconds(),
+      timeSpentSeconds: foregroundTimerRef.current?.getElapsedSeconds() ?? 0,
       mirrorsErased: getMirrorsErasedCount(),
       resetCount: resetCountRef.current,
     }
