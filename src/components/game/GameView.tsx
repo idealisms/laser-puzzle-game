@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { useGame } from '@/hooks/useGame'
 import { LevelConfig, Mirror, LaserPath } from '@/game/types'
@@ -53,7 +53,42 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     handleReset,
     loadLevel,
     loadSolution,
+    getMirrorsErasedCount,
   } = useGame(level || DEFAULT_LEVEL)
+
+  // Number of times the player has pressed the Reset button (analytics only).
+  const resetCountRef = useRef(0)
+
+  // Tracks foreground (visible-tab) time spent on the puzzle, from mount to submission.
+  // activeMsRef accumulates completed visible spans; visibleSinceRef marks the start of
+  // the current one (null while the tab is hidden).
+  const activeMsRef = useRef(0)
+  const visibleSinceRef = useRef<number | null>(
+    typeof document !== 'undefined' && document.visibilityState === 'visible' ? Date.now() : null
+  )
+
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        visibleSinceRef.current = Date.now()
+      } else if (visibleSinceRef.current !== null) {
+        activeMsRef.current += Date.now() - visibleSinceRef.current
+        visibleSinceRef.current = null
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [])
+
+  function getForegroundSeconds(): number {
+    const openMs = visibleSinceRef.current !== null ? Date.now() - visibleSinceRef.current : 0
+    return Math.round((activeMsRef.current + openMs) / 1000)
+  }
+
+  const onReset = useCallback(() => {
+    resetCountRef.current += 1
+    handleReset()
+  }, [handleReset])
 
   // Fetch level data
   useEffect(() => {
@@ -232,6 +267,9 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       levelDate: date,
       mirrors: mirrorPayload,
       anonId: getOrCreateAnonId(),
+      timeSpentSeconds: getForegroundSeconds(),
+      mirrorsErased: getMirrorsErasedCount(),
+      resetCount: resetCountRef.current,
     }
 
     try {
@@ -265,7 +303,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     setBestSolution([...gameState.placedMirrors])
     setHasSubmitted(true)
     setShowComplete(true)
-  }, [date, level, gameState, buildAchievements])
+  }, [date, level, gameState, buildAchievements, getMirrorsErasedCount])
 
   const handleRestoreBest = useCallback(() => {
     if (hasSubmitted && bestSolution) {
@@ -368,7 +406,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
               />
 
               <GameControls
-                onReset={handleReset}
+                onReset={onReset}
                 onSubmit={handleSubmit}
                 canSubmit={gameState.score > 0}
                 hasSubmitted={hasSubmitted}
