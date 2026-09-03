@@ -33,6 +33,9 @@ const baseCtx = {
   laserPath: null as LaserPath | null,
   playedPreviousDay: false,
   averagePercentage: null as number | null,
+  timeSpentSeconds: null as number | null,
+  mirrorsErased: null as number | null,
+  resetCount: null as number | null,
 }
 
 describe('computeAchievements', () => {
@@ -113,5 +116,59 @@ describe('computeAchievements', () => {
   it('does not award Long path for a run shorter than 20', () => {
     const achievements = computeAchievements({ ...baseCtx, laserPath: laserPathWithRun('down', 19) })
     expect(achievements.map((a) => a.id)).not.toContain('long-path')
+  })
+
+  it('awards Finished in under a minute for a fast submission', () => {
+    const achievements = computeAchievements({ ...baseCtx, timeSpentSeconds: 59 })
+    expect(achievements.map((a) => a.id)).toContain('fast-finish')
+  })
+
+  it('does not award Finished in under a minute at or above 60 seconds', () => {
+    const achievements = computeAchievements({ ...baseCtx, timeSpentSeconds: 60 })
+    expect(achievements.map((a) => a.id)).not.toContain('fast-finish')
+  })
+
+  it('awards Took your time on this one for a submission over 5 minutes', () => {
+    const achievements = computeAchievements({ ...baseCtx, timeSpentSeconds: 301 })
+    expect(achievements.map((a) => a.id)).toContain('slow-finish')
+  })
+
+  it('does not award Took your time on this one at or under 5 minutes', () => {
+    const achievements = computeAchievements({ ...baseCtx, timeSpentSeconds: 300 })
+    expect(achievements.map((a) => a.id)).not.toContain('slow-finish')
+  })
+
+  it('does not award fast/slow finish when timeSpentSeconds is unavailable', () => {
+    const achievements = computeAchievements({ ...baseCtx, timeSpentSeconds: null })
+    const ids = achievements.map((a) => a.id)
+    expect(ids).not.toContain('fast-finish')
+    expect(ids).not.toContain('slow-finish')
+  })
+
+  it('awards No mirrors removed when nothing was erased or reset', () => {
+    const achievements = computeAchievements({ ...baseCtx, mirrorsErased: 0, resetCount: 0 })
+    expect(achievements.map((a) => a.id)).toContain('no-mirrors-removed')
+  })
+
+  it('does not award No mirrors removed if anything was erased or reset', () => {
+    const erased = computeAchievements({ ...baseCtx, mirrorsErased: 1, resetCount: 0 })
+    const reset = computeAchievements({ ...baseCtx, mirrorsErased: 0, resetCount: 1 })
+    expect(erased.map((a) => a.id)).not.toContain('no-mirrors-removed')
+    expect(reset.map((a) => a.id)).not.toContain('no-mirrors-removed')
+  })
+
+  it('does not award No mirrors removed when the stats are unavailable', () => {
+    const achievements = computeAchievements({ ...baseCtx, mirrorsErased: null, resetCount: null })
+    expect(achievements.map((a) => a.id)).not.toContain('no-mirrors-removed')
+  })
+
+  it('awards Tried a different path when reset was pressed at least once', () => {
+    const achievements = computeAchievements({ ...baseCtx, resetCount: 1 })
+    expect(achievements.map((a) => a.id)).toContain('tried-different-path')
+  })
+
+  it('does not award Tried a different path when reset was never pressed', () => {
+    const achievements = computeAchievements({ ...baseCtx, resetCount: 0 })
+    expect(achievements.map((a) => a.id)).not.toContain('tried-different-path')
   })
 })

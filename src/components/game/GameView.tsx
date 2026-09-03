@@ -219,10 +219,21 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   }
 
   // Builds the achievement list for a solution. Reused both right after submission
-  // (where we already have a laserPath from gameState) and when re-opening the results
-  // modal for a previously-submitted solution (where we recompute the laserPath).
+  // (where we already have a laserPath from gameState and fresh engagement stats) and
+  // when re-opening the results modal for a previously-submitted solution (where we
+  // recompute the laserPath and engagement stats aren't available — treated as null).
   const buildAchievements = useCallback(
-    (mirrors: Mirror[], score: number, laserPath: LaserPath | null, levelConfig: LevelConfig | null) => {
+    (
+      mirrors: Mirror[],
+      score: number,
+      laserPath: LaserPath | null,
+      levelConfig: LevelConfig | null,
+      engagement: { timeSpentSeconds: number | null; mirrorsErased: number | null; resetCount: number | null } = {
+        timeSpentSeconds: null,
+        mirrorsErased: null,
+        resetCount: null,
+      }
+    ) => {
       const optimalScore = levelConfig?.optimalScore ?? DEFAULT_LEVEL.optimalScore
       const resolvedLaserPath =
         laserPath ??
@@ -242,6 +253,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
         laserPath: resolvedLaserPath,
         playedPreviousDay: getPlayedPreviousDay(date),
         averagePercentage: getAveragePercentage(date),
+        ...engagement,
       })
     },
     [date]
@@ -254,13 +266,17 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       type: m.type,
     }))
 
+    const engagement = {
+      timeSpentSeconds: foregroundTimerRef.current?.getElapsedSeconds() ?? 0,
+      mirrorsErased: getMirrorsErasedCount(),
+      resetCount: resetCountRef.current,
+    }
+
     const body = {
       levelDate: date,
       mirrors: mirrorPayload,
       anonId: getOrCreateAnonId(),
-      timeSpentSeconds: foregroundTimerRef.current?.getElapsedSeconds() ?? 0,
-      mirrorsErased: getMirrorsErasedCount(),
-      resetCount: resetCountRef.current,
+      ...engagement,
     }
 
     try {
@@ -286,7 +302,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     const optimalScore = level?.optimalScore ?? DEFAULT_LEVEL.optimalScore
 
     setAchievements(
-      buildAchievements(gameState.placedMirrors, gameState.score, gameState.laserPath, level)
+      buildAchievements(gameState.placedMirrors, gameState.score, gameState.laserPath, level, engagement)
     )
 
     // Also save to localStorage for offline access
