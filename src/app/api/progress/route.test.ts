@@ -182,6 +182,51 @@ describe('POST /api/progress', () => {
     expect(Array.isArray(storedMirrors[0])).toBe(true)
   })
 
+  it('stores engagement stats when provided', async () => {
+    ;(prisma.level.findUnique as jest.Mock).mockResolvedValue(mockLevel)
+    ;(prisma.scoreSubmission.findUnique as jest.Mock).mockResolvedValue(null)
+    ;(prisma.scoreSubmission.create as jest.Mock).mockResolvedValue({})
+    ;(prisma.scoreSubmission.groupBy as jest.Mock).mockResolvedValue([])
+
+    await POST(
+      makeRequest({
+        levelDate: '2026-01-01',
+        mirrors: [{ x: 2, y: 2, type: '/' }],
+        anonId: validAnonId,
+        timeSpentSeconds: 137.6,
+        mirrorsErased: 4,
+        resetCount: 2,
+      })
+    )
+
+    const createCall = (prisma.scoreSubmission.create as jest.Mock).mock.calls[0][0]
+    expect(createCall.data.timeSpentSeconds).toBe(138)
+    expect(createCall.data.mirrorsErased).toBe(4)
+    expect(createCall.data.resetCount).toBe(2)
+  })
+
+  it('stores null engagement stats when missing or invalid', async () => {
+    ;(prisma.level.findUnique as jest.Mock).mockResolvedValue(mockLevel)
+    ;(prisma.scoreSubmission.findUnique as jest.Mock).mockResolvedValue(null)
+    ;(prisma.scoreSubmission.create as jest.Mock).mockResolvedValue({})
+    ;(prisma.scoreSubmission.groupBy as jest.Mock).mockResolvedValue([])
+
+    await POST(
+      makeRequest({
+        levelDate: '2026-01-01',
+        mirrors: [{ x: 2, y: 2, type: '/' }],
+        anonId: validAnonId,
+        mirrorsErased: -3,
+        resetCount: 'two',
+      })
+    )
+
+    const createCall = (prisma.scoreSubmission.create as jest.Mock).mock.calls[0][0]
+    expect(createCall.data.timeSpentSeconds).toBeNull()
+    expect(createCall.data.mirrorsErased).toBeNull()
+    expect(createCall.data.resetCount).toBeNull()
+  })
+
   it('returns 400 for invalid mirrors', async () => {
     ;(prisma.level.findUnique as jest.Mock).mockResolvedValue(mockLevel)
     ;(prisma.scoreSubmission.findUnique as jest.Mock).mockResolvedValue(null)

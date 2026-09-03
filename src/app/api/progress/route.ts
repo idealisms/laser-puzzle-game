@@ -5,10 +5,24 @@ import { formatMirrorList } from '@/lib/mirrorFormat'
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
+// Engagement stats are analytics-only (not used for scoring), so we sanitize rather than
+// reject the submission over a malformed or missing value (e.g. an older client build).
+function sanitizeNonNegativeInt(value: unknown): number | null {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) return null
+  return Math.round(value)
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { levelDate, mirrors: mirrorInputs, anonId } = body
+    const {
+      levelDate,
+      mirrors: mirrorInputs,
+      anonId,
+      timeSpentSeconds,
+      mirrorsErased,
+      resetCount,
+    } = body
 
     if (!anonId || typeof anonId !== 'string' || !UUID_REGEX.test(anonId)) {
       return NextResponse.json(
@@ -68,6 +82,9 @@ export async function POST(request: Request) {
         mirrors: formatMirrorList(
           validation.mirrors.map(m => ({ x: m.position.x, y: m.position.y, type: m.type }))
         ),
+        timeSpentSeconds: sanitizeNonNegativeInt(timeSpentSeconds),
+        mirrorsErased: sanitizeNonNegativeInt(mirrorsErased),
+        resetCount: sanitizeNonNegativeInt(resetCount),
       },
     })
 

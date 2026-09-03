@@ -24,13 +24,16 @@ model Level {
 }
 
 model ScoreSubmission {
-  id        String   @id @default(cuid())
-  levelId   String
-  level     Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
-  playerId  String
-  score     Int
-  mirrors   String?  // JSON: [{ x, y, type }] - the mirror placement that produced the score
-  createdAt DateTime @default(now())
+  id                String   @id @default(cuid())
+  levelId           String
+  level             Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  playerId          String
+  score             Int
+  mirrors           String?  // JSON: [{ x, y, type }] - the mirror placement that produced the score
+  timeSpentSeconds  Int?     // Foreground (visible-tab) time spent on the puzzle, in seconds
+  mirrorsErased     Int?     // Number of times the player erased a placed mirror
+  resetCount        Int?     // Number of times the player pressed Reset
+  createdAt         DateTime @default(now())
 
   @@unique([levelId, playerId])
   @@index([levelId, score])
