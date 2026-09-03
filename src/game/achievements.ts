@@ -15,6 +15,11 @@ export interface AchievementContext {
   laserPath: LaserPath | null
   playedPreviousDay: boolean
   averagePercentage: number | null // player's average % on other days, excluding today
+  // Engagement stats from this submission. null when unavailable (e.g. recomputing
+  // achievements for a solution submitted in an earlier session).
+  timeSpentSeconds: number | null
+  mirrorsErased: number | null
+  resetCount: number | null
 }
 
 const NUMBER_EMOJI = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟']
@@ -22,6 +27,9 @@ const NUMBER_EMOJI = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5�
 // A run of consecutive segments in the same direction, within a single stream,
 // this long counts as a "long path".
 const LONG_PATH_RUN_LENGTH = 20
+
+const FAST_FINISH_SECONDS = 60
+const SLOW_FINISH_SECONDS = 5 * 60
 
 function mirrorKey(x: number, y: number, type: string): string {
   return `${x},${y},${type}`
@@ -102,6 +110,22 @@ export function computeAchievements(ctx: AchievementContext): Achievement[] {
 
   if (hasLongPath(ctx.laserPath)) {
     achievements.push({ id: 'long-path', emoji: '🛣️', label: 'Long path' })
+  }
+
+  if (ctx.timeSpentSeconds !== null && ctx.timeSpentSeconds < FAST_FINISH_SECONDS) {
+    achievements.push({ id: 'fast-finish', emoji: '⏲️', label: 'Finished in under a minute' })
+  }
+
+  if (ctx.timeSpentSeconds !== null && ctx.timeSpentSeconds > SLOW_FINISH_SECONDS) {
+    achievements.push({ id: 'slow-finish', emoji: '🐢', label: 'Took your time on this one' })
+  }
+
+  if (ctx.mirrorsErased !== null && ctx.resetCount !== null && ctx.mirrorsErased === 0 && ctx.resetCount === 0) {
+    achievements.push({ id: 'no-mirrors-removed', emoji: '🎯', label: 'No mirrors removed' })
+  }
+
+  if (ctx.resetCount !== null && ctx.resetCount >= 1) {
+    achievements.push({ id: 'tried-different-path', emoji: '🔄', label: 'Tried a different path' })
   }
 
   return achievements
