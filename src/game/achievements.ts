@@ -1,4 +1,4 @@
-import { LaserPath, Mirror, OptimalMirror } from './types'
+import { Direction, LaserPath, Mirror, OptimalMirror } from './types'
 
 export interface Achievement {
   id: string
@@ -44,6 +44,29 @@ function solutionsMatch(mirrors: Mirror[], optimal: OptimalMirror[]): boolean {
 function countMatchingPositions(mirrors: Mirror[], optimal: OptimalMirror[]): number {
   const optimalPositions = new Set(optimal.map((m) => `${m.x},${m.y}`))
   return mirrors.filter((m) => optimalPositions.has(`${m.position.x},${m.position.y}`)).length
+}
+
+// Clockwise order of travel directions, viewed top-down (y grows downward):
+// facing up and turning right points you right, turning right again points you down, etc.
+const CLOCKWISE_ORDER: Direction[] = ['up', 'right', 'down', 'left']
+
+type TurnDirection = 'cw' | 'ccw' | 'other'
+
+// Every direction change between consecutive segments of the laser path, across all
+// streams — a "turn" happens wherever the beam is redirected, by mirror or obstacle.
+function collectTurns(laserPath: LaserPath | null): TurnDirection[] {
+  if (!laserPath) return []
+  const turns: TurnDirection[] = []
+  for (const stream of laserPath.streams) {
+    for (let i = 1; i < stream.segments.length; i++) {
+      const from = stream.segments[i - 1].direction
+      const to = stream.segments[i].direction
+      if (from === to) continue
+      const diff = (CLOCKWISE_ORDER.indexOf(to) - CLOCKWISE_ORDER.indexOf(from) + 4) % 4
+      turns.push(diff === 1 ? 'cw' : diff === 3 ? 'ccw' : 'other')
+    }
+  }
+  return turns
 }
 
 function hasLongPath(laserPath: LaserPath | null): boolean {
@@ -126,6 +149,22 @@ export function computeAchievements(ctx: AchievementContext): Achievement[] {
 
   if (ctx.resetCount !== null && ctx.resetCount >= 1) {
     achievements.push({ id: 'tried-different-path', emoji: '🔄', label: 'Tried a different path' })
+  }
+
+  const turns = collectTurns(ctx.laserPath)
+  if (turns.length > 0 && turns.every((t) => t === 'cw')) {
+    achievements.push({ id: 'right-turns-only', emoji: '↩️', label: 'Right turns only' })
+  }
+  if (turns.length > 0 && turns.every((t) => t === 'ccw')) {
+    achievements.push({ id: 'left-turns-only', emoji: '↪️', label: 'Left turns only' })
+  }
+
+  if (ctx.mirrors.length > 0) {
+    const slashCount = ctx.mirrors.filter((m) => m.type === '/').length
+    const backslashCount = ctx.mirrors.length - slashCount
+    if (slashCount === backslashCount) {
+      achievements.push({ id: 'equal-mirror-types', emoji: '⚖️', label: 'Equal mirror types' })
+    }
   }
 
   return achievements

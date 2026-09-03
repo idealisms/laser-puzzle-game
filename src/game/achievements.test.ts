@@ -1,5 +1,5 @@
 import { computeAchievements } from './achievements'
-import { LaserPath, Mirror, OptimalMirror } from './types'
+import { Direction, LaserPath, Mirror, OptimalMirror } from './types'
 
 function mirror(x: number, y: number, type: '/' | '\\' = '/'): Mirror {
   return { position: { x, y }, type }
@@ -18,6 +18,23 @@ function laserPathWithRun(direction: LaserPath['streams'][0]['segments'][0]['dir
   return {
     streams: [{ segments, generation: 0 }],
     totalLength: length,
+    terminated: true,
+    terminationReason: 'edge',
+    collisionPoints: [],
+  }
+}
+
+// Builds a single-stream laser path where each entry becomes a unit-length segment
+// in that direction, so a direction change between consecutive entries is a "turn".
+function laserPathWithDirections(directions: Direction[]): LaserPath {
+  const segments = directions.map((direction, i) => ({
+    start: { x: i, y: 0 },
+    end: { x: i + 1, y: 0 },
+    direction,
+  }))
+  return {
+    streams: [{ segments, generation: 0 }],
+    totalLength: directions.length,
     terminated: true,
     terminationReason: 'edge',
     collisionPoints: [],
@@ -170,5 +187,56 @@ describe('computeAchievements', () => {
   it('does not award Tried a different path when reset was never pressed', () => {
     const achievements = computeAchievements({ ...baseCtx, resetCount: 0 })
     expect(achievements.map((a) => a.id)).not.toContain('tried-different-path')
+  })
+
+  it('awards Right turns only when every turn is clockwise', () => {
+    // up -> right (CW) -> down (CW) -> left (CW) -> up (CW)
+    const laserPath = laserPathWithDirections(['up', 'right', 'down', 'left', 'up'])
+    const achievements = computeAchievements({ ...baseCtx, laserPath })
+    const ids = achievements.map((a) => a.id)
+    expect(ids).toContain('right-turns-only')
+    expect(ids).not.toContain('left-turns-only')
+  })
+
+  it('awards Left turns only when every turn is counter-clockwise', () => {
+    // up -> left (CCW) -> down (CCW) -> right (CCW) -> up (CCW)
+    const laserPath = laserPathWithDirections(['up', 'left', 'down', 'right', 'up'])
+    const achievements = computeAchievements({ ...baseCtx, laserPath })
+    const ids = achievements.map((a) => a.id)
+    expect(ids).toContain('left-turns-only')
+    expect(ids).not.toContain('right-turns-only')
+  })
+
+  it('awards neither turn achievement when turns are mixed', () => {
+    const laserPath = laserPathWithDirections(['up', 'right', 'up', 'left'])
+    const achievements = computeAchievements({ ...baseCtx, laserPath })
+    const ids = achievements.map((a) => a.id)
+    expect(ids).not.toContain('right-turns-only')
+    expect(ids).not.toContain('left-turns-only')
+  })
+
+  it('awards neither turn achievement when the path never turns', () => {
+    const laserPath = laserPathWithDirections(['right', 'right', 'right'])
+    const achievements = computeAchievements({ ...baseCtx, laserPath })
+    const ids = achievements.map((a) => a.id)
+    expect(ids).not.toContain('right-turns-only')
+    expect(ids).not.toContain('left-turns-only')
+  })
+
+  it('awards Equal mirror types when slash and backslash counts match', () => {
+    const mirrors = [mirror(0, 0, '/'), mirror(1, 1, '\\'), mirror(2, 2, '/'), mirror(3, 3, '\\')]
+    const achievements = computeAchievements({ ...baseCtx, mirrors })
+    expect(achievements.map((a) => a.id)).toContain('equal-mirror-types')
+  })
+
+  it('does not award Equal mirror types when counts differ', () => {
+    const mirrors = [mirror(0, 0, '/'), mirror(1, 1, '/'), mirror(2, 2, '\\')]
+    const achievements = computeAchievements({ ...baseCtx, mirrors })
+    expect(achievements.map((a) => a.id)).not.toContain('equal-mirror-types')
+  })
+
+  it('does not award Equal mirror types with no mirrors placed', () => {
+    const achievements = computeAchievements({ ...baseCtx, mirrors: [] })
+    expect(achievements.map((a) => a.id)).not.toContain('equal-mirror-types')
   })
 })
