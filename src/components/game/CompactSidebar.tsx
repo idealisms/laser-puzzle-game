@@ -69,7 +69,8 @@ export function CompactSidebar({
   const bestLabel = hasSubmitted ? 'Submitted' : 'Best'
 
   return (
-    <div className="relative w-12 flex-shrink-0 self-stretch">
+    // Reserve 48px (w-12) in the layout; panel expands leftward via absolute positioning
+    <div className="relative w-12 shrink-0 self-stretch">
       <div
         className="absolute right-0 top-0 bottom-0 bg-gray-800 border-l border-gray-700 overflow-hidden z-10 select-none"
         style={{ width: isOpen ? '10rem' : '3rem', transition: 'width 0.2s ease' }}
@@ -82,25 +83,33 @@ export function CompactSidebar({
 
           <StatRow
             label="Path"
-            value={<span className="text-white font-bold text-xl font-mono tabular-nums">{score}</span>}
             isOpen={isOpen}
+            value={
+              <span className="text-white font-bold text-2xl font-mono tabular-nums leading-none">
+                {score}
+              </span>
+            }
           />
 
           <StatRow
             label="Mirrors"
+            isOpen={isOpen}
             value={
               <span className="text-white font-bold text-sm font-mono tabular-nums">
                 {mirrorsPlaced}<span className="text-gray-500">/{mirrorsAvailable}</span>
               </span>
             }
-            isOpen={isOpen}
           />
 
           {showBest && (
             <StatRow
               label={bestLabel}
-              value={<span className="text-emerald-400 font-bold text-sm font-mono tabular-nums">{bestScore}</span>}
               isOpen={isOpen}
+              value={
+                <span className="text-emerald-400 font-bold text-sm font-mono tabular-nums">
+                  {bestScore}
+                </span>
+              }
               clickable={canRestore}
               onClick={canRestore ? onRestoreBest : undefined}
             />
@@ -109,28 +118,31 @@ export function CompactSidebar({
           {showOptimal && (
             <StatRow
               label="Optimal"
-              value={<span className="text-amber-400 font-bold text-sm font-mono tabular-nums">{optimalScore}</span>}
               isOpen={isOpen}
+              value={
+                <span className="text-amber-400 font-bold text-sm font-mono tabular-nums">
+                  {optimalScore}
+                </span>
+              }
               clickable
               onClick={onShowOptimal}
             />
           )}
 
           <div className="flex-1" />
-
           <div className="border-t border-gray-700 mx-2 mb-1" />
 
           <ActionRow
             label="Reset"
-            icon={<ResetIcon />}
             isOpen={isOpen}
+            icon={<ResetIcon />}
             onClick={onReset}
           />
 
           <ActionRow
             label={hasSubmitted ? 'Results' : 'Submit'}
-            icon={hasSubmitted ? <ResultsIcon /> : <SubmitIcon />}
             isOpen={isOpen}
+            icon={hasSubmitted ? <ResultsIcon /> : <SubmitIcon />}
             onClick={hasSubmitted ? onShowResults : onSubmit}
             disabled={!hasSubmitted && !canSubmit}
             primary
@@ -142,6 +154,8 @@ export function CompactSidebar({
   )
 }
 
+// Each row: label fills the left expansion area; value/icon is always centered
+// in the rightmost 48px (w-12), so it's always visible in the collapsed state.
 interface StatRowProps {
   label: string
   value: React.ReactNode
@@ -153,17 +167,17 @@ interface StatRowProps {
 function StatRow({ label, value, isOpen, clickable, onClick }: StatRowProps) {
   return (
     <div
-      className={`flex items-center h-10 px-2 ${clickable ? 'cursor-pointer active:bg-gray-700' : ''}`}
+      className={`flex items-center h-10 ${clickable ? 'cursor-pointer active:bg-gray-700/60' : ''}`}
       onClick={onClick}
       onPointerDown={onClick ? (e => e.stopPropagation()) : undefined}
     >
       <span
-        className="flex-1 text-xs text-gray-400 whitespace-nowrap pr-1 transition-opacity duration-150"
+        className="flex-1 text-xs text-gray-400 pl-3 pr-1 whitespace-nowrap overflow-hidden transition-opacity duration-150"
         style={{ opacity: isOpen ? 1 : 0 }}
       >
         {label}
       </span>
-      <div className="w-10 flex justify-end items-center shrink-0">
+      <div className="w-12 shrink-0 flex justify-center items-center">
         {value}
       </div>
     </div>
@@ -182,24 +196,24 @@ interface ActionRowProps {
 function ActionRow({ label, icon, isOpen, onClick, disabled, primary }: ActionRowProps) {
   return (
     <button
-      className={`w-full flex items-center h-10 px-2 transition-colors ${
+      className={`w-full flex items-center h-10 transition-colors ${
         disabled
           ? 'opacity-40 cursor-not-allowed'
           : primary
-          ? 'text-emerald-400 active:bg-gray-700'
-          : 'text-gray-300 active:bg-gray-700'
+          ? 'text-emerald-400 active:bg-gray-700/60'
+          : 'text-gray-300 active:bg-gray-700/60'
       }`}
       onClick={disabled ? undefined : onClick}
       onPointerDown={e => e.stopPropagation()}
       disabled={disabled}
     >
       <span
-        className="flex-1 text-xs whitespace-nowrap pr-1 text-left transition-opacity duration-150"
+        className="flex-1 text-xs pl-3 pr-1 text-left whitespace-nowrap overflow-hidden transition-opacity duration-150"
         style={{ opacity: isOpen ? 1 : 0 }}
       >
         {label}
       </span>
-      <div className="w-10 flex justify-center items-center shrink-0">
+      <div className="w-12 shrink-0 flex justify-center items-center">
         {icon}
       </div>
     </button>
@@ -208,7 +222,7 @@ function ActionRow({ label, icon, isOpen, onClick, disabled, primary }: ActionRo
 
 function ResetIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
       <path d="M3 3v5h5" />
     </svg>
@@ -217,7 +231,7 @@ function ResetIcon() {
 
 function SubmitIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12" />
     </svg>
   )
@@ -225,7 +239,7 @@ function SubmitIcon() {
 
 function ResultsIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="18" y1="20" x2="18" y2="10" />
       <line x1="12" y1="20" x2="12" y2="4" />
       <line x1="6" y1="20" x2="6" y2="14" />

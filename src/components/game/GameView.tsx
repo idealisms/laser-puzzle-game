@@ -313,10 +313,10 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       {/* Standard phones (tall portrait) + desktop: stacked then side-by-side */}
       <main className="flex-1 p-6 squarish:hidden">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col wide:flex-row gap-6">
             <div className="flex-1">
               {loading ? (
-                <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[800px] flex items-center justify-center text-gray-500">
+                <div className="w-full aspect-[3/4] wide:aspect-auto wide:h-[800px] flex items-center justify-center text-gray-500">
                   Loading puzzle...
                 </div>
               ) : (
@@ -328,7 +328,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
               )}
             </div>
 
-            <div className="lg:w-64 space-y-4">
+            <div className="wide:w-64 space-y-4">
               <ScoreDisplay
                 score={gameState.score}
                 bestScore={hasSubmitted ? submittedScore : (sessionBestScore > 0 ? sessionBestScore : null)}
