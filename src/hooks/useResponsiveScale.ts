@@ -6,9 +6,10 @@ interface UseResponsiveScaleProps {
   canvasWidth: number
   canvasHeight: number
   padding?: number
+  mainPaddingRem?: number
 }
 
-export function useResponsiveScale({ canvasWidth, canvasHeight, padding = 0 }: UseResponsiveScaleProps) {
+export function useResponsiveScale({ canvasWidth, canvasHeight, padding = 0, mainPaddingRem = 1.5 }: UseResponsiveScaleProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
 
@@ -20,7 +21,7 @@ export function useResponsiveScale({ canvasWidth, canvasHeight, padding = 0 }: U
       const availableWidth = container.clientWidth - padding
       const containerTop = container.getBoundingClientRect().top
       const remPx = parseFloat(getComputedStyle(document.documentElement).fontSize)
-      const bottomPadding = 4 + 1.5 * remPx // 4px border + p-6 (1.5rem) from <main>
+      const bottomPadding = 4 + mainPaddingRem * remPx
       const availableHeight = window.innerHeight - containerTop - padding - bottomPadding
 
       const widthScale = availableWidth / canvasWidth

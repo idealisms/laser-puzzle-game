@@ -9,6 +9,7 @@ import { HistogramData } from '@/components/game/LevelComplete'
 import { ResponsiveCanvas } from '@/components/game/ResponsiveCanvas'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { GameControls } from '@/components/game/GameControls'
+import { CompactSidebar } from '@/components/game/CompactSidebar'
 import { LevelComplete } from '@/components/game/LevelComplete'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -261,18 +262,56 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     )
   }
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Header rightContent={
-        <div className="flex items-center gap-2">
-          {refreshing && (
-            <div className="w-3 h-3 border border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
-          )}
-          <span>{date}</span>
-        </div>
-      } />
+  const headerContent = (
+    <div className="flex items-center gap-2">
+      {refreshing && (
+        <div className="w-3 h-3 border border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
+      )}
+      <span>{date}</span>
+    </div>
+  )
 
-      <main className="flex-1 p-6">
+  const compactSidebarProps = {
+    score: gameState.score,
+    mirrorsPlaced: gameState.placedMirrors.length,
+    mirrorsAvailable: level?.mirrorsAvailable ?? DEFAULT_LEVEL.mirrorsAvailable,
+    bestScore: hasSubmitted ? submittedScore : (sessionBestScore > 0 ? sessionBestScore : null),
+    hasSubmitted,
+    optimalScore: level?.optimalScore ?? DEFAULT_LEVEL.optimalScore,
+    canRestore: hasSubmitted ? bestSolution !== null : sessionBestSolution !== null,
+    onRestoreBest: handleRestoreBest,
+    onShowOptimal: handleShowOptimal,
+    onReset: handleReset,
+    onSubmit: handleSubmit,
+    onShowResults: handleShowResults,
+    canSubmit: gameState.score > 0,
+  }
+
+  return (
+    <div className="h-[100dvh] overflow-hidden sm:h-auto sm:min-h-screen sm:overflow-visible flex flex-col">
+      <Header rightContent={headerContent} />
+
+      {/* Narrow layout: grid left, compact sidebar right — no scroll */}
+      <div className="sm:hidden flex-1 min-h-0 flex overflow-hidden">
+        <div className="flex-1 min-w-0 overflow-hidden">
+          {loading ? (
+            <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
+              Loading…
+            </div>
+          ) : (
+            <ResponsiveCanvas
+              gameState={gameState}
+              onCellClick={handleCellClick}
+              onCellRightClick={handleCellRightClick}
+              mainPaddingRem={0}
+            />
+          )}
+        </div>
+        <CompactSidebar {...compactSidebarProps} />
+      </div>
+
+      {/* Wide layout: stacked mobile (sm–lg) and side-by-side desktop (lg+) */}
+      <main className="hidden sm:block flex-1 p-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1">

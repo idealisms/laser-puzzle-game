@@ -9,17 +9,19 @@ interface ResponsiveCanvasProps {
   gameState: GameState
   onCellClick: (position: Position) => void
   onCellRightClick: (position: Position) => void
+  mainPaddingRem?: number
 }
 
 export function ResponsiveCanvas({
   gameState,
   onCellClick,
   onCellRightClick,
+  mainPaddingRem,
 }: ResponsiveCanvasProps) {
   const canvasWidth = gameState.level.gridWidth * CELL_SIZE
   const canvasHeight = gameState.level.gridHeight * CELL_SIZE
 
-  const { scale, containerRef } = useResponsiveScale({ canvasWidth, canvasHeight })
+  const { scale, containerRef } = useResponsiveScale({ canvasWidth, canvasHeight, mainPaddingRem })
 
   return (
     <div ref={containerRef} className="w-full flex justify-center">
