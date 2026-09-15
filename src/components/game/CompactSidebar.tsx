@@ -171,9 +171,15 @@ function StatRow({ label, value, isOpen, clickable, onClick }: StatRowProps) {
       onClick={onClick}
       onPointerDown={onClick ? (e => e.stopPropagation()) : undefined}
     >
+      {/* min-w-0 lets flex shrink this to 0; padding zeroed when closed so it
+          takes no space and the value div is truly centered in the 48px panel */}
       <span
-        className="flex-1 text-xs text-gray-400 pl-3 pr-1 whitespace-nowrap overflow-hidden transition-opacity duration-150"
-        style={{ opacity: isOpen ? 1 : 0 }}
+        className="flex-1 min-w-0 text-xs text-gray-400 whitespace-nowrap overflow-hidden transition-opacity duration-150"
+        style={{
+          opacity: isOpen ? 1 : 0,
+          paddingLeft: isOpen ? '0.75rem' : 0,
+          paddingRight: isOpen ? '0.25rem' : 0,
+        }}
       >
         {label}
       </span>
@@ -208,8 +214,12 @@ function ActionRow({ label, icon, isOpen, onClick, disabled, primary }: ActionRo
       disabled={disabled}
     >
       <span
-        className="flex-1 text-xs pl-3 pr-1 text-left whitespace-nowrap overflow-hidden transition-opacity duration-150"
-        style={{ opacity: isOpen ? 1 : 0 }}
+        className="flex-1 min-w-0 text-xs text-left whitespace-nowrap overflow-hidden transition-opacity duration-150"
+        style={{
+          opacity: isOpen ? 1 : 0,
+          paddingLeft: isOpen ? '0.75rem' : 0,
+          paddingRight: isOpen ? '0.25rem' : 0,
+        }}
       >
         {label}
       </span>
