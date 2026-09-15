@@ -4,3 +4,10 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
+
+/* Squarish phones (e.g. Z Fold 8 cover screen): aspect-ratio >= 2/3 but narrower than desktop */
+@custom-variant squarish {
+  @media (min-aspect-ratio: 2/3) and (max-width: 1023px) {
+    @slot;
+  }
+}

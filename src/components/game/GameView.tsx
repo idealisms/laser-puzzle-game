@@ -288,11 +288,11 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   }
 
   return (
-    <div className="h-[100dvh] overflow-hidden sm:h-auto sm:min-h-screen sm:overflow-visible flex flex-col">
+    <div className="min-h-screen flex flex-col squarish:h-[100dvh]">
       <Header rightContent={headerContent} />
 
-      {/* Narrow layout: grid left, compact sidebar right — no scroll */}
-      <div className="sm:hidden flex-1 min-h-0 flex overflow-hidden">
+      {/* Squarish phones (e.g. Z Fold 8 cover): grid left, compact sidebar right */}
+      <div className="hidden squarish:flex flex-1 min-h-0">
         <div className="flex-1 min-w-0 overflow-hidden">
           {loading ? (
             <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
@@ -310,8 +310,8 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
         <CompactSidebar {...compactSidebarProps} />
       </div>
 
-      {/* Wide layout: stacked mobile (sm–lg) and side-by-side desktop (lg+) */}
-      <main className="hidden sm:block flex-1 p-6">
+      {/* Standard phones (tall portrait) + desktop: stacked then side-by-side */}
+      <main className="flex-1 p-6 squarish:hidden">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1">
