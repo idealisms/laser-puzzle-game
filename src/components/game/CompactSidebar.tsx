@@ -79,8 +79,9 @@ export function CompactSidebar({
         onPointerUp={handlePointerUp}
         onPointerCancel={() => { dragStartX.current = null }}
       >
-        <div className="flex flex-col h-full py-2">
+        <div className="flex flex-col h-full justify-center py-4">
 
+          {/* Stats group */}
           <StatRow
             label="Path"
             isOpen={isOpen}
@@ -129,9 +130,10 @@ export function CompactSidebar({
             />
           )}
 
-          <div className="flex-1" />
-          <div className="border-t border-gray-700 mx-2 mb-1" />
+          {/* Gap between stats and buttons */}
+          <div className="h-5" />
 
+          {/* Buttons group */}
           <ActionRow
             label="Reset"
             isOpen={isOpen}

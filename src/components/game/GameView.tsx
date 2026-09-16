@@ -288,7 +288,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col squarish:h-[100dvh]">
+    <div className="min-h-screen flex flex-col squarish:min-h-0 squarish:h-[100dvh]">
       <Header rightContent={headerContent} />
 
       {/* Squarish phones (e.g. Z Fold 8 cover): grid left, compact sidebar right */}
