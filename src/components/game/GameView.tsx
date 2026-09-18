@@ -12,6 +12,7 @@ import { HistogramData } from '@/components/game/LevelComplete'
 import { ResponsiveCanvas } from '@/components/game/ResponsiveCanvas'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { GameControls } from '@/components/game/GameControls'
+import { CompactSidebar } from '@/components/game/CompactSidebar'
 import { LevelComplete } from '@/components/game/LevelComplete'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -369,23 +370,61 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     )
   }
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Header rightContent={
-        <div className="flex items-center gap-2">
-          {refreshing && (
-            <div className="w-3 h-3 border border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
-          )}
-          <span>{date}</span>
-        </div>
-      } />
+  const headerContent = (
+    <div className="flex items-center gap-2">
+      {refreshing && (
+        <div className="w-3 h-3 border border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
+      )}
+      <span>{date}</span>
+    </div>
+  )
 
-      <main className="flex-1 p-6">
+  const compactSidebarProps = {
+    score: gameState.score,
+    mirrorsPlaced: gameState.placedMirrors.length,
+    mirrorsAvailable: level?.mirrorsAvailable ?? DEFAULT_LEVEL.mirrorsAvailable,
+    bestScore: hasSubmitted ? submittedScore : (sessionBestScore > 0 ? sessionBestScore : null),
+    hasSubmitted,
+    optimalScore: level?.optimalScore ?? DEFAULT_LEVEL.optimalScore,
+    canRestore: hasSubmitted ? bestSolution !== null : sessionBestSolution !== null,
+    onRestoreBest: handleRestoreBest,
+    onShowOptimal: handleShowOptimal,
+    onReset: handleReset,
+    onSubmit: handleSubmit,
+    onShowResults: handleShowResults,
+    canSubmit: gameState.score > 0,
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col squarish:min-h-0 squarish:h-[100dvh]">
+      <Header rightContent={headerContent} />
+
+      {/* Squarish phones (e.g. Z Fold 8 cover): grid left, compact sidebar right */}
+      <div className="hidden squarish:flex flex-1 min-h-0">
+        <div className="flex-1 min-w-0 overflow-hidden">
+          {loading ? (
+            <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
+              Loading…
+            </div>
+          ) : (
+            <ResponsiveCanvas
+              gameState={gameState}
+              onCellClick={handleCellClick}
+              onCellRightClick={handleCellRightClick}
+              mainPaddingRem={0}
+            />
+          )}
+        </div>
+        <CompactSidebar {...compactSidebarProps} />
+      </div>
+
+      {/* Standard phones (tall portrait) + desktop: stacked then side-by-side */}
+      <main className="flex-1 p-6 squarish:hidden">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col wide:flex-row gap-6">
             <div className="flex-1">
               {loading ? (
-                <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[800px] flex items-center justify-center text-gray-500">
+                <div className="w-full aspect-[3/4] wide:aspect-auto wide:h-[800px] flex items-center justify-center text-gray-500">
                   Loading puzzle...
                 </div>
               ) : (
@@ -397,7 +436,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
               )}
             </div>
 
-            <div className="lg:w-64 space-y-4">
+            <div className="wide:w-64 space-y-4">
               <ScoreDisplay
                 score={gameState.score}
                 bestScore={hasSubmitted ? submittedScore : (sessionBestScore > 0 ? sessionBestScore : null)}

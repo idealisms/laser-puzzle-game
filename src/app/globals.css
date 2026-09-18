@@ -4,3 +4,17 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
+
+/* Squarish phones (e.g. Z Fold 8 cover): aspect-ratio between 2:3 and 3:2 */
+@custom-variant squarish {
+  @media (min-aspect-ratio: 2/3) and (max-aspect-ratio: 3/2) {
+    @slot;
+  }
+}
+
+/* Wide screens: aspect-ratio > 3:2 (landscape monitors, tablets in landscape, etc.) */
+@custom-variant wide {
+  @media (min-aspect-ratio: 3/2) {
+    @slot;
+  }
+}
