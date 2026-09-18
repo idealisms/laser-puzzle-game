@@ -24,7 +24,7 @@ export function ScoreDisplay({
   onShowOptimal,
 }: ScoreDisplayProps) {
   const bestLabel = hasSubmitted ? 'Submitted:' : 'Best:'
-  const showBestSection = bestScore !== null && bestScore > 0
+  const hasBest = bestScore !== null && bestScore > 0
   const isLastSection = !hasSubmitted
 
   return (
@@ -41,28 +41,33 @@ export function ScoreDisplay({
           </div>
         </div>
       </div>
-      {showBestSection && (
-        <div
-          className={`mt-2 pt-2 border-t border-gray-700 ${
-            canRestore
-              ? `cursor-pointer hover:bg-gray-700/50 -mx-4 px-4 transition-colors ${
-                  isLastSection ? '-mb-4 pb-4 rounded-b-lg' : 'pb-2'
-                }`
-              : ''
-          }`}
-          onClick={canRestore ? onRestoreBest : undefined}
-        >
-          <div className="text-sm text-gray-400">
-            {bestLabel} <span className="text-emerald-400 font-medium">{bestScore}</span>
-            {hasSubmitted && optimalScore > 0 && (
-              <span className="text-gray-500 ml-1">({Math.round((bestScore / optimalScore) * 100)}%)</span>
-            )}
-          </div>
-          {canRestore && (
-            <div className="text-xs text-gray-500 mt-1">Tap to restore</div>
+      <div
+        className={`mt-2 pt-2 border-t border-gray-700 ${
+          canRestore && hasBest
+            ? `cursor-pointer hover:bg-gray-700/50 -mx-4 px-4 transition-colors ${
+                isLastSection ? '-mb-4 pb-4 rounded-b-lg' : 'pb-2'
+              }`
+            : ''
+        }`}
+        onClick={canRestore && hasBest ? onRestoreBest : undefined}
+      >
+        <div className="text-sm text-gray-400">
+          {bestLabel}{' '}
+          {hasBest ? (
+            <>
+              <span className="text-emerald-400 font-medium">{bestScore}</span>
+              {hasSubmitted && optimalScore > 0 && (
+                <span className="text-gray-500 ml-1">({Math.round((bestScore! / optimalScore) * 100)}%)</span>
+              )}
+            </>
+          ) : (
+            <span className="text-emerald-700 font-medium">—</span>
           )}
         </div>
-      )}
+        {canRestore && hasBest && (
+          <div className="text-xs text-gray-500 mt-1">Tap to restore</div>
+        )}
+      </div>
       {hasSubmitted && (
         <div
           className="mt-2 pt-2 border-t border-gray-700 cursor-pointer hover:bg-gray-700/50 -mx-4 px-4 -mb-4 pb-4 rounded-b-lg transition-colors"
