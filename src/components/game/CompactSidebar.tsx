@@ -64,9 +64,9 @@ export function CompactSidebar({
     didDrag.current = false
   }
 
-  const showBest = bestScore !== null && bestScore > 0
   const showOptimal = hasSubmitted && optimalScore > 0
   const bestLabel = hasSubmitted ? 'Submitted' : 'Best'
+  const hasBest = bestScore !== null && bestScore > 0
 
   return (
     // Reserve 48px (w-12) in the layout; panel expands leftward via absolute positioning
@@ -102,19 +102,21 @@ export function CompactSidebar({
             }
           />
 
-          {showBest && (
-            <StatRow
-              label={bestLabel}
-              isOpen={isOpen}
-              value={
+          <StatRow
+            label={bestLabel}
+            isOpen={isOpen}
+            value={
+              hasBest ? (
                 <span className="text-emerald-400 font-bold text-sm font-mono tabular-nums">
                   {bestScore}
                 </span>
-              }
-              clickable={canRestore}
-              onClick={canRestore ? onRestoreBest : undefined}
-            />
-          )}
+              ) : (
+                <span className="text-emerald-600 font-bold text-sm font-mono">—</span>
+              )
+            }
+            clickable={canRestore && hasBest}
+            onClick={canRestore && hasBest ? onRestoreBest : undefined}
+          />
 
           {showOptimal && (
             <StatRow
