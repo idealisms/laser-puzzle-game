@@ -9,7 +9,6 @@ interface ResponsiveCanvasProps {
   onCellClick: (position: Position) => void
   onCellRightClick: (position: Position) => void
   scale: number
-  containerRef: React.RefObject<HTMLDivElement | null>
 }
 
 export function ResponsiveCanvas({
@@ -17,13 +16,12 @@ export function ResponsiveCanvas({
   onCellClick,
   onCellRightClick,
   scale,
-  containerRef,
 }: ResponsiveCanvasProps) {
   const canvasWidth = gameState.level.gridWidth * CELL_SIZE
   const canvasHeight = gameState.level.gridHeight * CELL_SIZE
 
   return (
-    <div ref={containerRef} className="w-full flex justify-center">
+    <div className="w-full flex justify-center overflow-hidden">
       <div
         style={{
           transform: `scale(${scale})`,

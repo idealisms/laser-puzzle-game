@@ -58,7 +58,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   const activeLevel = level || DEFAULT_LEVEL
   const canvasWidth = activeLevel.gridWidth * CELL_SIZE
   const canvasHeight = activeLevel.gridHeight * CELL_SIZE
-  const { scale, layoutMode, containerRef } = useGameLayout({ canvasWidth, canvasHeight })
+  const { scale, layoutMode } = useGameLayout({ canvasWidth, canvasHeight })
 
   // Fetch level data
   useEffect(() => {
@@ -287,7 +287,6 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       onCellClick={handleCellClick}
       onCellRightClick={handleCellRightClick}
       scale={scale}
-      containerRef={containerRef}
     />
   )
 

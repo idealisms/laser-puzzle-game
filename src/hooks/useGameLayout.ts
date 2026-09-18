@@ -1,29 +1,34 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 export type LayoutMode = 'portrait' | 'compact' | 'landscape'
 
 const HEADER_H = 52
 export const LANDSCAPE_SIDEBAR_W = 256
 export const COMPACT_SIDEBAR_W = 48
+// gap-6 between grid and landscape sidebar
+const LANDSCAPE_GAP = 24
 
 export interface GameLayoutState {
   scale: number
   layoutMode: LayoutMode
-  containerRef: React.RefObject<HTMLDivElement | null>
 }
 
 /**
  * Determines layout mode and canvas scale from the viewport dimensions.
  *
- * Layout decision (uses window.innerWidth/Height directly, not container):
- *   landscape — grid is height-limited even after reserving LANDSCAPE_SIDEBAR_W
- *   compact   — grid is height-limited with full width (extra width goes to COMPACT_SIDEBAR_W)
- *   portrait  — grid is width-limited; controls go below
+ * Layout decision — checks whether the grid would be height-limited at each sidebar width.
+ * "Height-limited with sidebar S" means (W − S) × bH ≥ (H − HEADER_H) × bW, i.e. there
+ * is spare horizontal space after the grid fills the available height.
  *
- * The "height-limited" test for a sidebar width S:
- *   (W − S) × (canvasH + border) ≥ (H − HEADER_H) × (canvasW + border)
+ *   landscape — height-limited even after reserving LANDSCAPE_SIDEBAR_W
+ *   compact   — height-limited with full width (spare width accommodates COMPACT_SIDEBAR_W)
+ *   portrait  — width-limited; controls go below
+ *
+ * Scale is computed from the actual CSS grid width: window width minus sidebar, main
+ * padding (p-6 = 1.5rem each side), and flex gap — so the canvas never overflows its
+ * container.
  */
 export function useGameLayout({
   canvasWidth,
@@ -36,11 +41,7 @@ export function useGameLayout({
   mainPaddingRem?: number
   borderWidth?: number
 }): GameLayoutState {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [state, setState] = useState<{ scale: number; layoutMode: LayoutMode }>({
-    scale: 1,
-    layoutMode: 'portrait',
-  })
+  const [state, setState] = useState<GameLayoutState>({ scale: 1, layoutMode: 'portrait' })
 
   useEffect(() => {
     const bW = canvasWidth + borderWidth * 2
@@ -50,44 +51,54 @@ export function useGameLayout({
       const W = window.innerWidth
       const H = window.innerHeight
       const remPx = parseFloat(getComputedStyle(document.documentElement).fontSize)
+      const pad = mainPaddingRem * remPx  // e.g. 24px for p-6
       const availH = H - HEADER_H
 
+      // Layout decision
       let layoutMode: LayoutMode
-      let gridW: number
-      let padBottom: number
-
       if ((W - LANDSCAPE_SIDEBAR_W) * bH >= availH * bW) {
         layoutMode = 'landscape'
-        gridW = W - LANDSCAPE_SIDEBAR_W
-        padBottom = mainPaddingRem * remPx
       } else if (W * bH >= availH * bW) {
         layoutMode = 'compact'
-        gridW = W - COMPACT_SIDEBAR_W
-        padBottom = 0
       } else {
         layoutMode = 'portrait'
-        gridW = W
-        padBottom = mainPaddingRem * remPx
       }
 
-      // containerRef.top gives the accurate top after the layout renders (includes any
-      // padding from <main>). Falls back to HEADER_H if not yet measured.
-      const containerTop = containerRef.current?.getBoundingClientRect().top ?? HEADER_H
-      const scale = Math.min(1, gridW / bW, (H - containerTop - padBottom) / bH)
+      // Grid width: subtract sidebar, main padding (both sides), and flex gap.
+      // This matches the actual CSS container width so the canvas never overflows.
+      let gridW: number
+      let padTop: number
+      let padBottom: number
+
+      if (layoutMode === 'landscape') {
+        // <main p-6> surrounds a flex-row with gap-6 between grid and sidebar
+        gridW = W - LANDSCAPE_SIDEBAR_W - 2 * pad - LANDSCAPE_GAP
+        padTop = pad
+        padBottom = pad
+      } else if (layoutMode === 'compact') {
+        // No <main> padding; grid fills width minus the compact strip
+        gridW = W - COMPACT_SIDEBAR_W
+        padTop = 0
+        padBottom = 0
+      } else {
+        // <main p-6> with no sidebar
+        gridW = W - 2 * pad
+        padTop = pad
+        padBottom = pad
+      }
+
+      const scaleW = gridW / bW
+      const scaleH = (availH - padTop - padBottom) / bH
+      const scale = Math.min(1, scaleW, scaleH)
 
       setState({ scale, layoutMode })
     }
 
-    const ro = new ResizeObserver(update)
-    if (containerRef.current) ro.observe(containerRef.current)
     window.addEventListener('resize', update)
     update()
 
-    return () => {
-      ro.disconnect()
-      window.removeEventListener('resize', update)
-    }
+    return () => window.removeEventListener('resize', update)
   }, [canvasWidth, canvasHeight, mainPaddingRem, borderWidth])
 
-  return { ...state, containerRef }
+  return state
 }
