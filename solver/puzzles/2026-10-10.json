@@ -121,13 +121,5 @@
       ]
     }
   ],
-  "splitters": [],
-  "gates": [
-    {
-      "x": 3,
-      "y": 14,
-      "dir": "up",
-      "note": "gap at row y=14 doubles as gate — UP passes, DOWN blocked"
-    }
-  ]
+  "splitters": []
 }

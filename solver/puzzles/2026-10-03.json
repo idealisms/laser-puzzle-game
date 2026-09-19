@@ -1,192 +1,24 @@
 {
   "date": "2026-10-03",
-  "name": "Sentry Post",
+  "name": "Ravelin",
   "width": 15,
   "height": 20,
-  "laser": {
-    "x": 14,
-    "y": 15,
-    "dir": "left"
-  },
+  "laser": {"x": 0, "y": 6, "dir": "right"},
   "num_mirrors": 10,
   "obstacle_groups": [
-    {
-      "label": "NW corner",
-      "cells": [
-        [
-          0,
-          0
-        ],
-        [
-          0,
-          1
-        ],
-        [
-          1,
-          0
-        ],
-        [
-          1,
-          1
-        ]
-      ]
-    },
-    {
-      "label": "NE corner",
-      "cells": [
-        [
-          13,
-          0
-        ],
-        [
-          14,
-          0
-        ],
-        [
-          14,
-          1
-        ],
-        [
-          14,
-          2
-        ]
-      ]
-    },
-    {
-      "label": "N wall stub",
-      "cells": [
-        [
-          6,
-          0
-        ],
-        [
-          7,
-          0
-        ],
-        [
-          8,
-          0
-        ]
-      ]
-    },
-    {
-      "label": "SW corner",
-      "cells": [
-        [
-          0,
-          17
-        ],
-        [
-          0,
-          18
-        ],
-        [
-          0,
-          19
-        ],
-        [
-          1,
-          19
-        ]
-      ]
-    },
-    {
-      "label": "SE corner",
-      "cells": [
-        [
-          13,
-          18
-        ],
-        [
-          13,
-          19
-        ],
-        [
-          14,
-          18
-        ],
-        [
-          14,
-          19
-        ]
-      ]
-    },
-    {
-      "label": "W wall mid",
-      "cells": [
-        [
-          0,
-          8
-        ],
-        [
-          0,
-          9
-        ],
-        [
-          1,
-          9
-        ]
-      ]
-    },
-    {
-      "label": "E wall mid",
-      "cells": [
-        [
-          14,
-          7
-        ],
-        [
-          14,
-          8
-        ],
-        [
-          13,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "interior gate house N",
-      "cells": [
-        [
-          6,
-          9
-        ],
-        [
-          7,
-          9
-        ],
-        [
-          6,
-          10
-        ]
-      ]
-    },
-    {
-      "label": "interior gate house S",
-      "cells": [
-        [
-          6,
-          13
-        ],
-        [
-          7,
-          13
-        ],
-        [
-          7,
-          12
-        ]
-      ]
-    }
+    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1]]},
+    {"label": "NE corner", "cells": [[14,0],[13,0],[14,1]]},
+    {"label": "SW corner", "cells": [[0,19],[0,18],[1,19]]},
+    {"label": "SE corner", "cells": [[14,19],[13,19],[14,18]]},
+    {"label": "run-breaker near laser row y=6", "cells": [[5,6],[6,6]]},
+    {"label": "upper-left L", "cells": [[2,3],[3,3],[3,2]]},
+    {"label": "upper-right Z", "cells": [[10,2],[11,2],[11,3],[12,3]]},
+    {"label": "mid interior block A", "cells": [[7,9],[8,9],[8,10]]},
+    {"label": "mid interior block B", "cells": [[4,12],[4,13],[5,13]]},
+    {"label": "lower-left S", "cells": [[2,15],[3,15],[3,16],[4,16]]},
+    {"label": "lower-right L", "cells": [[11,14],[12,14],[12,15]]},
+    {"label": "bottom pair", "cells": [[7,17],[8,17]]},
+    {"label": "east wall stub", "cells": [[13,7],[14,7],[14,8]]}
   ],
-  "splitters": [],
-  "gates": [
-    {
-      "x": 6,
-      "y": 11,
-      "dir": "down",
-      "note": "col x=6 gate — DOWN passes; UP blocked"
-    }
-  ]
+  "splitters": []
 }
