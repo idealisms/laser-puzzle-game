@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-07",
+  "name": "Undertow",
+  "width": 15,
+  "height": 20,
+  "laser": {"x": 3, "y": 0, "dir": "down"},
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {"label": "NW corner", "cells": [[0,0],[0,1],[1,0]]},
+    {"label": "NE corner", "cells": [[14,0],[14,1],[13,0]]},
+    {"label": "SW corner", "cells": [[0,19],[0,18],[1,19]]},
+    {"label": "SE corner", "cells": [[14,19],[14,18],[13,19]]},
+    {"label": "block below laser", "cells": [[4,3],[4,4],[5,4]]},
+    {"label": "NE interior notch", "cells": [[12,6],[12,7],[13,7]]},
+    {"label": "W interior pair", "cells": [[1,11],[2,11],[2,12]]},
+    {"label": "center-left step", "cells": [[6,8],[6,9],[7,8]]},
+    {"label": "center-right step", "cells": [[9,11],[9,12],[10,12]]},
+    {"label": "SW interior shape", "cells": [[3,16],[4,16],[4,17]]},
+    {"label": "SE interior shape", "cells": [[11,16],[11,17],[12,17]]},
+    {"label": "upper-mid stub", "cells": [[7,5],[8,5]]}
+  ],
+  "splitters": []
+}
