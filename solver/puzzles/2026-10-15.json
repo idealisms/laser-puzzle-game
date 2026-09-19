@@ -1,0 +1,214 @@
+{
+  "date": "2026-10-15",
+  "name": "Sentinel Row",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 10,
+    "y": 19,
+    "dir": "up"
+  },
+  "num_mirrors": 11,
+  "obstacle_groups": [
+    {
+      "label": "NW corner",
+      "cells": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "NE corner",
+      "cells": [
+        [
+          13,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          14,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "SW corner",
+      "cells": [
+        [
+          0,
+          18
+        ],
+        [
+          0,
+          19
+        ],
+        [
+          1,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "SE corner",
+      "cells": [
+        [
+          13,
+          19
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          14,
+          18
+        ]
+      ]
+    },
+    {
+      "label": "sentinel 1",
+      "cells": [
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "sentinel 2",
+      "cells": [
+        [
+          9,
+          3
+        ],
+        [
+          10,
+          3
+        ],
+        [
+          9,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "sentinel 3",
+      "cells": [
+        [
+          2,
+          10
+        ],
+        [
+          3,
+          10
+        ],
+        [
+          2,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "sentinel 4",
+      "cells": [
+        [
+          11,
+          9
+        ],
+        [
+          12,
+          9
+        ],
+        [
+          12,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "sentinel 5",
+      "cells": [
+        [
+          5,
+          14
+        ],
+        [
+          6,
+          14
+        ],
+        [
+          6,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "sentinel 6",
+      "cells": [
+        [
+          9,
+          15
+        ],
+        [
+          10,
+          15
+        ],
+        [
+          9,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "gate house",
+      "cells": [
+        [
+          7,
+          12
+        ],
+        [
+          8,
+          12
+        ],
+        [
+          7,
+          11
+        ]
+      ]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {
+      "x": 7,
+      "y": 10,
+      "dir": "up",
+      "note": "gate above gate house — UP passes, DOWN blocked"
+    }
+  ]
+}
