@@ -429,7 +429,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
 
       {layoutMode === 'landscape' ? (
         /* Landscape: grid fills available height, 260px controls panel to the right */
-        <div className="flex-1 flex flex-row items-center justify-center gap-6 p-6">
+        <div className="flex-1 flex flex-row items-start justify-center gap-6 p-6">
           {loading ? (
             <div className="text-gray-500">Loading puzzle...</div>
           ) : canvas}
