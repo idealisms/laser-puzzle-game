@@ -445,7 +445,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
               Loading puzzle...
             </div>
           ) : canvas}
-          <div style={{ width: loading ? undefined : Math.round(bW * scale) }} className="px-4">
+          <div style={{ width: loading ? undefined : Math.round(bW * scale) }}>
             {controls}
           </div>
         </div>
