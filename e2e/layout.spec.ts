@@ -213,6 +213,37 @@ test.describe('layout switch animation', () => {
     expect(await name('controls')).toBe('game-controls')
   })
 
+  test.describe('mobile rotation', () => {
+    test.use({ isMobile: true, hasTouch: true, deviceScaleFactor: 3 })
+
+    // Regression: the old landscape layout overflowed the new portrait viewport,
+    // the browser zoomed out to fit it, and that viewport change aborted the
+    // transition ("Transition was aborted because of invalid state").
+    test('landscape -> portrait transition is not aborted', async ({ page }) => {
+      const errors: string[] = []
+      page.on('pageerror', e => errors.push(e.message))
+      await page.addInitScript(() => {
+        const w = window as unknown as { __transitionResults: string[] }
+        w.__transitionResults = []
+        const original = document.startViewTransition.bind(document)
+        document.startViewTransition = ((cb?: ViewTransitionUpdateCallback) => {
+          const t = original(cb)
+          t.ready.then(() => w.__transitionResults.push('ok'), e => w.__transitionResults.push(e.message))
+          return t
+        }) as typeof document.startViewTransition
+      })
+      await page.setViewportSize({ width: 844, height: 390 })
+      await openGame(page)
+      await expectLandscapeFits(page)
+      await page.setViewportSize({ width: 390, height: 844 })
+      await expectPortraitFits(page)
+      await expect
+        .poll(() => page.evaluate(() => (window as unknown as { __transitionResults: string[] }).__transitionResults))
+        .toEqual(['ok'])
+      expect(errors).toEqual([])
+    })
+  })
+
   test.describe('with reduced motion', () => {
     test.use({ reducedMotion: 'reduce' })
 
