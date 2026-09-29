@@ -5,7 +5,7 @@ import { useState, useEffect, RefObject } from 'react'
 export type LayoutMode = 'portrait' | 'landscape'
 
 const FALLBACK_HEADER_H = 52 // used until the header element has been measured
-const CONTROLS_W = 300     // fixed width of the landscape controls panel
+const CONTROLS_W = 260     // fixed width of the landscape controls panel
 const CONTROLS_GAP = 24    // gap between grid and controls in landscape (gap-6)
 const LANDSCAPE_PAD = 24   // padding around the landscape row (p-6)
 const BORDER_W = 2         // canvas border-width (border-2 on <canvas>)
@@ -18,8 +18,8 @@ const BORDER_W = 2         // canvas border-width (border-2 on <canvas>)
  * so the grid always occupies the full height.
  *
  * Layout decision:
- *   landscape — at least (CONTROLS_W + CONTROLS_GAP) px of horizontal space
- *               remains to the right of the height-scaled grid
+ *   landscape — the row fits horizontally: left padding + height-scaled grid
+ *               + CONTROLS_GAP + CONTROLS_W + right padding
  *   portrait  — everything else; scale is additionally capped so the grid
  *               never exceeds the viewport width
  */
@@ -53,8 +53,10 @@ export function useGameLayout({
       const landscapeScale = (availH - LANDSCAPE_PAD * 2) / bH
       const gridVisualW = bW * landscapeScale
 
-      if (W - gridVisualW >= CONTROLS_W + CONTROLS_GAP) {
-        // Enough room to the right of the height-scaled grid for controls
+      const landscapeW = LANDSCAPE_PAD + gridVisualW + CONTROLS_GAP + CONTROLS_W + LANDSCAPE_PAD
+
+      if (landscapeW <= W) {
+        // Enough room for the padded grid + controls row
         setState({ scale: landscapeScale, layoutMode: 'landscape' })
       } else {
         // Portrait: also cap so the grid never exceeds viewport width
