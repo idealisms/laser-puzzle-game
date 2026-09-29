@@ -367,7 +367,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
 
   if (!loading && (error || !level)) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-svh flex items-center justify-center">
         <Card className="text-center max-w-md">
           <h2 className="text-xl font-bold mb-4">Puzzle Not Found</h2>
           <p className="text-gray-400 mb-6">{error || 'No puzzle available'}</p>
@@ -418,7 +418,10 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     // overflow-x-clip: while switching landscape → portrait, the old (wider)
     // layout briefly overflows the new viewport; clipping it stops mobile
     // browsers from zooming out, which would abort the view transition.
-    <div className="min-h-screen flex flex-col overflow-x-clip">
+    // min-h-svh, not min-h-screen: on mobile 100vh is the height with the
+    // address bar hidden, taller than the clientHeight the grid is sized to,
+    // which made the landscape layout scrollable by the address bar's height.
+    <div className="min-h-svh flex flex-col overflow-x-clip">
       <div ref={headerRef}>
         <Header rightContent={
           <div className="flex items-center gap-2">
