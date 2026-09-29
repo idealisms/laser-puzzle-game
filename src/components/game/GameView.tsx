@@ -64,7 +64,8 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   const canvasHeight = activeLevel.gridHeight * CELL_SIZE
   const BORDER_W = 2
   const bW = canvasWidth + BORDER_W * 2
-  const { scale, layoutMode } = useGameLayout({ canvasWidth, canvasHeight })
+  const headerRef = useRef<HTMLDivElement>(null)
+  const { scale, layoutMode } = useGameLayout({ canvasWidth, canvasHeight, headerRef })
 
   // Number of times the player has pressed the Reset button (analytics only).
   const resetCountRef = useRef(0)
@@ -415,14 +416,16 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header rightContent={
-        <div className="flex items-center gap-2">
-          {refreshing && (
-            <div className="w-3 h-3 border border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
-          )}
-          <span>{date}</span>
-        </div>
-      } />
+      <div ref={headerRef}>
+        <Header rightContent={
+          <div className="flex items-center gap-2">
+            {refreshing && (
+              <div className="w-3 h-3 border border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
+            )}
+            <span>{date}</span>
+          </div>
+        } />
+      </div>
 
       {layoutMode === 'landscape' ? (
         /* Landscape: grid fills available height, controls panel fixed to the right */
