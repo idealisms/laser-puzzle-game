@@ -43,7 +43,7 @@ export default function StatsPage() {
   const reversedDays = stats ? [...stats.days].reverse() : []
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-svh flex flex-col">
       <Header />
 
       <main className="flex-1 p-6">
