@@ -7,13 +7,15 @@ export type LayoutMode = 'portrait' | 'landscape'
 const FALLBACK_HEADER_H = 52 // used until the header element has been measured
 const CONTROLS_W = 300     // fixed width of the landscape controls panel
 const CONTROLS_GAP = 24    // gap between grid and controls in landscape (gap-6)
+const LANDSCAPE_PAD = 24   // padding around the landscape row (p-6)
 const BORDER_W = 2         // canvas border-width (border-2 on <canvas>)
 
 /**
  * Determines the layout mode and canvas scale from the current viewport.
  *
  * Scale fills the available vertical space (viewport minus the measured header
- * height). Upscaling is allowed so the grid always occupies the full height.
+ * height, and minus the top/bottom padding in landscape). Upscaling is allowed
+ * so the grid always occupies the full height.
  *
  * Layout decision:
  *   landscape — at least (CONTROLS_W + CONTROLS_GAP) px of horizontal space
@@ -47,11 +49,13 @@ export function useGameLayout({
 
       // Primary scale: fill the available vertical space (may exceed 1)
       const scaleH = availH / bH
-      const gridVisualW = bW * scaleH
+      // Landscape row has p-6, so the grid loses padding on top and bottom
+      const landscapeScale = (availH - LANDSCAPE_PAD * 2) / bH
+      const gridVisualW = bW * landscapeScale
 
       if (W - gridVisualW >= CONTROLS_W + CONTROLS_GAP) {
         // Enough room to the right of the height-scaled grid for controls
-        setState({ scale: scaleH, layoutMode: 'landscape' })
+        setState({ scale: landscapeScale, layoutMode: 'landscape' })
       } else {
         // Portrait: also cap so the grid never exceeds viewport width
         const scale = Math.min(scaleH, W / bW)
