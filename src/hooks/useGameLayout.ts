@@ -104,7 +104,10 @@ export function useGameLayout({
         document.startViewTransition &&
         !window.matchMedia('(prefers-reduced-motion: reduce)').matches
       ) {
-        document.startViewTransition(() => flushSync(() => setState(next)))
+        const transition = document.startViewTransition(() => flushSync(() => setState(next)))
+        // The browser skips the animation (but still applies the update) if the
+        // viewport changes mid-transition, e.g. while drag-resizing a window.
+        transition.ready.catch(() => {})
       } else {
         setState(next)
       }

@@ -415,7 +415,10 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   )
 
   return (
-    <div className="min-h-screen flex flex-col">
+    // overflow-x-clip: while switching landscape → portrait, the old (wider)
+    // layout briefly overflows the new viewport; clipping it stops mobile
+    // browsers from zooming out, which would abort the view transition.
+    <div className="min-h-screen flex flex-col overflow-x-clip">
       <div ref={headerRef}>
         <Header rightContent={
           <div className="flex items-center gap-2">
