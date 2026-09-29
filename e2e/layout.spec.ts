@@ -167,3 +167,62 @@ test.describe('mobile emulation', () => {
     await expectLandscapeFits(page)
   })
 })
+
+// Count view transitions started by the page (the landscape <-> portrait animation)
+async function countViewTransitions(page: Page) {
+  await page.addInitScript(() => {
+    const w = window as unknown as { __viewTransitions: number }
+    w.__viewTransitions = 0
+    const original = document.startViewTransition?.bind(document)
+    if (original) {
+      document.startViewTransition = ((cb?: ViewTransitionUpdateCallback) => {
+        w.__viewTransitions++
+        return original(cb)
+      }) as typeof document.startViewTransition
+    }
+  })
+  return () => page.evaluate(() => (window as unknown as { __viewTransitions: number }).__viewTransitions)
+}
+
+test.describe('layout switch animation', () => {
+  test('animates only when the layout mode changes', async ({ page }) => {
+    const transitions = await countViewTransitions(page)
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await openGame(page)
+    await expectLandscapeFits(page)
+    expect(await transitions()).toBe(0) // not on initial load
+
+    await page.setViewportSize({ width: 1280, height: 700 })
+    await expectLandscapeFits(page)
+    expect(await transitions()).toBe(0) // not on scale-only resizes
+
+    await page.setViewportSize({ width: 400, height: 800 })
+    await expectPortraitFits(page)
+    expect(await transitions()).toBe(1)
+
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await expectLandscapeFits(page)
+    expect(await transitions()).toBe(2)
+  })
+
+  test('names the grid and controls for the transition', async ({ page }) => {
+    await openGame(page)
+    const name = (testId: string) =>
+      page.getByTestId(testId).evaluate(el => getComputedStyle(el).viewTransitionName)
+    expect(await name('grid')).toBe('game-grid')
+    expect(await name('controls')).toBe('game-controls')
+  })
+
+  test.describe('with reduced motion', () => {
+    test.use({ reducedMotion: 'reduce' })
+
+    test('switches layouts without animating', async ({ page }) => {
+      const transitions = await countViewTransitions(page)
+      await page.setViewportSize({ width: 1280, height: 800 })
+      await openGame(page)
+      await page.setViewportSize({ width: 400, height: 800 })
+      await expectPortraitFits(page)
+      expect(await transitions()).toBe(0)
+    })
+  })
+})
