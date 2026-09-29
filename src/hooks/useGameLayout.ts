@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, RefObject } from 'react'
+import { useState, useEffect, useRef, RefObject } from 'react'
+import { flushSync } from 'react-dom'
 
 export type LayoutMode = 'portrait' | 'landscape'
 
@@ -77,19 +78,39 @@ export function useGameLayout({
     scale: 1,
     layoutMode: 'portrait',
   })
+  // Last measured layout mode; null until the first measurement so the initial
+  // placeholder → real layout change on page load isn't animated.
+  const modeRef = useRef<LayoutMode | null>(null)
 
   useEffect(() => {
     const update = () => {
       // Use the layout viewport, not window.inner*: on mobile, when the previous
       // (wider) layout overflows, the browser zooms out and inner* reports the
       // zoomed-out visual viewport, which would lock in an oversized grid.
-      setState(computeLayout({
+      const next = computeLayout({
         viewportW: document.documentElement.clientWidth,
         viewportH: document.documentElement.clientHeight,
         headerH: headerRef.current?.offsetHeight ?? FALLBACK_HEADER_H,
         gridW: bW,
         gridH: bH,
-      }))
+      })
+      const modeChanged = modeRef.current !== null && modeRef.current !== next.layoutMode
+      modeRef.current = next.layoutMode
+
+      // Animate the grid and controls between landscape and portrait with a
+      // view transition (see globals.css). Scale-only changes apply directly.
+      if (
+        modeChanged &&
+        document.startViewTransition &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        const transition = document.startViewTransition(() => flushSync(() => setState(next)))
+        // The browser skips the animation (but still applies the update) if the
+        // viewport changes mid-transition, e.g. while drag-resizing a window.
+        transition.ready.catch(() => {})
+      } else {
+        setState(next)
+      }
     }
 
     window.addEventListener('resize', update)

@@ -415,7 +415,10 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   )
 
   return (
-    <div className="min-h-screen flex flex-col">
+    // overflow-x-clip: while switching landscape → portrait, the old (wider)
+    // layout briefly overflows the new viewport; clipping it stops mobile
+    // browsers from zooming out, which would abort the view transition.
+    <div className="min-h-screen flex flex-col overflow-x-clip">
       <div ref={headerRef}>
         <Header rightContent={
           <div className="flex items-center gap-2">
@@ -429,11 +432,11 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
 
       {layoutMode === 'landscape' ? (
         /* Landscape: grid fills available height, 260px controls panel to the right */
-        <div data-layout="landscape" className="flex-1 flex flex-row items-start justify-center gap-6 p-6">
+        <div data-layout="landscape" className="flex-1 flex flex-row items-start justify-center-safe gap-6 p-6">
           {loading ? (
             <div className="text-gray-500">Loading puzzle...</div>
           ) : canvas}
-          <div data-testid="controls" className="w-[260px] shrink-0 space-y-4">
+          <div data-testid="controls" className="w-[260px] shrink-0 space-y-4 [view-transition-name:game-controls]">
             {controls}
           </div>
         </div>
@@ -445,7 +448,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
               Loading puzzle...
             </div>
           ) : canvas}
-          <div data-testid="controls" style={{ width: loading ? undefined : Math.round(bW * scale) }}>
+          <div data-testid="controls" className="[view-transition-name:game-controls]" style={{ width: loading ? undefined : Math.round(bW * scale) }}>
             {controls}
           </div>
         </div>
