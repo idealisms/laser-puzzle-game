@@ -30,6 +30,7 @@ export function ResponsiveCanvas({
   return (
     <div
       data-testid="grid"
+      className="[view-transition-name:game-grid]"
       style={{
         width: Math.round(bW * scale),
         height: Math.round(bH * scale),

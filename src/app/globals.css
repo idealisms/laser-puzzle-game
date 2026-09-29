@@ -4,3 +4,29 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
+
+/*
+ * Landscape <-> portrait layout switch (started from useGameLayout).
+ * The grid and controls each morph from their old box to their new one.
+ */
+::view-transition-group(game-grid),
+::view-transition-group(game-controls) {
+  animation-duration: 300ms;
+  animation-timing-function: ease-in-out;
+}
+
+/* Don't stretch or double up the controls' text while their box changes
+   width: show only the new content, pinned top-left and clipped to the
+   moving box. */
+::view-transition-group(game-controls) {
+  overflow: clip;
+}
+::view-transition-old(game-controls) {
+  display: none;
+}
+::view-transition-new(game-controls) {
+  animation: none;
+  height: 100%;
+  object-fit: none;
+  object-position: left top;
+}
