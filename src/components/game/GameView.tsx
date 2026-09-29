@@ -367,7 +367,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
 
   if (!loading && (error || !level)) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-svh flex items-center justify-center">
         <Card className="text-center max-w-md">
           <h2 className="text-xl font-bold mb-4">Puzzle Not Found</h2>
           <p className="text-gray-400 mb-6">{error || 'No puzzle available'}</p>
