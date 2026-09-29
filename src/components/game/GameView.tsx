@@ -439,7 +439,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
         </div>
       ) : (
         /* Portrait: grid + controls stacked, controls match grid width */
-        <div className="flex-1 flex flex-col items-center py-4 gap-4">
+        <div className="flex-1 flex flex-col items-center p-4 gap-4">
           {loading ? (
             <div className="aspect-[3/4] w-full max-w-sm flex items-center justify-center text-gray-500">
               Loading puzzle...
