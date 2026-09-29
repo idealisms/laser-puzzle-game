@@ -429,23 +429,23 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
 
       {layoutMode === 'landscape' ? (
         /* Landscape: grid fills available height, 260px controls panel to the right */
-        <div className="flex-1 flex flex-row items-start justify-center gap-6 p-6">
+        <div data-layout="landscape" className="flex-1 flex flex-row items-start justify-center gap-6 p-6">
           {loading ? (
             <div className="text-gray-500">Loading puzzle...</div>
           ) : canvas}
-          <div className="w-[260px] shrink-0 space-y-4">
+          <div data-testid="controls" className="w-[260px] shrink-0 space-y-4">
             {controls}
           </div>
         </div>
       ) : (
         /* Portrait: grid + controls stacked, controls match grid width */
-        <div className="flex-1 flex flex-col items-center p-4 gap-4">
+        <div data-layout="portrait" className="flex-1 flex flex-col items-center p-4 gap-4">
           {loading ? (
             <div className="aspect-[3/4] w-full max-w-sm flex items-center justify-center text-gray-500">
               Loading puzzle...
             </div>
           ) : canvas}
-          <div style={{ width: loading ? undefined : Math.round(bW * scale) }}>
+          <div data-testid="controls" style={{ width: loading ? undefined : Math.round(bW * scale) }}>
             {controls}
           </div>
         </div>

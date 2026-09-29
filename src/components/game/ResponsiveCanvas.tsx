@@ -29,6 +29,7 @@ export function ResponsiveCanvas({
   // overflow:hidden clips the inner div's unscaled layout box.
   return (
     <div
+      data-testid="grid"
       style={{
         width: Math.round(bW * scale),
         height: Math.round(bH * scale),

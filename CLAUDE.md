@@ -15,6 +15,7 @@ npm run lint       # Run ESLint
 npm run db:seed    # Seed database with 7 days of puzzle levels
 npm run db:reset   # Reset database and run migrations
 npm test           # Run tests with Jest
+npm run test:e2e   # Run Playwright browser tests (local only; reuses dev server on :3000)
 ```
 
 ## Architecture
