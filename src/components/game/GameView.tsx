@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { useGame } from '@/hooks/useGame'
+import { useGameLayout } from '@/hooks/useGameLayout'
+import { CELL_SIZE } from '@/game/constants'
 import { LevelConfig, Mirror, LaserPath } from '@/game/types'
 import { getOrCreateAnonId } from '@/lib/anonId'
 import { computeAchievements, Achievement } from '@/game/achievements'
@@ -56,6 +58,14 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     loadSolution,
     getMirrorsErasedCount,
   } = useGame(level || DEFAULT_LEVEL)
+
+  const activeLevel = level || DEFAULT_LEVEL
+  const canvasWidth = activeLevel.gridWidth * CELL_SIZE
+  const canvasHeight = activeLevel.gridHeight * CELL_SIZE
+  const BORDER_W = 2
+  const bW = canvasWidth + BORDER_W * 2
+  const headerRef = useRef<HTMLDivElement>(null)
+  const { scale, layoutMode } = useGameLayout({ canvasWidth, canvasHeight, headerRef })
 
   // Number of times the player has pressed the Reset button (analytics only).
   const resetCountRef = useRef(0)
@@ -369,66 +379,83 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     )
   }
 
+  const bestScore = hasSubmitted ? submittedScore : (sessionBestScore > 0 ? sessionBestScore : null)
+  const canRestore = hasSubmitted ? bestSolution !== null : sessionBestSolution !== null
+
+  const controls = (
+    <div className="space-y-4">
+      <ScoreDisplay
+        score={gameState.score}
+        bestScore={bestScore}
+        canRestore={canRestore}
+        onRestoreBest={handleRestoreBest}
+        mirrorsPlaced={gameState.placedMirrors.length}
+        mirrorsAvailable={activeLevel.mirrorsAvailable}
+        hasSubmitted={hasSubmitted}
+        optimalScore={activeLevel.optimalScore}
+        onShowOptimal={handleShowOptimal}
+      />
+      <GameControls
+        onReset={onReset}
+        onSubmit={handleSubmit}
+        canSubmit={gameState.score > 0}
+        hasSubmitted={hasSubmitted}
+        onShowResults={handleShowResults}
+      />
+    </div>
+  )
+
+  const canvas = loading ? null : (
+    <ResponsiveCanvas
+      gameState={gameState}
+      onCellClick={handleCellClick}
+      onCellRightClick={handleCellRightClick}
+      scale={scale}
+    />
+  )
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Header rightContent={
-        <div className="flex items-center gap-2">
-          {refreshing && (
-            <div className="w-3 h-3 border border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
-          )}
-          <span>{date}</span>
-        </div>
-      } />
+      <div ref={headerRef}>
+        <Header rightContent={
+          <div className="flex items-center gap-2">
+            {refreshing && (
+              <div className="w-3 h-3 border border-gray-600 border-t-emerald-400 rounded-full animate-spin" />
+            )}
+            <span>{date}</span>
+          </div>
+        } />
+      </div>
 
-      <main className="flex-1 p-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-6">
-            <div className="flex-1">
-              {loading ? (
-                <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[800px] flex items-center justify-center text-gray-500">
-                  Loading puzzle...
-                </div>
-              ) : (
-                <ResponsiveCanvas
-                  gameState={gameState}
-                  onCellClick={handleCellClick}
-                  onCellRightClick={handleCellRightClick}
-                />
-              )}
-            </div>
-
-            <div className="lg:w-64 space-y-4">
-              <ScoreDisplay
-                score={gameState.score}
-                bestScore={hasSubmitted ? submittedScore : (sessionBestScore > 0 ? sessionBestScore : null)}
-                canRestore={hasSubmitted
-                  ? bestSolution !== null
-                  : sessionBestSolution !== null}
-                onRestoreBest={handleRestoreBest}
-                mirrorsPlaced={gameState.placedMirrors.length}
-                mirrorsAvailable={level?.mirrorsAvailable ?? DEFAULT_LEVEL.mirrorsAvailable}
-                hasSubmitted={hasSubmitted}
-                optimalScore={level?.optimalScore ?? DEFAULT_LEVEL.optimalScore}
-                onShowOptimal={handleShowOptimal}
-              />
-
-              <GameControls
-                onReset={onReset}
-                onSubmit={handleSubmit}
-                canSubmit={gameState.score > 0}
-                hasSubmitted={hasSubmitted}
-                onShowResults={handleShowResults}
-              />
-            </div>
+      {layoutMode === 'landscape' ? (
+        /* Landscape: grid fills available height, 260px controls panel to the right */
+        <div data-layout="landscape" className="flex-1 flex flex-row items-start justify-center gap-6 p-6">
+          {loading ? (
+            <div className="text-gray-500">Loading puzzle...</div>
+          ) : canvas}
+          <div data-testid="controls" className="w-[260px] shrink-0 space-y-4">
+            {controls}
           </div>
         </div>
-      </main>
+      ) : (
+        /* Portrait: grid + controls stacked, controls match grid width */
+        <div data-layout="portrait" className="flex-1 flex flex-col items-center p-4 gap-4">
+          {loading ? (
+            <div className="aspect-[3/4] w-full max-w-sm flex items-center justify-center text-gray-500">
+              Loading puzzle...
+            </div>
+          ) : canvas}
+          <div data-testid="controls" style={{ width: loading ? undefined : Math.round(bW * scale) }}>
+            {controls}
+          </div>
+        </div>
+      )}
 
       <LevelComplete
         isOpen={showComplete}
         onClose={() => setShowComplete(false)}
         score={submittedScore}
-        optimalScore={level?.optimalScore ?? DEFAULT_LEVEL.optimalScore}
+        optimalScore={activeLevel.optimalScore}
         date={date}
         histogram={histogramData}
         achievements={achievements}

@@ -46,3 +46,8 @@ next-env.d.ts
 solver/.venv/
 __pycache__/
 *.pyc
+
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
