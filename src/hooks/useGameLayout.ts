@@ -43,8 +43,11 @@ export function useGameLayout({
 
   useEffect(() => {
     const update = () => {
-      const W = window.innerWidth
-      const H = window.innerHeight
+      // Use the layout viewport, not window.inner*: on mobile, when the previous
+      // (wider) layout overflows, the browser zooms out and inner* reports the
+      // zoomed-out visual viewport, which would lock in an oversized grid.
+      const W = document.documentElement.clientWidth
+      const H = document.documentElement.clientHeight
       const headerH = headerRef.current?.offsetHeight ?? FALLBACK_HEADER_H
       const availH = H - headerH
 
