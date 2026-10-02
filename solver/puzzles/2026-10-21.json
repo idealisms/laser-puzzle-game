@@ -1,73 +1,111 @@
 {
   "date": "2026-10-21",
-  "name": "Driftwood",
+  "name": "Crenel",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 3,
-    "y": 0,
-    "dir": "down"
+    "x": 14,
+    "y": 15,
+    "dir": "left"
   },
-  "num_mirrors": 9,
+  "num_mirrors": 11,
   "obstacle_groups": [
     {
-      "label": "vertical stub x=10 y=0-1 (top edge)",
+      "label": "vertical stub x=7 y=0-1 (top edge)",
       "cells": [
         [
-          10,
+          7,
           0
         ],
         [
-          10,
+          7,
           1
         ]
       ]
     },
     {
-      "label": "block x=6-7 y=3-4",
+      "label": "horizontal stub y=1 x=0-2 (left edge)",
       "cells": [
         [
-          6,
-          3
+          0,
+          1
         ],
         [
-          7,
-          3
+          1,
+          1
         ],
         [
-          6,
-          4
+          2,
+          1
         ]
       ]
     },
     {
-      "label": "vertical stub x=0 y=4-6 (left edge)",
+      "label": "block x=10-14 y=2-3 (right edge)",
       "cells": [
         [
-          0,
-          4
+          10,
+          2
         ],
+        [
+          10,
+          3
+        ],
+        [
+          11,
+          3
+        ],
+        [
+          12,
+          3
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=5 x=0-3 (left edge)",
+      "cells": [
         [
           0,
           5
         ],
         [
-          0,
-          6
+          1,
+          5
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          5
         ]
       ]
     },
     {
-      "label": "block x=11-12 y=5-7",
+      "label": "vertical stub x=6 y=6-7",
       "cells": [
         [
-          11,
-          5
-        ],
-        [
-          11,
+          6,
           6
         ],
+        [
+          6,
+          7
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=7 x=11-14 (right edge)",
+      "cells": [
         [
           11,
           7
@@ -75,93 +113,105 @@
         [
           12,
           7
+        ],
+        [
+          13,
+          7
+        ],
+        [
+          14,
+          7
         ]
       ]
     },
     {
-      "label": "block x=2-4 y=8-10",
+      "label": "horizontal stub y=9 x=0-2 (left edge)",
       "cells": [
         [
-          4,
-          8
+          0,
+          9
         ],
         [
-          4,
+          1,
           9
         ],
         [
           2,
-          10
-        ],
-        [
-          3,
-          10
-        ],
-        [
-          4,
-          10
-        ]
-      ]
-    },
-    {
-      "label": "vertical stub x=14 y=9-10 (right edge)",
-      "cells": [
-        [
-          14,
           9
-        ],
-        [
-          14,
-          10
         ]
       ]
     },
     {
-      "label": "block x=8-9 y=12-13",
+      "label": "vertical stub x=8 y=10-11",
       "cells": [
         [
-          9,
-          12
+          8,
+          10
         ],
         [
           8,
-          13
-        ],
-        [
-          9,
-          13
+          11
         ]
       ]
     },
     {
-      "label": "horizontal stub y=15 x=0-1 (left edge)",
+      "label": "horizontal stub y=11 x=12-14 (right edge)",
+      "cells": [
+        [
+          12,
+          11
+        ],
+        [
+          13,
+          11
+        ],
+        [
+          14,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=13 x=0-3 (left edge)",
       "cells": [
         [
           0,
-          15
+          13
         ],
         [
           1,
+          13
+        ],
+        [
+          2,
+          13
+        ],
+        [
+          3,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=5 y=14-15",
+      "cells": [
+        [
+          5,
+          14
+        ],
+        [
+          5,
           15
         ]
       ]
     },
     {
-      "label": "vertical stub x=6 y=16-17",
+      "label": "horizontal stub y=16 x=11-14 (right edge)",
       "cells": [
         [
-          6,
+          11,
           16
         ],
-        [
-          6,
-          17
-        ]
-      ]
-    },
-    {
-      "label": "horizontal stub y=16 x=12-14 (right edge)",
-      "cells": [
         [
           12,
           16
@@ -177,14 +227,31 @@
       ]
     },
     {
-      "label": "vertical stub x=11 y=18-19 (bottom edge)",
+      "label": "horizontal stub y=18 x=0-2 (left edge)",
       "cells": [
         [
-          11,
+          0,
           18
         ],
         [
-          11,
+          1,
+          18
+        ],
+        [
+          2,
+          18
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=9 y=18-19 (bottom edge)",
+      "cells": [
+        [
+          9,
+          18
+        ],
+        [
+          9,
           19
         ]
       ]

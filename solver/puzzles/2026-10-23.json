@@ -1,166 +1,133 @@
 {
   "date": "2026-10-23",
-  "name": "Rampart Steps",
+  "name": "Watchposts",
   "width": 15,
   "height": 20,
   "laser": {
     "x": 0,
-    "y": 17,
+    "y": 1,
     "dir": "right"
   },
   "num_mirrors": 11,
   "obstacle_groups": [
     {
-      "label": "vertical stub x=4 y=0-3 (top edge)",
+      "label": "NW corner",
       "cells": [
         [
-          4,
-          0
-        ],
-        [
-          4,
-          1
-        ],
-        [
-          4,
+          0,
           2
         ],
         [
-          4,
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          0,
           3
         ]
       ]
     },
     {
-      "label": "vertical stub x=10 y=0-2 (top edge)",
+      "label": "NE corner",
       "cells": [
         [
-          10,
+          12,
           0
         ],
         [
-          10,
-          1
-        ],
-        [
-          10,
-          2
-        ]
-      ]
-    },
-    {
-      "label": "horizontal stub y=4 x=11-13",
-      "cells": [
-        [
-          11,
-          4
-        ],
-        [
-          12,
-          4
-        ],
-        [
           13,
-          4
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          14,
+          1
         ]
       ]
     },
     {
-      "label": "horizontal stub y=5 x=0-1 (left edge)",
+      "label": "SW corner",
       "cells": [
         [
           0,
-          5
+          18
+        ],
+        [
+          0,
+          19
         ],
         [
           1,
-          5
+          19
+        ],
+        [
+          2,
+          19
         ]
       ]
     },
     {
-      "label": "block x=6-8 y=7-8",
+      "label": "SE corner",
       "cells": [
         [
-          6,
-          7
+          13,
+          18
         ],
         [
-          6,
-          8
+          13,
+          19
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          14,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "mid divider x=7 (gaps 9-11)",
+      "cells": [
+        [
+          7,
+          4
+        ],
+        [
+          7,
+          5
+        ],
+        [
+          7,
+          6
+        ],
+        [
+          7,
+          7
         ],
         [
           7,
           8
         ],
         [
-          8,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "vertical stub x=14 y=9-10 (right edge)",
-      "cells": [
-        [
-          14,
-          9
-        ],
-        [
-          14,
-          10
-        ]
-      ]
-    },
-    {
-      "label": "vertical stub x=3 y=10-11",
-      "cells": [
-        [
-          3,
-          10
-        ],
-        [
-          3,
-          11
-        ]
-      ]
-    },
-    {
-      "label": "block x=10-11 y=12-13",
-      "cells": [
-        [
-          11,
+          7,
           12
         ],
         [
-          10,
+          7,
           13
         ],
         [
-          11,
-          13
-        ]
-      ]
-    },
-    {
-      "label": "vertical stub x=0 y=14-15 (left edge)",
-      "cells": [
-        [
-          0,
+          7,
           14
-        ],
-        [
-          0,
-          15
-        ]
-      ]
-    },
-    {
-      "label": "block x=6-7 y=15-16",
-      "cells": [
-        [
-          6,
-          15
         ],
         [
           7,
@@ -173,18 +140,45 @@
       ]
     },
     {
-      "label": "vertical stub x=12 y=18-19 (bottom edge)",
+      "label": "post A",
       "cells": [
         [
-          12,
-          18
+          4,
+          8
         ],
         [
-          12,
-          19
+          5,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "post B",
+      "cells": [
+        [
+          10,
+          12
+        ],
+        [
+          11,
+          12
         ]
       ]
     }
   ],
-  "splitters": []
+  "splitters": [],
+  "gates": [
+    {
+      "x": 4,
+      "y": 9,
+      "dir": "down",
+      "note": "gate below post A — DOWN passes, UP blocked"
+    },
+    {
+      "x": 11,
+      "y": 11,
+      "dir": "up",
+      "note": "gate above post B — UP passes, DOWN blocked"
+    }
+  ]
 }

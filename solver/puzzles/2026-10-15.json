@@ -1,124 +1,76 @@
 {
   "date": "2026-10-15",
-  "name": "Sentinel Row",
+  "name": "Crossbeam",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 10,
-    "y": 19,
-    "dir": "up"
+    "x": 3,
+    "y": 0,
+    "dir": "down"
   },
-  "num_mirrors": 11,
+  "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "NW corner",
+      "label": "vertical arm top",
       "cells": [
         [
-          0,
+          7,
           0
         ],
         [
-          0,
+          7,
           1
         ],
         [
-          1,
-          0
+          7,
+          2
         ],
         [
-          1,
-          1
-        ]
-      ]
-    },
-    {
-      "label": "NE corner",
-      "cells": [
-        [
-          13,
-          0
-        ],
-        [
-          14,
-          0
-        ],
-        [
-          14,
-          1
-        ]
-      ]
-    },
-    {
-      "label": "SW corner",
-      "cells": [
-        [
-          0,
-          18
-        ],
-        [
-          0,
-          19
-        ],
-        [
-          1,
-          19
-        ]
-      ]
-    },
-    {
-      "label": "SE corner",
-      "cells": [
-        [
-          13,
-          19
-        ],
-        [
-          14,
-          19
-        ],
-        [
-          14,
-          18
-        ]
-      ]
-    },
-    {
-      "label": "sentinel 1",
-      "cells": [
-        [
-          3,
-          4
-        ],
-        [
-          4,
-          4
-        ],
-        [
-          4,
-          5
-        ]
-      ]
-    },
-    {
-      "label": "sentinel 2",
-      "cells": [
-        [
-          9,
+          7,
           3
         ],
         [
-          10,
-          3
-        ],
-        [
-          9,
+          7,
           4
         ]
       ]
     },
     {
-      "label": "sentinel 3",
+      "label": "vertical arm bottom",
       "cells": [
+        [
+          7,
+          15
+        ],
+        [
+          7,
+          16
+        ],
+        [
+          7,
+          17
+        ],
+        [
+          7,
+          18
+        ],
+        [
+          7,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "horizontal arm left",
+      "cells": [
+        [
+          0,
+          10
+        ],
+        [
+          1,
+          10
+        ],
         [
           2,
           10
@@ -126,88 +78,98 @@
         [
           3,
           10
-        ],
-        [
-          2,
-          11
         ]
       ]
     },
     {
-      "label": "sentinel 4",
+      "label": "horizontal arm right",
       "cells": [
         [
           11,
-          9
+          10
         ],
         [
           12,
-          9
+          10
         ],
         [
-          12,
+          13,
+          10
+        ],
+        [
+          14,
           10
         ]
       ]
     },
     {
-      "label": "sentinel 5",
+      "label": "NW filler",
       "cells": [
         [
-          5,
-          14
+          3,
+          4
         ],
         [
-          6,
-          14
+          4,
+          4
         ],
         [
-          6,
-          15
+          4,
+          3
         ]
       ]
     },
     {
-      "label": "sentinel 6",
+      "label": "SE filler",
       "cells": [
-        [
-          9,
-          15
-        ],
         [
           10,
           15
         ],
         [
-          9,
+          11,
+          15
+        ],
+        [
+          11,
           16
         ]
       ]
     },
     {
-      "label": "corridor wall N",
+      "label": "NE filler",
       "cells": [
-        [6, 9],
-        [7, 9],
-        [8, 9]
+        [
+          10,
+          5
+        ],
+        [
+          11,
+          5
+        ],
+        [
+          11,
+          6
+        ]
       ]
     },
     {
-      "label": "corridor wall S",
+      "label": "SW filler",
       "cells": [
-        [6, 11],
-        [7, 11],
-        [8, 11]
+        [
+          3,
+          14
+        ],
+        [
+          4,
+          14
+        ],
+        [
+          4,
+          15
+        ]
       ]
     }
   ],
-  "splitters": [],
-  "gates": [
-    {
-      "x": 7,
-      "y": 10,
-      "dir": "right",
-      "note": "row-10 corridor gate — RIGHT passes; LEFT blocked"
-    }
-  ]
+  "splitters": []
 }

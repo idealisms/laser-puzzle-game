@@ -1,62 +1,172 @@
 {
   "date": "2026-10-14",
-  "name": "Half Round",
+  "name": "Spurline",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 0,
-    "y": 12,
-    "dir": "right"
+    "x": 14,
+    "y": 10,
+    "dir": "left"
   },
-  "num_mirrors": 8,
+  "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "vertical divider x=6 (gaps 2-4, 13-15)",
+      "label": "vertical stub x=9 y=0-2 (top edge)",
       "cells": [
         [
-          6,
+          9,
           0
         ],
         [
-          6,
+          9,
           1
         ],
         [
-          6,
+          9,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=2 y=2-4",
+      "cells": [
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=10 y=4-5",
+      "cells": [
+        [
+          10,
+          4
+        ],
+        [
+          10,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=5 x=13-14 (right edge)",
+      "cells": [
+        [
+          13,
           5
         ],
         [
-          6,
-          6
-        ],
+          14,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "block x=4-5 y=7-8",
+      "cells": [
         [
-          6,
+          4,
           7
         ],
         [
-          6,
+          5,
+          7
+        ],
+        [
+          5,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=0 y=8-9 (left edge)",
+      "cells": [
+        [
+          0,
           8
         ],
         [
-          6,
+          0,
+          9
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=10 y=9-10",
+      "cells": [
+        [
+          10,
           9
         ],
         [
-          6,
+          10,
           10
-        ],
+        ]
+      ]
+    },
+    {
+      "label": "block x=3-5 y=12-13",
+      "cells": [
         [
-          6,
-          11
-        ],
-        [
-          6,
+          3,
           12
         ],
         [
-          6,
-          16
+          3,
+          13
         ],
+        [
+          4,
+          13
+        ],
+        [
+          5,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=11 y=13-15",
+      "cells": [
+        [
+          11,
+          13
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=14 y=14-15 (right edge)",
+      "cells": [
+        [
+          14,
+          14
+        ],
+        [
+          14,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=6 y=17-19 (bottom edge)",
+      "cells": [
         [
           6,
           17
@@ -72,44 +182,15 @@
       ]
     },
     {
-      "label": "horizontal divider y=9 east half (gap 11-12)",
+      "label": "horizontal stub y=18 x=11-12",
       "cells": [
         [
-          9,
-          9
-        ],
-        [
-          10,
-          9
-        ],
-        [
-          13,
-          9
-        ],
-        [
-          14,
-          9
-        ]
-      ]
-    },
-    {
-      "label": "horizontal divider y=16 east half (gap 10-11)",
-      "cells": [
-        [
-          9,
-          16
+          11,
+          18
         ],
         [
           12,
-          16
-        ],
-        [
-          13,
-          16
-        ],
-        [
-          14,
-          16
+          18
         ]
       ]
     }

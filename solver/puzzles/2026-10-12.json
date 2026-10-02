@@ -1,84 +1,75 @@
 {
   "date": "2026-10-12",
-  "name": "Breakwater",
+  "name": "Lock Keeper",
   "width": 15,
   "height": 20,
   "laser": {
     "x": 0,
-    "y": 9,
+    "y": 10,
     "dir": "right"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "vertical stub x=3 y=0-2 (top edge)",
+      "label": "vertical stub x=4 y=0-2 (top edge)",
       "cells": [
         [
-          3,
+          4,
           0
         ],
         [
-          3,
+          4,
           1
         ],
         [
-          3,
+          4,
           2
         ]
       ]
     },
     {
-      "label": "vertical stub x=11 y=0-1 (top edge)",
+      "label": "vertical stub x=11 y=1-3",
       "cells": [
-        [
-          11,
-          0
-        ],
         [
           11,
           1
-        ]
-      ]
-    },
-    {
-      "label": "horizontal stub y=3 x=11-12",
-      "cells": [
+        ],
+        [
+          11,
+          2
+        ],
         [
           11,
           3
-        ],
-        [
-          12,
-          3
         ]
       ]
     },
     {
-      "label": "horizontal stub y=4 x=0-1 (left edge)",
+      "label": "horizontal stub y=5 x=2-3",
       "cells": [
         [
-          0,
-          4
-        ],
-        [
-          1,
-          4
-        ]
-      ]
-    },
-    {
-      "label": "vertical stub x=7 y=5-7",
-      "cells": [
-        [
-          7,
+          2,
           5
         ],
         [
-          7,
+          3,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=9 y=5-7",
+      "cells": [
+        [
+          9,
+          5
+        ],
+        [
+          9,
           6
         ],
         [
-          7,
+          9,
           7
         ]
       ]
@@ -101,70 +92,57 @@
       ]
     },
     {
-      "label": "block x=3-4 y=7-8",
-      "cells": [
-        [
-          3,
-          7
-        ],
-        [
-          4,
-          7
-        ],
-        [
-          4,
-          8
-        ]
-      ]
-    },
-    {
-      "label": "block x=10-11 y=10-12",
-      "cells": [
-        [
-          10,
-          10
-        ],
-        [
-          10,
-          11
-        ],
-        [
-          10,
-          12
-        ],
-        [
-          11,
-          12
-        ]
-      ]
-    },
-    {
-      "label": "horizontal stub y=11 x=0-2 (left edge)",
+      "label": "horizontal stub y=9 x=0-2 (left edge)",
       "cells": [
         [
           0,
-          11
+          9
         ],
         [
           1,
-          11
+          9
         ],
         [
           2,
+          9
+        ]
+      ]
+    },
+    {
+      "label": "block x=7-8 y=9-11",
+      "cells": [
+        [
+          7,
+          9
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          7,
           11
         ]
       ]
     },
     {
-      "label": "block x=5-7 y=13-15",
+      "label": "block x=4-6 y=13-15",
       "cells": [
         [
-          5,
+          4,
           13
         ],
         [
-          5,
+          4,
           14
+        ],
+        [
+          4,
+          15
         ],
         [
           5,
@@ -173,60 +151,74 @@
         [
           6,
           15
-        ],
-        [
-          7,
-          15
         ]
       ]
     },
     {
-      "label": "vertical stub x=11 y=14-16",
+      "label": "block x=11-12 y=14-16",
       "cells": [
         [
           11,
           14
         ],
         [
-          11,
+          12,
+          14
+        ],
+        [
+          12,
           15
         ],
         [
-          11,
+          12,
           16
         ]
       ]
     },
     {
-      "label": "vertical stub x=2 y=17-19 (bottom edge)",
+      "label": "vertical stub x=0 y=17-19 (bottom/left edge)",
       "cells": [
         [
-          2,
+          0,
           17
         ],
         [
-          2,
+          0,
           18
         ],
         [
-          2,
+          0,
           19
         ]
       ]
     },
     {
-      "label": "vertical stub x=10 y=18-19 (bottom edge)",
+      "label": "vertical stub x=8 y=18-19 (bottom edge)",
       "cells": [
         [
-          10,
+          8,
           18
         ],
         [
-          10,
+          8,
           19
         ]
       ]
     }
   ],
-  "splitters": []
+  "splitters": [],
+  "gates": [
+    {
+      "x": 4,
+      "y": 7,
+      "dir": "down",
+      "note": "gate — DOWN passes, other directions blocked"
+    },
+    {
+      "x": 10,
+      "y": 12,
+      "dir": "right",
+      "note": "gate — RIGHT passes, other directions blocked"
+    }
+  ]
 }

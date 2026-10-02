@@ -1,105 +1,51 @@
 {
   "date": "2026-10-19",
-  "name": "Crenel",
+  "name": "Prism Hall",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 14,
-    "y": 15,
-    "dir": "left"
+    "x": 0,
+    "y": 5,
+    "dir": "right"
   },
-  "num_mirrors": 11,
+  "num_mirrors": 9,
   "obstacle_groups": [
     {
-      "label": "vertical stub x=7 y=0-1 (top edge)",
+      "label": "vertical stub x=3 y=0-1 (top edge)",
       "cells": [
         [
-          7,
+          3,
           0
         ],
         [
-          7,
+          3,
           1
         ]
       ]
     },
     {
-      "label": "horizontal stub y=1 x=0-2 (left edge)",
+      "label": "vertical stub x=11 y=0-1 (top edge)",
       "cells": [
         [
-          0,
-          1
-        ],
-        [
-          1,
-          1
-        ],
-        [
-          2,
-          1
-        ]
-      ]
-    },
-    {
-      "label": "block x=10-14 y=2-3 (right edge)",
-      "cells": [
-        [
-          10,
-          2
-        ],
-        [
-          10,
-          3
+          11,
+          0
         ],
         [
           11,
-          3
-        ],
-        [
-          12,
-          3
-        ],
-        [
-          13,
-          3
-        ],
-        [
-          14,
-          3
+          1
         ]
       ]
     },
     {
-      "label": "horizontal stub y=5 x=0-3 (left edge)",
+      "label": "horizontal stub y=4 x=0-1 (left edge)",
       "cells": [
         [
           0,
-          5
+          4
         ],
         [
           1,
-          5
-        ],
-        [
-          2,
-          5
-        ],
-        [
-          3,
-          5
-        ]
-      ]
-    },
-    {
-      "label": "vertical stub x=6 y=6-7",
-      "cells": [
-        [
-          6,
-          6
-        ],
-        [
-          6,
-          7
+          4
         ]
       ]
     },
@@ -125,54 +71,41 @@
       ]
     },
     {
-      "label": "horizontal stub y=9 x=0-2 (left edge)",
+      "label": "block x=4-5 y=8-10",
       "cells": [
         [
-          0,
+          4,
+          8
+        ],
+        [
+          4,
           9
         ],
         [
-          1,
-          9
-        ],
-        [
-          2,
-          9
-        ]
-      ]
-    },
-    {
-      "label": "vertical stub x=8 y=10-11",
-      "cells": [
-        [
-          8,
+          4,
           10
         ],
         [
-          8,
-          11
+          5,
+          10
         ]
       ]
     },
     {
-      "label": "horizontal stub y=11 x=12-14 (right edge)",
+      "label": "vertical stub x=10 y=11-12",
       "cells": [
         [
-          12,
+          10,
           11
         ],
         [
-          13,
-          11
-        ],
-        [
-          14,
-          11
+          10,
+          12
         ]
       ]
     },
     {
-      "label": "horizontal stub y=13 x=0-3 (left edge)",
+      "label": "horizontal stub y=13 x=0-2 (left edge)",
       "cells": [
         [
           0,
@@ -185,77 +118,59 @@
         [
           2,
           13
+        ]
+      ]
+    },
+    {
+      "label": "block x=7-8 y=15-16",
+      "cells": [
+        [
+          7,
+          15
+        ],
+        [
+          8,
+          15
+        ],
+        [
+          8,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=12 y=17-18",
+      "cells": [
+        [
+          12,
+          17
+        ],
+        [
+          12,
+          18
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=3 y=18-19 (bottom edge)",
+      "cells": [
+        [
+          3,
+          18
         ],
         [
           3,
-          13
-        ]
-      ]
-    },
-    {
-      "label": "vertical stub x=5 y=14-15",
-      "cells": [
-        [
-          5,
-          14
-        ],
-        [
-          5,
-          15
-        ]
-      ]
-    },
-    {
-      "label": "horizontal stub y=16 x=11-14 (right edge)",
-      "cells": [
-        [
-          11,
-          16
-        ],
-        [
-          12,
-          16
-        ],
-        [
-          13,
-          16
-        ],
-        [
-          14,
-          16
-        ]
-      ]
-    },
-    {
-      "label": "horizontal stub y=18 x=0-2 (left edge)",
-      "cells": [
-        [
-          0,
-          18
-        ],
-        [
-          1,
-          18
-        ],
-        [
-          2,
-          18
-        ]
-      ]
-    },
-    {
-      "label": "vertical stub x=9 y=18-19 (bottom edge)",
-      "cells": [
-        [
-          9,
-          18
-        ],
-        [
-          9,
           19
         ]
       ]
     }
   ],
-  "splitters": []
+  "splitters": [
+    {
+      "x": 7,
+      "y": 5,
+      "dir": "right",
+      "note": "laser going RIGHT splits UP into upper zone and DOWN into lower zone"
+    }
+  ]
 }
