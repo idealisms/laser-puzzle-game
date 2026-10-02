@@ -4,7 +4,10 @@
 import fs from 'fs'
 import path from 'path'
 import { calculateLaserPath } from '../src/game/engine/simulate'
-import type { LaserConfig, LaserPath, Mirror, MirrorType, Obstacle } from '../src/game/types'
+import type { LaserConfig, Mirror, Obstacle } from '../src/game/types'
+import {
+  type LevelRow, fmt, mean, median, parseMirrors, pathCells, percentileRanks, readDumpJson, readRatings, spearman,
+} from './lib/analysis'
 
 const DUMP_DIR = process.argv[2] ?? 'db-dump'
 const RATINGS_CSV = 'puzzle-ratings.csv'
@@ -16,18 +19,6 @@ const MIN_SCORE_RATIO = 0.7
 // Weights for the combined score; components missing for a puzzle are dropped and the rest renormalised.
 // scoreSpread: a wide range of player scores suggests the long paths weren't obvious.
 const WEIGHTS = { scoreGap: 0.4, pathMiss: 0.35, scoreSpread: 0.25 }
-
-interface LevelRow {
-  id: string
-  date: string
-  gridWidth: number
-  gridHeight: number
-  laserConfig: string
-  obstacles: string
-  mirrorsAvailable: number
-  optimalScore: number
-  optimalSolution: string | null
-}
 
 interface SubmissionRow {
   levelId: string
@@ -61,40 +52,6 @@ interface SubmissionAnalysis {
   timeSpentSeconds: number | null
 }
 
-function readJson<T>(file: string): T {
-  return JSON.parse(fs.readFileSync(path.join(DUMP_DIR, file), 'utf8'))
-}
-
-// Mirror lists are stored as [[x, y, type], ...]; a few early submissions used [{x, y, type}, ...].
-type StoredMirror = [number, number, MirrorType] | { x: number; y: number; type: MirrorType }
-
-function parseMirrors(json: string | null): Mirror[] {
-  if (!json) return []
-  return (JSON.parse(json) as StoredMirror[]).map(m => {
-    const [x, y, type] = Array.isArray(m) ? m : [m.x, m.y, m.type]
-    return { position: { x, y }, type }
-  })
-}
-
-// Every grid cell the beam passes through, across all streams.
-function pathCells(laserPath: LaserPath): Set<string> {
-  const cells = new Set<string>()
-  for (const stream of laserPath.streams) {
-    for (const seg of stream.segments) {
-      const dx = Math.sign(seg.end.x - seg.start.x)
-      const dy = Math.sign(seg.end.y - seg.start.y)
-      let { x, y } = seg.start
-      cells.add(`${x},${y}`)
-      while (x !== seg.end.x || y !== seg.end.y) {
-        x += dx
-        y += dy
-        cells.add(`${x},${y}`)
-      }
-    }
-  }
-  return cells
-}
-
 // Greedy minimum-cost pairing of player mirrors to optimal mirrors.
 // Cost is Manhattan distance, plus 1 if the mirror faces the other way.
 function matchMirrors(player: Mirror[], optimal: Mirror[]) {
@@ -123,16 +80,6 @@ function matchMirrors(player: Mirror[], optimal: Mirror[]) {
   return { exact, flipped, near, off, credit: optimal.length ? credit / optimal.length : 0 }
 }
 
-function mean(xs: number[]): number {
-  return xs.reduce((a, b) => a + b, 0) / xs.length
-}
-
-function median(xs: number[]): number {
-  const s = [...xs].sort((a, b) => a - b)
-  const mid = s.length >> 1
-  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2
-}
-
 function shrink(values: number[], prior: number): number {
   return (values.reduce((a, b) => a + b, 0) + PRIOR_WEIGHT * prior) / (values.length + PRIOR_WEIGHT)
 }
@@ -148,38 +95,9 @@ function shrunkStdDev(xs: number[], priorVariance: number): number {
   return Math.sqrt((sumSquaredDeviations(xs) + PRIOR_WEIGHT * priorVariance) / (df + PRIOR_WEIGHT))
 }
 
-// Percentile rank in [0, 1] of each value among the non-null values.
-function percentileRanks(values: (number | null)[]): (number | null)[] {
-  const present = values.filter((v): v is number => v !== null).sort((a, b) => a - b)
-  if (present.length < 2) return values.map(v => (v === null ? null : 0.5))
-  return values.map(v => {
-    if (v === null) return null
-    const below = present.filter(p => p < v).length
-    const equal = present.filter(p => p === v).length
-    return (below + (equal - 1) / 2) / (present.length - 1)
-  })
-}
-
-function spearman(a: number[], b: number[]): number {
-  const ra = percentileRanks(a) as number[]
-  const rb = percentileRanks(b) as number[]
-  const ma = mean(ra), mb = mean(rb)
-  let num = 0, da = 0, db = 0
-  for (let i = 0; i < ra.length; i++) {
-    num += (ra[i] - ma) * (rb[i] - mb)
-    da += (ra[i] - ma) ** 2
-    db += (rb[i] - mb) ** 2
-  }
-  return num / Math.sqrt(da * db)
-}
-
-function fmt(v: number | null, digits = 3): string {
-  return v === null ? '' : v.toFixed(digits)
-}
-
 function main() {
-  const levelRows = readJson<LevelRow[]>('Level.json')
-  const submissions = readJson<SubmissionRow[]>('ScoreSubmission.json')
+  const levelRows = readDumpJson<LevelRow[]>(DUMP_DIR, 'Level.json')
+  const submissions = readDumpJson<SubmissionRow[]>(DUMP_DIR, 'ScoreSubmission.json')
 
   const levels = new Map<string, Level>()
   for (const row of levelRows) {
@@ -326,12 +244,8 @@ function main() {
   console.log(`Spearman(scoreGap, scoreSpread) over ${rows.length} puzzles: ` +
     spearman(rows.map(r => r.scoreGap), rows.map(r => r.scoreSpread)).toFixed(2))
 
-  if (fs.existsSync(RATINGS_CSV)) {
-    const ratings = new Map<string, number>()
-    for (const line of fs.readFileSync(RATINGS_CSV, 'utf8').trim().split('\n').slice(1)) {
-      const [date, rating] = line.split(',')
-      if (rating) ratings.set(date, Number(rating))
-    }
+  const ratings = readRatings(RATINGS_CSV)
+  if (ratings.size) {
     const rated = rows.filter(r => ratings.has(r.date) && r.n >= 3)
     console.log(`Spearman(difficulty, enjoyment rating) over ${rated.length} puzzles with n >= 3: ` +
       spearman(rated.map(r => r.difficulty), rated.map(r => ratings.get(r.date)!)).toFixed(2))
