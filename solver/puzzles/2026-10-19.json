@@ -1,0 +1,261 @@
+{
+  "date": "2026-10-19",
+  "name": "Crenel",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 15,
+    "dir": "left"
+  },
+  "num_mirrors": 11,
+  "obstacle_groups": [
+    {
+      "label": "vertical stub x=7 y=0-1 (top edge)",
+      "cells": [
+        [
+          7,
+          0
+        ],
+        [
+          7,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=1 x=0-2 (left edge)",
+      "cells": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "block x=10-14 y=2-3 (right edge)",
+      "cells": [
+        [
+          10,
+          2
+        ],
+        [
+          10,
+          3
+        ],
+        [
+          11,
+          3
+        ],
+        [
+          12,
+          3
+        ],
+        [
+          13,
+          3
+        ],
+        [
+          14,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=5 x=0-3 (left edge)",
+      "cells": [
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=6 y=6-7",
+      "cells": [
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          7
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=7 x=11-14 (right edge)",
+      "cells": [
+        [
+          11,
+          7
+        ],
+        [
+          12,
+          7
+        ],
+        [
+          13,
+          7
+        ],
+        [
+          14,
+          7
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=9 x=0-2 (left edge)",
+      "cells": [
+        [
+          0,
+          9
+        ],
+        [
+          1,
+          9
+        ],
+        [
+          2,
+          9
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=8 y=10-11",
+      "cells": [
+        [
+          8,
+          10
+        ],
+        [
+          8,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=11 x=12-14 (right edge)",
+      "cells": [
+        [
+          12,
+          11
+        ],
+        [
+          13,
+          11
+        ],
+        [
+          14,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=13 x=0-3 (left edge)",
+      "cells": [
+        [
+          0,
+          13
+        ],
+        [
+          1,
+          13
+        ],
+        [
+          2,
+          13
+        ],
+        [
+          3,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=5 y=14-15",
+      "cells": [
+        [
+          5,
+          14
+        ],
+        [
+          5,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=16 x=11-14 (right edge)",
+      "cells": [
+        [
+          11,
+          16
+        ],
+        [
+          12,
+          16
+        ],
+        [
+          13,
+          16
+        ],
+        [
+          14,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=18 x=0-2 (left edge)",
+      "cells": [
+        [
+          0,
+          18
+        ],
+        [
+          1,
+          18
+        ],
+        [
+          2,
+          18
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=9 y=18-19 (bottom edge)",
+      "cells": [
+        [
+          9,
+          18
+        ],
+        [
+          9,
+          19
+        ]
+      ]
+    }
+  ],
+  "splitters": []
+}

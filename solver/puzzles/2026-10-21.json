@@ -1,0 +1,194 @@
+{
+  "date": "2026-10-21",
+  "name": "Driftwood",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 3,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 9,
+  "obstacle_groups": [
+    {
+      "label": "vertical stub x=10 y=0-1 (top edge)",
+      "cells": [
+        [
+          10,
+          0
+        ],
+        [
+          10,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "block x=6-7 y=3-4",
+      "cells": [
+        [
+          6,
+          3
+        ],
+        [
+          7,
+          3
+        ],
+        [
+          6,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=0 y=4-6 (left edge)",
+      "cells": [
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          0,
+          6
+        ]
+      ]
+    },
+    {
+      "label": "block x=11-12 y=5-7",
+      "cells": [
+        [
+          11,
+          5
+        ],
+        [
+          11,
+          6
+        ],
+        [
+          11,
+          7
+        ],
+        [
+          12,
+          7
+        ]
+      ]
+    },
+    {
+      "label": "block x=2-4 y=8-10",
+      "cells": [
+        [
+          4,
+          8
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          2,
+          10
+        ],
+        [
+          3,
+          10
+        ],
+        [
+          4,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=14 y=9-10 (right edge)",
+      "cells": [
+        [
+          14,
+          9
+        ],
+        [
+          14,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "block x=8-9 y=12-13",
+      "cells": [
+        [
+          9,
+          12
+        ],
+        [
+          8,
+          13
+        ],
+        [
+          9,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=15 x=0-1 (left edge)",
+      "cells": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=6 y=16-17",
+      "cells": [
+        [
+          6,
+          16
+        ],
+        [
+          6,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=16 x=12-14 (right edge)",
+      "cells": [
+        [
+          12,
+          16
+        ],
+        [
+          13,
+          16
+        ],
+        [
+          14,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=11 y=18-19 (bottom edge)",
+      "cells": [
+        [
+          11,
+          18
+        ],
+        [
+          11,
+          19
+        ]
+      ]
+    }
+  ],
+  "splitters": []
+}

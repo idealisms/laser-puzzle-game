@@ -1,0 +1,207 @@
+{
+  "date": "2026-10-17",
+  "name": "Sally Port",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 7,
+    "y": 19,
+    "dir": "up"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "vertical stub x=3 y=0-1 (top edge)",
+      "cells": [
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=10 y=0-1 (top edge)",
+      "cells": [
+        [
+          10,
+          0
+        ],
+        [
+          10,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "block x=9-10 y=3-5",
+      "cells": [
+        [
+          9,
+          3
+        ],
+        [
+          9,
+          4
+        ],
+        [
+          9,
+          5
+        ],
+        [
+          10,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=4 x=0-2 (left edge)",
+      "cells": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "block x=4-5 y=6-8",
+      "cells": [
+        [
+          4,
+          6
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          8
+        ],
+        [
+          5,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=14 y=6-7 (right edge)",
+      "cells": [
+        [
+          14,
+          6
+        ],
+        [
+          14,
+          7
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=11 y=9-10",
+      "cells": [
+        [
+          11,
+          9
+        ],
+        [
+          11,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=10 x=0-1 (left edge)",
+      "cells": [
+        [
+          0,
+          10
+        ],
+        [
+          1,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "block x=6-7 y=12-13",
+      "cells": [
+        [
+          6,
+          12
+        ],
+        [
+          7,
+          12
+        ],
+        [
+          7,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=13 x=13-14 (right edge)",
+      "cells": [
+        [
+          13,
+          13
+        ],
+        [
+          14,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=2 y=15-17",
+      "cells": [
+        [
+          2,
+          15
+        ],
+        [
+          2,
+          16
+        ],
+        [
+          2,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "block x=10-12 y=16-17",
+      "cells": [
+        [
+          10,
+          16
+        ],
+        [
+          10,
+          17
+        ],
+        [
+          11,
+          17
+        ],
+        [
+          12,
+          17
+        ]
+      ]
+    }
+  ],
+  "splitters": []
+}

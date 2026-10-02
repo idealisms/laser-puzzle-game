@@ -1,0 +1,213 @@
+{
+  "date": "2026-10-30",
+  "name": "Hollow Oak",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 10,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "vertical stub x=3 y=0-1 (top edge)",
+      "cells": [
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=11 y=2-3",
+      "cells": [
+        [
+          11,
+          2
+        ],
+        [
+          11,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=6 y=3-5",
+      "cells": [
+        [
+          6,
+          3
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=5 x=0-1 (left edge)",
+      "cells": [
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=6 x=13-14 (right edge)",
+      "cells": [
+        [
+          13,
+          6
+        ],
+        [
+          14,
+          6
+        ]
+      ]
+    },
+    {
+      "label": "block x=3-4 y=7-8",
+      "cells": [
+        [
+          3,
+          7
+        ],
+        [
+          3,
+          8
+        ],
+        [
+          4,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "block x=9-10 y=9-11",
+      "cells": [
+        [
+          9,
+          9
+        ],
+        [
+          9,
+          10
+        ],
+        [
+          9,
+          11
+        ],
+        [
+          10,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=5 y=11-12",
+      "cells": [
+        [
+          5,
+          11
+        ],
+        [
+          5,
+          12
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=11 y=13-14",
+      "cells": [
+        [
+          11,
+          13
+        ],
+        [
+          11,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=14 y=13-14 (right edge)",
+      "cells": [
+        [
+          14,
+          13
+        ],
+        [
+          14,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=0 y=14-15 (left edge)",
+      "cells": [
+        [
+          0,
+          14
+        ],
+        [
+          0,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "block x=5-6 y=16-17",
+      "cells": [
+        [
+          5,
+          16
+        ],
+        [
+          6,
+          16
+        ],
+        [
+          6,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=12 y=18-19 (bottom edge)",
+      "cells": [
+        [
+          12,
+          18
+        ],
+        [
+          12,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=3 y=19-19 (bottom edge)",
+      "cells": [
+        [
+          3,
+          19
+        ]
+      ]
+    }
+  ],
+  "splitters": []
+}

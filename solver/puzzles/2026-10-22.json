@@ -1,0 +1,199 @@
+{
+  "date": "2026-10-22",
+  "name": "Spurline",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 10,
+    "dir": "left"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "vertical stub x=9 y=0-2 (top edge)",
+      "cells": [
+        [
+          9,
+          0
+        ],
+        [
+          9,
+          1
+        ],
+        [
+          9,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=2 y=2-4",
+      "cells": [
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=10 y=4-5",
+      "cells": [
+        [
+          10,
+          4
+        ],
+        [
+          10,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=5 x=13-14 (right edge)",
+      "cells": [
+        [
+          13,
+          5
+        ],
+        [
+          14,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "block x=4-5 y=7-8",
+      "cells": [
+        [
+          4,
+          7
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          5,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=0 y=8-9 (left edge)",
+      "cells": [
+        [
+          0,
+          8
+        ],
+        [
+          0,
+          9
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=10 y=9-10",
+      "cells": [
+        [
+          10,
+          9
+        ],
+        [
+          10,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "block x=3-5 y=12-13",
+      "cells": [
+        [
+          3,
+          12
+        ],
+        [
+          3,
+          13
+        ],
+        [
+          4,
+          13
+        ],
+        [
+          5,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=11 y=13-15",
+      "cells": [
+        [
+          11,
+          13
+        ],
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=14 y=14-15 (right edge)",
+      "cells": [
+        [
+          14,
+          14
+        ],
+        [
+          14,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=6 y=17-19 (bottom edge)",
+      "cells": [
+        [
+          6,
+          17
+        ],
+        [
+          6,
+          18
+        ],
+        [
+          6,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=18 x=11-12",
+      "cells": [
+        [
+          11,
+          18
+        ],
+        [
+          12,
+          18
+        ]
+      ]
+    }
+  ],
+  "splitters": []
+}
