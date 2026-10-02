@@ -11,6 +11,8 @@ const RATINGS_CSV = 'puzzle-ratings.csv'
 
 // Pseudo-count for shrinking per-puzzle averages toward the global mean.
 const PRIOR_WEIGHT = 3
+// Submissions below this fraction of optimal are treated as abandoned attempts and ignored.
+const MIN_SCORE_RATIO = 0.7
 // Weights for the combined score; components missing for a puzzle are dropped and the rest renormalised.
 // scoreSpread: a wide range of player scores suggests the long paths weren't obvious.
 const WEIGHTS = { scoreGap: 0.4, pathMiss: 0.35, scoreSpread: 0.25 }
@@ -198,9 +200,14 @@ function main() {
 
   const byLevel = new Map<string, SubmissionAnalysis[]>()
   let scoreMismatches = 0
+  let discarded = 0
   for (const sub of submissions) {
     const level = levels.get(sub.levelId)
     if (!level) continue
+    if (sub.score < MIN_SCORE_RATIO * level.optimalScore) {
+      discarded++
+      continue
+    }
     const solved = sub.score >= level.optimalScore
     if (sub.score > level.optimalScore) {
       console.log(`note: ${level.date} player scored ${sub.score} > optimal ${level.optimalScore}`)
@@ -233,6 +240,7 @@ function main() {
     })
     byLevel.set(sub.levelId, list)
   }
+  console.log(`discarded ${discarded} submissions below ${MIN_SCORE_RATIO * 100}% of optimal`)
   if (scoreMismatches) console.log(`warning: ${scoreMismatches} submissions whose mirrors don't reproduce their score`)
 
   const all = [...byLevel.values()].flat()
