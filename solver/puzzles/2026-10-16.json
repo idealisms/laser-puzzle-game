@@ -1,0 +1,221 @@
+{
+  "date": "2026-10-16",
+  "name": "Kelp Bed",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 6,
+    "y": 19,
+    "dir": "up"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "vertical stub x=1 y=0-2 (top edge)",
+      "cells": [
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=9 y=0-1 (top edge)",
+      "cells": [
+        [
+          9,
+          0
+        ],
+        [
+          9,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=9 y=3-3",
+      "cells": [
+        [
+          9,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "block x=4-5 y=4-5",
+      "cells": [
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          5,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=11 y=4-6",
+      "cells": [
+        [
+          11,
+          4
+        ],
+        [
+          11,
+          5
+        ],
+        [
+          11,
+          6
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=14 y=6-7 (right edge)",
+      "cells": [
+        [
+          14,
+          6
+        ],
+        [
+          14,
+          7
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=8 x=0-1 (left edge)",
+      "cells": [
+        [
+          0,
+          8
+        ],
+        [
+          1,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "block x=7-8 y=9-10",
+      "cells": [
+        [
+          8,
+          9
+        ],
+        [
+          7,
+          10
+        ],
+        [
+          8,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=3 y=12-13",
+      "cells": [
+        [
+          3,
+          12
+        ],
+        [
+          3,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=12 x=10-14 (right edge)",
+      "cells": [
+        [
+          10,
+          12
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          12,
+          12
+        ],
+        [
+          13,
+          12
+        ],
+        [
+          14,
+          12
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=10 y=15-16",
+      "cells": [
+        [
+          10,
+          15
+        ],
+        [
+          10,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=16 x=0-1 (left edge)",
+      "cells": [
+        [
+          0,
+          16
+        ],
+        [
+          1,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=3 y=18-19 (bottom edge)",
+      "cells": [
+        [
+          3,
+          18
+        ],
+        [
+          3,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=12 y=18-19 (bottom edge)",
+      "cells": [
+        [
+          12,
+          18
+        ],
+        [
+          12,
+          19
+        ]
+      ]
+    }
+  ],
+  "splitters": []
+}

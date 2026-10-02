@@ -1,184 +1,194 @@
 {
   "date": "2026-10-11",
-  "name": "Watchposts",
+  "name": "Driftwood",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 0,
-    "y": 1,
-    "dir": "right"
+    "x": 3,
+    "y": 0,
+    "dir": "down"
   },
-  "num_mirrors": 11,
+  "num_mirrors": 9,
   "obstacle_groups": [
     {
-      "label": "NW corner",
+      "label": "vertical stub x=10 y=0-1 (top edge)",
       "cells": [
         [
-          0,
-          2
-        ],
-        [
-          1,
-          2
-        ],
-        [
-          2,
-          2
-        ],
-        [
-          0,
-          3
-        ]
-      ]
-    },
-    {
-      "label": "NE corner",
-      "cells": [
-        [
-          12,
+          10,
           0
         ],
         [
-          13,
-          0
-        ],
-        [
-          14,
-          0
-        ],
-        [
-          14,
+          10,
           1
         ]
       ]
     },
     {
-      "label": "SW corner",
+      "label": "block x=6-7 y=3-4",
       "cells": [
         [
-          0,
-          18
+          6,
+          3
         ],
-        [
-          0,
-          19
-        ],
-        [
-          1,
-          19
-        ],
-        [
-          2,
-          19
-        ]
-      ]
-    },
-    {
-      "label": "SE corner",
-      "cells": [
-        [
-          13,
-          18
-        ],
-        [
-          13,
-          19
-        ],
-        [
-          14,
-          18
-        ],
-        [
-          14,
-          19
-        ]
-      ]
-    },
-    {
-      "label": "mid divider x=7 (gaps 9-11)",
-      "cells": [
         [
           7,
+          3
+        ],
+        [
+          6,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=0 y=4-6 (left edge)",
+      "cells": [
+        [
+          0,
           4
         ],
         [
-          7,
+          0,
           5
         ],
         [
-          7,
+          0,
           6
-        ],
-        [
-          7,
-          7
-        ],
-        [
-          7,
-          8
-        ],
-        [
-          7,
-          12
-        ],
-        [
-          7,
-          13
-        ],
-        [
-          7,
-          14
-        ],
-        [
-          7,
-          15
-        ],
-        [
-          7,
-          16
         ]
       ]
     },
     {
-      "label": "post A",
+      "label": "block x=11-12 y=5-7",
+      "cells": [
+        [
+          11,
+          5
+        ],
+        [
+          11,
+          6
+        ],
+        [
+          11,
+          7
+        ],
+        [
+          12,
+          7
+        ]
+      ]
+    },
+    {
+      "label": "block x=2-4 y=8-10",
       "cells": [
         [
           4,
           8
         ],
         [
-          5,
-          8
+          4,
+          9
+        ],
+        [
+          2,
+          10
+        ],
+        [
+          3,
+          10
+        ],
+        [
+          4,
+          10
         ]
       ]
     },
     {
-      "label": "post B",
+      "label": "vertical stub x=14 y=9-10 (right edge)",
       "cells": [
         [
-          10,
+          14,
+          9
+        ],
+        [
+          14,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "block x=8-9 y=12-13",
+      "cells": [
+        [
+          9,
           12
         ],
         [
+          8,
+          13
+        ],
+        [
+          9,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=15 x=0-1 (left edge)",
+      "cells": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=6 y=16-17",
+      "cells": [
+        [
+          6,
+          16
+        ],
+        [
+          6,
+          17
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=16 x=12-14 (right edge)",
+      "cells": [
+        [
+          12,
+          16
+        ],
+        [
+          13,
+          16
+        ],
+        [
+          14,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=11 y=18-19 (bottom edge)",
+      "cells": [
+        [
           11,
-          12
+          18
+        ],
+        [
+          11,
+          19
         ]
       ]
     }
   ],
-  "splitters": [],
-  "gates": [
-    {
-      "x": 4,
-      "y": 9,
-      "dir": "down",
-      "note": "gate below post A — DOWN passes, UP blocked"
-    },
-    {
-      "x": 11,
-      "y": 11,
-      "dir": "up",
-      "note": "gate above post B — UP passes, DOWN blocked"
-    }
-  ]
+  "splitters": []
 }

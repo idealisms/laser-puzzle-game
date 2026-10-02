@@ -1,0 +1,190 @@
+{
+  "date": "2026-10-29",
+  "name": "Rampart Steps",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 17,
+    "dir": "right"
+  },
+  "num_mirrors": 11,
+  "obstacle_groups": [
+    {
+      "label": "vertical stub x=4 y=0-3 (top edge)",
+      "cells": [
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=10 y=0-2 (top edge)",
+      "cells": [
+        [
+          10,
+          0
+        ],
+        [
+          10,
+          1
+        ],
+        [
+          10,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=4 x=11-13",
+      "cells": [
+        [
+          11,
+          4
+        ],
+        [
+          12,
+          4
+        ],
+        [
+          13,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=5 x=0-1 (left edge)",
+      "cells": [
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "block x=6-8 y=7-8",
+      "cells": [
+        [
+          6,
+          7
+        ],
+        [
+          6,
+          8
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          8,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=14 y=9-10 (right edge)",
+      "cells": [
+        [
+          14,
+          9
+        ],
+        [
+          14,
+          10
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=3 y=10-11",
+      "cells": [
+        [
+          3,
+          10
+        ],
+        [
+          3,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "block x=10-11 y=12-13",
+      "cells": [
+        [
+          11,
+          12
+        ],
+        [
+          10,
+          13
+        ],
+        [
+          11,
+          13
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=0 y=14-15 (left edge)",
+      "cells": [
+        [
+          0,
+          14
+        ],
+        [
+          0,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "block x=6-7 y=15-16",
+      "cells": [
+        [
+          6,
+          15
+        ],
+        [
+          7,
+          15
+        ],
+        [
+          7,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=12 y=18-19 (bottom edge)",
+      "cells": [
+        [
+          12,
+          18
+        ],
+        [
+          12,
+          19
+        ]
+      ]
+    }
+  ],
+  "splitters": []
+}

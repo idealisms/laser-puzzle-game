@@ -1,172 +1,229 @@
 {
   "date": "2026-10-09",
-  "name": "Crossbeam",
+  "name": "Breakwater",
   "width": 15,
   "height": 20,
   "laser": {
-    "x": 3,
-    "y": 0,
-    "dir": "down"
+    "x": 0,
+    "y": 9,
+    "dir": "right"
   },
   "num_mirrors": 10,
   "obstacle_groups": [
     {
-      "label": "vertical arm top",
+      "label": "vertical stub x=3 y=0-2 (top edge)",
       "cells": [
         [
-          7,
+          3,
           0
         ],
         [
-          7,
+          3,
           1
         ],
         [
-          7,
-          2
-        ],
-        [
-          7,
-          3
-        ],
-        [
-          7,
-          4
-        ]
-      ]
-    },
-    {
-      "label": "vertical arm bottom",
-      "cells": [
-        [
-          7,
-          15
-        ],
-        [
-          7,
-          16
-        ],
-        [
-          7,
-          17
-        ],
-        [
-          7,
-          18
-        ],
-        [
-          7,
-          19
-        ]
-      ]
-    },
-    {
-      "label": "horizontal arm left",
-      "cells": [
-        [
-          0,
-          10
-        ],
-        [
-          1,
-          10
-        ],
-        [
-          2,
-          10
-        ],
-        [
           3,
-          10
+          2
         ]
       ]
     },
     {
-      "label": "horizontal arm right",
+      "label": "vertical stub x=11 y=0-1 (top edge)",
       "cells": [
         [
           11,
-          10
+          0
+        ],
+        [
+          11,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=3 x=11-12",
+      "cells": [
+        [
+          11,
+          3
         ],
         [
           12,
-          10
-        ],
-        [
-          13,
-          10
-        ],
-        [
-          14,
-          10
-        ]
-      ]
-    },
-    {
-      "label": "NW filler",
-      "cells": [
-        [
-          3,
-          4
-        ],
-        [
-          4,
-          4
-        ],
-        [
-          4,
           3
         ]
       ]
     },
     {
-      "label": "SE filler",
+      "label": "horizontal stub y=4 x=0-1 (left edge)",
       "cells": [
         [
-          10,
-          15
+          0,
+          4
         ],
         [
-          11,
-          15
-        ],
-        [
-          11,
-          16
+          1,
+          4
         ]
       ]
     },
     {
-      "label": "NE filler",
+      "label": "vertical stub x=7 y=5-7",
       "cells": [
         [
-          10,
+          7,
           5
         ],
         [
-          11,
-          5
+          7,
+          6
         ],
         [
-          11,
+          7,
+          7
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=6 x=12-14 (right edge)",
+      "cells": [
+        [
+          12,
+          6
+        ],
+        [
+          13,
+          6
+        ],
+        [
+          14,
           6
         ]
       ]
     },
     {
-      "label": "SW filler",
+      "label": "block x=3-4 y=7-8",
       "cells": [
         [
           3,
-          14
+          7
         ],
         [
           4,
-          14
+          7
         ],
         [
           4,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "block x=10-11 y=10-12",
+      "cells": [
+        [
+          10,
+          10
+        ],
+        [
+          10,
+          11
+        ],
+        [
+          10,
+          12
+        ],
+        [
+          11,
+          12
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=11 x=0-2 (left edge)",
+      "cells": [
+        [
+          0,
+          11
+        ],
+        [
+          1,
+          11
+        ],
+        [
+          2,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "block x=5-7 y=13-15",
+      "cells": [
+        [
+          5,
+          13
+        ],
+        [
+          5,
+          14
+        ],
+        [
+          5,
           15
+        ],
+        [
+          6,
+          15
+        ],
+        [
+          7,
+          15
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=11 y=14-16",
+      "cells": [
+        [
+          11,
+          14
+        ],
+        [
+          11,
+          15
+        ],
+        [
+          11,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=2 y=17-19 (bottom edge)",
+      "cells": [
+        [
+          2,
+          17
+        ],
+        [
+          2,
+          18
+        ],
+        [
+          2,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=10 y=18-19 (bottom edge)",
+      "cells": [
+        [
+          10,
+          18
+        ],
+        [
+          10,
+          19
         ]
       ]
     }

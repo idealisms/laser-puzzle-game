@@ -1,0 +1,196 @@
+{
+  "date": "2026-10-26",
+  "name": "Toll Road",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 7,
+    "y": 0,
+    "dir": "down"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "vertical stub x=2 y=0-2 (top edge)",
+      "cells": [
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=12 y=0-1 (top edge)",
+      "cells": [
+        [
+          12,
+          0
+        ],
+        [
+          12,
+          1
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=9 y=4-6",
+      "cells": [
+        [
+          9,
+          4
+        ],
+        [
+          9,
+          5
+        ],
+        [
+          9,
+          6
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=5 x=0-1 (left edge)",
+      "cells": [
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    {
+      "label": "horizontal stub y=8 x=12-14 (right edge)",
+      "cells": [
+        [
+          12,
+          8
+        ],
+        [
+          13,
+          8
+        ],
+        [
+          14,
+          8
+        ]
+      ]
+    },
+    {
+      "label": "block x=4-5 y=9-11",
+      "cells": [
+        [
+          4,
+          9
+        ],
+        [
+          4,
+          10
+        ],
+        [
+          4,
+          11
+        ],
+        [
+          5,
+          11
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=0 y=13-14 (left edge)",
+      "cells": [
+        [
+          0,
+          13
+        ],
+        [
+          0,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=11 y=13-14",
+      "cells": [
+        [
+          11,
+          13
+        ],
+        [
+          11,
+          14
+        ]
+      ]
+    },
+    {
+      "label": "block x=6-7 y=15-16",
+      "cells": [
+        [
+          6,
+          15
+        ],
+        [
+          6,
+          16
+        ],
+        [
+          7,
+          16
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=2 y=18-19 (bottom edge)",
+      "cells": [
+        [
+          2,
+          18
+        ],
+        [
+          2,
+          19
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=12 y=18-19 (bottom edge)",
+      "cells": [
+        [
+          12,
+          18
+        ],
+        [
+          12,
+          19
+        ]
+      ]
+    }
+  ],
+  "splitters": [],
+  "gates": [
+    {
+      "x": 6,
+      "y": 6,
+      "dir": "left",
+      "note": "gate — LEFT passes, other directions blocked"
+    },
+    {
+      "x": 10,
+      "y": 11,
+      "dir": "up",
+      "note": "gate — UP passes, other directions blocked"
+    }
+  ]
+}

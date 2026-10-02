@@ -1,162 +1,178 @@
 {
-  "date": "2026-10-14",
-  "name": "Spurline",
+  "date": "2026-10-27",
+  "name": "Weathervane",
   "width": 15,
   "height": 20,
   "laser": {
     "x": 14,
-    "y": 10,
+    "y": 18,
     "dir": "left"
   },
-  "num_mirrors": 10,
+  "num_mirrors": 11,
   "obstacle_groups": [
     {
-      "label": "vertical stub x=9 y=0-2 (top edge)",
+      "label": "vertical stub x=4 y=0-2 (top edge)",
       "cells": [
         [
-          9,
+          4,
           0
         ],
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          2
+        ]
+      ]
+    },
+    {
+      "label": "block x=9-10 y=1-2",
+      "cells": [
         [
           9,
           1
         ],
         [
-          9,
+          10,
+          1
+        ],
+        [
+          10,
           2
         ]
       ]
     },
     {
-      "label": "vertical stub x=2 y=2-4",
-      "cells": [
-        [
-          2,
-          2
-        ],
-        [
-          2,
-          3
-        ],
-        [
-          2,
-          4
-        ]
-      ]
-    },
-    {
-      "label": "vertical stub x=10 y=4-5",
-      "cells": [
-        [
-          10,
-          4
-        ],
-        [
-          10,
-          5
-        ]
-      ]
-    },
-    {
-      "label": "horizontal stub y=5 x=13-14 (right edge)",
+      "label": "horizontal stub y=4 x=13-14 (right edge)",
       "cells": [
         [
           13,
-          5
+          4
         ],
         [
           14,
+          4
+        ]
+      ]
+    },
+    {
+      "label": "vertical stub x=2 y=5-7",
+      "cells": [
+        [
+          2,
           5
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          2,
+          7
         ]
       ]
     },
     {
-      "label": "block x=4-5 y=7-8",
+      "label": "block x=7-9 y=6-8",
       "cells": [
         [
-          4,
+          7,
+          6
+        ],
+        [
+          7,
           7
         ],
         [
-          5,
-          7
+          7,
+          8
         ],
         [
-          5,
+          8,
+          8
+        ],
+        [
+          9,
           8
         ]
       ]
     },
     {
-      "label": "vertical stub x=0 y=8-9 (left edge)",
+      "label": "horizontal stub y=10 x=0-2 (left edge)",
       "cells": [
         [
           0,
-          8
+          10
         ],
         [
-          0,
-          9
-        ]
-      ]
-    },
-    {
-      "label": "vertical stub x=10 y=9-10",
-      "cells": [
-        [
-          10,
-          9
+          1,
+          10
         ],
         [
-          10,
+          2,
           10
         ]
       ]
     },
     {
-      "label": "block x=3-5 y=12-13",
+      "label": "vertical stub x=13 y=10-12",
       "cells": [
         [
-          3,
+          13,
+          10
+        ],
+        [
+          13,
+          11
+        ],
+        [
+          13,
           12
-        ],
+        ]
+      ]
+    },
+    {
+      "label": "block x=4-5 y=12-14",
+      "cells": [
         [
-          3,
-          13
-        ],
-        [
-          4,
-          13
+          5,
+          12
         ],
         [
           5,
           13
+        ],
+        [
+          4,
+          14
+        ],
+        [
+          5,
+          14
         ]
       ]
     },
     {
-      "label": "vertical stub x=11 y=13-15",
+      "label": "vertical stub x=10 y=14-15",
       "cells": [
         [
-          11,
-          13
-        ],
-        [
-          11,
+          10,
           14
         ],
         [
-          11,
+          10,
           15
         ]
       ]
     },
     {
-      "label": "vertical stub x=14 y=14-15 (right edge)",
+      "label": "horizontal stub y=15 x=13-14 (right edge)",
       "cells": [
         [
-          14,
-          14
+          13,
+          15
         ],
         [
           14,
@@ -165,32 +181,19 @@
       ]
     },
     {
-      "label": "vertical stub x=6 y=17-19 (bottom edge)",
+      "label": "vertical stub x=7 y=17-19 (bottom edge)",
       "cells": [
         [
-          6,
+          7,
           17
         ],
         [
-          6,
+          7,
           18
         ],
         [
-          6,
+          7,
           19
-        ]
-      ]
-    },
-    {
-      "label": "horizontal stub y=18 x=11-12",
-      "cells": [
-        [
-          11,
-          18
-        ],
-        [
-          12,
-          18
         ]
       ]
     }
