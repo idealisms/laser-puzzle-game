@@ -1,31 +1,33 @@
-'use strict';
 // Layout and optimal-solution shape metrics, shared by generate_levels.ts (post-solve warnings)
 // and scripts/puzzle-features.ts (analysis against player enjoyment ratings).
 
-const { calculateLaserPath } = require('../src/game/engine/simulate');
+// ES module syntax (not module.exports) so scripts/ can import it under the Next.js type check;
+// tsx still lets the CommonJS solver files require() it.
+import { calculateLaserPath } from '../src/game/engine/simulate';
+import type { Direction, LaserPath, MirrorType, Obstacle } from '../src/game/types';
 
 // Warning thresholds, chosen from enjoyment ratings (see scripts/puzzle-features.ts):
 // puzzles rated 6-7 averaged 0.30 edge-path share and 0.41 anchored share; puzzles rated 1-2
 // averaged 0.42 and 0.25.
-const MAX_EDGE_PATH_SHARE = 0.4;
-const MIN_ANCHORED_SHARE = 0.25;
+export const MAX_EDGE_PATH_SHARE = 0.4;
+export const MIN_ANCHORED_SHARE = 0.25;
 
 interface Cell { x: number; y: number }
 
 interface Bounds { left: number; right: number; top: number; bottom: number }
 
-interface LevelShape {
+export interface LevelShape {
   gridWidth: number;
   gridHeight: number;
-  laserConfig: { x: number; y: number; direction: string };
-  obstacles: { x: number; y: number; type?: string; orientation?: string }[];
-  optimalSolution: { x: number; y: number; type: string }[];
+  laserConfig: { x: number; y: number; direction: Direction };
+  obstacles: Obstacle[];
+  optimalSolution: { x: number; y: number; type: MirrorType }[];
 }
 
 const key = (x: number, y: number) => `${x},${y}`;
 
 // The playable area inside any fully blocked border rows/columns.
-function playableBounds(walls: Set<string>, width: number, height: number): Bounds {
+export function playableBounds(walls: Set<string>, width: number, height: number): Bounds {
   const rowBlocked = (y: number) => Array.from({ length: width }, (_, x) => x).every(x => walls.has(key(x, y)));
   const colBlocked = (x: number) => Array.from({ length: height }, (_, y) => y).every(y => walls.has(key(x, y)));
   const b = { left: 0, right: width - 1, top: 0, bottom: height - 1 };
@@ -36,12 +38,12 @@ function playableBounds(walls: Set<string>, width: number, height: number): Boun
   return b;
 }
 
-function edgeDistance(x: number, y: number, b: Bounds): number {
+export function edgeDistance(x: number, y: number, b: Bounds): number {
   return Math.min(x - b.left, b.right - x, y - b.top, b.bottom - y);
 }
 
 // 4-connected groups of obstacle cells.
-function obstacleGroups(cells: Cell[]): Cell[][] {
+export function obstacleGroups(cells: Cell[]): Cell[][] {
   const remaining = new Map(cells.map(c => [key(c.x, c.y), c]));
   const groups: Cell[][] = [];
   for (const start of cells) {
@@ -67,7 +69,7 @@ function obstacleGroups(cells: Cell[]): Cell[][] {
 
 // The beam as straight runs (the simulator records one segment per cell step), plus how many times
 // each free cell is crossed, across all streams.
-function traceBeam(laserPath: any, isFree: (x: number, y: number) => boolean) {
+export function traceBeam(laserPath: LaserPath, isFree: (x: number, y: number) => boolean) {
   const visits = new Map<string, number>();
   const runs: { horizontal: boolean; length: number }[] = [];
   for (const stream of laserPath.streams) {
@@ -83,7 +85,7 @@ function traceBeam(laserPath: any, isFree: (x: number, y: number) => boolean) {
   return { visits, runs };
 }
 
-function measureShape(level: LevelShape) {
+export function measureShape(level: LevelShape) {
   const { obstacles } = level;
   const mirrors = level.optimalSolution.map(m => ({ position: { x: m.x, y: m.y }, type: m.type }));
   const borderWalls = new Set(obstacles.filter(o => (o.type ?? 'wall') === 'wall').map(o => key(o.x, o.y)));
@@ -120,7 +122,7 @@ function measureShape(level: LevelShape) {
 }
 
 // Warnings for layouts whose optimal solution looks like the perimeter/sweep shapes players enjoy least.
-function checkLayout({ edgePathShare, anchoredShare }: { edgePathShare: number; anchoredShare: number }): string[] {
+export function checkLayout({ edgePathShare, anchoredShare }: { edgePathShare: number; anchoredShare: number }): string[] {
   const warnings: string[] = [];
   if (edgePathShare > MAX_EDGE_PATH_SHARE) {
     warnings.push(
@@ -137,13 +139,3 @@ function checkLayout({ edgePathShare, anchoredShare }: { edgePathShare: number; 
   return warnings;
 }
 
-module.exports = {
-  MAX_EDGE_PATH_SHARE,
-  MIN_ANCHORED_SHARE,
-  playableBounds,
-  edgeDistance,
-  obstacleGroups,
-  traceBeam,
-  measureShape,
-  checkLayout,
-};

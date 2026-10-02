@@ -4,7 +4,7 @@
 // Writes <dump-dir>/puzzle-features.csv and prints a summary.
 import fs from 'fs'
 import path from 'path'
-import type { LaserConfig, Obstacle } from '../src/game/types'
+import type { LaserConfig, MirrorType, Obstacle } from '../src/game/types'
 import { edgeDistance, measureShape } from '../solver/layout_metrics'
 import { type LevelRow, fmt, mean, readDumpJson, readRatings, spearman } from './lib/analysis'
 
@@ -65,7 +65,7 @@ type Feature = keyof typeof FEATURES
 
 function measure(row: LevelRow): Record<Feature, number> {
   const obstacles = JSON.parse(row.obstacles) as Obstacle[]
-  const optimalSolution = (JSON.parse(row.optimalSolution ?? '[]') as [number, number, string][])
+  const optimalSolution = (JSON.parse(row.optimalSolution ?? '[]') as [number, number, MirrorType][])
     .map(([x, y, type]) => ({ x, y, type }))
   const shape = measureShape({
     gridWidth: row.gridWidth,
@@ -77,7 +77,7 @@ function measure(row: LevelRow): Record<Feature, number> {
   const { bounds: b, interior, groups, visits, runs, mirrors } = shape
   const playableCells = (b.right - b.left + 1) * (b.bottom - b.top + 1)
 
-  const blocked = new Set(interior.map((o: Obstacle) => key(o.x, o.y)))
+  const blocked = new Set(interior.map(o => key(o.x, o.y)))
   let barriers = 0
   for (let y = b.top; y <= b.bottom; y++) {
     let n = 0
@@ -90,8 +90,7 @@ function measure(row: LevelRow): Record<Feature, number> {
     if (n >= BARRIER_SHARE * (b.bottom - b.top + 1)) barriers++
   }
 
-  type Run = { horizontal: boolean; length: number }
-  const pathLength = runs.reduce((a: number, r: Run) => a + r.length, 0) || 1
+  const pathLength = runs.reduce((a, r) => a + r.length, 0) || 1
 
   return {
     mirrors: row.mirrorsAvailable,
@@ -105,12 +104,12 @@ function measure(row: LevelRow): Record<Feature, number> {
     coverage: visits.size / (playableCells - interior.length),
     edgePathShare: shape.edgePathShare,
     edgeMirrorShare: mirrors.length
-      ? mirrors.filter((m: { position: { x: number; y: number } }) => edgeDistance(m.position.x, m.position.y, b) === 0).length / mirrors.length
+      ? mirrors.filter(m => edgeDistance(m.position.x, m.position.y, b) === 0).length / mirrors.length
       : 0,
-    crossings: [...visits.values()].filter((v: number) => v > 1).length,
+    crossings: [...visits.values()].filter(v => v > 1).length,
     segments: runs.length,
-    longRunShare: runs.filter((r: Run) => r.length >= LONG_RUN).reduce((a: number, r: Run) => a + r.length, 0) / pathLength,
-    horizontalShare: runs.filter((r: Run) => r.horizontal).reduce((a: number, r: Run) => a + r.length, 0) / pathLength,
+    longRunShare: runs.filter(r => r.length >= LONG_RUN).reduce((a, r) => a + r.length, 0) / pathLength,
+    horizontalShare: runs.filter(r => r.horizontal).reduce((a, r) => a + r.length, 0) / pathLength,
   }
 }
 
