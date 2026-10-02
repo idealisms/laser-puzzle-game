@@ -70,7 +70,8 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   // Number of times the player has pressed the Reset button (analytics only).
   const resetCountRef = useRef(0)
 
-  // Tracks foreground (visible-tab) time spent on the puzzle, from mount to submission.
+  // Tracks foreground (visible-tab) time spent on the puzzle, from the first mirror placed
+  // to submission.
   const foregroundTimerRef = useRef<ForegroundTimer | null>(null)
   if (foregroundTimerRef.current === null) {
     foregroundTimerRef.current = createForegroundTimer(
@@ -85,6 +86,12 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     document.addEventListener('visibilitychange', handleVisibilityChange)
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
+
+  // Nothing restores mirrors before the player acts, so the first non-empty board is
+  // the first placement. start() ignores repeat calls.
+  useEffect(() => {
+    if (gameState.placedMirrors.length > 0) foregroundTimerRef.current?.start()
+  }, [gameState.placedMirrors.length])
 
   const onReset = useCallback(() => {
     resetCountRef.current += 1
