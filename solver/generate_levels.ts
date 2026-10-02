@@ -16,6 +16,7 @@ const os = require('os');
 
 const { PUZZLES } = require('./puzzles');
 const { solvePuzzle } = require('./solve');
+const { checkLayout, measureShape } = require('./layout_metrics');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -78,7 +79,7 @@ async function generateLevel(dateStr: string, config: PuzzleConfig, solverOpts: 
 
   const dirName = ['up', 'right', 'down', 'left'][config.laserDir];
 
-  return {
+  const level = {
     date: dateStr,
     gridWidth: config.width,
     gridHeight: config.height,
@@ -103,6 +104,16 @@ async function generateLevel(dateStr: string, config: PuzzleConfig, solverOpts: 
     optimalScore,
     optimalSolution,
   };
+
+  const shape = measureShape(level);
+  const { edgePathShare, anchoredShare } = shape;
+  console.log(
+    `  Layout: ${(edgePathShare * 100).toFixed(0)}% of optimal path on outer ring, ` +
+    `${(anchoredShare * 100).toFixed(0)}% of obstacle cells anchored to an edge`
+  );
+  for (const warning of checkLayout(shape)) console.warn(`  WARNING: ${warning}`);
+
+  return level;
 }
 
 /**
