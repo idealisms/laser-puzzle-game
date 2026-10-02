@@ -12,7 +12,8 @@ const RATINGS_CSV = 'puzzle-ratings.csv'
 // Pseudo-count for shrinking per-puzzle averages toward the global mean.
 const PRIOR_WEIGHT = 3
 // Weights for the combined score; components missing for a puzzle are dropped and the rest renormalised.
-const WEIGHTS = { unsolved: 0.3, scoreGap: 0.3, pathMiss: 0.25, effort: 0.15 }
+// scoreSpread: a wide range of player scores suggests the long paths weren't obvious.
+const WEIGHTS = { scoreGap: 0.4, pathMiss: 0.35, scoreSpread: 0.25 }
 
 interface LevelRow {
   id: string
@@ -134,6 +135,17 @@ function shrink(values: number[], prior: number): number {
   return (values.reduce((a, b) => a + b, 0) + PRIOR_WEIGHT * prior) / (values.length + PRIOR_WEIGHT)
 }
 
+function sumSquaredDeviations(xs: number[]): number {
+  const m = mean(xs)
+  return xs.reduce((a, x) => a + (x - m) ** 2, 0)
+}
+
+// Standard deviation, pooled with PRIOR_WEIGHT degrees of freedom at the global variance.
+function shrunkStdDev(xs: number[], priorVariance: number): number {
+  const df = xs.length - 1
+  return Math.sqrt((sumSquaredDeviations(xs) + PRIOR_WEIGHT * priorVariance) / (df + PRIOR_WEIGHT))
+}
+
 // Percentile rank in [0, 1] of each value among the non-null values.
 function percentileRanks(values: (number | null)[]): (number | null)[] {
   const present = values.filter((v): v is number => v !== null).sort((a, b) => a - b)
@@ -225,9 +237,12 @@ function main() {
 
   const all = [...byLevel.values()].flat()
   const withPath = all.filter(s => s.pathOverlap !== null)
-  const globalSolve = mean(all.map(s => (s.solved ? 1 : 0)))
   const globalRatio = mean(all.map(s => s.ratio))
   const globalOverlap = mean(withPath.map(s => s.pathOverlap!))
+  const groups = [...byLevel.values()]
+  const pooledVariance =
+    groups.reduce((a, subs) => a + sumSquaredDeviations(subs.map(s => s.ratio)), 0) /
+    groups.reduce((a, subs) => a + subs.length - 1, 0)
 
   const rows = [...byLevel.entries()].map(([levelId, subs]) => {
     const level = levels.get(levelId)!
@@ -247,19 +262,18 @@ function main() {
       near: mirrored.reduce((a, s) => a + s.near, 0),
       off: mirrored.reduce((a, s) => a + s.off, 0),
       medianTime: times.length ? median(times) : null,
-      unsolved: 1 - shrink(subs.map(s => (s.solved ? 1 : 0)), globalSolve),
       scoreGap: 1 - shrink(subs.map(s => s.ratio), globalRatio),
       pathMiss: mirrored.length ? 1 - shrink(mirrored.map(s => s.pathOverlap!), globalOverlap) : null,
+      scoreSpread: shrunkStdDev(subs.map(s => s.ratio), pooledVariance),
       difficulty: 0,
     }
   })
 
   const components = Object.keys(WEIGHTS) as (keyof typeof WEIGHTS)[]
   const ranks = {
-    unsolved: percentileRanks(rows.map(r => r.unsolved)),
     scoreGap: percentileRanks(rows.map(r => r.scoreGap)),
     pathMiss: percentileRanks(rows.map(r => r.pathMiss)),
-    effort: percentileRanks(rows.map(r => r.medianTime)),
+    scoreSpread: percentileRanks(rows.map(r => r.scoreSpread)),
   }
   rows.forEach((row, i) => {
     let total = 0, weight = 0
@@ -274,12 +288,12 @@ function main() {
   rows.sort((a, b) => a.date.localeCompare(b.date))
 
   const header = [
-    'date', 'optimalScore', 'n', 'nMirrors', 'solveRate', 'meanRatio', 'meanPathOverlap',
+    'date', 'optimalScore', 'n', 'nMirrors', 'solveRate', 'meanRatio', 'scoreSpread', 'meanPathOverlap',
     'meanMirrorCredit', 'exact', 'flipped', 'near', 'off', 'medianTime', 'difficulty',
   ]
   const csv = [header.join(',')].concat(
     rows.map(r => [
-      r.date, r.optimalScore, r.n, r.nMirrors, fmt(r.solveRate), fmt(r.meanRatio), fmt(r.meanPathOverlap),
+      r.date, r.optimalScore, r.n, r.nMirrors, fmt(r.solveRate), fmt(r.meanRatio), fmt(r.scoreSpread), fmt(r.meanPathOverlap),
       fmt(r.meanMirrorCredit), r.exact, r.flipped, r.near, r.off, fmt(r.medianTime, 0), fmt(r.difficulty, 1),
     ].join(','))
   )
@@ -290,21 +304,19 @@ function main() {
   const byDifficulty = [...rows].sort((a, b) => b.difficulty - a.difficulty)
   const show = (r: (typeof rows)[number]) =>
     `  ${r.date}  diff=${r.difficulty.toFixed(0).padStart(3)}  n=${String(r.n).padStart(2)}  ` +
-    `solved=${(r.solveRate * 100).toFixed(0).padStart(3)}%  ratio=${r.meanRatio.toFixed(2)}  ` +
-    `overlap=${r.meanPathOverlap === null ? ' -- ' : r.meanPathOverlap.toFixed(2)}  ` +
-    `time=${r.medianTime === null ? '--' : `${Math.round(r.medianTime / 60)}m`}`
+    `ratio=${r.meanRatio.toFixed(2)}  spread=${r.scoreSpread.toFixed(3)}  ` +
+    `overlap=${r.meanPathOverlap === null ? ' -- ' : r.meanPathOverlap.toFixed(2)}`
   console.log('Hardest (n >= 3):')
   byDifficulty.filter(r => r.n >= 3).slice(0, 10).forEach(r => console.log(show(r)))
   console.log('\nEasiest (n >= 3):')
   byDifficulty.filter(r => r.n >= 3).slice(-10).reverse().forEach(r => console.log(show(r)))
 
-  // Sanity checks: do the components agree with each other and with the hand ratings?
+  // Sanity checks: how the components relate, and whether difficulty predicts enjoyment.
   const both = rows.filter(r => r.meanPathOverlap !== null)
   console.log(`\nSpearman(scoreGap, pathMiss) over ${both.length} puzzles with mirror data: ` +
     spearman(both.map(r => r.scoreGap), both.map(r => r.pathMiss!)).toFixed(2))
-  const timed = rows.filter(r => r.medianTime !== null)
-  console.log(`Spearman(scoreGap, medianTime) over ${timed.length} puzzles: ` +
-    spearman(timed.map(r => r.scoreGap), timed.map(r => r.medianTime!)).toFixed(2))
+  console.log(`Spearman(scoreGap, scoreSpread) over ${rows.length} puzzles: ` +
+    spearman(rows.map(r => r.scoreGap), rows.map(r => r.scoreSpread)).toFixed(2))
 
   if (fs.existsSync(RATINGS_CSV)) {
     const ratings = new Map<string, number>()
@@ -313,7 +325,7 @@ function main() {
       if (rating) ratings.set(date, Number(rating))
     }
     const rated = rows.filter(r => ratings.has(r.date) && r.n >= 3)
-    console.log(`Spearman(difficulty, ${RATINGS_CSV} rating) over ${rated.length} puzzles with n >= 3: ` +
+    console.log(`Spearman(difficulty, enjoyment rating) over ${rated.length} puzzles with n >= 3: ` +
       spearman(rated.map(r => r.difficulty), rated.map(r => ratings.get(r.date)!)).toFixed(2))
   }
 }
