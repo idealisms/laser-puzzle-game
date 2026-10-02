@@ -73,6 +73,7 @@ When working with the database, never echo the production database name or passw
 2. Run solver from inside the `solver/` directory:
    - No splitters: `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --v2 --beam-width 12000`
    - Splitters: `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --beam-width 6000` (expect ~9 min per puzzle)
+   - After solving, the generator prints layout metrics and warns when more than 40% of the optimal path is on the outer ring or fewer than 25% of obstacle cells are anchored to an edge (see `solver/layout_metrics.ts`). These shapes rate poorly with players — rework the layout rather than shipping it.
 3. Seed to dev: `DOTENV_CONFIG_PATH=.env.local npm run db:seed`
 4. Seed to prod: `DOTENV_CONFIG_PATH=.env.production npm run db:seed`
 
