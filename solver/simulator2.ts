@@ -351,7 +351,8 @@ class MinHeap {
   _siftDown(i: number) {
     const d = this._data, n = d.length;
     for (;;) {
-      let s = i, l = 2 * i + 1, r = 2 * i + 2;
+      let s = i;
+      const l = 2 * i + 1, r = 2 * i + 2;
       if (l < n && d[l].score < d[s].score) s = l;
       if (r < n && d[r].score < d[s].score) s = r;
       if (s === i) break;

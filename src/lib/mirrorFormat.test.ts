@@ -2,7 +2,7 @@ import { parseMirrorList, formatMirrorList } from './mirrorFormat'
 
 describe('parseMirrorList', () => {
   it('parses compact [[x, y, type]] format', () => {
-    const result = parseMirrorList([[3, 7, '/'], [5, 2, '\\']] as any)
+    const result = parseMirrorList([[3, 7, '/'], [5, 2, '\\']] as Parameters<typeof parseMirrorList>[0])
     expect(result).toEqual([
       { x: 3, y: 7, type: '/' },
       { x: 5, y: 2, type: '\\' },
@@ -36,7 +36,7 @@ describe('formatMirrorList', () => {
 
   it('round-trips through parseMirrorList', () => {
     const mirrors = [{ x: 3, y: 7, type: '/' }, { x: 5, y: 2, type: '\\' }]
-    const parsed = parseMirrorList(JSON.parse(formatMirrorList(mirrors)) as any)
+    const parsed = parseMirrorList(JSON.parse(formatMirrorList(mirrors)))
     expect(parsed).toEqual(mirrors)
   })
 

@@ -166,7 +166,7 @@ console.log(
 );
 
 const rand = makePrng(seedArg);
-let assignment = shuffle(puzzles, rand);
+const assignment = shuffle(puzzles, rand);
 
 const ok = tryFix(assignment, rand);
 if (!ok) {
