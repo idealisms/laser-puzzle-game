@@ -3,14 +3,11 @@
 /**
  * Laser Puzzle Solver — Node.js parallel implementation
  *
- * Default search (beam_search.ts): one beam over all depths, with each depth's
+ * Beam search (beam_search.ts): one beam over all depths, with each depth's
  * expansion split across a pool of worker threads. Handles splitters and gates.
- *
- * --v2 search (simulator2.ts): segment-based, one worker per mirror depth.
  *
  * Usage:
  *   npx tsx solve.ts 2026-01-22 --beam-width 12000 --workers 12  # recommended (all puzzle types)
- *   npx tsx solve.ts 2026-01-22 --v2                               # older segment-based search
  *   npx tsx solve.ts --list                          # list puzzles
  *   npx tsx solve.ts 2026-01-22 --workers 1         # single-threaded
  *   npx tsx solve.ts 2026-01-22 --no-prune
@@ -22,7 +19,7 @@ const os = require('os');
 const { Worker } = require('worker_threads');
 
 const { PUZZLES } = require('./puzzles');
-const { simulateLaser, posKey } = require('./simulator');
+const { simulateLaser } = require('./simulator');
 const { beamSearch } = require('./beam_search');
 
 // ── CLI argument parsing ──────────────────────────────────────────────────────
@@ -36,7 +33,6 @@ function parseArgs(argv) {
     beamWidth: 12000,
     noPrune: false,
     workers: os.cpus().length,
-    v2: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -44,73 +40,15 @@ function parseArgs(argv) {
     if (a === '--list' || a === '-l') { opts.list = true; }
     else if (a === '--quiet' || a === '-q') { opts.quiet = true; }
     else if (a === '--no-prune') { opts.noPrune = true; }
-    else if (a === '--v2') { opts.v2 = true; }
     else if (a === '--beam-width') { opts.beamWidth = parseInt(args[++i], 10); }
     else if (a === '--workers') { opts.workers = parseInt(args[++i], 10); }
     else if (!a.startsWith('-')) { opts.puzzle = a; }
+    else { console.error(`Unknown argument: ${a}`); process.exit(1); }
   }
   return opts;
 }
 
-// ── Worker pool ───────────────────────────────────────────────────────────────
-
-/**
- * Run --v2 beam searches in parallel, one worker per mirror-count depth level.
- * Returns the best { score, mirrors } across all depths.
- */
-function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth) {
-  return new Promise((resolve, reject) => {
-    const depths = Array.from({ length: numMirrors }, (_, i) => i + 1);
-    // Cap workers to avoid spawning more than needed
-    const effectiveWorkers = Math.min(numWorkers, numMirrors);
-
-    let bestScore = 0, bestMirrors = [];
-    let completed = 0;
-    let dispatched = 0;
-    const errors = [];
-
-    function spawnNext() {
-      if (dispatched >= depths.length) return;
-      const targetDepth = depths[dispatched++];
-
-      const worker = new Worker(path.join(__dirname, 'worker.ts'), {
-        execArgv: ['--require', 'tsx/cjs'],
-        workerData: {
-          configData: config,
-          ...sharedData,
-          targetDepth,
-          beamWidth,
-        },
-      });
-
-      worker.on('message', ({ score, mirrors }) => {
-        if (score > bestScore) {
-          bestScore = score;
-          bestMirrors = mirrors;
-        }
-      });
-
-      worker.on('error', (err) => {
-        errors.push(err);
-      });
-
-      worker.on('exit', () => {
-        completed++;
-        // Dispatch next depth if any remain
-        spawnNext();
-        if (completed === depths.length) {
-          if (errors.length > 0) reject(errors[0]);
-          else resolve({ score: bestScore, mirrors: bestMirrors });
-        }
-      });
-    }
-
-    // Seed the pool up to effectiveWorkers concurrent workers
-    for (let i = 0; i < effectiveWorkers; i++) spawnNext();
-  });
-}
-
-// ── Layer-parallel beam search (default; required for splitters/gates) ───────
+// ── Layer-parallel beam search ────────────────────────────────────────────────
 
 /**
  * Run beam_search.ts with a pool of persistent beam_worker.ts threads.
@@ -158,14 +96,11 @@ async function runLayerParallel(config, numWorkers, beamWidth, usePathPruning, o
 /**
  * Solve a puzzle config and return { score, mirrors }.
  *
- * Default: layer-parallel beam search (beam_search.ts), which handles every
+ * Runs the layer-parallel beam search (beam_search.ts), which handles every
  * puzzle type and keeps all `opts.workers` threads busy at every depth.
  *
- * With `v2`: segment-based search (simulator2.ts), parallelised across
- * mirror-count depth levels, one worker per depth.
- *
  * @param {object} config  Puzzle config from PUZZLES (puzzles.ts).
- * @param {object} opts    { beamWidth?, workers?, noPrune?, v2?, onLayer? }
+ * @param {object} opts    { beamWidth?, workers?, noPrune?, onLayer? }
  * @returns {Promise<{ score: number, mirrors: Array }>}
  */
 async function solvePuzzle(config, opts: any = {}) {
@@ -173,29 +108,10 @@ async function solvePuzzle(config, opts: any = {}) {
     beamWidth = 8000,
     workers = os.cpus().length,
     noPrune = false,
-    v2 = false,
     onLayer = null,
   } = opts;
 
-  if (!v2) return runLayerParallel(config, workers, beamWidth, !noPrune, onLayer);
-
-  // Pre-compute shared data for the v2 workers
-  const obstacleSet = new Set(config.obstacles.map(([x, y]) => posKey(x, y)));
-  const splitterMap = new Map(
-    (config.splitters || []).map(([x, y, o]) => [posKey(x, y), o])
-  );
-  const gateMap = new Map((config.gates || []).map(([x, y, o]) => [posKey(x, y), o]));
-  const laserPos = posKey(config.laserX, config.laserY);
-  const invalidPositions = new Set([...obstacleSet, ...splitterMap.keys(), ...gateMap.keys(), laserPos]);
-
-  const sharedData = {
-    obstacleSetArr: [...obstacleSet],
-    splitterMapArr: [...splitterMap.entries()],
-    gateMapArr: [...gateMap.entries()],
-    invalidPosArr: [...invalidPositions],
-  };
-
-  return runParallel(config, sharedData, config.numMirrors, workers, beamWidth);
+  return runLayerParallel(config, workers, beamWidth, !noPrune, onLayer);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -232,16 +148,15 @@ async function main() {
     const dirName = ['up','right','down','left'][config.laserDir];
     console.log(`Laser: (${config.laserX}, ${config.laserY}) -> ${dirName}`);
     const pruneStr = opts.noPrune ? ', no-prune' : '';
-    const v2Str = opts.v2 ? ', v2' : '';
     console.log();
-    console.log(`Solving with beam search (beam_width: ${opts.beamWidth}${pruneStr}${v2Str}, workers: ${opts.workers})...`);
+    console.log(`Solving with beam search (beam_width: ${opts.beamWidth}${pruneStr}, workers: ${opts.workers})...`);
   }
 
   const startTime = Date.now();
   const onLayer = opts.quiet ? null : ({ depth, beamCount, layerBest, bestScore, ms }) =>
     console.log(`  depth ${depth}: ${beamCount} states, layer best ${layerBest}, best ${bestScore} (${(ms / 1000).toFixed(1)}s)`);
   const result = await solvePuzzle(config, {
-    beamWidth: opts.beamWidth, workers: opts.workers, noPrune: opts.noPrune, v2: opts.v2, onLayer,
+    beamWidth: opts.beamWidth, workers: opts.workers, noPrune: opts.noPrune, onLayer,
   });
   const elapsed = (Date.now() - startTime) / 1000;
 
