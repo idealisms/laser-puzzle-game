@@ -28,8 +28,7 @@ React 19, TypeScript, Tailwind CSS 4, Prisma with PostgreSQL (Neon).
 ### Step-by-step
 1. Write `solver/puzzles/YYYY-MM-DD.json` (see format below)
 2. Run solver:
-   - **No splitters:** `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --v2 --beam-width 12000`
-   - **Splitters:** `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --beam-width 6000` (~9 min/puzzle, no `--v2`)
+   - Any puzzle type: `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --beam-width 12000` (~2–6 s/puzzle)
 3. Seed to dev: `DOTENV_CONFIG_PATH=.env.local npm run db:seed`
 4. Seed to prod: `DOTENV_CONFIG_PATH=.env.production npm run db:seed`
 
@@ -84,7 +83,6 @@ Hause, Knott, Wath, Wyke, Fen
 - `dir` = direction laser must travel to **trigger a split** (perpendicular beams)
 - `laser dir == opposite(dir)` → wall (blocked)
 - otherwise → reflects toward `OPPOSITE[dir]`
-- **Always use non-v2 solver** (`--beam-width 6000`, no `--v2`) for splitter puzzles
 
 ---
 
@@ -138,7 +136,7 @@ Two splitter puzzles had incorrect solutions (mirrors never reached, inflated sc
 - **Aug 29 (Latch):** was 126, corrected to 124 — fixed in PR #23, merged
 
 Root cause: those puzzles were re-solved with `--v2` flag which doesn't handle
-splitters. Always use the non-v2 command for splitter puzzles.
+splitters. (The `--v2` solver has since been removed.)
 
 All other 37 splitter puzzles verified clean.
 

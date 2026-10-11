@@ -4,35 +4,12 @@
 
 const { calculateLaserPath } = require('../src/game/engine/simulate');
 
-const UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
-
-// [dx, dy] indexed by direction
-const DELTAS = [[0,-1],[1,0],[0,1],[-1,0]];
-
-// opposite[dir] = reverse direction
-const OPPOSITE = [DOWN, LEFT, UP, RIGHT]; // [2, 3, 0, 1]
-
-// REFLECT[mirrorType][incomingDir] = outgoingDir
-// '/' : UP→RIGHT, RIGHT→UP, DOWN→LEFT, LEFT→DOWN
-// '\' : UP→LEFT,  RIGHT→DOWN, DOWN→RIGHT, LEFT→UP
-const REFLECT = {
-  '/':  [RIGHT, UP, LEFT, DOWN],   // indexed [UP, RIGHT, DOWN, LEFT]
-  '\\': [LEFT, DOWN, RIGHT, UP],
-};
-
 const INT_TO_DIR = ['up', 'right', 'down', 'left'];
-const DIR_TO_INT = { up: UP, right: RIGHT, down: DOWN, left: LEFT };
+const DIR_TO_INT = { up: 0, right: 1, down: 2, left: 3 };
 
 function dirFromString(s) {
   return DIR_TO_INT[s];
 }
-
-// Encode (x, y) as a single integer. Grid is at most 15×20, so x*100+y is safe.
-function posKey(x, y) { return x * 100 + y; }
-function decodePos(k) { return [Math.floor(k / 100), k % 100]; }
-
-// Encode (x, y, dir) for visited-state tracking.
-function stateKey(x, y, dir) { return (x * 20 + y) * 4 + dir; }
 
 /**
  * Simulate a full laser path from scratch.
@@ -82,9 +59,4 @@ function simulateLaser(config, mirrors) {
   return { length: laserPath.totalLength, terminationReason };
 }
 
-module.exports = {
-  UP, RIGHT, DOWN, LEFT,
-  DELTAS, OPPOSITE, REFLECT,
-  dirFromString, posKey, decodePos, stateKey,
-  simulateLaser,
-};
+module.exports = { dirFromString, simulateLaser };
