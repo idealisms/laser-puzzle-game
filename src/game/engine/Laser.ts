@@ -1,4 +1,4 @@
-export { resolveCollisions, calculateLaserPath } from './simulate'
+export { sameCellCollision, calculateLaserPath } from './simulate'
 import { LaserPath } from '../types'
 
 export function calculateScore(laserPath: LaserPath): number {

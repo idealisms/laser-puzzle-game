@@ -1,5 +1,5 @@
-import { calculateLaserPath, resolveCollisions } from '../simulate'
-import { LaserConfig, LaserStream, Mirror, Obstacle, Position } from '../../types'
+import { calculateLaserPath, sameCellCollision } from '../simulate'
+import { Direction, LaserConfig, LaserPath, Mirror, Obstacle } from '../../types'
 
 // Mirror reflection reference:
 //   '\': right→down, up→left, left→up, down→right
@@ -20,231 +20,70 @@ function wall(x: number, y: number): Obstacle {
   return { x, y }
 }
 
-function seg(x0: number, y0: number, x1: number, y1: number, dir: 'up' | 'down' | 'left' | 'right') {
-  return { start: { x: x0, y: y0 }, end: { x: x1, y: y1 }, direction: dir }
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
-// resolveCollisions — unit tests with hand-crafted streams
+// sameCellCollision — two beams arriving at one cell at the same time
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe('resolveCollisions', () => {
-  it('no collision when streams do not meet', () => {
-    // Stream 0: goes right along row 3; Stream 1: goes right along row 7
-    const streams: LaserStream[] = [
-      { segments: [seg(0,3,1,3,'right'), seg(1,3,2,3,'right')], generation: 0 },
-      { segments: [seg(0,7,1,7,'right'), seg(1,7,2,7,'right')], generation: 1 },
-    ]
-    const offsets = [0, 0]
-    const result = resolveCollisions(streams, offsets, [])
-    expect(result).toHaveLength(0)
+describe('sameCellCollision', () => {
+  const at = { x: 5, y: 5 }
+  const collide = (a: Direction, b: Direction, mirrors: Mirror[] = [], obstacles: Obstacle[] = []) =>
+    sameCellCollision(at, a, b, mirrors, obstacles)
+
+  it('open space: head-on beams collide', () => {
+    expect(collide('right', 'left')).toBe(true)
+    expect(collide('up', 'down')).toBe(true)
   })
 
-  it('same-cell same-time collision: beams arrive at same cell from opposite directions at the same global time', () => {
-    // Stream 0 (offset 0): goes right, arriving at (5,5) at segi=4, gTime=5
-    // Stream 1 (offset 0): goes left, arriving at (5,5) at segi=4, gTime=5
-    const streams: LaserStream[] = [
-      { segments: [seg(1,5,2,5,'right'), seg(2,5,3,5,'right'), seg(3,5,4,5,'right'), seg(4,5,5,5,'right'), seg(5,5,6,5,'right')], generation: 0 },
-      { segments: [seg(9,5,8,5,'left'),  seg(8,5,7,5,'left'),  seg(7,5,6,5,'left'),  seg(6,5,5,5,'left'),  seg(5,5,4,5,'left')],  generation: 1 },
-    ]
-    const offsets = [0, 0]
-    const result = resolveCollisions(streams, offsets, [])
-    expect(result).toHaveLength(1)
-    expect(result[0]).toEqual({ x: 5, y: 5 })
-    // Both streams truncated to end at (5,5)
-    expect(streams[0].segments).toHaveLength(4)  // segs 0..3, segi=3 is the last kept
-    expect(streams[1].segments).toHaveLength(4)
-    expect(streams[0].segments[3].end).toEqual({ x: 5, y: 5 })
-    expect(streams[1].segments[3].end).toEqual({ x: 5, y: 5 })
+  it('open space: same-direction beams collide', () => {
+    expect(collide('right', 'right')).toBe(true)
   })
 
-  it('crossing collision: beams swap adjacent cells at the same global time', () => {
-    // Stream 0 (offset 0): arrives at (5,5) going right at gTime=5 (segi=4)
-    // Stream 1 (offset 0): arrives at (6,5) going left  at gTime=5 (segi=4)
-    // → A heading to (6,5), B heading to (5,5): they cross between the cells
-    const streams: LaserStream[] = [
-      { segments: [seg(1,5,2,5,'right'), seg(2,5,3,5,'right'), seg(3,5,4,5,'right'), seg(4,5,5,5,'right'), seg(5,5,6,5,'right')], generation: 0 },
-      { segments: [seg(10,5,9,5,'left'), seg(9,5,8,5,'left'),  seg(8,5,7,5,'left'),  seg(7,5,6,5,'left'),  seg(6,5,5,5,'left')],  generation: 1 },
-    ]
-    const offsets = [0, 0]
-    const result = resolveCollisions(streams, offsets, [])
-    expect(result).toHaveLength(1)
-    expect(result[0]).toEqual({ x: 5.5, y: 5 })  // midpoint between (5,5) and (6,5)
-    // Each stream truncated at segi=3 (the segment before the crossing cell)
-    expect(streams[0].segments).toHaveLength(4)
-    expect(streams[1].segments).toHaveLength(4)
-  })
-
-  it('same-direction beams at the same cell and time count as a collision', () => {
-    // Both going right along identical paths — same-direction beams share the same
-    // point in space at the same time, which counts as a collision under the new rule.
-    // First shared cell is (4,5) at gTime=1; both streams truncated there.
-    const streams: LaserStream[] = [
-      { segments: [seg(3,5,4,5,'right'), seg(4,5,5,5,'right'), seg(5,5,6,5,'right')], generation: 0 },
-      { segments: [seg(3,5,4,5,'right'), seg(4,5,5,5,'right'), seg(5,5,6,5,'right')], generation: 1 },
-    ]
-    const result = resolveCollisions(streams, [0, 0], [])
-    expect(result).toHaveLength(1)
-    expect(result[0]).toEqual({ x: 4, y: 5 })
-    expect(streams[0].segments).toHaveLength(1)
-    expect(streams[1].segments).toHaveLength(1)
-  })
-
-  it('mirror-side rule / same side: right + down at a / mirror — collision', () => {
-    // RIGHT is on face {right,down}, DOWN is on face {right,down} → same face → collision
-    const streams: LaserStream[] = [
-      { segments: [seg(1,5,2,5,'right'), seg(2,5,3,5,'right'), seg(3,5,4,5,'right'), seg(4,5,5,5,'right')], generation: 0 },
-      { segments: [seg(5,1,5,2,'down'),  seg(5,2,5,3,'down'),  seg(5,3,5,4,'down'),  seg(5,4,5,5,'down')],  generation: 1 },
-    ]
-    const result = resolveCollisions(streams, [0, 0], [mirror(5, 5, '/')])
-    expect(result).toHaveLength(1)
-    expect(result[0]).toEqual({ x: 5, y: 5 })
-    expect(streams[0].segments).toHaveLength(4)
-    expect(streams[1].segments).toHaveLength(4)
-  })
-
-  it('mirror-side rule / opposite sides: right + left at a / mirror — no collision', () => {
-    // RIGHT is on face {right,down}, LEFT is on face {up,left} → opposite faces → no collision
-    const streams: LaserStream[] = [
-      { segments: [seg(1,5,2,5,'right'), seg(2,5,3,5,'right'), seg(3,5,4,5,'right'), seg(4,5,5,5,'right')], generation: 0 },
-      { segments: [seg(9,5,8,5,'left'),  seg(8,5,7,5,'left'),  seg(7,5,6,5,'left'),  seg(6,5,5,5,'left')],  generation: 1 },
-    ]
-    const result = resolveCollisions(streams, [0, 0], [mirror(5, 5, '/')])
-    expect(result).toHaveLength(0)
-  })
-
-  it('mirror-side rule / opposite sides: down + up at a / mirror — no collision', () => {
-    // DOWN is on face {right,down}, UP is on face {up,left} → opposite faces → no collision
-    const streams: LaserStream[] = [
-      { segments: [seg(5,1,5,2,'down'),  seg(5,2,5,3,'down'),  seg(5,3,5,4,'down'),  seg(5,4,5,5,'down')],  generation: 0 },
-      { segments: [seg(5,9,5,8,'up'),    seg(5,8,5,7,'up'),    seg(5,7,5,6,'up'),    seg(5,6,5,5,'up')],    generation: 1 },
-    ]
-    const result = resolveCollisions(streams, [0, 0], [mirror(5, 5, '/')])
-    expect(result).toHaveLength(0)
-  })
-
-  it('mirror-side rule \\ same side: right + up at a \\ mirror — collision', () => {
-    // RIGHT is on face {up,right}, UP is on face {up,right} → same face → collision
-    const streams: LaserStream[] = [
-      { segments: [seg(1,5,2,5,'right'), seg(2,5,3,5,'right'), seg(3,5,4,5,'right'), seg(4,5,5,5,'right')], generation: 0 },
-      { segments: [seg(5,9,5,8,'up'),    seg(5,8,5,7,'up'),    seg(5,7,5,6,'up'),    seg(5,6,5,5,'up')],    generation: 1 },
-    ]
-    const result = resolveCollisions(streams, [0, 0], [mirror(5, 5, '\\')])
-    expect(result).toHaveLength(1)
-    expect(result[0]).toEqual({ x: 5, y: 5 })
-  })
-
-  it('mirror-side rule \\ opposite sides: up + down at a \\ mirror — no collision', () => {
-    // UP is on face {up,right}, DOWN is on face {down,left} → opposite faces → no collision
-    const streams: LaserStream[] = [
-      { segments: [seg(5,9,5,8,'up'),   seg(5,8,5,7,'up'),   seg(5,7,5,6,'up'),   seg(5,6,5,5,'up')],   generation: 0 },
-      { segments: [seg(5,1,5,2,'down'), seg(5,2,5,3,'down'), seg(5,3,5,4,'down'), seg(5,4,5,5,'down')], generation: 1 },
-    ]
-    const result = resolveCollisions(streams, [0, 0], [mirror(5, 5, '\\')])
-    expect(result).toHaveLength(0)
-  })
-
-  it('no mirror at cell: head-on beams always collide in open space', () => {
-    // RIGHT and LEFT in open space (no mirror) → always collide
-    const streams: LaserStream[] = [
-      { segments: [seg(1,5,2,5,'right'), seg(2,5,3,5,'right'), seg(3,5,4,5,'right'), seg(4,5,5,5,'right')], generation: 0 },
-      { segments: [seg(9,5,8,5,'left'),  seg(8,5,7,5,'left'),  seg(7,5,6,5,'left'),  seg(6,5,5,5,'left')],  generation: 1 },
-    ]
-    const result = resolveCollisions(streams, [0, 0], [])
-    expect(result).toHaveLength(1)
-    expect(result[0]).toEqual({ x: 5, y: 5 })
-    expect(streams[0].segments).toHaveLength(4)
-    expect(streams[1].segments).toHaveLength(4)
-  })
-
-  it('perpendicular beams in open space do not collide', () => {
-    // Stream 0 goes right, arriving at (5,5) at gTime=5 (segi=4).
-    // Stream 1 goes down, arriving at (5,5) at gTime=5 (segi=4).
-    // Perpendicular in open space → no collision.
-    const streams: LaserStream[] = [
-      { segments: [seg(0,5,1,5,'right'), seg(1,5,2,5,'right'), seg(2,5,3,5,'right'), seg(3,5,4,5,'right'), seg(4,5,5,5,'right')], generation: 0 },
-      { segments: [seg(5,0,5,1,'down'),  seg(5,1,5,2,'down'),  seg(5,2,5,3,'down'),  seg(5,3,5,4,'down'),  seg(5,4,5,5,'down')],  generation: 1 },
-    ]
-    const result = resolveCollisions(streams, [0, 0], [])
-    expect(result).toHaveLength(0)
-  })
-
-  it('perpendicular beams in open space: all four combos pass through', () => {
-    // up+right, up+left, down+right, down+left — none collide in open space
-    const pairs: [Parameters<typeof seg>[4], Parameters<typeof seg>[4]][] = [
-      ['up', 'right'], ['up', 'left'], ['down', 'right'], ['down', 'left'],
-    ]
-    for (const [d0, d1] of pairs) {
-      const streams: LaserStream[] = [
-        { segments: [seg(4,5,5,5,d0)], generation: 0 },
-        { segments: [seg(4,5,5,5,d1)], generation: 1 },
-      ]
-      const result = resolveCollisions(streams, [0, 0], [])
-      expect(result).toHaveLength(0)
+  it('open space: perpendicular beams pass through each other', () => {
+    for (const [a, b] of [['up', 'right'], ['up', 'left'], ['down', 'right'], ['down', 'left']] as [Direction, Direction][]) {
+      expect(collide(a, b)).toBe(false)
     }
   })
 
-  it('same-cell at different times does not trigger collision', () => {
-    // Stream 0 arrives at (5,5) at gTime=5, Stream 1 arrives at gTime=8
-    const streams: LaserStream[] = [
-      { segments: [seg(1,5,2,5,'right'), seg(2,5,3,5,'right'), seg(3,5,4,5,'right'), seg(4,5,5,5,'right')], generation: 0 },
-      { segments: [seg(8,5,7,5,'left'), seg(7,5,6,5,'left'), seg(6,5,5,5,'left')], generation: 1 },
-    ]
-    // offsets: stream 0 offset=0 → (5,5) at gTime 4; stream 1 offset=5 → (5,5) at gTime 5+2+1=8
-    const result = resolveCollisions(streams, [0, 5], [])
-    expect(result).toHaveLength(0)
+  it("'/' mirror: beams on the same face collide, opposite faces don't", () => {
+    const m = [mirror(5, 5, '/')]
+    expect(collide('right', 'down', m)).toBe(true)  // both on face {right, down}
+    expect(collide('right', 'left', m)).toBe(false)
+    expect(collide('down', 'up', m)).toBe(false)
   })
 
-  it('loop: only ONE collision recorded for a symmetric head-on pair', () => {
-    // Streams swap adjacent cells at T=5 (crossing) AND at T=6 (swap back).
-    // The crossing check at T=5 and T=6 would both fire; pairKey deduplication
-    // keeps only the earlier one (T=5).
-    const streams: LaserStream[] = [
-      {
-        segments: [
-          seg(0,5,1,5,'right'), seg(1,5,2,5,'right'), seg(2,5,3,5,'right'),
-          seg(3,5,4,5,'right'), seg(4,5,5,5,'right'), seg(5,5,6,5,'right'),
-          seg(6,5,7,5,'right'),
-        ],
-        generation: 0,
-      },
-      {
-        segments: [
-          seg(10,5,9,5,'left'), seg(9,5,8,5,'left'), seg(8,5,7,5,'left'),
-          seg(7,5,6,5,'left'),  seg(6,5,5,5,'left'),  seg(5,5,4,5,'left'),
-          seg(4,5,3,5,'left'),
-        ],
-        generation: 1,
-      },
-    ]
-    const result = resolveCollisions(streams, [0, 0], [])
-    expect(result).toHaveLength(1)
+  it("'\\' mirror: beams on the same face collide, opposite faces don't", () => {
+    const m = [mirror(5, 5, '\\')]
+    expect(collide('right', 'up', m)).toBe(true)    // both on face {up, right}
+    expect(collide('up', 'down', m)).toBe(false)
   })
 
-  it('splitter: split-face vs wall-face arriving at same time — no collision', () => {
-    // Splitter at (7,7) orientation='right': wall face = LEFT.
-    // Stream 0 arrives going RIGHT (split face); stream 1 arrives going LEFT (wall face).
-    // Wall-face beam simply stops — must not be treated as a collision with the other beam.
-    const streams: LaserStream[] = [
-      { segments: [seg(6, 7, 7, 7, 'right')], generation: 0, colorIndex: 0 },
-      { segments: [seg(8, 7, 7, 7, 'left')],  generation: 1, colorIndex: 1 },
-    ]
-    const result = resolveCollisions(streams, [0, 0], [], [splitter(7, 7, 'right')])
-    expect(result).toHaveLength(0)
+  it('splitter: a beam hitting the wall face just stops, no collision', () => {
+    // orientation 'right' → wall face is hit by a beam travelling LEFT
+    expect(collide('right', 'left', [], [splitter(5, 5, 'right')])).toBe(false)
   })
 
-  it('splitter: two reflect-face beams arriving head-on should collide', () => {
-    // Splitter at (7,7) orientation='right': reflect faces = UP and DOWN (both non-wall).
-    // Opposite arrivals on non-wall faces must collide.
-    const streams: LaserStream[] = [
-      { segments: [seg(7, 8, 7, 7, 'up')],   generation: 1, colorIndex: 1 },
-      { segments: [seg(7, 6, 7, 7, 'down')], generation: 1, colorIndex: 2 },
-    ]
-    const result = resolveCollisions(streams, [0, 0], [], [splitter(7, 7, 'right')])
-    expect(result).toHaveLength(1)
-    expect(result[0]).toEqual({ x: 7, y: 7 })
+  it('splitter: two beams on reflect faces collide', () => {
+    expect(collide('up', 'down', [], [splitter(5, 5, 'right')])).toBe(true)
   })
 })
+
+/**
+ * Every split beam must start where, and when, a beam that was still alive
+ * reached a splitter: its parent's last step ends at the child's start cell
+ * at time child.globalOffset.
+ */
+function expectNoOrphanBeams(result: LaserPath) {
+  for (const child of result.streams.filter((s) => s.generation > 0)) {
+    const start = child.segments[0].start
+    const parent = result.streams.find((p) => {
+      if (p.generation !== child.generation - 1) return false
+      const last = p.segments[p.segments.length - 1]
+      return (p.globalOffset ?? 0) + p.segments.length === child.globalOffset &&
+        last.end.x === start.x && last.end.y === start.y
+    })
+    expect(parent).toBeDefined()
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // calculateLaserPath — simple beam tests (no splitters)
@@ -517,5 +356,45 @@ describe('calculateLaserPath — collision detection', () => {
     const result = calculateLaserPath(laser, mirrors, obstacles, BOUNDS_15x20)
     expect(result.collisionPoints).toHaveLength(1)
     expect(result.collisionPoints[0]).toEqual({ x: 13, y: 10 })
+  })
+
+  it('beams that collide stop there and spawn nothing afterwards', () => {
+    // Solution from 2026-03-19. The split at (9,15) sends one beam right and one
+    // left; both loop round and meet head-on at (11,11) at t=82. Before the fix
+    // the left-going beam kept going past the collision to the (5,5) splitter
+    // and its two children were counted (145 instead of 94).
+    const laser: LaserConfig = { x: 0, y: 10, direction: 'right' }
+    const walls = [
+      [2, 2], [3, 2], [3, 3], [4, 3], [2, 3], [10, 1], [11, 1], [11, 2], [12, 2], [10, 2],
+      [1, 7], [2, 7], [2, 8], [1, 8], [3, 8], [3, 9], [11, 6], [12, 6], [12, 7], [13, 7],
+      [11, 7], [13, 8], [3, 13], [4, 13], [4, 14], [3, 14], [2, 14], [10, 12], [11, 12],
+      [11, 13], [12, 13], [12, 14], [13, 13], [5, 17], [6, 17], [6, 18], [7, 18], [7, 17],
+    ]
+    const obstacles: Obstacle[] = [
+      ...walls.map(([x, y]) => wall(x, y)),
+      splitter(5, 5, 'right'),
+      splitter(9, 15, 'up'),
+    ]
+    const mirrors: Mirror[] = [
+      mirror(14, 10, '/'), mirror(14, 0, '\\'), mirror(5, 0, '/'), mirror(0, 5, '/'),
+      mirror(0, 19, '\\'), mirror(9, 19, '/'), mirror(14, 15, '/'), mirror(6, 15, '\\'),
+      mirror(14, 11, '\\'), mirror(6, 11, '/'),
+    ]
+    const result = calculateLaserPath(laser, mirrors, obstacles, BOUNDS_15x20)
+    expect(result.collisionPoints).toEqual([{ x: 11, y: 11 }])
+    expect(result.streams.map((st) => st.segments.length)).toEqual([70, 12, 12])
+    expect(result.totalLength).toBe(94)
+    expectNoOrphanBeams(result)
+  })
+
+  it('split beams never outlive their parent (collision rigs)', () => {
+    const laser: LaserConfig = { x: 0, y: 10, direction: 'right' }
+    const rigs: Mirror[][] = [
+      [mirror(5, 6, '/'), mirror(10, 6, '\\'), mirror(5, 14, '\\'), mirror(10, 14, '/')],
+      [mirror(5, 6, '/'), mirror(10, 6, '\\'), mirror(5, 13, '\\'), mirror(10, 13, '/')],
+    ]
+    for (const mirrors of rigs) {
+      expectNoOrphanBeams(calculateLaserPath(laser, mirrors, [splitter(5, 10, 'right')], BOUNDS_15x20))
+    }
   })
 })

@@ -4,15 +4,13 @@
  *
  * Computes exactly the same totalLength as calculateLaserPath in
  * src/game/engine/simulate.ts (splitters, gates, loops, the shared
- * MAX_LASER_LENGTH cap and collision truncation), but on integer-encoded grids
- * with preallocated buffers, so a simulation does no heap allocation.
- * Kept in lockstep with simulate.ts by test_fastsim.ts, which compares the two
- * on random mirror placements for every puzzle.
+ * MAX_LASER_LENGTH cap and collisions), but on integer-encoded grids with
+ * preallocated buffers, so a simulation does no heap allocation.
+ * test_fastsim.ts keeps the two in sync by comparing them on random mirror
+ * placements for every puzzle.
  *
- * Collision semantics (matching resolveCollisions): for each stream, find the
- * earliest global time at which it collides with any other stream; the stream
- * keeps its segments up to and including that time. Truncating a stream does
- * not remove sub-streams it already spawned.
+ * Like simulate.ts, all beams advance one cell per time step; beams that
+ * collide on arrival both stop, and a stopped beam spawns nothing further.
  */
 
 const UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
@@ -26,7 +24,8 @@ const MIRROR_SIDE = [[], [0, 1, 1, 0], [0, 0, 1, 1]];
 const DIR_TO_INT: Record<string, number> = { up: UP, right: RIGHT, down: DOWN, left: LEFT };
 
 const MAX_LENGTH = 1000; // MAX_LASER_LENGTH in src/game/constants.ts
-const MAX_STREAMS = 64;
+const MAX_BEAMS = 64; // live beams at once; each splitter can split at most once
+const OUT_CONTINUE = 0, OUT_STOP = 1, OUT_SPLIT = 2;
 
 const CELL_EMPTY = 0, CELL_WALL = 1, CELL_SPLITTER = 2, CELL_GATE = 3;
 
@@ -38,7 +37,7 @@ export interface FastSim {
   /** Mirror grid, indexed x*height+y: 0 = none, 1 = '/', 2 = '\'. Mutated by callers. */
   mirrors: Int8Array;
   /** Scores the current mirror grid. If `cellsOut` is given, fills it with a bitset
-   *  of every in-bounds cell (bit x*height+y) the surviving beams enter. */
+   *  of every in-bounds cell (bit x*height+y) any beam enters. */
   run(cellsOut?: Uint8Array | null): number;
   /** Number of bytes needed for a cell bitset. */
   cellBytes: number;
@@ -47,11 +46,6 @@ export interface FastSim {
 export function createFastSim(config: any): FastSim {
   const W: number = config.width, H: number = config.height;
   const N = W * H;
-  // Extended grid with a 2-cell border: holds off-grid segment ends (edge exits)
-  // and keeps the crossing check's neighbour lookup from wrapping columns.
-  const EH = H + 4;
-  const ext = (x: number, y: number) => (x + 2) * EH + (y + 2);
-
   const kind = new Int8Array(N);
   const orient = new Int8Array(N);
   for (const [x, y] of config.obstacles) kind[x * H + y] = CELL_WALL;
@@ -60,26 +54,23 @@ export function createFastSim(config: any): FastSim {
 
   const mirrors = new Int8Array(N);
   const laserX: number = config.laserX, laserY: number = config.laserY, laserDir: number = config.laserDir;
-  const hasSplitters = (config.splitters || []).length > 0;
 
   // Visited (pos, dir) stamps — avoids clearing between runs.
   const visited = new Uint32Array(N * 4);
   let stamp = 0;
 
-  // Step buffers: every segment end across all streams (at most MAX_LENGTH).
-  const stepCell = new Int16Array(MAX_LENGTH);  // extended-grid index of segment end
-  const stepDir = new Int8Array(MAX_LENGTH);   // direction of travel into that cell
-  // Stream table
-  const sStart = new Int32Array(MAX_STREAMS);  // index into step buffers
-  const sLen = new Int32Array(MAX_STREAMS);
-  const sOffset = new Int32Array(MAX_STREAMS); // global time before first step
-  const sCut = new Int32Array(MAX_STREAMS);    // earliest collision time (or large)
-  // Pending stack: [x, y, dir, globalOffset]
-  const stack = new Int32Array(MAX_STREAMS * 4);
+  // Live beams, double-buffered: position and direction.
+  let bx = new Int32Array(MAX_BEAMS), by = new Int32Array(MAX_BEAMS), bd = new Int32Array(MAX_BEAMS);
+  let nx2 = new Int32Array(MAX_BEAMS), ny2 = new Int32Array(MAX_BEAMS), nd2 = new Int32Array(MAX_BEAMS);
+  // This step's arrivals.
+  const ax = new Int32Array(MAX_BEAMS), ay = new Int32Array(MAX_BEAMS);
+  const adir = new Int32Array(MAX_BEAMS);    // direction of travel into the cell
+  const aout = new Int32Array(MAX_BEAMS);    // OUT_* outcome
+  const anew = new Int32Array(MAX_BEAMS);    // new direction for OUT_CONTINUE
+  const ahit = new Uint8Array(MAX_BEAMS);    // collided this step
 
-  // Classify a same-cell, same-time meeting of two beams (directions da, db).
-  function sameCellCollides(cellExt: number, da: number, db: number): boolean {
-    const x = Math.floor(cellExt / EH) - 2, y = (cellExt % EH) - 2;
+  // Do two beams arriving at (x, y) (possibly off-grid) travelling da and db collide?
+  function sameCellCollides(x: number, y: number, da: number, db: number): boolean {
     if (x >= 0 && x < W && y >= 0 && y < H) {
       const c = x * H + y;
       const m = mirrors[c];
@@ -95,106 +86,74 @@ export function createFastSim(config: any): FastSim {
   function run(cellsOut?: Uint8Array | null): number {
     stamp++;
     if (stamp === 0xFFFFFFFF) { visited.fill(0); stamp = 1; }
+    if (cellsOut) cellsOut.fill(0);
 
-    let total = 0, nStreams = 0, sp = 0;
-    stack[0] = laserX; stack[1] = laserY; stack[2] = laserDir; stack[3] = 0; sp = 1;
+    let total = 0;
+    let n = 1;
+    bx[0] = laserX; by[0] = laserY; bd[0] = laserDir;
 
-    while (sp > 0) {
-      sp--;
-      let x = stack[sp * 4], y = stack[sp * 4 + 1], dir = stack[sp * 4 + 2];
-      const offset = stack[sp * 4 + 3];
-      const si = nStreams++;
-      sStart[si] = total; sOffset[si] = offset;
-
-      while (total < MAX_LENGTH) {
+    while (n > 0) {
+      // 1. Move every beam one cell.
+      let na = 0;
+      for (let i = 0; i < n; i++) {
+        if (total >= MAX_LENGTH) break;
+        const x = bx[i], y = by[i], dir = bd[i];
         const vk = (x * H + y) * 4 + dir;
-        if (visited[vk] === stamp) break;
+        if (visited[vk] === stamp) continue;
         visited[vk] = stamp;
 
-        const nx = x + DX[dir], ny = y + DY[dir];
-        stepCell[total] = ext(nx, ny); stepDir[total] = dir; total++;
-        if (nx < 0 || nx >= W || ny < 0 || ny >= H) break;
-
-        const c = nx * H + ny;
-        const k = kind[c];
-        if (k !== CELL_EMPTY) {
-          if (k === CELL_WALL) break;
-          const o = orient[c];
-          if (k === CELL_GATE) {
-            if (dir !== o) break;
-          } else if (dir === o) {
-            // Split: push dirs[0] then dirs[1] so dirs[1] runs first (as in simulate.ts).
-            const subOffset = offset + (total - sStart[si]);
-            const d0 = (dir === LEFT || dir === RIGHT) ? UP : LEFT;
-            const d1 = (dir === LEFT || dir === RIGHT) ? DOWN : RIGHT;
-            stack[sp * 4] = nx; stack[sp * 4 + 1] = ny; stack[sp * 4 + 2] = d0; stack[sp * 4 + 3] = subOffset; sp++;
-            stack[sp * 4] = nx; stack[sp * 4 + 1] = ny; stack[sp * 4 + 2] = d1; stack[sp * 4 + 3] = subOffset; sp++;
-            break;
-          } else if (dir === OPP[o]) {
-            break;
-          } else {
-            dir = OPP[o];
-          }
+        const tx = x + DX[dir], ty = y + DY[dir];
+        total++;
+        let out = OUT_CONTINUE, nd = dir;
+        if (tx < 0 || tx >= W || ty < 0 || ty >= H) {
+          out = OUT_STOP;
         } else {
-          const m = mirrors[c];
-          if (m) dir = REFLECT[m][dir];
-        }
-        x = nx; y = ny;
-      }
-      sLen[si] = total - sStart[si];
-    }
-
-    let score = total;
-    if (hasSplitters && nStreams > 1) {
-      for (let i = 0; i < nStreams; i++) sCut[i] = 0x7FFFFFFF;
-      // Pairwise scan for each pair's earliest collision. Time of step j of
-      // stream s is sOffset[s] + j + 1.
-      for (let a = 0; a < nStreams; a++) {
-        for (let b = a + 1; b < nStreams; b++) {
-          const lo = Math.max(sOffset[a], sOffset[b]) + 1;
-          const hi = Math.min(sOffset[a] + sLen[a], sOffset[b] + sLen[b]);
-          for (let t = lo; t <= hi; t++) {
-            const ia = sStart[a] + (t - sOffset[a] - 1);
-            const ib = sStart[b] + (t - sOffset[b] - 1);
-            const ca = stepCell[ia], cb = stepCell[ib];
-            const da = stepDir[ia], db = stepDir[ib];
-            let hit = false;
-            if (ca === cb) {
-              hit = sameCellCollides(ca, da, db);
-            } else if (da === OPP[db]) {
-              // Crossing: a at P heading to Q, b at Q heading to P.
-              hit = cb === ca + DX[da] * EH + DY[da];
-            }
-            if (hit) {
-              if (t < sCut[a]) sCut[a] = t;
-              if (t < sCut[b]) sCut[b] = t;
-              break;
-            }
+          const c = tx * H + ty;
+          if (cellsOut) cellsOut[c >> 3] |= 1 << (c & 7);
+          const k = kind[c];
+          if (k === CELL_EMPTY) {
+            const m = mirrors[c];
+            if (m) nd = REFLECT[m][dir];
+          } else if (k === CELL_WALL) {
+            out = OUT_STOP;
+          } else {
+            const o = orient[c];
+            if (k === CELL_GATE) { if (dir !== o) out = OUT_STOP; }
+            else if (dir === o) out = OUT_SPLIT;
+            else if (dir === OPP[o]) out = OUT_STOP;
+            else nd = OPP[o];
           }
         }
+        ax[na] = tx; ay[na] = ty; adir[na] = dir; aout[na] = out; anew[na] = nd; ahit[na] = 0;
+        na++;
       }
-      score = 0;
-      for (let i = 0; i < nStreams; i++) {
-        const keep = Math.min(sLen[i], sCut[i] - sOffset[i]);
-        sLen[i] = keep;
-        score += keep;
-      }
-    }
 
-    if (cellsOut) {
-      cellsOut.fill(0);
-      for (let i = 0; i < nStreams; i++) {
-        const end = sStart[i] + sLen[i];
-        for (let j = sStart[i]; j < end; j++) {
-          const e = stepCell[j];
-          const x = Math.floor(e / EH) - 2, y = (e % EH) - 2;
-          if (x < 0 || x >= W || y < 0 || y >= H) continue;
-          const c = x * H + y;
-          cellsOut[c >> 3] |= 1 << (c & 7);
+      // 2. Collisions between beams arriving at the same cell.
+      if (na > 1) {
+        for (let i = 0; i < na; i++)
+          for (let j = i + 1; j < na; j++)
+            if (ax[i] === ax[j] && ay[i] === ay[j] && sameCellCollides(ax[i], ay[i], adir[i], adir[j]))
+              ahit[i] = ahit[j] = 1;
+      }
+
+      // 3. Surviving beams continue or split.
+      let m = 0;
+      for (let i = 0; i < na; i++) {
+        if (ahit[i] || aout[i] === OUT_STOP) continue;
+        if (aout[i] === OUT_SPLIT) {
+          const horiz = adir[i] === LEFT || adir[i] === RIGHT;
+          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? DOWN : RIGHT; m++;
+          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? UP : LEFT; m++;
+        } else {
+          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = anew[i]; m++;
         }
       }
+      let t = bx; bx = nx2; nx2 = t;
+      t = by; by = ny2; ny2 = t;
+      t = bd; bd = nd2; nd2 = t;
+      n = m;
     }
-    return score;
+    return total;
   }
 
   return { width: W, height: H, mirrors, run, cellBytes: (N + 7) >> 3 };
