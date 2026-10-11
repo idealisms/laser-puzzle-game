@@ -15,17 +15,25 @@ export function HamburgerMenu({ isOpen, onClose, onOpenHowToPlay, onOpenSettings
   const [mounted, setMounted] = useState(false)
   const [visible, setVisible] = useState(false)
 
+  // Mount as soon as the menu opens and start the fade-out as soon as it closes.
+  // Adjusting state during render (rather than in an effect) avoids an extra pass.
+  if (isOpen && !mounted) setMounted(true)
+  if (!isOpen && visible) setVisible(false)
+
   useEffect(() => {
     if (isOpen) {
-      setMounted(true)
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setVisible(true))
+      // Wait two frames so the menu renders hidden first and the transition runs.
+      let inner = 0
+      const outer = requestAnimationFrame(() => {
+        inner = requestAnimationFrame(() => setVisible(true))
       })
-    } else {
-      setVisible(false)
-      const timer = setTimeout(() => setMounted(false), 300)
-      return () => clearTimeout(timer)
+      return () => {
+        cancelAnimationFrame(outer)
+        cancelAnimationFrame(inner)
+      }
     }
+    const timer = setTimeout(() => setMounted(false), 300)
+    return () => clearTimeout(timer)
   }, [isOpen])
 
   const handleKeyDown = useCallback(

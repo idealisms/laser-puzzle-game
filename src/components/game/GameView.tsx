@@ -29,6 +29,53 @@ const DEFAULT_LEVEL: LevelConfig = {
   optimalScore: 100,
 }
 
+// Local progress helpers. They only touch localStorage, so they live outside the
+// component and stay stable across renders.
+
+function getLocalProgress(): Record<string, { bestScore: number; bestSolution?: Mirror[]; optimalScore?: number }> {
+  if (typeof window === 'undefined') return {}
+  try {
+    const stored = localStorage.getItem('laser-puzzle-progress')
+    return stored ? JSON.parse(stored) : {}
+  } catch {
+    return {}
+  }
+}
+
+function saveLocalProgress(levelDate: string, score: number, solution: Mirror[], optimalScore: number) {
+  try {
+    const progress = getLocalProgress()
+    const existing = progress[levelDate]
+    if (!existing || score > existing.bestScore) {
+      progress[levelDate] = { bestScore: score, bestSolution: solution, optimalScore }
+      localStorage.setItem('laser-puzzle-progress', JSON.stringify(progress))
+      return true // isNewBest
+    }
+    return false
+  } catch {
+    return false
+  }
+}
+
+// Whether the player also submitted a score for the calendar day before `levelDate`.
+function getPlayedPreviousDay(levelDate: string): boolean {
+  const progress = getLocalProgress()
+  const previous = new Date(levelDate + 'T00:00:00')
+  previous.setDate(previous.getDate() - 1)
+  const previousDate = previous.toISOString().split('T')[0]
+  return Boolean(progress[previousDate])
+}
+
+// Player's average percentage score across all other days played (excludes `levelDate`).
+function getAveragePercentage(levelDate: string): number | null {
+  const progress = getLocalProgress()
+  const percentages = Object.entries(progress)
+    .filter(([date, entry]) => date !== levelDate && entry.optimalScore)
+    .map(([, entry]) => (entry.bestScore / entry.optimalScore!) * 100)
+  if (percentages.length === 0) return null
+  return percentages.reduce((sum, p) => sum + p, 0) / percentages.length
+}
+
 interface GameViewProps {
   date: string
   enableLevelCache?: boolean
@@ -190,50 +237,6 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       setSessionBestSolution([...gameState.placedMirrors])
     }
   }, [level, gameState.score, gameState.placedMirrors, hasSubmitted, sessionBestScore])
-
-  function getLocalProgress(): Record<string, { bestScore: number; bestSolution?: Mirror[]; optimalScore?: number }> {
-    if (typeof window === 'undefined') return {}
-    try {
-      const stored = localStorage.getItem('laser-puzzle-progress')
-      return stored ? JSON.parse(stored) : {}
-    } catch {
-      return {}
-    }
-  }
-
-  function saveLocalProgress(levelDate: string, score: number, solution: Mirror[], optimalScore: number) {
-    try {
-      const progress = getLocalProgress()
-      const existing = progress[levelDate]
-      if (!existing || score > existing.bestScore) {
-        progress[levelDate] = { bestScore: score, bestSolution: solution, optimalScore }
-        localStorage.setItem('laser-puzzle-progress', JSON.stringify(progress))
-        return true // isNewBest
-      }
-      return false
-    } catch {
-      return false
-    }
-  }
-
-  // Whether the player also submitted a score for the calendar day before `levelDate`.
-  function getPlayedPreviousDay(levelDate: string): boolean {
-    const progress = getLocalProgress()
-    const previous = new Date(levelDate + 'T00:00:00')
-    previous.setDate(previous.getDate() - 1)
-    const previousDate = previous.toISOString().split('T')[0]
-    return Boolean(progress[previousDate])
-  }
-
-  // Player's average percentage score across all other days played (excludes `levelDate`).
-  function getAveragePercentage(levelDate: string): number | null {
-    const progress = getLocalProgress()
-    const percentages = Object.entries(progress)
-      .filter(([date, entry]) => date !== levelDate && entry.optimalScore)
-      .map(([, entry]) => (entry.bestScore / entry.optimalScore!) * 100)
-    if (percentages.length === 0) return null
-    return percentages.reduce((sum, p) => sum + p, 0) / percentages.length
-  }
 
   // Builds the achievement list for a solution. Reused both right after submission
   // (where we already have a laserPath from gameState and fresh engagement stats) and
