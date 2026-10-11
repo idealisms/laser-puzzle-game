@@ -70,9 +70,8 @@ When working with the database, never echo the production database name or passw
 
 ### Pipeline
 1. Create `solver/puzzles/YYYY-MM-DD.json` — the puzzle config (obstacle layout, laser, mirrors, splitters)
-2. Run solver from inside the `solver/` directory:
-   - No splitters: `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --v2 --beam-width 12000`
-   - Splitters: `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --beam-width 6000` (expect ~9 min per puzzle)
+2. Run solver from inside the `solver/` directory (any puzzle type, ~2–6 s per puzzle):
+   `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --beam-width 12000`
    - After solving, the generator prints layout metrics and warns when more than 40% of the optimal path is on the outer ring or fewer than 25% of obstacle cells are anchored to an edge (see `solver/layout_metrics.ts`). These shapes rate poorly with players — rework the layout rather than shipping it.
 3. Seed to dev: `DOTENV_CONFIG_PATH=.env.local npm run db:seed`
 4. Seed to prod: `DOTENV_CONFIG_PATH=.env.production npm run db:seed`
@@ -80,7 +79,7 @@ When working with the database, never echo the production database name or passw
 ### Puzzle config rules
 - Grid: 15 wide (x: 0–14) × 20 tall (y: 0–19)
 - `num_mirrors`: 8–11
-- `splitters`: 0–2 per puzzle. Splitter puzzles are slower due to full simulation at each beam search step — use `--workers 12 --beam-width 6000` without `--v2` (expect ~9 min per puzzle)
+- `splitters`: 0–2 per puzzle
 - No duplicate obstacle layouts across puzzles
 
 ### Splitter semantics (easy to get wrong)

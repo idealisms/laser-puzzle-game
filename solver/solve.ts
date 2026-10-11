@@ -9,8 +9,8 @@
  * --v2 search (simulator2.ts): segment-based, one worker per mirror depth.
  *
  * Usage:
- *   npx tsx solve.ts 2026-01-22 --v2 --beam-width 12000 --workers 12  # recommended (no splitters)
- *   npx tsx solve.ts 2026-01-22 --beam-width 6000 --workers 12        # splitter puzzles
+ *   npx tsx solve.ts 2026-01-22 --beam-width 12000 --workers 12  # recommended (all puzzle types)
+ *   npx tsx solve.ts 2026-01-22 --v2                               # older segment-based search
  *   npx tsx solve.ts --list                          # list puzzles
  *   npx tsx solve.ts 2026-01-22 --workers 1         # single-threaded
  *   npx tsx solve.ts 2026-01-22 --no-prune
