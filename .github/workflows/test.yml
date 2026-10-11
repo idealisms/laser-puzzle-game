@@ -18,3 +18,14 @@ jobs:
       # The Prisma client is gitignored; tests mock the database but need the generated types
       - run: npx prisma generate
       - run: npm test
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint

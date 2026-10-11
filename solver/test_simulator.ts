@@ -16,8 +16,7 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 
 const {
-  UP, RIGHT, DOWN, LEFT,
-  dirFromString, posKey,
+  dirFromString,
   simulateLaser,
 } = require('./simulator');
 

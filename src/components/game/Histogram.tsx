@@ -7,7 +7,7 @@ interface HistogramProps {
   totalPlayers: number
 }
 
-export function Histogram({ distribution, playerScore, optimalScore, totalPlayers }: HistogramProps) {
+export function Histogram({ distribution, playerScore, totalPlayers }: HistogramProps) {
   const scores = Object.keys(distribution).map(Number).sort((a, b) => b - a)
   if (scores.length === 0) return null
 

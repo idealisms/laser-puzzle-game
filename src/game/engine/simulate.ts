@@ -5,7 +5,6 @@ import {
   Obstacle,
   LaserConfig,
   LaserPath,
-  LaserSegment,
   LaserStream,
 } from '../types'
 import { MAX_LASER_LENGTH } from '../constants'
