@@ -3,9 +3,10 @@
 /**
  * Laser Puzzle Solver — Node.js parallel implementation
  *
- * Parallelises across mirror-count levels: each worker independently runs a
- * full beam search for its assigned mirror depth, mirroring the outer loop in
- * the Python solver.  The main thread picks the best result.
+ * Default search (beam_search.ts): one beam over all depths, with each depth's
+ * expansion split across a pool of worker threads. Handles splitters and gates.
+ *
+ * --v2 search (simulator2.ts): segment-based, one worker per mirror depth.
  *
  * Usage:
  *   npx tsx solve.ts 2026-01-22 --v2 --beam-width 12000 --workers 12  # recommended (no splitters)
@@ -54,10 +55,10 @@ function parseArgs(argv) {
 // ── Worker pool ───────────────────────────────────────────────────────────────
 
 /**
- * Run beam searches in parallel, one worker per mirror-count depth level.
+ * Run --v2 beam searches in parallel, one worker per mirror-count depth level.
  * Returns the best { score, mirrors } across all depths.
  */
-function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, usePathPruning, useV2 = false) {
+function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth) {
   return new Promise((resolve, reject) => {
     const depths = Array.from({ length: numMirrors }, (_, i) => i + 1);
     // Cap workers to avoid spawning more than needed
@@ -79,8 +80,6 @@ function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, useP
           ...sharedData,
           targetDepth,
           beamWidth,
-          usePathPruning,
-          useV2,
         },
       });
 
@@ -180,7 +179,7 @@ async function solvePuzzle(config, opts: any = {}) {
 
   if (!v2) return runLayerParallel(config, workers, beamWidth, !noPrune, onLayer);
 
-  // Pre-compute shared data (passed to all workers)
+  // Pre-compute shared data for the v2 workers
   const obstacleSet = new Set(config.obstacles.map(([x, y]) => posKey(x, y)));
   const splitterMap = new Map(
     (config.splitters || []).map(([x, y, o]) => [posKey(x, y), o])
@@ -189,29 +188,14 @@ async function solvePuzzle(config, opts: any = {}) {
   const laserPos = posKey(config.laserX, config.laserY);
   const invalidPositions = new Set([...obstacleSet, ...splitterMap.keys(), ...gateMap.keys(), laserPos]);
 
-  const validPositions = [];
-  for (let x = 0; x < config.width; x++)
-    for (let y = 0; y < config.height; y++)
-      if (!invalidPositions.has(posKey(x, y))) validPositions.push([x, y]);
-
-  const initial = simulateLaser(config, [], 1000, obstacleSet, splitterMap);
-
   const sharedData = {
     obstacleSetArr: [...obstacleSet],
     splitterMapArr: [...splitterMap.entries()],
     gateMapArr: [...gateMap.entries()],
     invalidPosArr: [...invalidPositions],
-    validPositions,
-    initialLength: initial.length,
-    initialPath: initial.path,
-    initialAllCells: initial.allCells,
   };
 
-  return runParallel(
-    config, sharedData,
-    config.numMirrors, workers,
-    beamWidth, !noPrune, v2,
-  );
+  return runParallel(config, sharedData, config.numMirrors, workers, beamWidth);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────

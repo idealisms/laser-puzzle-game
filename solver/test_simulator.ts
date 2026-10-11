@@ -7,7 +7,6 @@
  * This file retains:
  *   - Smoke tests for the simulateLaser adapter (basic beam, obstacle, mirror, splitter)
  *   - Collision integration tests via simulateLaser
- *   - simulateIncremental regression tests
  *
  * Run with:
  *   cd solver && node --import tsx --test test_simulator.ts
@@ -20,7 +19,6 @@ const {
   UP, RIGHT, DOWN, LEFT,
   dirFromString, posKey,
   simulateLaser,
-  simulateIncremental,
 } = require('./simulator');
 
 // ---------------------------------------------------------------------------
@@ -209,43 +207,5 @@ describe('TestCollisionDetection', () => {
     // Primary: 6, UP: 3+7=10, DOWN: 7. Total = 23.
     const c = collisionConfig();
     assert.equal(len(c, [[6, 3, '/']]), 23);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// Regression: simulateIncremental still works for non-splitter puzzles
-// ---------------------------------------------------------------------------
-
-describe('TestIncrementalSimulation', () => {
-  it('incremental_matches_full_no_mirrors', () => {
-    const c = cfg(10, 10, 0, 5, 'right', { obstacles: [[8, 5]] });
-    const full = simulateLaser(c, [[3, 5, '/']]).length;
-    // Build incremental from empty mirrors first
-    const base = simulateLaser(c, []);
-    const obstacleSet = new Set(c.obstacles.map(([x, y]) => posKey(x, y)));
-    const inc = simulateIncremental(
-      c,
-      obstacleSet,
-      [],
-      base.path,
-      base.length,
-      [3, 5, '/'],
-    );
-    assert.equal(inc.length, full);
-  });
-
-  it('incremental_mirror_not_on_path', () => {
-    // Mirror placed off the laser path should have no effect.
-    const c = cfg(10, 10, 0, 5, 'right');
-    const base = simulateLaser(c, []);
-    const inc = simulateIncremental(
-      c,
-      new Set(),
-      [],
-      base.path,
-      base.length,
-      [5, 9, '/'],  // (5,9) is not on the y=5 path
-    );
-    assert.equal(inc.length, base.length);
   });
 });
