@@ -3,13 +3,14 @@
 /**
  * Laser Puzzle Solver — Node.js parallel implementation
  *
- * Parallelises across mirror-count levels: each worker independently runs a
- * full beam search for its assigned mirror depth, mirroring the outer loop in
- * the Python solver.  The main thread picks the best result.
+ * Default search (beam_search.ts): one beam over all depths, with each depth's
+ * expansion split across a pool of worker threads. Handles splitters and gates.
+ *
+ * --v2 search (simulator2.ts): segment-based, one worker per mirror depth.
  *
  * Usage:
- *   npx tsx solve.ts 2026-01-22 --v2 --beam-width 12000 --workers 12  # recommended (no splitters)
- *   npx tsx solve.ts 2026-01-22 --beam-width 6000 --workers 12        # splitter puzzles
+ *   npx tsx solve.ts 2026-01-22 --beam-width 12000 --workers 12  # recommended (all puzzle types)
+ *   npx tsx solve.ts 2026-01-22 --v2                               # older segment-based search
  *   npx tsx solve.ts --list                          # list puzzles
  *   npx tsx solve.ts 2026-01-22 --workers 1         # single-threaded
  *   npx tsx solve.ts 2026-01-22 --no-prune
@@ -22,6 +23,7 @@ const { Worker } = require('worker_threads');
 
 const { PUZZLES } = require('./puzzles');
 const { simulateLaser, posKey } = require('./simulator');
+const { beamSearch } = require('./beam_search');
 
 // ── CLI argument parsing ──────────────────────────────────────────────────────
 
@@ -53,10 +55,10 @@ function parseArgs(argv) {
 // ── Worker pool ───────────────────────────────────────────────────────────────
 
 /**
- * Run beam searches in parallel, one worker per mirror-count depth level.
+ * Run --v2 beam searches in parallel, one worker per mirror-count depth level.
  * Returns the best { score, mirrors } across all depths.
  */
-function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, usePathPruning, useV2 = false) {
+function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth) {
   return new Promise((resolve, reject) => {
     const depths = Array.from({ length: numMirrors }, (_, i) => i + 1);
     // Cap workers to avoid spawning more than needed
@@ -78,8 +80,6 @@ function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, useP
           ...sharedData,
           targetDepth,
           beamWidth,
-          usePathPruning,
-          useV2,
         },
       });
 
@@ -110,28 +110,76 @@ function runParallel(config, sharedData, numMirrors, numWorkers, beamWidth, useP
   });
 }
 
+// ── Layer-parallel beam search (default; required for splitters/gates) ───────
+
+/**
+ * Run beam_search.ts with a pool of persistent beam_worker.ts threads.
+ * Workers split each depth's expansion between them, so all `numWorkers`
+ * threads stay busy for the whole search.
+ */
+async function runLayerParallel(config, numWorkers, beamWidth, usePathPruning, onLayer = null) {
+  const workers = Array.from({ length: Math.max(1, numWorkers) }, () =>
+    new Worker(path.join(__dirname, 'beam_worker.ts'), {
+      execArgv: ['--require', 'tsx/cjs'],
+      workerData: { config, usePathPruning },
+    }));
+
+  // Each worker handles one request at a time, so replies arrive in order.
+  const pending = workers.map(() => []);
+  let failure = null;
+  workers.forEach((w, i) => {
+    w.on('message', (msg) => pending[i].shift().resolve(msg));
+    w.on('error', (err) => {
+      failure = err;
+      for (const p of pending[i].splice(0)) p.reject(err);
+    });
+  });
+
+  const pool = {
+    size: workers.length,
+    request(i, msg, transfer = []) {
+      if (failure) return Promise.reject(failure);
+      return new Promise((resolve, reject) => {
+        pending[i].push({ resolve, reject });
+        workers[i].postMessage(msg, transfer);
+      });
+    },
+  };
+
+  try {
+    return await beamSearch(config, pool, { beamWidth, onLayer });
+  } finally {
+    await Promise.all(workers.map((w) => w.terminate()));
+  }
+}
+
 // ── Exported solver API ───────────────────────────────────────────────────────
 
 /**
  * Solve a puzzle config and return { score, mirrors }.
  *
- * Parallelises across mirror-count depth levels: one worker thread per depth
- * (1 through config.numMirrors), capped to `opts.workers` concurrent threads.
- * The main thread picks the best { score, mirrors } across all depths.
+ * Default: layer-parallel beam search (beam_search.ts), which handles every
+ * puzzle type and keeps all `opts.workers` threads busy at every depth.
+ *
+ * With `v2`: segment-based search (simulator2.ts), parallelised across
+ * mirror-count depth levels, one worker per depth.
  *
  * @param {object} config  Puzzle config from PUZZLES (puzzles.ts).
- * @param {object} opts    { beamWidth?: number, workers?: number, noPrune?: boolean, v2?: boolean }
+ * @param {object} opts    { beamWidth?, workers?, noPrune?, v2?, onLayer? }
  * @returns {Promise<{ score: number, mirrors: Array }>}
  */
-async function solvePuzzle(config, opts = {}) {
+async function solvePuzzle(config, opts: any = {}) {
   const {
     beamWidth = 8000,
     workers = os.cpus().length,
     noPrune = false,
     v2 = false,
+    onLayer = null,
   } = opts;
 
-  // Pre-compute shared data (passed to all workers)
+  if (!v2) return runLayerParallel(config, workers, beamWidth, !noPrune, onLayer);
+
+  // Pre-compute shared data for the v2 workers
   const obstacleSet = new Set(config.obstacles.map(([x, y]) => posKey(x, y)));
   const splitterMap = new Map(
     (config.splitters || []).map(([x, y, o]) => [posKey(x, y), o])
@@ -140,29 +188,14 @@ async function solvePuzzle(config, opts = {}) {
   const laserPos = posKey(config.laserX, config.laserY);
   const invalidPositions = new Set([...obstacleSet, ...splitterMap.keys(), ...gateMap.keys(), laserPos]);
 
-  const validPositions = [];
-  for (let x = 0; x < config.width; x++)
-    for (let y = 0; y < config.height; y++)
-      if (!invalidPositions.has(posKey(x, y))) validPositions.push([x, y]);
-
-  const initial = simulateLaser(config, [], 1000, obstacleSet, splitterMap);
-
   const sharedData = {
     obstacleSetArr: [...obstacleSet],
     splitterMapArr: [...splitterMap.entries()],
     gateMapArr: [...gateMap.entries()],
     invalidPosArr: [...invalidPositions],
-    validPositions,
-    initialLength: initial.length,
-    initialPath: initial.path,
-    initialAllCells: initial.allCells,
   };
 
-  return runParallel(
-    config, sharedData,
-    config.numMirrors, workers,
-    beamWidth, !noPrune, v2,
-  );
+  return runParallel(config, sharedData, config.numMirrors, workers, beamWidth);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -204,40 +237,12 @@ async function main() {
     console.log(`Solving with beam search (beam_width: ${opts.beamWidth}${pruneStr}${v2Str}, workers: ${opts.workers})...`);
   }
 
-  // Pre-compute shared data (passed to all workers)
-  const obstacleSet = new Set(config.obstacles.map(([x, y]) => posKey(x, y)));
-  const splitterMap = new Map(
-    (config.splitters || []).map(([x, y, o]) => [posKey(x, y), o])
-  );
-  const gateMap = new Map((config.gates || []).map(([x, y, o]) => [posKey(x, y), o]));
-  const laserPos = posKey(config.laserX, config.laserY);
-  const invalidPositions = new Set([...obstacleSet, ...splitterMap.keys(), ...gateMap.keys(), laserPos]);
-
-  const validPositions = [];
-  for (let x = 0; x < config.width; x++)
-    for (let y = 0; y < config.height; y++)
-      if (!invalidPositions.has(posKey(x, y))) validPositions.push([x, y]);
-
-  // Initial simulation (no mirrors)
-  const initial = simulateLaser(config, [], 1000, obstacleSet, splitterMap);
-
-  const sharedData = {
-    obstacleSetArr: [...obstacleSet],
-    splitterMapArr: [...splitterMap.entries()],
-    gateMapArr: [...gateMap.entries()],
-    invalidPosArr: [...invalidPositions],
-    validPositions,
-    initialLength: initial.length,
-    initialPath: initial.path,
-    initialAllCells: initial.allCells,
-  };
-
   const startTime = Date.now();
-  const result = await runParallel(
-    config, sharedData,
-    config.numMirrors, opts.workers,
-    opts.beamWidth, !opts.noPrune, opts.v2,
-  );
+  const onLayer = opts.quiet ? null : ({ depth, beamCount, layerBest, bestScore, ms }) =>
+    console.log(`  depth ${depth}: ${beamCount} states, layer best ${layerBest}, best ${bestScore} (${(ms / 1000).toFixed(1)}s)`);
+  const result = await solvePuzzle(config, {
+    beamWidth: opts.beamWidth, workers: opts.workers, noPrune: opts.noPrune, v2: opts.v2, onLayer,
+  });
   const elapsed = (Date.now() - startTime) / 1000;
 
   console.log();
@@ -250,7 +255,7 @@ async function main() {
   console.log(`Solve time: ${elapsed.toFixed(2)}s`);
 
   // Verify solution
-  const verified = simulateLaser(config, result.mirrors, 1000, obstacleSet, splitterMap);
+  const verified = simulateLaser(config, result.mirrors);
   if (verified.length !== result.score) {
     console.error(`WARNING: Verification failed! Expected ${result.score}, got ${verified.length}`);
     return 1;

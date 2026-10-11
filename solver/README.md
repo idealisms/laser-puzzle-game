@@ -6,7 +6,7 @@ A TypeScript/Node.js solver for the laser puzzle game that finds optimal mirror 
 
 The solver takes a puzzle configuration (grid size, laser position, obstacles, number of mirrors) and finds the mirror placement that maximizes the laser path length using parallel beam search.
 
-Workers are parallelized across mirror-count depth levels: one worker per depth (1 through `num_mirrors`), capped to `--workers` concurrent threads.
+The default search keeps one beam across all depths and splits each depth's expansion across `--workers` threads. The `--v2` search instead runs one worker per mirror-count depth.
 
 ## Files
 
@@ -16,10 +16,15 @@ Workers are parallelized across mirror-count depth levels: one worker per depth 
 | `generate_levels.ts` | Generates `levels/YYYY-MM-DD.json` output files for seeding the game |
 | `puzzles.ts` | Loads `puzzles/*.json`; flattens into solver config objects keyed by date |
 | `puzzles/` | Source puzzle configs (one JSON per date) |
-| `simulator.ts` | Adapter over `src/game/engine/simulate.ts`; contains beam search and incremental solver |
-| `simulator2.ts` | Segment-based beam search with frontier pruning (`--v2` mode, recommended for non-splitter puzzles) |
-| `worker.ts` | Worker thread: runs one `beamSearchForDepth` call per mirror-count depth |
-| `test_simulator.ts` | 19 unit tests for the simulator |
+| `beam_search.ts` | Default search: layer-parallel beam search with deduplication of equivalent mirror sets |
+| `beam_worker.ts` | Persistent worker thread that expands chunks of the beam for `beam_search.ts` |
+| `fastsim.ts` | Allocation-free scorer used by the search; matches `calculateLaserPath` exactly |
+| `simulator.ts` | `simulateLaser` adapter over `src/game/engine/simulate.ts`, used to verify solutions |
+| `simulator2.ts` | Segment-based beam search with frontier pruning (`--v2` mode) |
+| `worker.ts` | `--v2` worker thread: runs one `beamSearchForDepth2` call per mirror-count depth |
+| `test_simulator.ts` | Unit tests for the `simulateLaser` adapter |
+| `test_fastsim.ts` | Differential tests: `fastsim.ts` vs `calculateLaserPath` on every puzzle and on random collision-heavy boards |
+| `test_beam_search.ts` | Beam search results verify and don't depend on worker count |
 | `benchmark.js` | Benchmarks single-worker vs multi-worker performance |
 | `levels/` | Generated level JSON files (one per date) |
 
@@ -39,11 +44,8 @@ All commands must be run from inside the `solver/` directory.
 ### Solve a puzzle
 
 ```bash
-# Recommended (no splitters)
-npx tsx solve.ts 2026-01-22 --v2 --beam-width 12000 --workers 12
-
-# Splitter puzzles (slower — skip --v2)
-npx tsx solve.ts 2026-01-22 --beam-width 6000 --workers 12
+# Recommended (all puzzle types)
+npx tsx solve.ts 2026-01-22 --beam-width 12000 --workers 12
 
 # Other options
 npx tsx solve.ts 2026-01-22 --quiet
@@ -53,14 +55,11 @@ npx tsx solve.ts --list
 ### Generate level files
 
 ```bash
-# Recommended (no splitters)
-npx tsx generate_levels.ts --date 2026-03-01 --v2 --beam-width 12000 --workers 12
+# Recommended (all puzzle types)
+npx tsx generate_levels.ts --date 2026-03-01 --beam-width 12000 --workers 12
 
 # Date range
-npx tsx generate_levels.ts --start 2026-03-01 --end 2026-03-07 --v2 --beam-width 12000 --workers 12
-
-# Splitter puzzles (slower — skip --v2)
-npx tsx generate_levels.ts --start 2026-03-01 --end 2026-03-07 --beam-width 6000 --workers 12
+npx tsx generate_levels.ts --start 2026-03-01 --end 2026-03-07 --beam-width 12000 --workers 12
 ```
 
 Generated files are saved to `levels/` and include the puzzle config, optimal score, and optimal solution.
@@ -68,7 +67,7 @@ Generated files are saved to `levels/` and include the puzzle config, optimal sc
 ### Run tests
 
 ```bash
-node --require tsx/cjs --test test_simulator.ts
+node --require tsx/cjs --test test_simulator.ts test_fastsim.ts test_beam_search.ts
 ```
 
 ## CLI options
@@ -82,7 +81,7 @@ node --require tsx/cjs --test test_simulator.ts
 | `--no-prune` | Disable path-based pruning | Off |
 | `--quiet` / `-q` | Hide detailed progress | Off |
 | `--list` / `-l` | List all available puzzles | — |
-| `--v2` | Use segment-based solver (simulator2) — recommended for non-splitter puzzles | Off |
+| `--v2` | Use the older segment-based solver (simulator2) | Off |
 
 ### `generate_levels.ts`
 
@@ -93,16 +92,13 @@ node --require tsx/cjs --test test_simulator.ts
 | `--end DATE` | End of date range | — |
 | `--workers N` | Number of parallel worker threads | CPU count |
 | `--beam-width N` | Beam width for beam search | 12000 |
-| `--v2` | Use segment-based solver (simulator2) — recommended for non-splitter puzzles | Off |
+| `--v2` | Use the older segment-based solver (simulator2) | Off |
 
 ## Recommended settings
 
-| Puzzle type | Recommended command |
-|-------------|---------------------|
-| No splitters | `--v2 --beam-width 12000 --workers 12` |
-| Splitters | `--beam-width 6000 --workers 12` (~9 min/puzzle) |
+All puzzle types (plain, gates, splitters): `--beam-width 12000 --workers 12`, about 2–6 s per puzzle.
 
-Splitter puzzles use full simulation at each beam search step (no incremental optimization), so they are significantly slower. Gates are fine with `--v2`.
+At that setting the default search matches or beats every shipped optimal score (checked on all 282 levels, Oct 2026). `--v2` is still available but is slower and doesn't model splitter collisions.
 
 ## Output
 
@@ -177,8 +173,7 @@ Solve time: 3.90s
 ## How it works
 
 1. **Puzzle loading**: `puzzles.ts` reads `puzzles/*.json` and flattens each config into a solver-friendly format (flat obstacle arrays, integer direction constants).
-2. **Initial simulation**: The laser is simulated with no mirrors placed to establish a baseline path and valid candidate positions.
-3. **Parallel beam search**: `solve.ts` spawns one worker per mirror-count depth (1 through `num_mirrors`). Each worker runs `beamSearchForDepth`, keeping the top `beam_width` states at each step.
-4. **Incremental optimization**: For puzzles without splitters or gates, the solver uses incremental path extension — only re-simulating the new segment after each mirror placement rather than re-running the full simulation.
-5. **Best result**: The main thread collects results from all workers and returns the highest-scoring placement.
-6. **Verification**: The solution is re-simulated to confirm the reported score.
+2. **Beam search** (`beam_search.ts`): the main thread holds the beam. At each depth it hands chunks of the beam to persistent worker threads, which try both mirror types on every cell the current beams pass through and keep a local top-`beam_width`. The main thread merges the workers' lists into the next beam and tracks the best placement seen at any depth.
+3. **Scoring** (`fastsim.ts`): each candidate is scored with an integer-grid simulator that reproduces `calculateLaserPath` exactly (splitters, gates, loops, collisions) without allocating. `test_fastsim.ts` keeps the two in sync.
+4. **Compact, deduplicated beam**: a beam entry is just its mirror list (one Uint16 per mirror). Mirror sets reached in different orders are deduplicated by a Zobrist hash, and ties are broken by that hash, so results are deterministic and independent of the worker count.
+5. **Verification**: the solution is re-simulated with `calculateLaserPath` to confirm the reported score.

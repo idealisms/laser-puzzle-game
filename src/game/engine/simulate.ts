@@ -20,10 +20,6 @@ function positionKey(pos: Position, dir: Direction): string {
   return `${pos.x},${pos.y},${dir}`
 }
 
-function cellKey(pos: Position): string {
-  return `${pos.x},${pos.y}`
-}
-
 function isInBounds(pos: Position, bounds: GridBounds): boolean {
   return pos.x >= 0 && pos.x < bounds.width && pos.y >= 0 && pos.y < bounds.height
 }
@@ -70,8 +66,6 @@ function getObstacleAction(laserDir: Direction, obstacle: Obstacle): ObstacleAct
   return { kind: 'reflect', dir: oppositeDir(orientation) }
 }
 
-type ArrivalInfo = { si: number; segi: number; dir: Direction; pos: Position }
-
 /**
  * Returns which face of a mirror the laser is hitting (0 or 1).
  *
@@ -89,147 +83,76 @@ function mirrorSide(dir: Direction, mirrorType: '/' | '\\'): 0 | 1 {
 }
 
 /**
- * Post-process computed streams to find collisions: two beams from different streams
- * that physically occupy the same point at the same time.
+ * Do two beams that arrive at the same cell at the same time collide?
+ * `dirA` and `dirB` are the directions the beams were travelling as they arrived.
  *
- * Each stream has a globalOffset = total steps from the laser source to where it started.
- * The global time when a beam reaches the END of segment[segi] is: offset + segi + 1.
- *
- * Two collision types:
- *   1. Same-cell same-time: beams from different streams arrive at the same cell at the
- *      same global time. If the cell contains a mirror, the beams only collide when they
- *      are hitting the SAME face of the mirror (mirrorSide). Beams on opposite faces
- *      reflect independently without colliding.
- *   2. Crossing: at the same global time, beam A is at cell P heading toward Q and beam B
- *      is at Q heading toward P — they cross between the cells. The collision position is
- *      the midpoint (fractional grid coordinate).
- *
- * Only the EARLIEST collision per stream-pair is kept (prevents the same physical
- * collision being recorded twice as consecutive crossings or as crossing + same-cell).
- *
- * Both streams are truncated to stop at their respective collision segments.
+ *   - Mirror cell: only beams hitting the same mirror face collide (mirrorSide).
+ *   - Splitter cell: they collide unless at least one hits the wall face, which
+ *     just stops that beam.
+ *   - Anything else (open cell, wall, gate, off-grid): head-on or same-direction
+ *     beams collide; perpendicular beams pass through each other.
  *
  * Exported for unit testing.
  */
-export function resolveCollisions(
-  streams: LaserStream[],
-  streamOffsets: number[],
+export function sameCellCollision(
+  cell: Position,
+  dirA: Direction,
+  dirB: Direction,
   mirrors: Mirror[],
   obstacles: Obstacle[] = []
-): Position[] {
-  // Map "x,y|globalTime" → arrivals (for same-cell detection)
-  const byCellTime = new Map<string, ArrivalInfo[]>()
-  // Map globalTime → all arrivals at that step (for crossing detection)
-  const byTime = new Map<number, ArrivalInfo[]>()
-
-  for (let si = 0; si < streams.length; si++) {
-    const offset = streamOffsets[si]
-    for (let segi = 0; segi < streams[si].segments.length; segi++) {
-      const seg = streams[si].segments[segi]
-      const gTime = offset + segi + 1
-      const info: ArrivalInfo = { si, segi, dir: seg.direction, pos: { ...seg.end } }
-
-      const ctKey = `${cellKey(seg.end)}|${gTime}`
-      if (!byCellTime.has(ctKey)) byCellTime.set(ctKey, [])
-      byCellTime.get(ctKey)!.push(info)
-
-      if (!byTime.has(gTime)) byTime.set(gTime, [])
-      byTime.get(gTime)!.push(info)
-    }
+): boolean {
+  const m = findMirror(cell, mirrors)
+  if (m) return mirrorSide(dirA, m.type) === mirrorSide(dirB, m.type)
+  const spl = obstacles.find((o) => o.type === 'splitter' && o.x === cell.x && o.y === cell.y)
+  if (spl) {
+    const wallDir = oppositeDir(spl.orientation ?? 'right')
+    return dirA !== wallDir && dirB !== wallDir
   }
-
-  // Per stream-pair: keep only the earliest collision (prevents double-detection of the
-  // same physical event as both a crossing and same-cell, or as consecutive crossings).
-  const pairCollisions = new Map<string, { gTime: number; pos: Position; a: ArrivalInfo; b: ArrivalInfo }>()
-
-  function tryCollision(gTime: number, pos: Position, a: ArrivalInfo, b: ArrivalInfo) {
-    const lo = Math.min(a.si, b.si), hi = Math.max(a.si, b.si)
-    const key = `${lo}-${hi}`
-    const existing = pairCollisions.get(key)
-    if (!existing || gTime < existing.gTime) {
-      pairCollisions.set(key, { gTime, pos, a, b })
-    }
-  }
-
-  // 1. Same-cell same-time: two beams from different streams at the same cell at the
-  //    same global time.
-  //    - Mirror cell: only beams hitting the same mirror face collide (mirrorSide rule).
-  //    - Open cell: perpendicular beams pass through each other; only head-on or
-  //      same-direction beams collide.
-  for (const arrivals of byCellTime.values()) {
-    if (arrivals.length < 2) continue
-    for (let i = 0; i < arrivals.length; i++) {
-      for (let j = i + 1; j < arrivals.length; j++) {
-        const a = arrivals[i], b = arrivals[j]
-        if (a.si !== b.si) {
-          const m = mirrors.find((mir) => mir.position.x === a.pos.x && mir.position.y === a.pos.y)
-          if (m) {
-            if (mirrorSide(a.dir, m.type) !== mirrorSide(b.dir, m.type)) continue
-          } else {
-            const spl = obstacles.find((o) => o.type === 'splitter' && o.x === a.pos.x && o.y === a.pos.y)
-            if (spl) {
-              // At a splitter: collide unless at least one beam is hitting the wall face.
-              // The wall face (opposite of orientation) just stops the beam — no collision.
-              const wallDir = oppositeDir(spl.orientation ?? 'right')
-              if (a.dir === wallDir || b.dir === wallDir) continue
-            } else {
-              // Perpendicular beams in open space pass through each other
-              if (a.dir !== b.dir && a.dir !== oppositeDir(b.dir)) continue
-            }
-          }
-          const gTime = streamOffsets[a.si] + a.segi + 1
-          tryCollision(gTime, a.pos, a, b)
-        }
-      }
-    }
-  }
-
-  // 2. Crossing: at the same gTime, beam A at P heading to Q, beam B at Q heading to P
-  for (const [gTime, arrivals] of byTime) {
-    if (arrivals.length < 2) continue
-    for (let i = 0; i < arrivals.length; i++) {
-      for (let j = i + 1; j < arrivals.length; j++) {
-        const a = arrivals[i], b = arrivals[j]
-        if (a.si === b.si || a.dir !== oppositeDir(b.dir)) continue
-        const delta = getDirectionDelta(a.dir)
-        if (b.pos.x === a.pos.x + delta.dx && b.pos.y === a.pos.y + delta.dy) {
-          tryCollision(gTime, { x: (a.pos.x + b.pos.x) / 2, y: (a.pos.y + b.pos.y) / 2 }, a, b)
-        }
-      }
-    }
-  }
-
-  // Apply earliest truncation per stream, then collect collision positions
-  const truncations = new Map<number, number>()
-  const collisionPositions: Position[] = []
-
-  for (const { pos, a, b } of pairCollisions.values()) {
-    collisionPositions.push(pos)
-    const prevA = truncations.get(a.si)
-    truncations.set(a.si, prevA === undefined ? a.segi : Math.min(prevA, a.segi))
-    const prevB = truncations.get(b.si)
-    truncations.set(b.si, prevB === undefined ? b.segi : Math.min(prevB, b.segi))
-  }
-
-  for (const [si, maxSegi] of truncations) {
-    streams[si].segments = streams[si].segments.slice(0, maxSegi + 1)
-  }
-
-  return collisionPositions
+  return dirA === dirB || dirA === oppositeDir(dirB)
 }
 
 function findMirror(pos: Position, mirrors: Mirror[]): Mirror | undefined {
   return mirrors.find((m) => m.position.x === pos.x && m.position.y === pos.y)
 }
 
-interface StackItem {
-  startPos: Position
-  startDir: Direction
-  generation: number
-  globalOffset: number  // total steps from the laser source before this stream started
-  colorIndex: number
+interface Beam {
+  pos: Position
+  dir: Direction
+  stream: LaserStream
 }
 
+type StepOutcome =
+  | { kind: 'continue'; dir: Direction }
+  | { kind: 'stop'; reason: LaserPath['terminationReason'] }
+  | { kind: 'split'; dirs: [Direction, Direction] }
+
+interface Arrival {
+  beam: Beam
+  to: Position
+  dir: Direction // direction of travel into `to`
+  outcome: StepOutcome
+  collided: boolean
+}
+
+/**
+ * Trace the laser, advancing every beam one cell per time step.
+ *
+ * Beams move in lockstep so that collisions are resolved in time order: two
+ * beams that arrive at the same cell at the same time and collide (see
+ * sameCellCollision) both stop there, and a stopped beam never reaches any
+ * later mirror or splitter, so it spawns nothing further.
+ *
+ * Beams can never cross mid-step (swap two adjacent cells): every beam starts
+ * at the laser and moves one cell per step, so at time t every beam is on a
+ * cell with (x + y) ≡ (laser.x + laser.y + t) mod 2, and no two beams are ever
+ * on adjacent cells at the same time.
+ *
+ * Loop detection is shared by all beams: a beam stops when it is about to
+ * leave a cell in a direction that any beam already left that cell in.
+ *
+ * totalLength counts every step of every beam (beams sharing a cell count
+ * independently), capped at MAX_LASER_LENGTH steps overall.
+ */
 export function calculateLaserPath(
   laserConfig: LaserConfig,
   mirrors: Mirror[],
@@ -237,97 +160,97 @@ export function calculateLaserPath(
   bounds: GridBounds
 ): LaserPath {
   const streams: LaserStream[] = []
-  const streamOffsets: number[] = []
   const visited = new Set<string>()
+  const collisionPoints: Position[] = []
   let totalLength = 0
   let terminationReason: LaserPath['terminationReason'] = 'max-length'
   let nextColorIndex = 1
 
-  const stack: StackItem[] = [
-    { startPos: { x: laserConfig.x, y: laserConfig.y }, startDir: laserConfig.direction, generation: 0, globalOffset: 0, colorIndex: 0 },
-  ]
+  const newBeam = (pos: Position, dir: Direction, generation: number, globalOffset: number, colorIndex: number): Beam => {
+    const stream: LaserStream = { segments: [], generation, colorIndex, globalOffset }
+    streams.push(stream)
+    return { pos: { ...pos }, dir, stream }
+  }
 
-  while (stack.length > 0) {
-    const { startPos, startDir, generation, globalOffset, colorIndex } = stack.pop()!
-    const streamSegments: LaserSegment[] = []
-    let pos: Position = { ...startPos }
-    let dir: Direction = startDir
+  let beams: Beam[] = [newBeam({ x: laserConfig.x, y: laserConfig.y }, laserConfig.direction, 0, 0, 0)]
 
-    while (totalLength < MAX_LASER_LENGTH) {
-      const stateKey = positionKey(pos, dir)
-
+  for (let time = 1; beams.length > 0; time++) {
+    // 1. Move every beam one cell.
+    const arrivals: Arrival[] = []
+    for (const beam of beams) {
+      if (totalLength >= MAX_LASER_LENGTH) {
+        terminationReason = 'max-length'
+        continue
+      }
+      const stateKey = positionKey(beam.pos, beam.dir)
       if (visited.has(stateKey)) {
         terminationReason = 'loop'
-        break
+        continue
       }
       visited.add(stateKey)
 
-      const moveDelta = getDirectionDelta(dir)
-      const nextPos: Position = {
-        x: pos.x + moveDelta.dx,
-        y: pos.y + moveDelta.dy,
-      }
+      const { dx, dy } = getDirectionDelta(beam.dir)
+      const to: Position = { x: beam.pos.x + dx, y: beam.pos.y + dy }
+      beam.stream.segments.push({ start: { ...beam.pos }, end: { ...to }, direction: beam.dir })
+      totalLength++
 
-      if (!isInBounds(nextPos, bounds)) {
-        streamSegments.push({ start: { ...pos }, end: { ...nextPos }, direction: dir })
-        totalLength++
-        terminationReason = 'edge'
-        break
-      }
-
-      const obstacle = findObstacle(nextPos, obstacles)
-      if (obstacle) {
-        const action = getObstacleAction(dir, obstacle)
-        streamSegments.push({ start: { ...pos }, end: { ...nextPos }, direction: dir })
-        totalLength++
-        if (action.kind === 'wall') {
-          terminationReason = 'obstacle'
-          break
-        }
-        if (action.kind === 'pass') {
-          // Laser passes through gate — continue from gate cell, same direction
-          pos = nextPos
-          continue
-        }
-        if (action.kind === 'split') {
-          // Sub-streams inherit the global time at the split point.
-          // One child keeps the parent's color; the other gets a fresh color.
-          const subOffset = globalOffset + streamSegments.length
-          stack.push({ startPos: { ...nextPos }, startDir: action.dirs[0], generation: generation + 1, globalOffset: subOffset, colorIndex: nextColorIndex++ })
-          stack.push({ startPos: { ...nextPos }, startDir: action.dirs[1], generation: generation + 1, globalOffset: subOffset, colorIndex })
-          break
-        }
-        // reflect: continue from splitter cell in new direction
-        dir = action.dir
-        pos = nextPos
-        continue
-      }
-
-      const mirror = findMirror(nextPos, mirrors)
-      if (mirror) {
-        streamSegments.push({ start: { ...pos }, end: { ...nextPos }, direction: dir })
-        totalLength++
-        dir = reflectLaser(dir, mirror.type)
-        pos = nextPos
+      let outcome: StepOutcome
+      if (!isInBounds(to, bounds)) {
+        outcome = { kind: 'stop', reason: 'edge' }
       } else {
-        streamSegments.push({ start: { ...pos }, end: { ...nextPos }, direction: dir })
-        totalLength++
-        pos = nextPos
+        const obstacle = findObstacle(to, obstacles)
+        if (obstacle) {
+          const action = getObstacleAction(beam.dir, obstacle)
+          if (action.kind === 'wall') outcome = { kind: 'stop', reason: 'obstacle' }
+          else if (action.kind === 'pass') outcome = { kind: 'continue', dir: beam.dir }
+          else if (action.kind === 'split') outcome = { kind: 'split', dirs: action.dirs }
+          else outcome = { kind: 'continue', dir: action.dir }
+        } else {
+          const mirror = findMirror(to, mirrors)
+          outcome = { kind: 'continue', dir: mirror ? reflectLaser(beam.dir, mirror.type) : beam.dir }
+        }
+      }
+      arrivals.push({ beam, to, dir: beam.dir, outcome, collided: false })
+    }
+
+    // 2. Resolve collisions between beams that moved this step.
+    for (let i = 0; i < arrivals.length; i++) {
+      for (let j = i + 1; j < arrivals.length; j++) {
+        const a = arrivals[i], b = arrivals[j]
+        if (a.to.x === b.to.x && a.to.y === b.to.y && sameCellCollision(a.to, a.dir, b.dir, mirrors, obstacles)) {
+          a.collided = b.collided = true
+          collisionPoints.push({ ...a.to })
+        }
       }
     }
 
-    streams.push({ segments: streamSegments, generation, colorIndex, globalOffset })
-    streamOffsets.push(globalOffset)
+    // 3. Apply each surviving beam's outcome.
+    const next: Beam[] = []
+    for (const arr of arrivals) {
+      const { beam, outcome } = arr
+      if (arr.collided) {
+        terminationReason = 'obstacle'
+        continue
+      }
+      if (outcome.kind === 'stop') {
+        terminationReason = outcome.reason
+      } else if (outcome.kind === 'split') {
+        // One child keeps the parent's color; the other gets a fresh one.
+        const gen = beam.stream.generation + 1
+        next.push(newBeam(arr.to, outcome.dirs[1], gen, time, beam.stream.colorIndex ?? 0))
+        next.push(newBeam(arr.to, outcome.dirs[0], gen, time, nextColorIndex++))
+      } else {
+        beam.pos = arr.to
+        beam.dir = outcome.dir
+        next.push(beam)
+      }
+    }
+    beams = next
   }
 
-  const collisionPoints = resolveCollisions(streams, streamOffsets, mirrors, obstacles)
-
-  // Count total segments after truncation; beams sharing a cell count independently
-  const finalLength = streams.reduce((sum, st) => sum + st.segments.length, 0)
-
   return {
-    streams,
-    totalLength: finalLength,
+    streams: streams.filter((st) => st.segments.length > 0),
+    totalLength,
     terminated: true,
     terminationReason,
     collisionPoints,
