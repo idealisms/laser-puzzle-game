@@ -93,6 +93,10 @@
       "y": 9
     },
     {
+      "x": 11,
+      "y": 9
+    },
+    {
       "x": 12,
       "y": 9
     },
@@ -165,12 +169,6 @@
       "y": 9,
       "type": "gate",
       "orientation": "up"
-    },
-    {
-      "x": 11,
-      "y": 9,
-      "type": "gate",
-      "orientation": "down"
     }
   ],
   "mirrorsAvailable": 10,

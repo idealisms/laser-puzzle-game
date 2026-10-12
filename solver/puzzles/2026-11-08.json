@@ -54,6 +54,7 @@
         [8, 9],
         [9, 9],
         [10, 9],
+        [11, 9],
         [12, 9],
         [13, 9],
         [14, 9]
@@ -101,12 +102,6 @@
       "y": 9,
       "dir": "up",
       "note": "northbound gate \u2014 UP passes only"
-    },
-    {
-      "x": 11,
-      "y": 9,
-      "dir": "down",
-      "note": "southbound gate \u2014 DOWN passes only"
     }
   ]
 }
