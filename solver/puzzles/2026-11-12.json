@@ -42,6 +42,7 @@
         [10, 9],
         [10, 10],
         [10, 11],
+        [10, 12],
         [10, 13],
         [10, 14],
         [10, 15],
@@ -74,12 +75,6 @@
       "y": 5,
       "dir": "left",
       "note": "west weir gate \u2014 LEFT passes only"
-    },
-    {
-      "x": 10,
-      "y": 12,
-      "dir": "up",
-      "note": "east weir gate \u2014 UP passes only"
     }
   ]
 }
