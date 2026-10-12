@@ -1,0 +1,55 @@
+name: Tarns
+size: 21x28
+laser: right
+mirrors: 11
+label a: NW tarn — touches top and left walls (10 cells)
+label b: NE tarn — touches top and right walls (10 cells)
+label c: SW tarn — touches left and bottom walls (10 cells)
+label d: SE tarn — touches right and bottom walls (10 cells)
+label e: Left wall upper — touches left wall (6 cells)
+label f: Left wall lower — touches left wall (6 cells)
+label g: Right wall upper — touches right wall (6 cells)
+label h: Right wall lower — touches right wall (6 cells)
+label i: Upper-left tarn (6 cells)
+label j: Upper-right tarn (6 cells)
+label k: Left mid tarn (4 cells)
+label l: Right mid tarn (4 cells)
+label m: y=14 run shortener (2 cells)
+label n: Lower tarn (6 cells)
+label o: Lower accent (4 cells)
+note 12,9: blocks downward x=12 run — beam can only go up through here
+note 12,18: blocks upward x=12 run — beam can only go down through here
+note 17,9: blocks downward x=17 run — beam can only go up through here
+note 17,18: blocks upward x=17 run — beam can only go down through here
+note 2,9: blocks downward x=2 run — beam can only go up through here
+note 2,18: blocks upward x=2 run — beam can only go down through here
+note 5,12: blocks downward x=5 run — beam can only go up through here
+note 5,20: blocks upward x=5 run — beam can only go down through here
+aaaa............bbbbb
+aaa...............bbb
+aa.................bb
+a....................
+.....iii.....jjj.....
+.....iii.....jjj.....
+.....................
+.....................
+ee.................gg
+eeN.........N....N.gg
+ee.................gg
+.....................
+...kkN.........ll....
+...kk..........ll....
+@........mm..........
+.....................
+.....................
+ff.................hh
+ffS.........S....S.hh
+ff.......nnn.......hh
+.....S...nnn.........
+.....................
+.........oo..........
+.........oo..........
+c...................d
+cc.................dd
+ccc...............ddd
+cccc.............dddd

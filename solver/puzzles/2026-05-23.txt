@@ -1,0 +1,30 @@
+name: Spider Web
+laser: left
+mirrors: 11
+label a: Vertical spoke
+label b: Left stub of horizontal spoke
+label c: Diagonal spokes
+label d: Inner concentric ring
+label e: Outer concentric ring fragments
+note 14,7: right wall — only upward passes; blocks the long downward right-wall run
+note 14,13: right wall — only downward passes; blocks the long upward right-wall run
+...............
+.......a.......
+..c....a....c..
+...c...a...c...
+..e.c..a..c.e..
+..e..dd.dd..e..
+..e..d...d..e..
+..............N
+...............
+...............
+.bbb..........@
+...............
+...............
+..............S
+..e..d...d..e..
+..e..dd.dd..e..
+..e.c..a..c.e..
+...c...a...c...
+..c....a....c..
+.......a.......

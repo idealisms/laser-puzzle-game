@@ -1,0 +1,37 @@
+name: Shoals
+laser: right
+mirrors: 10
+label a: NW shoal — touches top and left walls (6 cells)
+label b: NE shoal — touches top and right walls (6 cells)
+label c: SW shoal — touches left and bottom walls (5 cells)
+label d: SE shoal — touches right and bottom walls (5 cells)
+label e: Left wall upper — touches left wall (5 cells)
+label f: Right wall upper — touches right wall (5 cells)
+label g: Left wall lower — touches left wall (4 cells)
+label h: Right wall lower — touches right wall (4 cells)
+label i: Upper-left island (5 cells)
+label j: Upper-right island (5 cells)
+label k: Center vertical blocker (3 cells)
+label l: y=14 run shortener (2 cells)
+label m: Lower-left island (4 cells)
+label n: Lower-right island (4 cells)
+aaa.........bbb
+aa...........bb
+a...iii.jjj...b
+....ii...jj....
+.............ff
+ee...........ff
+e.............f
+ee.............
+...............
+......kkk......
+...............
+gg.............
+gg...........hh
+.............hh
+@........ll....
+...mm..........
+...mm....nn....
+c........nn...d
+cc............d
+cc..........ddd

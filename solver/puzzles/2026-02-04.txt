@@ -1,0 +1,25 @@
+name: Window Frame
+laser: right
+mirrors: 11
+label a: Outer frame
+label b: Window panes (cross dividers)
+aaaaaaaaaaaaaaa
+a.............a
+a......b......a
+@......b......a
+a......b......a
+a......b......a
+a......b......a
+a......b......a
+a......b......a
+a.............a
+a.bbbbb..bbbbba
+a.............a
+a......b......a
+a......b......a
+a......b......a
+a......b......a
+a......b......a
+a......b......a
+a......b......a
+aaaaaaaaaaaaaaa

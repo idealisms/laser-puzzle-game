@@ -1,0 +1,39 @@
+name: Ghylls
+laser: right
+mirrors: 10
+label a: NW ghyll — touches top and left walls (9 cells)
+label b: NE ghyll — touches top and right walls (9 cells)
+label c: SW ghyll — touches left and bottom walls (7 cells)
+label d: SE ghyll — touches right and bottom walls (6 cells)
+label e: Left wall upper — touches left wall (5 cells)
+label f: Left wall lower — touches left wall (5 cells)
+label g: Right wall mid — touches right wall (5 cells)
+label h: Upper-left island (5 cells)
+label i: Upper-right island (5 cells)
+label j: Lower-left island (5 cells)
+label k: Lower-right island (5 cells)
+label l: y=8 run shortener (2 cells)
+note 2,6: blocks downward x=2 run — beam can only go up through here
+note 2,13: blocks upward x=2 run — beam can only go down through here
+note 8,6: blocks downward x=8 run — beam can only go up through here
+note 8,13: blocks upward x=8 run — beam can only go down through here
+aaaa.......bbbb
+aaa.........bbb
+a.............b
+a..hhh...iii..b
+ee.hh.....ii...
+e..............
+eeN.....N......
+...............
+@........ll....
+...............
+.............gg
+ff...........gg
+f.............g
+ffS.....S......
+...jjj...kkk...
+...jj.....kk...
+c..............
+cc............d
+cc...........dd
+cc..........ddd

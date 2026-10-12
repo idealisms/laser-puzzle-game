@@ -1,0 +1,41 @@
+name: Cay
+laser: right
+mirrors: 10
+label a: NE cape — touches top and right walls
+label b: NW corner — touches top and left walls
+label c: Upper interior A
+label d: Upper interior B
+label e: Center marker — breaks x=7 run at y=5
+label f: Left wall mid — touches left wall
+label g: Right wall mid — touches right wall
+label h: Mid interior A
+label i: Mid interior B
+label j: Mid interior C
+label k: Mid interior D
+label l: Mid interior E
+label m: Lower interior A
+label n: Lower interior B
+label o: SW cape — touches left and bottom walls
+label p: SE cape — touches right and bottom walls
+note 12,7: blocks downward x=12 run — beam can only go up through here
+note 12,12: blocks upward x=12 run — beam can only go down through here
+bbb........aaaa
+b.............a
+bb...cc......aa
+......c..dd....
+.........d.....
+@......e.......
+...............
+....hh..ii..N..
+ff..h....i....g
+f.............g
+f............gg
+f......kk.....g
+...jj..k....S..
+....j.....ll...
+..........l....
+.....mm........
+.....m...nn....
+o........n....p
+o.............p
+ooo.........ppp

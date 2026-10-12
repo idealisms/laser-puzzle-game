@@ -1,0 +1,28 @@
+name: Cyclone
+laser: right
+mirrors: 10
+label a: Outer spiral arm top
+label b: Outer spiral arm bottom
+label c: Inner spiral ring
+note 4,5: Laser going RIGHT → split (UP+DOWN). Reachable by redirecting early off outer wall.
+note 10,15: Laser going UP → split (LEFT+RIGHT). Inner spiral creates path to reach this splitter.
+...............
+.aaaaaa.aaaaaa.
+.............a.
+...cccc.cccc.a.
+...c.......c.a.
+...c>......c.a.
+...c.......c.a.
+...c.......c.a.
+...c.......c.a.
+...c.......c...
+@..............
+...c.......c...
+.b.c.......c.b.
+.b.c.......c.b.
+.b.cccc.cccc.b.
+.b........^..b.
+.b...........b.
+.bbbbbb.bbbbbb.
+...............
+...............

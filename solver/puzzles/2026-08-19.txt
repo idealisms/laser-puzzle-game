@@ -1,0 +1,36 @@
+name: Breck
+laser: left
+mirrors: 10
+label a: NW corner
+label b: NE corner
+label c: SW corner
+label d: SE corner
+label e: run-breaker
+label f: upper-left T
+label g: upper-right T
+label h: left wall mid
+label i: right wall mid
+label j: center Z
+label k: lower-left Z
+label l: lower-right Z
+label m: bottom pair
+aa...........bb
+a.............b
+..............b
+..fff.....ggg..
+...f.......g...
+...............
+.......ee.....@
+...............
+...............
+h.....jj.....ii
+hh.....jj.....i
+...............
+...............
+..kk......ll...
+...kk......ll..
+...............
+...............
+c.....mm.......
+c............dd
+cc............d

@@ -1,0 +1,36 @@
+name: Kames
+laser: left
+mirrors: 10
+label a: NW kame — touches top and left walls (6 cells)
+label b: NE kame — touches top and right walls (6 cells)
+label c: SW kame — touches left and bottom walls (6 cells)
+label d: SE kame — touches right and bottom walls (6 cells)
+label e: Left wall mid — touches left wall (5 cells)
+label f: Right wall upper — touches right wall (5 cells)
+label g: Right wall lower — touches right wall (5 cells)
+label h: Upper-left kame island (5 cells)
+label i: Upper-right kame island (5 cells)
+label j: Lower-left kame island (4 cells)
+label k: Lower-right kame island (4 cells)
+label l: Lower mid blocker (2 cells)
+note 7,6: laser going left triggers split — up+down beams emerge at x=7
+aaa.........bbb
+aa...........bb
+a.............b
+...hh....iii.ff
+...hh....ii..ff
+...h..........f
+.......<......@
+...............
+.............gg
+.............gg
+ee............g
+e..............
+ee.............
+...............
+...jj....kk....
+...jj....kk....
+......ll.......
+c.............d
+cc...........dd
+ccc.........ddd

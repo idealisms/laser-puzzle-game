@@ -1,0 +1,39 @@
+name: Crags
+laser: right
+mirrors: 10
+label a: NW crag — touches top and left walls (8 cells)
+label b: NE crag — touches top and right walls (8 cells)
+label c: SW crag — touches left and bottom walls (7 cells)
+label d: SE crag — touches right and bottom walls (7 cells)
+label e: Left wall mid — touches left wall (6 cells)
+label f: Right wall mid — touches right wall (6 cells)
+label g: Top mid — touches top wall (4 cells)
+label h: Interior upper-left L-crag (5 cells)
+label i: Interior upper-right L-crag (5 cells)
+label j: Interior center vertical — blocks x=7 runs (4 cells)
+label k: Interior lower-left L-crag (5 cells)
+label l: Interior lower-right L-crag (5 cells)
+label m: y=15 blocker — shortens initial laser run (2 cells)
+label n: Lower-left accent (2 cells)
+label o: Lower interior (2 cells)
+label p: Lower-right interior (2 cells)
+aaaa.ggg...bbbb
+aa...g.......bb
+a.............b
+a.............b
+....hhh.iii....
+......h.i......
+......h.i......
+e..............
+ee....jj.......
+ee.....j......f
+e......j.....ff
+.............ff
+...kkk...lll..f
+.....k...l.....
+..oo.k...l.pp..
+@........mm....
+c...nn........d
+c.............d
+c.............d
+cccc.......dddd

@@ -1,0 +1,34 @@
+name: Haugh
+laser: down
+mirrors: 9
+label a: NW fat-L
+label b: NE fat-L
+label c: SW fat-L
+label d: SE fat-L
+label e: Top flanks L
+label f: Top flanks R
+label g: Left zone island
+label h: Right zone island
+label i: Left zone lower
+label j: Right zone lower
+note 8,10: laser going DOWN splits LEFT and RIGHT at y=10
+aa......@....bb
+aa...ee..ff..bb
+aa...........bb
+aa...........bb
+a.............b
+...............
+...gg.....hh...
+...............
+...............
+...............
+........v......
+...............
+...............
+..ii.......jj..
+...............
+cc...........dd
+cc...........dd
+cc...........dd
+cc...........dd
+c.............d

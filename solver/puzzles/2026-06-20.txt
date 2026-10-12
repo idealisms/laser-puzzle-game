@@ -1,0 +1,31 @@
+name: Branch
+laser: right
+mirrors: 10
+label a: Top-left corner — x=0..3, y=0..3, touches top and left edges
+label b: Top-right corner — x=11..14, y=0..3, touches top and right edges
+label c: Left upper staircase — y=5..8, touches left; hypotenuse (4,5)→(0,8)
+label d: Right upper staircase — y=5..8, touches right; hypotenuse (10,5)→(14,8)
+label e: Left lower staircase — y=12..15, touches left; hypotenuse (0,12)→(4,15)
+label f: Right lower staircase — y=12..15, touches right; hypotenuse (14,12)→(10,15)
+label g: Bottom-left corner — x=0..3, y=16..19, touches bottom and left edges
+label h: Bottom-right corner — x=11..14, y=16..19, touches bottom and right edges
+aaaa.......bbbb
+aaaa.......bbbb
+aaaa.......bbbb
+aaaa.......bbbb
+...............
+ccccc.....ddddd
+cccc.......dddd
+ccc.........ddd
+cc...........dd
+...............
+@......>.......
+...............
+ee...........ff
+eee.........fff
+eeee.......ffff
+eeeee.....fffff
+gggg.......hhhh
+gggg.......hhhh
+gggg.......hhhh
+gggg.......hhhh

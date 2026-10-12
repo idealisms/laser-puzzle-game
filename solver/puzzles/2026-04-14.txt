@@ -1,0 +1,28 @@
+name: Watchtowers
+laser: up
+mirrors: 10
+label a: Tower 1 — top-left corner, touches top and left edges
+label b: Tower 2 — top-right corner, touches top and right edges
+label c: Tower 3 — bottom-left corner, touches bottom and left edges
+label d: Tower 4 — bottom-right corner, touches bottom and right edges
+label e: Center divider — horizontal bar spanning x=4-10 at y=8-12; forces beam to bypass left or right
+aaa.........bbb
+aaa.........bbb
+aaa.........bbb
+aaa.........bbb
+aaa.........bbb
+aaa.........bbb
+aaa.........bbb
+aaa.........bbb
+....eeeeeee....
+....eeeeeee....
+....eeeeeee....
+....eeeeeee....
+ccc.eeeeeee.ddd
+ccc.........ddd
+ccc.........ddd
+ccc.........ddd
+ccc.........ddd
+ccc.........ddd
+ccc.........ddd
+ccc....@....ddd

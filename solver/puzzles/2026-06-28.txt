@@ -1,0 +1,38 @@
+name: Coves
+laser: down
+mirrors: 10
+label a: NW cove — touches top and left walls (8 cells)
+label b: NE cove — touches top and right walls (8 cells)
+label c: SW cove — touches left and bottom walls (6 cells)
+label d: SE cove — touches right and bottom walls (6 cells)
+label e: Left wall mid — touches left wall (5 cells)
+label f: Right wall mid — touches right wall (5 cells)
+label g: Upper-left cove island (5 cells)
+label h: Upper-right cove island (5 cells)
+label i: x=7 run shortener (3 cells)
+label j: Lower-left cove island (5 cells)
+label k: Lower-right cove island (5 cells)
+note 2,6: blocks downward x=2 run — beam can only go up through here
+note 2,13: blocks upward x=2 run — beam can only go down through here
+note 12,6: blocks downward x=12 run — beam can only go up through here
+note 12,13: blocks upward x=12 run — beam can only go down through here
+aaaa...@...bbbb
+aaa.........bbb
+a.............b
+...............
+...ggg...hhh...
+...gg.....hh...
+..N.........N..
+...............
+...............
+ee...........ff
+e.....iii....ff
+ee............f
+...............
+..S.........S..
+...jjj...kkk...
+...jj.....kk...
+...............
+c.............d
+cc...........dd
+ccc.........ddd

@@ -1,0 +1,36 @@
+name: Drumlins
+laser: right
+mirrors: 10
+label a: NW drumlin — touches top and left walls (6 cells)
+label b: NE drumlin — touches top and right walls (6 cells)
+label c: SW drumlin — touches left and bottom walls (6 cells)
+label d: SE drumlin — touches right and bottom walls (6 cells)
+label e: Left wall upper — touches left wall (5 cells)
+label f: Right wall upper — touches right wall (5 cells)
+label g: Right wall lower — touches right wall (5 cells)
+label h: Upper-left drumlin (5 cells)
+label i: Upper-right drumlin (5 cells)
+label j: Upper mid blocker (2 cells)
+label k: Lower-left drumlin (4 cells)
+label l: Lower-right drumlin (4 cells)
+note 8,15: laser going right triggers split — up+down beams emerge at x=8
+aaa.........bbb
+aa...........bb
+a.............b
+...............
+...hhh...iii.ff
+....hh...ii..ff
+..............f
+...............
+ee.....jj......
+e..............
+ee...........gg
+.............gg
+..............g
+...............
+...............
+@.......>......
+...kk....ll....
+c..kk....ll...d
+cc...........dd
+ccc.........ddd

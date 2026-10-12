@@ -1,0 +1,40 @@
+name: Copse
+laser: up
+mirrors: 10
+label a: NW — touches top+left
+label b: N wall — touches top
+label c: NE — touches top+right
+label d: Upper-left island (flanks x=3 corridor above gate)
+label e: Upper-right island (flanks x=12 corridor above gate)
+label f: W wall mid — touches left
+label g: E wall mid — touches right
+label h: x=7 run-breaker
+label i: Mid interior
+label j: Lower-left island (flanks x=3 corridor below gate)
+label k: Lower-right island (flanks x=12 corridor below gate)
+label l: SW — touches left+bottom
+label m: SE — touches right+bottom
+note 3,6: x=3 upper gate — beam must travel UP; downward blocked
+note 3,15: x=3 lower gate — beam must travel DOWN; upward blocked
+note 12,6: x=12 upper gate — beam must travel UP; downward blocked
+note 12,15: x=12 lower gate — beam must travel DOWN; upward blocked
+aa....bbb....cc
+a......b......c
+..............c
+.dd.........ee.
+..d..........e.
+...............
+...N........N..
+...............
+f............gg
+ff............g
+.....ii.......g
+.....i.........
+.......hh......
+...............
+...............
+...S........S..
+.jj.........kk.
+..j..........k.
+ll...........mm
+l......@......m

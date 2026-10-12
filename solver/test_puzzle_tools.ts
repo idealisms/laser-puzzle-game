@@ -12,7 +12,7 @@ const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
 
-const { parseMap, puzzleToMap, formatPuzzleJson } = require('./puzzle_map');
+const { parseMap, puzzleToMap } = require('./puzzle_map');
 const { analyzeLevel, levelFromConfig, renderSolution } = require('./check_levels');
 const { rankCandidates, searchSplitter, weakestStream } = require('./search_splitter');
 
@@ -55,10 +55,6 @@ describe('parseMap', () => {
     assert.deepEqual(p.obstacle_groups, []);
   });
 
-  it('prefers a date: line over the default date', () => {
-    assert.equal(parseMap(map([...HEADER, 'date: 2026-12-02'], [[0, 0, '@']]), '2026-12-01').date, '2026-12-02');
-  });
-
   it('rejects malformed maps', () => {
     const bad = (text: string, message: RegExp) => assert.throws(() => parseMap(text, '2026-12-01'), message);
     bad(map(HEADER, []), /no laser/);
@@ -73,40 +69,21 @@ describe('parseMap', () => {
 });
 
 describe('puzzleToMap', () => {
-  const cellSet = (p: any) => new Set(p.obstacle_groups.flatMap((g: any) => g.cells.map(([x, y]: number[]) => `${x},${y}`)));
-
-  it('round-trips every puzzle in solver/puzzles', () => {
+  it('prints every puzzle in solver/puzzles back to the same puzzle', () => {
     const dir = path.join(__dirname, 'puzzles');
-    for (const file of fs.readdirSync(dir).filter((f: string) => f.endsWith('.json'))) {
-      const p = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'));
-      const back = parseMap(puzzleToMap(p));
-      for (const k of ['date', 'name', 'width', 'height', 'laser', 'num_mirrors', 'notes']) {
-        assert.deepEqual(back[k], p[k], `${file}: ${k}`);
-      }
-      // Maps list splitters and gates in reading order.
-      const sorted = (list: any[] = []) => [...list].sort((a, b) => a.y - b.y || a.x - b.x);
-      assert.deepEqual(back.splitters, sorted(p.splitters), `${file}: splitters`);
-      assert.deepEqual(back.gates, sorted(p.gates), `${file}: gates`);
-      // A cell in two groups is kept in the first, so compare the cells overall.
-      assert.deepEqual(cellSet(back), cellSet(p), `${file}: walls`);
-      const labels = p.obstacle_groups.map((g: any) => g.label);
-      for (const g of back.obstacle_groups) assert.ok(labels.includes(g.label), `${file}: label ${g.label}`);
+    const files = fs.readdirSync(dir).filter((f: string) => f.endsWith('.txt'));
+    assert.ok(files.length > 0);
+    for (const file of files) {
+      const date = file.slice(0, -'.txt'.length);
+      const p = parseMap(fs.readFileSync(path.join(dir, file), 'utf8'), date);
+      assert.deepEqual(parseMap(puzzleToMap(p), date), p, file);
     }
   });
 
-  it('prints a puzzle that has no splitters list', () => {
+  it('prints a puzzle without its date, even with no splitters list', () => {
     const p = parseMap(map(HEADER, [[0, 0, '@']]), '2026-12-01');
     delete p.splitters;
-    assert.match(puzzleToMap(p), /^name: Test\ndate: 2026-12-01\nlaser: right\nmirrors: 9\n@\.{14}\n/);
-  });
-});
-
-describe('formatPuzzleJson', () => {
-  it('puts each cell on one line', () => {
-    const p = parseMap(map(HEADER, [[0, 0, '@'], [3, 4, 'a']]), '2026-12-01');
-    const text = formatPuzzleJson(p);
-    assert.match(text, /"cells": \[\n\s+\[3, 4\]\n\s+\]/);
-    assert.deepEqual(JSON.parse(text), p);
+    assert.match(puzzleToMap(p), /^name: Test\nlaser: right\nmirrors: 9\n@\.{14}\n/);
   });
 });
 

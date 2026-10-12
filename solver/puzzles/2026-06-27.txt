@@ -1,0 +1,28 @@
+name: Drawbridge
+laser: right
+mirrors: 10
+label a: Bar A — x=4..5, y=0..14, touches top; gap y=15..19 below; first obstacle in laser path
+label b: Bar B — x=9..10, y=0..6, touches top; gap y=7..19 below
+label c: Bar C — x=13..14, y=0..10, touches top and right edges; gap y=11..19 below
+label d: Bottom-left staircase — SW corner, hypotenuse (0,15)→(4,19)
+label e: Bottom-right staircase — SE corner, hypotenuse (14,15)→(10,19)
+....aa...bb..cc
+....aa...bb..cc
+....aa...bb..cc
+....aa...bb..cc
+....aa...bb..cc
+....aa...bb..cc
+....aa...bb..cc
+....aa.......cc
+....aa.......cc
+....aa.......cc
+@...aa.......cc
+....aa.........
+....aa.........
+....aa.........
+....aa.........
+dd...........ee
+ddd.........eee
+dddd.......eeee
+ddddd.....eeeee
+dddddd.........

@@ -1,0 +1,32 @@
+name: Prism
+laser: left
+mirrors: 10
+label a: Apex — rightmost, narrowest layer
+label b: Layer 2
+label c: Layer 3
+label d: Base — near left edge, almost full height
+label e: Top perimeter block
+label f: Bottom perimeter block
+label g: Right column — gap at y=9..11 for laser
+note 0,10: left edge midpoint — only upward beams pass, downward is blocked
+note 10,10: right interior midpoint — only downward beams pass, upward is blocked
+...........eee.
+...........eee.
+...............
+...d.........g.
+...d.........g.
+...d.c.......g.
+...d.c.......g.
+...d.c.b.....g.
+...d.c.b.....g.
+...d.c.b.a.....
+N..d.c.b.aS...@
+...d.c.b.a.....
+...d.c.b.....g.
+...d.c.b.....g.
+...d.c.......g.
+...d.c.......g.
+...d.........g.
+...d.........g.
+...........fff.
+...........fff.

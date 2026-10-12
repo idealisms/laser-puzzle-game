@@ -1,0 +1,36 @@
+name: Heaths
+laser: left
+mirrors: 10
+label a: NW L — touches top+left
+label b: NE pair
+label c: E wall upper notch — touches right
+label d: Upper-left island
+label e: Upper-right island
+label f: y=12 run-breaker
+label g: Mid-left island
+label h: Mid-right island
+label i: W wall mid — touches left
+label j: Lower-left island
+label k: Lower-right island
+label l: SE corner — touches right+bottom
+label m: S wall island
+aaa.........bb.
+a..............
+........ee.....
+.........e...cc
+...dd.........c
+....d..........
+...............
+...............
+ii.............
+i..............
+i..............
+...gg.....hh...
+...g...ff.h...@
+...............
+....jj.....kk..
+....j.......k..
+...............
+..............l
+.....mm......ll
+.....m........l

@@ -1,0 +1,40 @@
+name: Grove
+laser: right
+mirrors: 9
+label a: NW corner — touches top+left
+label b: N wall — touches top
+label c: NE corner — touches top+right
+label d: W wall upper — touches left
+label e: Upper interior A — blocks x=4 band
+label f: Upper interior B — blocks x=11 band
+label g: E wall upper — touches right
+label h: Upper interior C — blocks x=6 band, away from splitter column
+label i: Left mid wall — touches left below laser row
+label j: Right mid wall — touches right below splitter row
+label k: Lower interior A — blocks x=4 band
+label l: Lower interior B — blocks x=11 band
+label m: Lower interior C — blocks x=7 band
+label n: W wall lower — touches left
+label o: SW corner — touches left+bottom
+label p: SE corner — touches right+bottom
+note 10,8: laser going RIGHT splits UP into upper-center zone and DOWN into lower-center zone
+aa.....bb....cc
+aa......b.....c
+....ee.....ff..
+d...e......f...
+dd...........gg
+..............g
+......hh.......
+......h........
+@.........>....
+...............
+i............jj
+ii............j
+...............
+....kk.........
+....k......ll..
+...........l...
+nn.....mm......
+n......m....ppp
+o.............p
+oo.............

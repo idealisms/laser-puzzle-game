@@ -1,0 +1,53 @@
+name: Lagoon
+size: 21x28
+laser: up
+mirrors: 11
+label a: NW blob — touches top and left walls (15 cells)
+label b: NE blob — touches top and right walls (15 cells)
+label c: SW blob — touches left and bottom walls (15 cells)
+label d: SE blob — touches right and bottom walls (15 cells)
+label e: Left wall upper — touches left wall (7 cells)
+label f: Right wall upper — touches right wall (7 cells)
+label g: Left wall lower — touches left wall (7 cells)
+label h: Right wall lower — touches right wall (7 cells)
+label i: Top mid-left — touches top wall (4 cells)
+label j: Top mid-right — touches top wall (4 cells)
+label k: Bottom mid-left — touches bottom wall (4 cells)
+label l: Bottom mid-right — touches bottom wall (4 cells)
+label m: Interior upper-left (6 cells)
+label n: Interior upper-right (6 cells)
+label o: Center x=10 blocker — breaks laser straight run (3 cells)
+label p: Interior mid-left (5 cells)
+label q: Interior mid-right (5 cells)
+label r: Interior lower-left (5 cells)
+label s: Interior lower-right (5 cells)
+label t: Center lower (4 cells)
+label u: Interior mid-center (3 cells)
+aaaaa.ii.....jj.bbbbb
+aaaa...ii...jj...bbbb
+aaa...............bbb
+aa.................bb
+a...................b
+.....mmm.....nnn.....
+.....mmm.....nnn.....
+e...................f
+ee.................ff
+eee.....uuu.......fff
+..e...............f..
+.....................
+....pp.........qq....
+....pp...ooo...qq....
+....p...........q....
+.....................
+.....................
+ggg...............hhh
+ggg...............hhh
+g....rr.......ss....h
+.....rr.......ss.....
+.....r...tt....s.....
+..........tt.........
+c...................d
+cc.................dd
+ccc...............ddd
+cccc...kk...ll...dddd
+ccccc.kk..@..ll.ddddd

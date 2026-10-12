@@ -1,22 +1,16 @@
 'use strict';
 /**
- * ASCII maps for drafting puzzles: convert a map to a solver/puzzles/*.json
- * config, or print an existing puzzle as a map to edit.
- *
- * Usage (from solver/):
- *   npx tsx puzzle_map.ts build drafts/2026-11-01.txt [more maps...]   # writes puzzles/DATE.json
- *   npx tsx puzzle_map.ts show 2026-10-23                             # prints the puzzle as a map
- *
- * Map format: header lines, then one line per grid row.
+ * The puzzle map format: solver/puzzles/YYYY-MM-DD.txt holds each puzzle as
+ * header lines followed by one line per grid row. The date comes from the
+ * file name.
  *
  *   name: Fork Road
- *   date: 2026-11-01            (optional; defaults to the map's file name)
  *   size: 15x20                 (optional; default 15x20)
  *   laser: right                (direction; the laser cell is '@')
  *   mirrors: 9
  *   label a: north post         (label for obstacle group 'a'; '#' and a-z except v are groups)
  *   note 7,9: splits UP/DOWN    (note on the splitter or gate at x,y)
- *   notes: free text            (top-level puzzle notes; repeat for more lines)
+ *   notes: free text            (puzzle notes; repeat for more lines)
  *   .....a.........
  *   ...
  *
@@ -25,9 +19,6 @@
  * way, 'N' 'E' 'S' 'W' one-way gate passing up/right/down/left.
  */
 
-const fs = require('fs');
-const path = require('path');
-
 const SPLITTER_CHARS: Record<string, string> = { '^': 'up', '>': 'right', 'v': 'down', '<': 'left' };
 const GATE_CHARS: Record<string, string> = { N: 'up', E: 'right', S: 'down', W: 'left' };
 // Every lowercase letter but 'v', which is a splitter.
@@ -35,7 +26,7 @@ const GROUP_CHARS = 'abcdefghijklmnopqrstuwxyz#';
 
 interface Device { x: number; y: number; dir: string; note?: string }
 
-export interface PuzzleJson {
+export interface Puzzle {
   date: string;
   name: string;
   width: number;
@@ -50,8 +41,8 @@ export interface PuzzleJson {
 
 const invert = (m: Record<string, string>) => Object.fromEntries(Object.entries(m).map(([k, v]) => [v, k]));
 
-/** Parses an ASCII map. `defaultDate` is used when the map has no `date:` line. */
-export function parseMap(text: string, defaultDate?: string): PuzzleJson {
+/** Parses a puzzle map; `date` comes from its file name. */
+export function parseMap(text: string, date: string): Puzzle {
   const meta: Record<string, string> = {};
   const labels: Record<string, string> = {};
   const deviceNotes = new Map<string, string>();
@@ -65,14 +56,12 @@ export function parseMap(text: string, defaultDate?: string): PuzzleJson {
     if (rows.length === 0 && (m = line.match(/^label (\S): (.*)$/))) labels[m[1]] = m[2];
     else if (rows.length === 0 && (m = line.match(/^note (\d+),(\d+): (.*)$/))) deviceNotes.set(`${m[1]},${m[2]}`, m[3]);
     else if (rows.length === 0 && (m = line.match(/^notes: (.*)$/))) notes.push(m[1]);
-    else if (rows.length === 0 && (m = line.match(/^(name|date|size|laser|mirrors): (.*)$/))) meta[m[1]] = m[2].trim();
+    else if (rows.length === 0 && (m = line.match(/^(name|size|laser|mirrors): (.*)$/))) meta[m[1]] = m[2].trim();
     else rows.push(line.trim());
   }
 
   const [width, height] = (meta.size ?? '15x20').split('x').map(Number);
-  const date = meta.date ?? defaultDate;
   for (const key of ['name', 'laser', 'mirrors']) if (!meta[key]) throw new Error(`map is missing "${key}:"`);
-  if (!date) throw new Error('map is missing "date:" and no default date was given');
   if (!['up', 'right', 'down', 'left'].includes(meta.laser)) throw new Error(`bad laser direction "${meta.laser}"`);
   if (rows.length !== height) throw new Error(`expected ${height} rows, got ${rows.length}`);
 
@@ -105,7 +94,7 @@ export function parseMap(text: string, defaultDate?: string): PuzzleJson {
   for (const k of Object.keys(labels)) if (!groups.has(k)) throw new Error(`label for unused group "${k}"`);
 
   const { x, y } = laser as { x: number; y: number };
-  const puzzle: PuzzleJson = {
+  const puzzle: Puzzle = {
     date,
     name: meta.name,
     width,
@@ -121,13 +110,13 @@ export function parseMap(text: string, defaultDate?: string): PuzzleJson {
 }
 
 /**
- * Prints a puzzle config as a map. A cell listed in more than one group goes
- * to the first; a group left with no cells is dropped. A wall under the laser
- * would be lost, since the cell can only show '@'.
+ * Prints a puzzle as a map (without its date). A cell listed in more than one
+ * group goes to the first; a group left with no cells is dropped. A wall
+ * under the laser would be lost, since the cell can only show '@'.
  */
-export function puzzleToMap(p: PuzzleJson): string {
+export function puzzleToMap(p: Puzzle): string {
   const grid = Array.from({ length: p.height }, () => Array(p.width).fill('.'));
-  const header = [`name: ${p.name}`, `date: ${p.date}`];
+  const header = [`name: ${p.name}`];
   if (p.width !== 15 || p.height !== 20) header.push(`size: ${p.width}x${p.height}`);
   header.push(`laser: ${p.laser.dir}`, `mirrors: ${p.num_mirrors}`);
 
@@ -150,38 +139,4 @@ export function puzzleToMap(p: PuzzleJson): string {
   for (const n of p.notes ?? []) header.push(`notes: ${n}`);
   grid[p.laser.y][p.laser.x] = '@';
   return [...header, ...grid.map(r => r.join(''))].join('\n') + '\n';
-}
-
-/** JSON for solver/puzzles/, with each cell on one line. */
-export function formatPuzzleJson(p: PuzzleJson): string {
-  return JSON.stringify(p, null, 2).replace(/\[\s+(\d+),\s+(\d+)\s+\]/g, '[$1, $2]') + '\n';
-}
-
-function main(argv: string[]): number {
-  const [cmd, ...args] = argv;
-  const puzzlesDir = path.join(__dirname, 'puzzles');
-  if (cmd === 'build' && args.length) {
-    for (const file of args) {
-      const puzzle = parseMap(fs.readFileSync(file, 'utf8'), path.basename(file).replace(/\.[^.]*$/, ''));
-      const out = path.join(puzzlesDir, `${puzzle.date}.json`);
-      fs.writeFileSync(out, formatPuzzleJson(puzzle));
-      console.log(`${file} -> ${path.relative(process.cwd(), out)}`);
-    }
-    return 0;
-  }
-  if (cmd === 'show' && args.length === 1) {
-    process.stdout.write(puzzleToMap(JSON.parse(fs.readFileSync(path.join(puzzlesDir, `${args[0]}.json`), 'utf8'))));
-    return 0;
-  }
-  console.error('Usage: npx tsx puzzle_map.ts build <map.txt>...\n       npx tsx puzzle_map.ts show <date>');
-  return 1;
-}
-
-if (require.main === module) {
-  try {
-    process.exit(main(process.argv.slice(2)));
-  } catch (err) {
-    console.error(`Error: ${(err as Error).message}`);
-    process.exit(1);
-  }
 }

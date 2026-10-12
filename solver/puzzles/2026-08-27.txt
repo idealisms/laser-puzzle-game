@@ -1,0 +1,42 @@
+name: Kyle
+laser: up
+mirrors: 10
+label a: NW corner
+label b: N wall
+label c: NE corner
+label d: Upper-left flank
+label e: Upper-right flank
+label f: W wall mid
+label g: E wall mid
+label h: x=10 run-breaker
+label i: Mid interior
+label j: Lower-left flank
+label k: Lower-right flank
+label l: SW corner
+label m: S wall
+label n: SE corner
+note 4,5: col x=4 upper gate — UP passes; DOWN blocked
+note 4,14: col x=4 lower gate — DOWN passes; UP blocked
+note 11,5: col x=11 upper gate — UP passes; DOWN blocked
+note 11,14: col x=11 lower gate — DOWN passes; UP blocked
+note 5,9: col x=5 mid gate — DOWN passes; UP blocked
+aa...bbbbb...cc
+aa............c
+...............
+..dd........ee.
+...d........e..
+....N......N...
+...............
+f.............g
+f.....ii......g
+f....Si.......g
+f.............g
+f.........hh..g
+...............
+...............
+....S......S...
+..jj........kk.
+...j........k..
+l..............
+ll...........nn
+l....mmmmm@...n

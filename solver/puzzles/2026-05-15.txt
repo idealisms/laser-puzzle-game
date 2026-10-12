@@ -1,0 +1,38 @@
+name: Floes
+laser: left
+mirrors: 10
+label a: NE floe — touches top and right walls
+label b: NW floe — touches top and left walls
+label c: Upper-right floe — touches right wall
+label d: Upper floe A
+label e: Upper floe B
+label f: Upper floe C
+label g: Left-mid floe — touches left wall
+label h: Mid floe A
+label i: Mid floe B
+label j: Mid floe C
+label k: Right-mid floe — touches right wall
+label l: Lower floe A
+label m: Lower floe B
+label n: SW floe — touches left and bottom walls
+label o: SE floe — touches right and bottom walls
+bbb........aaaa
+b.............a
+bb..dd.......aa
+.......ee......
+.......e.......
+.............cc
+..........ff..c
+..........f...c
+gg..hh.........
+g...h..........
+gg............@
+........ii.....
+.....jj..i.....
+.....j.......kk
+..............k
+...ll.........k
+...l...mm......
+n.......m......
+n..........oooo
+nnn...........o

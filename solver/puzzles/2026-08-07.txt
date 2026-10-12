@@ -1,0 +1,40 @@
+name: Covert
+laser: right
+mirrors: 10
+label a: NW corner — touches top+left
+label b: N wall — touches top
+label c: NE corner — touches top+right
+label d: W wall upper — touches left
+label e: Upper interior A
+label f: Upper interior B
+label g: E wall upper — touches right
+label h: y=7 run-breaker
+label i: Mid interior
+label j: W wall lower — touches left
+label k: E wall lower — touches right
+label l: Lower interior A
+label m: Lower interior B
+label n: SW corner — touches left+bottom
+label o: SE corner — touches right+bottom
+note 3,9: col x=3 upper gate — UP passes; DOWN blocked
+note 3,15: col x=3 lower gate — DOWN passes; UP blocked
+aaa....bb....cc
+a.......b.....c
+a....ee.......c
+d....e.......gg
+d.........ff..g
+d..........f...
+...............
+@.......hh.....
+...............
+...N.ii........
+.....i.......kk
+j.............k
+j.........mm...
+jj...ll...m....
+......l........
+...S...........
+...............
+n..............
+n...........ooo
+nn............o

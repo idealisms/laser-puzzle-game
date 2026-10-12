@@ -1,0 +1,36 @@
+name: Rills
+laser: right
+mirrors: 10
+label a: NW rill — touches top and left walls (6 cells)
+label b: NE rill — touches top and right walls (6 cells)
+label c: SW rill — touches left and bottom walls (6 cells)
+label d: SE rill — touches right and bottom walls (6 cells)
+label e: Left wall upper — touches left wall (4 cells)
+label f: Left wall lower — touches left wall (4 cells)
+label g: Right wall upper — touches right wall (5 cells)
+label h: Right wall lower — touches right wall (5 cells)
+label i: Upper-left island (5 cells)
+label j: Upper-right island (4 cells)
+label k: Lower-left island (5 cells)
+label l: Lower-right island (4 cells)
+note 9,10: laser going right triggers split — up+down beams emerge
+aaa.........bbb
+aa...........bb
+a.............b
+...iii...jj....
+...ii....jj..gg
+ee...........gg
+e.............g
+e..............
+...............
+...............
+@........>.....
+...............
+...............
+ff.............
+f..kkk.......hh
+f..kk........hh
+.........ll...h
+c........ll...d
+cc...........dd
+ccc.........ddd

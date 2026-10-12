@@ -1,0 +1,38 @@
+name: Shingle
+laser: down
+mirrors: 10
+label a: Top-left corner — touches top and left walls
+label b: Top-right corner — touches top and right walls
+label c: Left wall upper — touches left wall
+label d: Right wall upper — touches right wall
+label e: Interior A
+label f: Interior B
+label g: Interior C
+label h: Interior D
+label i: Interior E
+label j: Interior F
+label k: Interior G
+label l: Left wall lower — touches left wall
+label m: Right wall lower — touches right wall
+label n: Bottom-left corner — touches left and bottom walls
+label o: Bottom-right corner — touches right and bottom walls
+aaa....@....bbb
+aa...........bb
+...............
+....ee...ff....
+....e.....f....
+c.............d
+cc...........dd
+cc...........dd
+...gg..........
+...g......ii...
+..........i....
+......hh.......
+.......h.......
+l...jj........m
+ll...j...kk..mm
+ll.......k...mm
+...............
+...............
+n.............o
+nnn.........ooo

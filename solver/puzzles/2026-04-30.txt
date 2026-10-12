@@ -1,0 +1,38 @@
+name: Islands
+laser: up
+mirrors: 10
+label a: Headland — 7 cells, top-left, touches top and left walls
+label b: Cape — 5 cells, top-right, touches top and right walls
+label c: Reef A — 3 cells, upper interior
+label d: Shoal — 2 cells, upper-right interior
+label e: Breakwater — 6 cells, left wall mid, touches left wall
+label f: Stack — 4 cells, right wall upper, touches right wall
+label g: Pebble — 1 cell, interior
+label h: Pinnacle — 2 cells, center, blocks x=7 run
+label i: Reef B — 4 cells, right-mid interior
+label j: Atoll — 5 cells, center-lower interior
+label k: Rock — 2 cells, lower-left interior
+label l: Spit — 7 cells, left wall lower, touches left and bottom walls
+label m: Crag — 3 cells, lower-right, touches right wall
+label n: Islet — 1 cell, lower interior
+label o: Sandbar — 5 cells, bottom-right, touches right and bottom walls
+aaa........bbbb
+aaa...........b
+a..............
+.....cc........
+.....c....dd...
+.............ff
+e.............f
+e.............f
+e.......g......
+e......h.......
+ee.....h...ii..
+.....jj.....ii.
+.....jj........
+l.....j........
+l..kk..........
+l...........mmm
+l..............
+l........n.....
+l..........oooo
+l......@......o

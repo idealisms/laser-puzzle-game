@@ -1,0 +1,37 @@
+name: Gill
+laser: right
+mirrors: 10
+label a: NW — touches top+left
+label b: N wall — touches top
+label c: NE — touches top+right
+label d: W wall upper — touches left
+label e: Upper interior A
+label f: Upper interior B
+label g: E wall upper — touches right
+label h: Mid interior A
+label i: Mid interior B
+label j: E wall lower — touches right
+label k: y=15 run-breaker
+label l: Interior lower
+label m: SW — touches left+bottom
+label n: SE — touches right+bottom
+aa....bb....ccc
+a.....b.......c
+....ee........c
+dd..e....ff....
+d........f.....
+.............gg
+..............g
+..............g
+...hh...ii.....
+...h....i......
+...............
+.............jj
+..............j
+...ll.........j
+...l...........
+@.....kk.......
+...............
+mm.............
+m...........nnn
+m.............n

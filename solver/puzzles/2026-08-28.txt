@@ -1,0 +1,40 @@
+name: Hanger
+laser: left
+mirrors: 10
+label a: NW corner
+label b: N wall
+label c: NE corner
+label d: W wall upper
+label e: Upper interior A
+label f: Upper interior B
+label g: E wall upper
+label h: Mid interior A
+label i: Mid interior B
+label j: W wall mid
+label k: E wall mid
+label l: y=16 run-breaker
+label m: Interior lower
+label n: W wall lower
+label o: SW corner
+label p: SE corner
+note 3,10: col x=3 mid gate — UP passes; DOWN blocked
+aaa.....bbb..cc
+a.............c
+...............
+dd...ee.ff.....
+d....e...f...gg
+..............g
+...............
+.....hh.ii.....
+.....hh..i.....
+...............
+j..N.........kk
+jj............k
+...............
+n....mm........
+nn....m........
+...............
+.......ll.....@
+o..............
+o...........ppp
+oo............p

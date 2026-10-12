@@ -1,0 +1,32 @@
+name: Pillars
+laser: down
+mirrors: 10
+label a: Top-left corner — x=0..2, y=0..2, touches top and left edges
+label b: Top-right corner — x=12..14, y=0..2, touches top and right edges
+label c: Left pillar A — x=0..2, y=5..9, touches left edge
+label d: Right pillar A — x=12..14, y=5..9, touches right edge
+label e: Left pillar B — x=0..2, y=12..16, touches left edge
+label f: Right pillar B — x=12..14, y=12..16, touches right edge
+label g: Bottom-left corner — x=0..2, y=18..19, touches bottom and left edges
+label h: Bottom-right corner — x=12..14, y=18..19, touches bottom and right edges
+label i: Central top bar — x=5..9, y=5; first obstacle in laser path
+aaa....@....bbb
+aaa.........bbb
+aaa.........bbb
+...............
+...............
+ccc..iiiii..ddd
+ccc.........ddd
+ccc.........ddd
+ccc.........ddd
+ccc.........ddd
+...............
+...............
+eee.........fff
+eee.........fff
+eee.........fff
+eee.........fff
+eee.........fff
+...............
+ggg.........hhh
+ggg.........hhh

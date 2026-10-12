@@ -1,0 +1,37 @@
+name: Strath
+laser: left
+mirrors: 10
+label a: NW — touches top+left
+label b: N wall — touches top
+label c: NE — touches top+right
+label d: W wall upper — touches left
+label e: Upper interior A
+label f: Upper interior B
+label g: E wall mid — touches right
+label h: Mid interior A
+label i: Mid interior B
+label j: W wall lower — touches left
+label k: y=13 run-breaker
+label l: Interior lower
+label m: SW — touches left+bottom
+label n: SE — touches right+bottom
+aa.....bb...ccc
+a.......b.....c
+....ee........c
+d...e....ff....
+dd........f....
+...............
+.............gg
+..............g
+.....hh........
+.....h...ii....
+.........i.....
+j..............
+jj.............
+.......kk.....@
+....ll.........
+....l..........
+...............
+m...........nnn
+mm............n
+m.............n

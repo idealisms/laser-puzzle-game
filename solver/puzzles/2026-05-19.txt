@@ -1,0 +1,28 @@
+name: Portals
+laser: down
+mirrors: 10
+label a: Top-left corner — x=0..2, y=0..2, touches top and left edges
+label b: Top-right corner — x=12..14, y=0..2, touches top and right edges
+label c: Right portal — x=12..14, y=8..19, touches right and bottom edges; gap y=3..7 above
+label d: Centre portal — x=6..8, y=11..19, touches bottom; gap y=0..10 above; first obstacle in laser path
+label e: Left portal — x=0..3, y=14..19, touches left and bottom edges; gap y=0..13 above
+aaa....@....bbb
+aaa.........bbb
+aaa.........bbb
+...............
+...............
+...............
+...............
+...............
+............ccc
+............ccc
+............ccc
+......ddd...ccc
+......ddd...ccc
+......ddd...ccc
+eeee..ddd...ccc
+eeee..ddd...ccc
+eeee..ddd...ccc
+eeee..ddd...ccc
+eeee..ddd...ccc
+eeee..ddd...ccc

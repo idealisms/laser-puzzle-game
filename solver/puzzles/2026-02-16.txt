@@ -1,0 +1,28 @@
+name: Castle
+laser: right
+mirrors: 10
+label a: Castle towers (top)
+label b: Battlements
+label c: Castle walls
+label d: Inner courtyard walls
+label e: Gate
+...............
+.aa...aaa...aa.
+.aa...a.a...aa.
+...............
+.bbbbbbbbbbbbb.
+.c...........c.
+.c...........c.
+.c..d.....d..c.
+.c..d.....d..c.
+.c..d.....d..c.
+.c...ddddd...c.
+.c...........c.
+.c...........c.
+.c...........c.
+.c....e.e....c.
+@....eeeee.....
+...............
+...............
+...............
+...............

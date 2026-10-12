@@ -1,0 +1,36 @@
+name: Shoals
+laser: left
+mirrors: 9
+label a: Rock A — top-left, touches top and left edges
+label b: Atoll B — top-right, touches top and right edges
+label c: Shoal C — upper center-left
+label d: Mesa D — upper center-right
+label e: Island E — left mid, touches left edge
+label f: Crag F — right upper-mid, touches right edge
+label g: Reef G — center-left mid
+label h: Stack H — center-right mid
+label i: Sandbar I — left lower, clear of laser lane at y=15
+label j: Bank J — lower center, near bottom edge
+label k: Cliff K — bottom-right, touches right and bottom edges
+note 8,15: Laser going LEFT from (14,15) hits this → splits UP+DOWN at x=8.
+note 8,9: UP beam from splitter 1 travels x=8 from y=14 to y=9 → splits LEFT+RIGHT. Path is clear of all island obstacles.
+aaa..........bb
+aa...........bb
+a............bb
+...ccc...ddd...
+....c.....d....
+............fff
+ee...........ff
+ee.............
+e..............
+........^......
+...............
+..gg......hh...
+..gg......hh...
+ii.............
+ii.............
+........<.....@
+............kkk
+....jjj......kk
+.....jj.......k
+...............

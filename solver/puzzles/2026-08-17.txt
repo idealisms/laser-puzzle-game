@@ -1,0 +1,42 @@
+name: Strand
+laser: up
+mirrors: 10
+label a: NW corner
+label b: N wall
+label c: NE corner
+label d: Upper-left flank
+label e: Upper-right flank
+label f: W wall mid
+label g: E wall mid
+label h: x=8 run-breaker
+label i: Mid interior
+label j: Lower-left flank
+label k: Lower-right flank
+label l: SW corner
+label m: S wall
+label n: SE corner
+note 4,5: y=5 left gate — RIGHT passes; LEFT blocked
+note 11,5: y=5 right gate — LEFT passes; RIGHT blocked
+note 4,14: y=14 left gate — RIGHT passes; LEFT blocked
+note 11,14: y=14 right gate — LEFT passes; RIGHT blocked
+note 1,10: col x=1 mid gate — UP passes; DOWN blocked
+aa...bbbbb...cc
+a.............c
+..............c
+..dd.......ee..
+..d.........e..
+....E......W...
+...............
+f.............g
+f.....ii......g
+f......i......g
+fN............g
+f.......hh....g
+...............
+...............
+....E......W...
+..jj.......kk..
+..j.........k..
+.............nn
+l.............n
+ll...mmm@.....n

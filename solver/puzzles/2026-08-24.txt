@@ -1,0 +1,36 @@
+name: Knoll
+laser: down
+mirrors: 9
+label a: NW L-wall
+label b: NE L-wall
+label c: SW L-wall
+label d: SE L-wall
+label e: Left zone island A
+label f: Right zone island A
+label g: Left zone island B
+label h: Right zone island B
+label i: W wall mid
+label j: E wall mid
+label k: Upper zone island
+label l: Lower zone island
+note 4,10: laser going DOWN splits LEFT into left zone and RIGHT into right zone
+aaaa@......bbbb
+a.............b
+a.............b
+a......kk.....b
+a.............b
+..ee......ff...
+...............
+...............
+i............jj
+ii............j
+....v..........
+...............
+...............
+...............
+..gg...ll.hh...
+c.............d
+c.............d
+c.............d
+c.............d
+cccc.......dddd

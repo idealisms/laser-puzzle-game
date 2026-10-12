@@ -1,0 +1,40 @@
+name: Holt
+laser: left
+mirrors: 10
+label a: NW corner
+label b: N wall
+label c: NE corner
+label d: y=2 run-breaker
+label e: W wall upper
+label f: Upper interior A
+label g: Upper interior B
+label h: E wall upper
+label i: Mid interior A
+label j: Mid interior B
+label k: W wall mid
+label l: E wall mid
+label m: Interior lower A
+label n: Interior lower B
+label o: W wall lower
+label p: SW corner
+label q: SE corner
+aaa....bb...ccc
+aa......b.....c
+.......dd.....@
+...............
+e...ff...gg....
+ee..f....g...hh
+..............h
+...............
+...ii..........
+...i......jj.ll
+k.........jj..l
+kk.............
+...............
+...............
+o...mm...nn....
+oo...m...n.....
+...............
+p..............
+pp...........qq
+p.............q

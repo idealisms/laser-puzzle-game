@@ -1,0 +1,37 @@
+name: Brakes
+laser: left
+mirrors: 10
+label a: NW L-wall — vertical left leg, horizontal top leg
+label b: NE L-wall — vertical right leg, horizontal top leg
+label c: SW L-wall — vertical left leg, horizontal bottom leg
+label d: SE L-wall — vertical right leg, horizontal bottom leg
+label e: Left mid wall — touches left between gate rows
+label f: Right mid wall — touches right near laser
+label g: Upper-left flank — near y=4 left gate
+label h: Upper-right flank — near y=4 right gate
+label i: Lower-left flank — near y=15 left gate
+label j: Lower-right flank — near y=15 right gate
+note 3,4: y=4 left gate — beam must go RIGHT; leftward blocked
+note 11,4: y=4 right gate — beam must go LEFT; rightward blocked
+note 3,15: y=15 left gate — beam must go RIGHT; leftward blocked
+note 11,15: y=15 right gate — beam must go LEFT; rightward blocked
+aaaaa.....bbbbb
+a.............b
+a....gg.hh....b
+a.............b
+a..E.......W..b
+...............
+...............
+e.............f
+e.............f
+e.............f
+..............@
+...............
+...............
+...............
+...............
+c..E.......W..d
+c.............d
+c....ii.jj....d
+c.............d
+ccccc.....ddddd

@@ -1,0 +1,28 @@
+name: Spiral Inward
+laser: right
+mirrors: 10
+label a: Outer wall (top, leaving gap at right)
+label b: Right wall going down
+label c: Bottom wall going left
+label d: Left wall going up
+label e: Inner spiral
+@..............
+...............
+aaaaaaaaaaaaab.
+.............b.
+.............b.
+...deeeeeee..b.
+...d......e..b.
+...d......e..b.
+...d..eee.e..b.
+...d..e...e..b.
+...d..e...e..b.
+...d..e...e..b.
+...d..e...e..b.
+...d..e...e..b.
+...d..eeeee..b.
+...d.........b.
+...d.........b.
+...ccccccccccc.
+...............
+...............
