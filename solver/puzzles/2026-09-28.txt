@@ -1,0 +1,36 @@
+name: Wath
+laser: down
+mirrors: 9
+label a: NW corner
+label b: NE corner
+label c: upper-left L
+label d: upper-right L
+label e: E wall upper
+label f: mid-left Z
+label g: run-breaker x=11
+label h: mid-right pair
+label i: lower-left L
+label j: lower-right L
+label k: bottom pair
+label l: SW corner
+label m: SE corner
+aa.........@.bb
+aa............b
+...............
+...cc.......dd.
+...c........d..
+..............e
+..............e
+..ff.........h.
+...ff........h.
+..........gg...
+...............
+...............
+...............
+...ii..........
+....i.....jj...
+...........j...
+......kk.......
+l..............
+l............mm
+ll............m

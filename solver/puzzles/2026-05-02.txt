@@ -1,0 +1,54 @@
+name: Lochs
+size: 21x28
+laser: down
+mirrors: 11
+label a: NW loch — touches top and left walls (10 cells)
+label b: NE loch — touches top and right walls (10 cells)
+label c: SW loch — touches left and bottom walls (10 cells)
+label d: SE loch — touches right and bottom walls (10 cells)
+label e: Left wall upper — touches left wall (6 cells)
+label f: Left wall lower — touches left wall (6 cells)
+label g: Right wall upper — touches right wall (6 cells)
+label h: Right wall lower — touches right wall (6 cells)
+label i: Upper-left loch (6 cells)
+label j: Upper-right loch (6 cells)
+label k: x=10 run shortener (3 cells)
+label l: Lower-left loch (5 cells)
+label m: Lower-right loch (5 cells)
+label n: Center lower accent (4 cells)
+note 7,9: blocks downward x=7 run — beam can only go up through here
+note 7,18: blocks upward x=7 run — beam can only go down through here
+note 17,9: blocks downward x=17 run — beam can only go up through here
+note 17,18: blocks upward x=17 run — beam can only go down through here
+note 2,9: blocks downward x=2 run — beam can only go up through here
+note 2,18: blocks upward x=2 run — beam can only go down through here
+note 3,9: blocks downward x=3 run — beam can only go up through here
+note 3,18: blocks upward x=3 run — beam can only go down through here
+aaaa......@......bbbb
+aaa..............bbbb
+aa.................bb
+a....................
+....iii.......jjj....
+....iii.......jjj....
+.....................
+.....................
+ee.................gg
+eeNN...N.........N.gg
+ee.......kkk.......gg
+.....................
+.....................
+.....................
+.....................
+.....................
+.....................
+ff.................hh
+ffSS...S.........S.hh
+ff..lll.......mmm..hh
+....ll.........mm....
+.....................
+.........nn..........
+.........nn..........
+c...................d
+cc.................dd
+ccc...............ddd
+cccc.............dddd

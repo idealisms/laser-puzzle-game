@@ -1,0 +1,39 @@
+name: Bights
+laser: left
+mirrors: 10
+label a: NW bight — touches top and left walls (8 cells)
+label b: NE bight — touches top and right walls (8 cells)
+label c: SW bight — touches left and bottom walls (8 cells)
+label d: SE bight — touches right and bottom walls (6 cells)
+label e: Left wall upper — touches left wall (5 cells)
+label f: Left wall lower — touches left wall (5 cells)
+label g: Right wall upper — touches right wall (5 cells)
+label h: Right wall mid — touches right wall (5 cells)
+label i: Upper-left bight island (5 cells)
+label j: Upper-right bight island (5 cells)
+label k: Mid island (4 cells)
+label l: y=16 run shortener (2 cells)
+note 2,6: blocks downward x=2 run — beam can only go up through here
+note 2,14: blocks upward x=2 run — beam can only go down through here
+note 8,6: blocks downward x=8 run — beam can only go up through here
+note 8,14: blocks upward x=8 run — beam can only go down through here
+aaaa.......bbbb
+aaa.........bbb
+a.............b
+...............
+...iii...jjj...
+...ii.....jj.gg
+..N.....N....gg
+..............g
+...............
+ee...........hh
+e............hh
+ee............h
+......kk.......
+ff....kk.......
+f.S.....S......
+ff.............
+c...ll........@
+cc............d
+cc...........dd
+ccc.........ddd

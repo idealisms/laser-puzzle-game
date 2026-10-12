@@ -1,0 +1,40 @@
+name: Shingle
+laser: left
+mirrors: 10
+label a: NW corner
+label b: N wall
+label c: NE corner
+label d: y=4 run-breaker
+label e: W wall upper
+label f: Upper interior A
+label g: Upper interior B
+label h: E wall upper
+label i: Mid interior A
+label j: Mid interior B
+label k: W wall mid
+label l: E wall mid
+label m: Interior lower A
+label n: Interior lower B
+label o: SW corner
+label p: SE corner
+note 2,9: col x=2 mid gate — UP passes; DOWN blocked
+aa....bbb....cc
+aa............c
+....ff...gg...c
+e....f...g.....
+e......dd.....@
+e..............
+.............hh
+..............h
+....ii....jj...
+..N.i......j...
+k............ll
+kk............l
+...............
+...............
+....mm...nn....
+....m....nn....
+...............
+o...........ppp
+oo............p
+o..............

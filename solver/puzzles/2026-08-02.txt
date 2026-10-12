@@ -1,0 +1,42 @@
+name: Tarn
+laser: left
+mirrors: 10
+label a: NW corner
+label b: N wall
+label c: NE corner
+label d: Upper-left flank
+label e: Upper-right flank
+label f: W wall mid
+label g: E wall mid
+label h: y=14 run-breaker
+label i: Mid interior
+label j: Lower-left flank
+label k: Lower-right flank
+label l: SW corner
+label m: S wall
+label n: SE corner
+note 4,5: col x=4 upper gate — UP passes; DOWN blocked
+note 4,15: col x=4 lower gate — DOWN passes; UP blocked
+note 10,5: col x=10 upper gate — UP passes; DOWN blocked
+note 10,15: col x=10 lower gate — DOWN passes; UP blocked
+note 1,9: col x=1 mid gate — DOWN passes; UP blocked
+aa...bbb.....cc
+a.............c
+...............
+..dd.......ee..
+...d.......e...
+....N.....N....
+...............
+f.............g
+f.............g
+fS....ii......g
+f.....i.......g
+f.............g
+f.............g
+...............
+.......hh.....@
+....S.....S....
+..jj.......kk..
+...j.......k...
+l...........nnn
+ll.....mmm....n

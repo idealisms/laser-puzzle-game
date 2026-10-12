@@ -14,8 +14,8 @@ The search keeps one beam across all depths and splits each depth's expansion ac
 |------|-------------|
 | `solve.ts` | **Main entry point** — CLI for solving puzzles; exports `solvePuzzle()` |
 | `generate_levels.ts` | Generates `levels/YYYY-MM-DD.json` output files for seeding the game |
-| `puzzles.ts` | Loads `puzzles/*.json`; flattens into solver config objects keyed by date |
-| `puzzles/` | Source puzzle configs (one JSON per date) |
+| `puzzles.ts` | Loads `puzzles/*.txt`; flattens into solver config objects keyed by date |
+| `puzzles/` | Source puzzles, one ASCII map per date (`YYYY-MM-DD.txt`) |
 | `beam_search.ts` | Layer-parallel beam search with deduplication of equivalent mirror sets |
 | `beam_worker.ts` | Persistent worker thread that expands chunks of the beam for `beam_search.ts` |
 | `fastsim.ts` | Allocation-free scorer used by the search; matches `calculateLaserPath` exactly |
@@ -23,7 +23,7 @@ The search keeps one beam across all depths and splits each depth's expansion ac
 | `test_simulator.ts` | Unit tests for the `simulateLaser` adapter |
 | `test_fastsim.ts` | Differential tests: `fastsim.ts` vs `calculateLaserPath` on every puzzle and on random collision-heavy boards |
 | `test_beam_search.ts` | Beam search results verify and don't depend on worker count |
-| `puzzle_map.ts` | Converts an ASCII map draft to `puzzles/DATE.json`, or prints a puzzle as a map |
+| `puzzle_map.ts` | Parses and prints the puzzle map format |
 | `check_levels.ts` | Draws each level's optimal solution; flags splitter beams that place no mirror and gates that can never be passed |
 | `search_splitter.ts` | Tries a splitter at each cell/orientation in a region and ranks placements by the weakest split beam |
 | `test_puzzle_tools.ts` | Tests for `puzzle_map.ts`, `check_levels.ts` and `search_splitter.ts` |
@@ -68,24 +68,7 @@ Generated files are saved to `levels/` and include the puzzle config, optimal sc
 
 ### Design tools
 
-Draft a puzzle as an ASCII map and convert it to a puzzle config. A map is a few header lines and then 20 rows of 15 cells: `.` empty, `#` or a letter for walls (one obstacle group per letter, `v` excepted), `@` the laser, `^ > v <` splitters and `N E S W` one-way gates. The full format is at the top of `puzzle_map.ts`.
-
-```
-name: Fork Road
-laser: right
-mirrors: 9
-label a: north post
-note 7,9: laser travelling RIGHT splits UP and DOWN
-.....a.........
-.....a.....c...
-               ... 17 more rows, including:
-@......>..eeeee
-```
-
-```bash
-npx tsx puzzle_map.ts build drafts/2026-11-01.txt   # writes puzzles/2026-11-01.json (date from the file name or a date: line)
-npx tsx puzzle_map.ts show 2026-10-23              # prints an existing puzzle as a map to edit
-```
+Puzzles are written as ASCII maps in `puzzles/` (format below).
 
 After generating levels, check them. This exits 1 if a split beam (with everything it splits into) places no mirror or runs fewer than 8 cells, or if a gate's entrance or exit is blocked:
 
@@ -157,31 +140,28 @@ Mirrors placed: 9
 Solve time: 3.90s
 ```
 
-## Puzzle config format (`puzzles/YYYY-MM-DD.json`)
+## Puzzle map format (`puzzles/YYYY-MM-DD.txt`)
 
-```json
-{
-  "date": "2026-03-01",
-  "name": "Example Puzzle",
-  "width": 15,
-  "height": 20,
-  "laser": { "x": 0, "y": 19, "dir": "up" },
-  "num_mirrors": 9,
-  "obstacle_groups": [
-    { "label": "left wall", "cells": [[0, 5], [0, 6]] }
-  ],
-  "splitters": [
-    { "x": 7, "y": 10, "dir": "right" }
-  ],
-  "gates": [
-    { "x": 3, "y": 5, "dir": "up" }
-  ]
-}
+Each puzzle is a few header lines followed by one line per grid row. The date is the file name.
+
+```
+name: Fork Road
+laser: right
+mirrors: 9
+label a: north post
+label e: east divider
+note 7,9: laser travelling RIGHT splits UP and DOWN
+.....a.........
+.....a.........
+               ... 20 rows of 15 cells, including:
+@......>..eeeee
 ```
 
-- `splitters` and `gates` are optional.
-- `dir` on a splitter = the direction a laser must travel **to trigger a split**. See CLAUDE.md for full splitter semantics.
-- `dir` on a gate = the single direction a laser can **pass through**. All other directions are blocked.
+- Header: `name:`, `laser:` (the laser's direction), `mirrors:`, and optionally `size: 21x28` (default 15x20), `label <c>: …` for obstacle groups, `note x,y: …` for a splitter or gate, and `notes: …` lines.
+- Cells: `.` empty, `#` or a lowercase letter other than `v` for walls (one obstacle group per character), `@` the laser, `^ > v <` splitters, `N E S W` one-way gates.
+- A splitter's symbol is the direction a laser must travel **to trigger a split**. See CLAUDE.md for full splitter semantics.
+- A gate's letter is the single direction a laser can **pass through**. All other directions are blocked.
+- `puzzle_map.ts` documents the format and parses it; a malformed map fails with the file, row and cell.
 
 ## Generated level format (`levels/YYYY-MM-DD.json`)
 
@@ -207,7 +187,7 @@ Solve time: 3.90s
 
 ## How it works
 
-1. **Puzzle loading**: `puzzles.ts` reads `puzzles/*.json` and flattens each config into a solver-friendly format (flat obstacle arrays, integer direction constants).
+1. **Puzzle loading**: `puzzles.ts` parses the maps in `puzzles/*.txt` and flattens each one into a solver-friendly format (flat obstacle arrays, integer direction constants).
 2. **Beam search** (`beam_search.ts`): the main thread holds the beam. At each depth it hands chunks of the beam to persistent worker threads, which try both mirror types on every cell the current beams pass through and keep a local top-`beam_width`. The main thread merges the workers' lists into the next beam and tracks the best placement seen at any depth.
 3. **Scoring** (`fastsim.ts`): each candidate is scored with an integer-grid simulator that reproduces `calculateLaserPath` exactly (splitters, gates, loops, collisions) without allocating. `test_fastsim.ts` keeps the two in sync.
 4. **Compact, deduplicated beam**: a beam entry is just its mirror list (one Uint16 per mirror). Mirror sets reached in different orders are deduplicated by a Zobrist hash, and ties are broken by that hash, so results are deterministic and independent of the worker count.

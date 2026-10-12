@@ -1,0 +1,35 @@
+name: Inlets
+laser: left
+mirrors: 10
+label a: NW inlet — touches top and left walls (6 cells)
+label b: NE inlet — touches top and right walls (6 cells)
+label c: SW inlet — touches left and bottom walls (6 cells)
+label d: SE inlet — touches right and bottom walls (6 cells)
+label e: Left wall mid — touches left wall (5 cells)
+label f: Right wall upper — touches right wall (5 cells)
+label g: Right wall lower — touches right wall (5 cells)
+label h: Upper-left island (5 cells)
+label i: Upper-right island (5 cells)
+label j: Lower-left island (4 cells)
+label k: Lower-right island (4 cells)
+note 6,14: laser going left triggers split — up+down beams emerge at x=6
+aaa.........bbb
+aa...........bb
+a.............b
+...............
+...hhh...iii...
+...hh.....ii...
+.............ff
+.............ff
+..............f
+...............
+ee...........gg
+e............gg
+ee............g
+...............
+......<.......@
+...............
+...jj....kk....
+c..jj....kk...d
+cc...........dd
+ccc.........ddd

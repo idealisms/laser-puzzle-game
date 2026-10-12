@@ -1,0 +1,40 @@
+name: Pulse
+laser: right
+mirrors: 9
+label a: NE anchor — touches top and right walls
+label b: Upper-left wall — touches left wall
+label c: Upper interior left
+label d: Upper interior right
+label e: Right wall upper — touches right wall
+label f: Pre-split screen — just above laser row
+label g: Lower interior near-split
+label h: Lower interior right near-split
+label i: Left wall lower — touches left wall
+label j: Right wall lower — touches right wall
+label k: Lower interior left
+label l: Lower interior right
+label m: Left wall bottom — touches left wall
+label n: Right wall bottom — touches right wall
+label o: Bottom anchor left — touches bottom wall
+label p: Bottom anchor right — touches bottom wall
+note 8,7: Laser traveling RIGHT hits splitter → splits UP (toward y=0) and DOWN (toward y=19)
+..............a
+.............aa
+....cc....dd...
+b...c.....d....
+bb.............
+............eee
+...ff..........
+@.......>......
+...............
+...gg.....hh...
+...g......h....
+i..............
+ii..........jjj
+..............j
+.....kk........
+.........ll....
+m............nn
+mm............n
+..........ppp..
+..ooo..........

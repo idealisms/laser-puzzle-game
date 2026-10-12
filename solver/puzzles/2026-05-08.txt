@@ -1,0 +1,41 @@
+name: Estuary
+laser: right
+mirrors: 10
+label a: Top-left mass — touches top and left walls
+label b: Top-right mass — touches top and right walls
+label c: Top-mid left — touches top wall
+label d: Top-mid right — touches top wall
+label e: Upper interior left
+label f: Upper interior right
+label g: Left wall upper — touches left wall
+label h: Right wall upper — touches right wall
+label i: Mid interior left
+label j: Mid interior right
+label k: Mid-lower interior left
+label l: Mid-lower interior right
+label m: Lower interior left
+label n: Lower interior right
+label o: Bottom-left mass — touches left and bottom walls
+label p: Bottom-right mass — touches right and bottom walls
+label q: Bottom interior left
+label r: Bottom interior right
+aaaacc...ddbbbb
+aaaa.......bbbb
+aaaa.......bbbb
+...............
+..ee.......ff..
+..e.........f..
+.....ii........
+g.......jj....h
+gg...........hh
+...............
+...............
+....kk....ll...
+....k......l...
+...............
+..mm...........
+@..........nn..
+o.....qq.......
+o.......rr.....
+o...........ppp
+ooo.........ppp

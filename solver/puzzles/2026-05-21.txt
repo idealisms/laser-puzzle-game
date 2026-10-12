@@ -1,0 +1,38 @@
+name: Atoll
+laser: right
+mirrors: 10
+label a: NW large — touches top and left walls (10 cells)
+label b: NE large — touches top and right walls (8 cells)
+label c: SW medium — touches left and bottom walls (6 cells)
+label d: SE large — touches right and bottom walls (8 cells)
+label e: Left wall mid — touches left wall (5 cells)
+label f: Right wall mid — touches right wall (5 cells)
+label g: Interior upper-left (3 cells)
+label h: Interior upper-right (3 cells)
+label i: Interior mid-left (2 cells)
+label j: Interior mid-right (2 cells)
+label k: Center blocker — breaks full-width y=10 run (1 cell)
+label l: Interior lower-left (3 cells)
+label m: Interior lower-right (3 cells)
+label n: Interior bottom-left (2 cells)
+label o: Interior bottom-right (2 cells)
+aaaa.......bbbb
+aaa..........bb
+aa............b
+a....gg.hh....b
+.....g...h.....
+...............
+e............ff
+ee...........ff
+ee............f
+.....ii.jj.....
+@......k.......
+...............
+...............
+.....ll.mm.....
+.....l...m.....
+...............
+....nn...oo...d
+c............dd
+cc..........ddd
+ccc.........d.d

@@ -1,0 +1,30 @@
+name: Pyramid
+laser: left
+mirrors: 10
+label a: Apex — rightmost, narrowest layer
+label b: Layer 2
+label c: Layer 3
+label d: Base — near left edge, almost full height
+label e: Top perimeter block — forces beam off top-right edge
+label f: Bottom perimeter block — forces beam off bottom-right edge
+label g: Right column — blocks right-side perimeter run, gap at y=9-11 for laser
+...........eee.
+...........eee.
+...............
+...d.........g.
+...d.........g.
+...d.c.......g.
+...d.c.......g.
+...d.c.b.....g.
+...d.c.b.....g.
+...d.c.b.a.....
+...d.c.b.a....@
+...d.c.b.a.....
+...d.c.b.....g.
+...d.c.b.....g.
+...d.c.......g.
+...d.c.......g.
+...d.........g.
+...d.........g.
+...........fff.
+...........fff.

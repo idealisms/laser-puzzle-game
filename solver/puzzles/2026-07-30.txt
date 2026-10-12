@@ -1,0 +1,38 @@
+name: Garth
+laser: down
+mirrors: 10
+label a: NW — touches top+left
+label b: N wall mid — touches top
+label c: NE — touches top+right
+label d: x=1 run-breaker
+label e: W wall mid — touches left
+label f: Upper interior A
+label g: Upper interior B
+label h: E wall upper — touches right
+label i: Mid interior A
+label j: Mid interior B
+label k: E wall lower — touches right
+label l: Interior lower A
+label m: Interior lower B
+label n: SW — touches left+bottom
+label o: S wall — touches bottom
+a@....bbb...ccc
+a......b......c
+a.............c
+....ff...gg....
+e....f...g...hh
+edd...........h
+e.............h
+...............
+........jj.....
+...ii...j......
+...i...........
+.............kk
+..............k
+..............k
+....ll...mm....
+....l....m.....
+...............
+n..............
+nn......oo.....
+n........oo....

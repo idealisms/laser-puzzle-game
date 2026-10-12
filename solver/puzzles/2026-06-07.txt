@@ -1,0 +1,28 @@
+name: Cascade
+laser: left
+mirrors: 10
+label a: Top-left staircase — NW corner, hypotenuse (4,0)→(0,4)
+label b: Upper-right cascade — grows from x=14,y=2 toward center; hypotenuse (14,2)→(9,7)
+label c: Left-mid cascade — shrinks from x=0..5,y=8 toward x=0,y=13; first obstacle in laser path at y=10
+label d: Lower-right cascade — grows from x=14,y=12 toward center; hypotenuse (14,12)→(9,17)
+label e: Bottom-left staircase — grows from x=0,y=14 toward SE; hypotenuse (0,14)→(5,19)
+aaaaa..........
+aaaa...........
+aaa...........b
+aa...........bb
+a...........bbb
+...........bbbb
+..........bbbbb
+.........bbbbbb
+cccccc.........
+ccccc..........
+cccc..........@
+ccc............
+cc............d
+c............dd
+e...........ddd
+ee.........dddd
+eee.......ddddd
+eeee.....dddddd
+eeeee..........
+eeeeee.........

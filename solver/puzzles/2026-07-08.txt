@@ -1,0 +1,33 @@
+name: Moors
+laser: right
+mirrors: 10
+label a: NW L-wall — vertical left, horizontal top
+label b: NE staircase — steps down-left
+label c: SW staircase — steps up-right
+label d: SE L-wall — vertical right, horizontal bottom
+label e: Upper horizontal bar
+label f: Lower horizontal bar
+label g: Left zone island
+label h: Right zone island
+label i: Mid left wall — touches left
+label j: Mid right wall — touches right
+aaaaa......bbbb
+a...........bbb
+a............bb
+a....eeee......
+a..............
+...............
+...............
+..gg...........
+...............
+i.............j
+i.............j
+...............
+...........hh..
+...............
+@..............
+..............d
+......ffff....d
+cc............d
+ccc...........d
+cccc......ddddd

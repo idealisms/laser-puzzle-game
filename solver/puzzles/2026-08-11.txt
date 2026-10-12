@@ -1,0 +1,40 @@
+name: Fleet
+laser: left
+mirrors: 10
+label a: NW corner
+label b: N wall
+label c: NE corner
+label d: W wall upper
+label e: Upper interior A
+label f: Upper interior B
+label g: E wall upper
+label h: Mid interior A
+label i: Mid interior B
+label j: y=11 run-breaker
+label k: W wall mid
+label l: E wall mid
+label m: Interior lower A
+label n: Interior lower B
+label o: SW corner
+label p: SE corner
+note 12,9: col x=12 mid gate — DOWN passes; UP blocked
+aa....bbb....cc
+aa............c
+.....ee.ff.....
+dd....e.f......
+d............gg
+..............g
+..............g
+...............
+....hh...ii....
+....h.....i.S..
+...............
+.......j......@
+k......j.....ll
+kk............l
+....mmm.nn.....
+......m.n......
+...............
+o............pp
+oo............p
+o..............

@@ -1,0 +1,29 @@
+name: Scaffold
+laser: right
+mirrors: 10
+label a: Top beam — near top edge, gap at x=0-1 for left side and x=14 right side
+label b: Bottom beam — near bottom edge
+label c: Support A — gap at y=9-11 so laser passes through
+label d: Support B — gap at y=9-11
+label e: Support C — gap at y=9-11
+label f: Support D — near right edge, gap at y=9-11
+...............
+...............
+...............
+..aaaaaaaaaaaa.
+....c..d..e..f.
+....c..d..e..f.
+....c..d..e..f.
+....c..d..e..f.
+....c..d..e..f.
+...............
+@..............
+...............
+....c..d..e..f.
+....c..d..e..f.
+....c..d..e..f.
+....c..d..e..f.
+..bbbbbbbbbbbb.
+...............
+...............
+...............

@@ -1,0 +1,31 @@
+name: Cleft
+laser: down
+mirrors: 10
+label a: Top-left corner — x=0..3, y=0..3, touches top and left edges
+label b: Top-right corner — x=11..14, y=0..3, touches top and right edges
+label c: Left upper staircase — y=5..8, touches left; hypotenuse (4,5)→(0,8)
+label d: Right upper staircase — y=5..8, touches right; hypotenuse (10,5)→(14,8)
+label e: Left lower staircase — y=14..17, touches left; hypotenuse (0,14)→(4,17)
+label f: Right lower staircase — y=14..17, touches right; hypotenuse (14,14)→(10,17)
+label g: Bottom-left corner — x=0..3, y=18..19, touches bottom and left edges
+label h: Bottom-right corner — x=11..14, y=18..19, touches bottom and right edges
+aaaa...@...bbbb
+aaaa.......bbbb
+aaaa.......bbbb
+aaaa.......bbbb
+...............
+ccccc.....ddddd
+cccc.......dddd
+ccc.........ddd
+cc...........dd
+...............
+...............
+...............
+.......v.......
+...............
+ee...........ff
+eee.........fff
+eeee.......ffff
+eeeee.....fffff
+gggg.......hhhh
+gggg.......hhhh

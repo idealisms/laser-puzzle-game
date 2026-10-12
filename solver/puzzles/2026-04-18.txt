@@ -1,0 +1,47 @@
+name: The Choice
+laser: down
+mirrors: 10
+label a: Entry/room divider at y=2 — left of gate B (x=0..2)
+label b: Entry/room divider at y=2 — between the two gates (x=4..10)
+label c: Entry/room divider at y=2 — right of gate C (x=12..14)
+label d: B/C vertical divider at x=7, y=3..19 — seals rooms apart
+label e: Room B — left-wall stub upper (x=0, y=5..6)
+label f: Room B — right-wall stub upper (x=6, y=6..7)
+label g: Room B — floating L near laser entry (y=8..9)
+label h: Room B — left-wall horizontal stub (y=10)
+label i: Room B — floating pair center-left (y=12)
+label j: Room B — floating single (x=5, y=14)
+label k: Room B — right-wall L lower (y=15..16)
+label l: Room B — floating pair near bottom (y=17)
+label m: Room B — left-wall single near bottom (x=0, y=18)
+label n: Room C — right-wall stub near top (x=14, y=4..5)
+label o: Room C — floating pair near top (y=5)
+label p: Room C — left-wall stub upper (x=8, y=8..9)
+label q: Room C — floating pair upper middle (y=8)
+label r: Room C — floating vertical pair center (x=11, y=11..12)
+label s: Room C — left-wall L middle-lower (y=13..14)
+label t: Room C — right-wall pair lower (y=15)
+label u: Room C — floating pair near bottom (y=17)
+label w: Room C — floating pair bottom-right (y=18)
+note 3,2: one-way gate into Room B — laser must travel DOWN to enter, cannot exit back up
+note 11,2: one-way gate into Room C — laser must travel DOWN to enter, cannot exit back up
+.......@.......
+...............
+aaaSbbbbbbbSccc
+.......d.......
+.......d......n
+e......d.oo...n
+e.....fd.......
+......fd.......
+...gg..dp...qq.
+....g..dp......
+.h.....d.......
+.......d...r...
+..ii...d...r...
+.......dss.....
+.....j.d.s.....
+.....kkd.....tt
+......kd.......
+.ll....d..uu...
+m......d....ww.
+.......d.......

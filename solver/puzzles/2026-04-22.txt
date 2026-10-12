@@ -1,0 +1,32 @@
+name: Slalom
+laser: right
+mirrors: 10
+label a: Left anchor top — x=0, touches left and top edges
+label b: Left anchor bottom — x=0, touches left and bottom edges
+label c: Pole 1 top — x=3, touches top edge; gap at y=7..13 lets laser through
+label d: Pole 1 bottom — x=3, touches bottom edge
+label e: Pole 2 — x=6, gap at top (y=0..4); blocks y=5..19 including laser row
+label f: Pole 3 — x=9, gap at bottom (y=15..19); blocks y=0..14 including laser row
+label g: Pole 4 — x=12, gap at top (y=0..4); blocks y=5..19 including laser row
+label h: Right anchor top — x=14, touches right and top edges
+label i: Right anchor bottom — x=14, touches right and bottom edges
+a..c.....f....h
+a..c.....f....h
+a..c.....f....h
+a..c.....f....h
+a..c.....f....h
+...c..e..f..g..
+...c..e..f..g..
+......e..f..g..
+......e..f..g..
+......e..f..g..
+@.....e..f..g..
+......e..f..g..
+......e..f..g..
+......e..f..g..
+...d..e..f..g..
+b..d..e.....g.i
+b..d..e.....g.i
+b..d..e.....g.i
+b..d..e.....g.i
+b..d..e.....g.i

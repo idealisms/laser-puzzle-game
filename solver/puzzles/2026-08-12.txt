@@ -1,0 +1,42 @@
+name: Carr
+laser: up
+mirrors: 10
+label a: NW corner
+label b: N wall
+label c: NE corner
+label d: Upper-left flank
+label e: Upper-right flank
+label f: W wall mid
+label g: E wall mid
+label h: x=3 run-breaker
+label i: Mid interior
+label j: Lower-left flank
+label k: Lower-right flank
+label l: SW corner
+label m: S wall
+label n: SE corner
+note 5,4: col x=5 upper gate — UP passes; DOWN blocked
+note 5,15: col x=5 lower gate — DOWN passes; UP blocked
+note 9,4: col x=9 upper gate — UP passes; DOWN blocked
+note 9,15: col x=9 lower gate — DOWN passes; UP blocked
+note 6,10: col x=6 mid gate — DOWN passes; UP blocked
+aa...bbbbb...cc
+aa............c
+...dd.....ee...
+....d.....e....
+.....N...N.....
+...............
+...............
+f.............g
+f......ii.....g
+f.hh...i......g
+f.....S.......g
+f.............g
+...............
+...............
+...............
+.....S...S.....
+...jj.....kk...
+l...j.....k....
+ll...........nn
+l..@.mmm......n

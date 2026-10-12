@@ -1,14 +1,15 @@
 'use strict';
 /**
- * Puzzle configurations loaded from solver/puzzles/*.json.
+ * Puzzle configurations loaded from the maps in solver/puzzles/*.txt (format
+ * in puzzle_map.ts).
  *
- * Each JSON file has obstacle_groups (with "label" strings preserving the
- * original comments) which are flattened into a plain obstacles array here.
- * Splitters are mapped from {x,y,dir} objects to [x, y, dir] triples.
+ * Obstacle groups are flattened into a plain obstacles array, and splitters
+ * and gates become [x, y, dir] triples.
  */
 
 const fs = require('fs');
 const path = require('path');
+const { parseMap } = require('./puzzle_map');
 
 const DIR: Record<string, number> = { up: 0, right: 1, down: 2, left: 3 };
 
@@ -30,14 +31,20 @@ function loadPuzzles(): Record<string, PuzzleConfig> {
   const configs: Record<string, PuzzleConfig> = {};
 
   for (const file of fs.readdirSync(puzzlesDir).sort()) {
-    if (!file.endsWith('.json')) continue;
-    const data = JSON.parse(fs.readFileSync(path.join(puzzlesDir, file), 'utf8'));
+    if (!file.endsWith('.txt')) continue;
+    const date = file.slice(0, -'.txt'.length);
+    let data;
+    try {
+      data = parseMap(fs.readFileSync(path.join(puzzlesDir, file), 'utf8'), date);
+    } catch (err) {
+      throw new Error(`solver/puzzles/${file}: ${err.message}`);
+    }
 
     const obstacles: [number, number][] = data.obstacle_groups.flatMap(g => g.cells);
-    const splitters: [number, number, string][] = (data.splitters || []).map(s => [s.x, s.y, s.dir]);
-    const gates: [number, number, string][] = (data.gates || []).map(g => [g.x, g.y, g.dir]);
+    const splitters: [number, number, string][] = data.splitters.map(s => [s.x, s.y, s.dir]);
+    const gates: [number, number, string][] = data.gates.map(g => [g.x, g.y, g.dir]);
 
-    configs[data.date] = {
+    configs[date] = {
       name: data.name,
       width: data.width,
       height: data.height,

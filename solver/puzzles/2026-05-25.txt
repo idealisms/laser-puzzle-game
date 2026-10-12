@@ -1,0 +1,29 @@
+name: Steps
+laser: right
+mirrors: 10
+label a: Top-left staircase — NW corner, hypotenuse from (5,0) to (0,4)
+label b: Top-right staircase — NE corner, hypotenuse from (9,0) to (14,4)
+label c: Left mid staircase — y=6..9, above laser; hypotenuse from (4,6) to (0,9)
+label d: Right mid staircase — y=11..14, below laser; hypotenuse from (14,11) to (10,14)
+label e: Bottom-left staircase — SW corner, hypotenuse from (0,16) to (4,19)
+label f: Bottom-right staircase — SE corner, hypotenuse from (14,16) to (10,19)
+aaaaaa...bbbbbb
+aaaaa.....bbbbb
+aaaa.......bbbb
+aaa.........bbb
+aa...........bb
+...............
+ccccc..........
+cccc...........
+ccc............
+cc.............
+@..............
+.............dd
+............ddd
+...........dddd
+..........ddddd
+...............
+ee...........ff
+eee.........fff
+eeee.......ffff
+eeeee.....fffff

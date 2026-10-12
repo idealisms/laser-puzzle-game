@@ -1,0 +1,37 @@
+name: Vales
+laser: up
+mirrors: 10
+label a: NW staircase — steps down-right
+label b: NE staircase — steps down-left
+label c: SW staircase — steps up-right
+label d: SE staircase — steps up-left
+label e: Left mid wall — touches left between gate rows
+label f: Right mid wall — touches right between gate rows
+label g: Upper-left flank — near y=5 left gate
+label h: Upper-right flank — near y=5 right gate
+label i: Lower-left flank — near y=14 left gate
+label j: Lower-right flank — near y=14 right gate
+note 3,5: y=5 corridor left gate — beam must go RIGHT; leftward blocked
+note 11,5: y=5 corridor right gate — beam must go LEFT; rightward blocked
+note 3,14: y=14 corridor left gate — beam must go RIGHT; leftward blocked
+note 11,14: y=14 corridor right gate — beam must go LEFT; rightward blocked
+aaaa.......bbbb
+aaa.........bbb
+aa...........bb
+....gg...hh....
+...............
+...E.......W...
+...............
+...............
+e.............f
+e.............f
+e.............f
+e.............f
+...............
+...............
+...E.......W...
+...............
+....ii...jj....
+cc...........dd
+ccc.........ddd
+cccc...@...dddd

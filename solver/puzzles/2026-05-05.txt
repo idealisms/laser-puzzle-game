@@ -1,0 +1,36 @@
+name: Cloughs
+laser: up
+mirrors: 10
+label a: NW clough — touches top and left walls (6 cells)
+label b: NE clough — touches top and right walls (6 cells)
+label c: SW clough — touches left and bottom walls (6 cells)
+label d: SE clough — touches right and bottom walls (6 cells)
+label e: Left wall upper — touches left wall (5 cells)
+label f: Left wall lower — touches left wall (5 cells)
+label g: Right wall upper — touches right wall (5 cells)
+label h: Right wall lower — touches right wall (5 cells)
+label i: Upper island (5 cells)
+label j: Upper-right island (5 cells)
+label k: Lower-left island (5 cells)
+label l: Lower-right island (5 cells)
+note 6,9: laser going up triggers split — left+right beams emerge at y=9
+aaa.........bbb
+aa...........bb
+a.............b
+....iii..jjj...
+....ii....jj.gg
+ee...........gg
+e.............g
+ee.............
+...............
+......^........
+...............
+...............
+ff...........hh
+f............hh
+ff............h
+...kkk...lll...
+...kk.....ll...
+c.............d
+cc...........dd
+ccc...@.....ddd

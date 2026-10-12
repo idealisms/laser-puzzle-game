@@ -1,0 +1,36 @@
+name: Carse
+laser: right
+mirrors: 9
+label a: NW staircase-med
+label b: NE staircase-med
+label c: SW staircase-med
+label d: SE staircase-med
+label e: W wall mid
+label f: E wall mid
+label g: Upper zone island A
+label h: Upper zone island B
+label i: Upper col x=9 channel
+label j: Lower zone island A
+label k: Lower zone island B
+label l: Lower col x=9 channel
+note 9,14: laser going RIGHT splits UP into upper zone and DOWN into lower zone
+aaa.........bbb
+aa...........bb
+a.............b
+...............
+....gg...ii....
+.........ihh...
+...............
+e..............
+ee...........ff
+e.............f
+..............f
+...............
+...............
+...............
+@........>.....
+...............
+..........kk...
+ccc.jj...ll...d
+cc.......l...dd
+c...........ddd

@@ -1,0 +1,36 @@
+name: Ravelin
+laser: right
+mirrors: 10
+label a: NW corner
+label b: NE corner
+label c: SW corner
+label d: SE corner
+label e: run-breaker near laser row y=6
+label f: upper-left L
+label g: upper-right Z
+label h: mid interior block A
+label i: mid interior block B
+label j: lower-left S
+label k: lower-right L
+label l: bottom pair
+label m: east wall stub
+aa...........bb
+a.............b
+...f......gg...
+..ff.......gg..
+...............
+...............
+@....ee........
+.............mm
+..............m
+.......hh......
+........h......
+...............
+....i..........
+....ii.........
+...........kk..
+..jj........k..
+...jj..........
+.......ll......
+c.............d
+cc...........dd

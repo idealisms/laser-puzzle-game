@@ -1,0 +1,32 @@
+name: Crag
+laser: left
+mirrors: 10
+label a: NW crag — irregular, touches top and left edges
+label b: NE crag — irregular, touches top and right edges
+label c: Left upper crag — irregular, touches left edge; y=6..9
+label d: Right upper crag — irregular, touches right edge; y=6..9; gap at y=10 for laser
+label e: Central blob — irregular; first obstacle in laser path at y=10
+label f: Left lower crag — irregular, touches left edge; y=11..14
+label g: Right lower crag — irregular, touches right edge; y=11..14
+label h: SW crag — irregular staircase, touches bottom and left edges
+label i: SE crag — irregular staircase, touches bottom and right edges
+aaaa.......bbbb
+aaa.........bbb
+aa...........bb
+aa............b
+a..............
+...............
+cccc.......dddd
+.ccc........ddd
+cc...........dd
+c.....eee.....d
+......eee.....@
+ffff...ee..gggg
+.fff........ggg
+ff...........gg
+f.............g
+...............
+hh........iiiii
+hhh........iiii
+hhhh........iii
+hhhhh........ii

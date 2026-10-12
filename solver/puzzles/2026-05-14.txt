@@ -1,0 +1,31 @@
+name: Chute
+laser: up
+mirrors: 10
+label a: Top-center bar — x=4..10, y=0..1, touches top; corners open
+label b: Left pillar top — x=0..1, y=0..6, touches top and left edges
+label c: Right pillar top — x=13..14, y=0..6, touches top and right edges
+label d: Left pillar bottom — x=0..1, y=9..15, touches left edge
+label e: Right pillar bottom — x=13..14, y=9..15, touches right edge
+label f: Central obstacle — x=6..8, y=7..8; first obstacle in laser path
+label g: Bottom-left corner — x=0..3, y=17..19, touches bottom and left edges
+label h: Bottom-right corner — x=11..14, y=17..19, touches bottom and right edges
+bb..aaaaaaa..cc
+bb..aaaaaaa..cc
+bb...........cc
+bb...........cc
+bb...........cc
+bb...........cc
+bb...........cc
+......fff......
+......fff......
+dd...........ee
+dd...........ee
+dd...........ee
+dd...........ee
+dd...........ee
+dd...........ee
+dd...........ee
+...............
+gggg.......hhhh
+gggg.......hhhh
+gggg...@...hhhh

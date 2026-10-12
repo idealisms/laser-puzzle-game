@@ -1,0 +1,25 @@
+name: Concentric Boxes
+laser: down
+mirrors: 11
+label a: Outer box (with gaps)
+label b: Inner box
+..............@
+...............
+.aaaaaa.aaaaaa.
+.a...........a.
+.a...........a.
+.a...........a.
+.a...........a.
+.a...bbbbb...a.
+.a...b...b...a.
+.....b...b.....
+.....b...b.....
+.a...b...b...a.
+.a...bbbbb...a.
+.a...........a.
+.a...........a.
+.a...........a.
+.a...........a.
+.aaaaaa.aaaaaa.
+...............
+...............

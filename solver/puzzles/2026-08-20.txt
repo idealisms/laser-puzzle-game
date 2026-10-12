@@ -1,0 +1,40 @@
+name: Edge
+laser: down
+mirrors: 10
+label a: NW corner — touches top+left
+label b: N wall — touches top
+label c: NE corner — touches top+right
+label d: W wall upper — touches left
+label e: Upper interior A
+label f: Upper interior B
+label g: E wall upper — touches right
+label h: Mid interior A
+label i: Mid interior B
+label j: W wall mid — touches left
+label k: E wall mid — touches right
+label l: Lower interior A
+label m: Lower interior B
+label n: W wall lower — touches left
+label o: SW corner — touches left+bottom
+label p: SE corner — touches right+bottom
+note 8,10: col x=8 mid gate — DOWN passes; UP blocked
+aa....bb..@..cc
+aa....b.......c
+..............c
+d..ee......ffgg
+dd.e........f.g
+...............
+...............
+...............
+...hh......ii..
+j...h......i.kk
+jj......S.....k
+...............
+...............
+...ll..........
+n..l.......mm..
+nn..........m..
+...............
+o...........ppp
+o.............p
+oo.............

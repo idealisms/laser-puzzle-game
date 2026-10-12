@@ -1,0 +1,39 @@
+name: Forelands
+laser: right
+mirrors: 10
+label a: NW foreland — touches top and left walls (8 cells)
+label b: NE foreland — touches top and right walls (8 cells)
+label c: SW foreland — touches left and bottom walls (6 cells)
+label d: SE foreland — touches right and bottom walls (6 cells)
+label e: Left wall lower — touches left wall (5 cells)
+label f: Right wall upper — touches right wall (4 cells)
+label g: Right wall lower — touches right wall (5 cells)
+label h: Upper-left foreland (5 cells)
+label i: Upper-right foreland (5 cells)
+label j: y=5 run shortener (2 cells)
+label k: Lower-left foreland (5 cells)
+label l: Lower-right foreland (5 cells)
+note 6,6: blocks downward x=6 run — beam can only go up through here
+note 6,14: blocks upward x=6 run — beam can only go down through here
+note 12,6: blocks downward x=12 run — beam can only go up through here
+note 12,14: blocks upward x=12 run — beam can only go down through here
+aaaa.......bbbb
+aaa.........bbb
+a.............b
+...hhh...iii.ff
+...hh.....ii.ff
+@.......jj.....
+......N.....N..
+...............
+ee.............
+e..............
+ee.............
+.............gg
+.............gg
+..............g
+...kkkS..lllS..
+...kk.....ll...
+...............
+c.............d
+cc...........dd
+ccc.........ddd

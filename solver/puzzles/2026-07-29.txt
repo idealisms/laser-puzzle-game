@@ -1,0 +1,33 @@
+name: Linn
+laser: left
+mirrors: 10
+label a: NW staircase — steps down-right
+label b: NE wall — right edge + top row (gap at x=14 y=3 for laser)
+label c: SW staircase — steps up-right
+label d: SE staircase — steps up-left
+label e: Left mid wall — touches left
+label f: Right mid wall — touches right
+label g: Laser row run-breaker
+label h: Upper island
+label i: Mid island
+label j: Lower island
+aaaa.....bbbbbb
+aaa...........b
+aa...hh.......b
+.......gg.....@
+..............b
+...............
+...............
+...............
+..............f
+e...ii........f
+e.............f
+e..............
+...............
+...............
+...............
+........jj.....
+...............
+cc...........dd
+ccc.........ddd
+cccc.......dddd

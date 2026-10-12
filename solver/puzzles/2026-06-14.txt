@@ -1,0 +1,39 @@
+name: Reach
+laser: up
+mirrors: 10
+label a: NW blob — touches top and left walls
+label b: NE blob — touches top and right walls
+label c: SW blob — touches left and bottom walls
+label d: SE blob — touches right and bottom walls
+label e: Upper island A
+label f: Upper island B
+label g: Mid-upper island A
+label h: Mid-upper island B
+label i: Center blocker — breaks long x=7 run
+label j: Mid island A
+label k: Mid island B
+label l: Center island
+label m: Lower island A
+label n: Lower island B
+label o: Lower island C
+label p: Lower island D
+aaaa.......bbbb
+aaa.........bbb
+aa...ee..ff..bb
+a.............b
+...............
+....gg...hh....
+....g..........
+...............
+.......ii......
+...jj......kk..
+...........k...
+.....ll........
+...............
+....mm....nn...
+....m..........
+...............
+c....oo.......d
+cc.......pp..dd
+ccc........dddd
+cccc...@...dddd

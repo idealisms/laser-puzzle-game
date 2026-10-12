@@ -47,7 +47,7 @@ function getPuzzleForDate(dateStr: string): PuzzleConfig {
   if (!(dateStr in PUZZLES)) {
     throw new Error(
       `No puzzle configured for ${dateStr}. ` +
-      'Add a new JSON file to solver/puzzles/ with this date.'
+      'Add a map for this date to solver/puzzles/ (YYYY-MM-DD.txt).'
     );
   }
   return PUZZLES[dateStr];

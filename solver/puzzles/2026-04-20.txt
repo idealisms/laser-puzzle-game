@@ -1,0 +1,57 @@
+name: The Descent
+size: 21x28
+laser: down
+mirrors: 11
+label a: Barrier 1 at y=7 — full-width wall, gate at x=10
+label b: Barrier 2 at y=15 — full-width wall, gate at x=3
+label c: Barrier 3 at y=22 — full-width wall, gate at x=17
+label d: Chamber 1 — left edge stub (x=0, y=3..4)
+label e: Chamber 1 — right edge stub (x=20, y=3..4)
+label f: Chamber 1 — inner left pair (x=4..5, y=5)
+label g: Chamber 1 — inner right pair (x=15..16, y=5)
+label h: Chamber 2 — left edge stub (x=0, y=10..11)
+label i: Chamber 2 — right edge stub (x=20, y=10..11)
+label j: Chamber 2 — left interior pair (x=5..6, y=12)
+label k: Chamber 2 — right interior pair (x=14..15, y=12)
+label l: Chamber 2 — central pair (x=9..11, y=9)
+label m: Chamber 3 — left edge stub (x=0, y=17..18)
+label n: Chamber 3 — right edge stub (x=20, y=17..18)
+label o: Chamber 3 — center vertical pair (x=10, y=17..18)
+label p: Chamber 3 — right interior pair (x=14..15, y=20)
+label q: Chamber 3 — left interior pair (x=5..6, y=20)
+label r: Chamber 4 — left edge stub (x=0, y=25..26)
+label s: Chamber 4 — right edge stub (x=20, y=25..26)
+label t: Chamber 4 — center cluster (x=9..11, y=25)
+label u: Chamber 4 — lower left pair (x=3..4, y=26)
+label w: Chamber 4 — lower right pair (x=16..17, y=26)
+note 10,7: one-way gate into Chamber 2
+note 3,15: one-way gate into Chamber 3
+note 17,22: one-way gate into Chamber 4
+..........@..........
+.....................
+.....................
+d...................e
+d...................e
+....ff.........gg....
+.....................
+aaaaaaaaaaSaaaaaaaaaa
+.....................
+.........lll.........
+h...................i
+h...................i
+.....jj.......kk.....
+.....................
+.....................
+bbbSbbbbbbbbbbbbbbbbb
+.....................
+m.........o.........n
+m.........o.........n
+.....................
+.....qq.......pp.....
+.....................
+cccccccccccccccccSccc
+.....................
+.....................
+r........ttt........s
+r..uu...........ww..s
+.....................

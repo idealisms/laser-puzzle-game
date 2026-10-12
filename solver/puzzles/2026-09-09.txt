@@ -1,0 +1,36 @@
+name: Beck
+laser: right
+mirrors: 10
+label a: NW corner
+label b: NE corner
+label c: upper-left L
+label d: E wall upper
+label e: upper-right Z
+label f: run-breaker y=5
+label g: mid-left pair
+label h: mid-right pair
+label i: center L
+label j: lower-left L
+label k: lower-right Z
+label l: SW corner
+label m: SE corner
+aa...........bb
+a.............b
+...............
+..cc......ee...
+...c.......ee..
+@......ff....dd
+..............d
+...............
+..g.........h..
+..g...ii....h..
+.......i.......
+...............
+...............
+...jj....kk....
+...j......kk...
+...............
+...............
+l..............
+l............mm
+ll............m

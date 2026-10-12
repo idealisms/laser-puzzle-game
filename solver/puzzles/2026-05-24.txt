@@ -1,0 +1,38 @@
+name: Banks
+laser: left
+mirrors: 10
+label a: NW bank — touches top and left walls (7 cells)
+label b: NE bank — touches top and right walls (5 cells)
+label c: SW bank — touches left and bottom walls (5 cells)
+label d: SE bank — touches right and bottom walls (7 cells)
+label e: Top-left wall — touches left wall (5 cells)
+label f: Bottom-left wall — touches left wall (4 cells)
+label g: Top-right wall — touches right wall (4 cells)
+label h: Bottom-right wall — touches right wall (5 cells)
+label i: Right wall mid — touches right wall (3 cells)
+label j: y=8 run shortener (2 cells)
+label k: Upper-left island (4 cells)
+label l: Upper-right island (4 cells)
+label m: Mid island (5 cells)
+label n: Lower-left island (4 cells)
+label o: Lower-right island (4 cells)
+aaaa.......bbbb
+aaa...........b
+....kk...ll....
+....kk...ll..gg
+ee............g
+ee............g
+e..............
+...............
+.....jj.......@
+.............ii
+..............i
+......mmm......
+......mm.......
+f..............
+ff...........hh
+f............hh
+...nn....oo...h
+...nn....oo....
+c...........ddd
+cccc.......dddd

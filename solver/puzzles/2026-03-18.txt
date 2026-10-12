@@ -1,0 +1,27 @@
+name: Canyon
+laser: down
+mirrors: 9
+label a: Left canyon wall
+label b: Right canyon wall
+label c: Canyon floor boulders
+label d: Canyon top ledges
+.......@.......
+...ddd...ddd...
+..a.........b..
+..a.........b..
+..a.........b..
+..a.........b..
+..a.........b..
+..a.........b..
+..a.........b..
+..a.........b..
+..a.........b..
+..a.........b..
+..a.........b..
+..a.........b..
+..a.........b..
+..a.........b..
+....ccc.ccc....
+...............
+...............
+...............

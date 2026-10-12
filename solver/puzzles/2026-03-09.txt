@@ -1,0 +1,26 @@
+name: Bullseye
+laser: left
+mirrors: 10
+label a: Outer ring (near grid edges)
+label b: Middle ring (open corridors to splitter at x=7 and y=10)
+note 7,10: Laser arriving LEFT hits 'right' splitter → wall (blocked). To split (UP+DOWN), redirect beam to arrive going RIGHT. Open corridors at x=7 (top/bottom of middle ring) and y=10 (left/right of middle ring) give clear paths in.
+...............
+.aaaaaaaaaaaaa.
+.a...........a.
+.a...........a.
+.a...........a.
+.a............@
+.a..bbb.bbb..a.
+.a..b.....b..a.
+.a..b.....b..a.
+.a..b.....b..a.
+.a.....>.....a.
+.a..b.....b..a.
+.a..b.....b..a.
+.a..b.....b..a.
+.a..bbb.bbb..a.
+.a...........a.
+.a...........a.
+.a...........a.
+.aaaaaaaaaaaaa.
+...............

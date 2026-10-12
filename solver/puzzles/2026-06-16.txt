@@ -1,0 +1,33 @@
+name: Shoal
+laser: up
+mirrors: 10
+label a: NW shoal — irregular, touches top and left edges
+label b: NE shoal — irregular, touches top and right edges
+label c: N mid shoal — irregular, near top center
+label d: W upper shoal — irregular, touches left edge
+label e: E upper shoal — irregular, touches right edge
+label f: Central shoal — irregular blob; first obstacle in laser path
+label g: W lower shoal — irregular, touches left edge
+label h: E lower shoal — irregular, touches right edge
+label i: SW shoal — irregular, touches bottom and left edges
+label j: SE shoal — irregular, touches bottom and right edges
+aaa..ccc....bbb
+aa....cc.....bb
+a......c......b
+...............
+...............
+ddd.........eee
+.dd.........ee.
+..d...........e
+...............
+......fff......
+......fff......
+.......f.......
+ggg.........hhh
+gg...........hh
+.g............h
+...............
+ii...........jj
+iii.........jjj
+iiii........jjj
+iii....@....jjj

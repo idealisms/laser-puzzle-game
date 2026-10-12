@@ -1,0 +1,38 @@
+name: Coppice
+laser: left
+mirrors: 10
+label a: NW corner — touches top+left
+label b: N wall — touches top
+label c: NE corner — touches top+right
+label d: W wall upper — touches left
+label e: Upper interior A
+label f: Upper interior B
+label g: E wall upper — touches right
+label h: Mid interior A
+label i: Mid interior B
+label j: W wall mid — touches left
+label k: E wall mid — touches right
+label l: Interior lower A
+label m: y=16 run-breaker
+label n: SW corner — touches left+bottom
+label o: SE corner — touches right+bottom
+aa.....bb....cc
+aa......b.....c
+....ee.........
+d...e........gg
+dd............g
+..........ff...
+..........f....
+...............
+...hh..........
+...h.....ii..kk
+.........i....k
+j..............
+jj.............
+.....ll........
+.....l.........
+...............
+........mm....@
+n..............
+nn..........ooo
+n.............o

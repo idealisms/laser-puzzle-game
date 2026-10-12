@@ -1,0 +1,27 @@
+name: Ladder
+laser: down
+mirrors: 10
+label a: Left rail — x=1, full height; encloses interior from left
+label b: Right rail — x=13, full height; encloses interior from right
+label c: Rung 1 — y=7, x=2-8; gap at x=9-12 (right side)
+label d: Rung 2 — y=14, x=5-12; gap at x=2-4 (left side)
+.a.....@.....b.
+.a...........b.
+.a...........b.
+.a...........b.
+.a...........b.
+.a...........b.
+.a...........b.
+.accccccc....b.
+.a...........b.
+.a...........b.
+.a...........b.
+.a...........b.
+.a...........b.
+.a...........b.
+.a...ddddddddb.
+.a...........b.
+.a...........b.
+.a...........b.
+.a...........b.
+.a...........b.

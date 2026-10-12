@@ -1,0 +1,39 @@
+name: Flats
+laser: down
+mirrors: 10
+label a: NW flat — touches top and left walls (6 cells)
+label b: NE flat — touches top and right walls (6 cells)
+label c: SW flat — touches left and bottom walls (6 cells)
+label d: SE flat — touches right and bottom walls (6 cells)
+label e: Left wall mid — touches left wall (5 cells)
+label f: Right wall mid — touches right wall (5 cells)
+label g: x=7 blocker — blocks initial laser run (3 cells)
+label h: Upper-left island (5 cells)
+label i: Upper-right island (5 cells)
+label j: Mid-left island (4 cells)
+label k: Mid-right island (4 cells)
+label l: Lower-left island (5 cells)
+label m: Lower-right island (5 cells)
+label n: Near-bottom accent (2 cells)
+note 7,12: blocks rightward y=12 run — beam can only go left through here
+note 7,15: blocks leftward y=15 run — beam can only go right through here
+aaa....@....bbb
+aaa.........bbb
+...............
+...hhh...iii...
+...hh.....ii...
+...............
+..jj.......kk..
+..jj.......kk..
+ee...........ff
+e............ff
+ee............f
+......ggg......
+.......W.......
+...lll...mmm...
+...ll.....mm...
+.......E.......
+......nn.......
+cc.............
+ccc.........ddd
+c...........ddd

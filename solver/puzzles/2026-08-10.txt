@@ -1,0 +1,40 @@
+name: Bourne
+laser: right
+mirrors: 10
+label a: NW corner
+label b: N wall
+label c: NE corner
+label d: W wall upper
+label e: Upper interior A
+label f: Upper interior B
+label g: E wall upper
+label h: y=5 run-breaker
+label i: Mid interior A
+label j: Mid interior B
+label k: W wall mid
+label l: E wall mid
+label m: Interior lower A
+label n: Interior lower B
+label o: SW corner
+label p: SE corner
+note 2,9: col x=2 mid gate — DOWN passes; UP blocked
+aaa....bbb...cc
+a.............c
+....ee...ff...c
+d...e....f.....
+dd...........gg
+@.......hh....g
+..............g
+...............
+...ii.....jj...
+..Si......jj...
+k.........j..ll
+kk............l
+...............
+....mm...nn....
+....m....n.....
+...............
+...............
+o..............
+o...........ppp
+oo............p

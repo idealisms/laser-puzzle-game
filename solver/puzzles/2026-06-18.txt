@@ -1,0 +1,36 @@
+name: Combes
+laser: left
+mirrors: 10
+label a: NW combe — touches top and left walls (6 cells)
+label b: NE combe — touches top and right walls (6 cells)
+label c: SW combe — touches left and bottom walls (6 cells)
+label d: SE combe — touches right and bottom walls (6 cells)
+label e: Left wall mid — touches left wall (5 cells)
+label f: Right wall upper — touches right wall (5 cells)
+label g: Right wall lower — touches right wall (5 cells)
+label h: Upper-left island (5 cells)
+label i: Upper-right island (5 cells)
+label j: x=8 upper blocker (2 cells)
+label k: Lower-left island (5 cells)
+label l: Lower-right island (5 cells)
+note 8,12: laser going left triggers split — up+down beams emerge at x=8
+aaa.........bbb
+aa...........bb
+a.............b
+...............
+...hhh...iii...
+...hh..jj.ii.ff
+.............ff
+..............f
+...............
+ee.............
+e..............
+ee.............
+........<.....@
+.............gg
+.............gg
+...kkk...lll..g
+...kk.....ll...
+c.............d
+cc...........dd
+ccc.........ddd

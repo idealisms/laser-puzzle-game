@@ -9,6 +9,7 @@
 
 import * as fs from "fs";
 import * as path from "path";
+import { parseMap } from "./puzzle_map";
 
 const args = process.argv.slice(2);
 const getArg = (name: string) => {
@@ -138,25 +139,23 @@ const puzzlesDir = path.join(__dirname, "puzzles");
 const levelsDir = path.join(__dirname, "levels");
 
 const puzzles: PuzzleInfo[] = [];
-const puzzleFiles: Record<string, Record<string, unknown>> = {};
+const puzzleFiles: Record<string, string> = {};
 const levelFiles: Record<string, Record<string, unknown>> = {};
 
 for (const date of dates) {
-  const pPath = path.join(puzzlesDir, `${date}.json`);
+  const pPath = path.join(puzzlesDir, `${date}.txt`);
   const lPath = path.join(levelsDir, `${date}.json`);
   if (!fs.existsSync(pPath) || !fs.existsSync(lPath)) {
     console.error(`Missing files for ${date}`);
     process.exit(1);
   }
-  const p = JSON.parse(fs.readFileSync(pPath, "utf8")) as Record<
-    string,
-    unknown
-  >;
+  const pText = fs.readFileSync(pPath, "utf8");
+  const p = parseMap(pText, date) as unknown as Record<string, unknown>;
   const l = JSON.parse(fs.readFileSync(lPath, "utf8")) as Record<
     string,
     unknown
   >;
-  puzzleFiles[date] = p;
+  puzzleFiles[date] = pText;
   levelFiles[date] = l;
   puzzles.push({ date, name: p.name as string, type: getPuzzleType(p) });
 }
@@ -202,13 +201,10 @@ for (let i = 0; i < dates.length; i++) {
   const puzzle = assignment[i];
   const oldDate = puzzle.date;
 
-  const pContent = { ...puzzleFiles[oldDate], date: newDate };
+  // A puzzle map takes its date from its file name.
   const lContent = { ...levelFiles[oldDate], date: newDate };
 
-  fs.writeFileSync(
-    path.join(puzzlesDir, `${newDate}.json`),
-    JSON.stringify(pContent, null, 2) + "\n"
-  );
+  fs.writeFileSync(path.join(puzzlesDir, `${newDate}.txt`), puzzleFiles[oldDate]);
   fs.writeFileSync(
     path.join(levelsDir, `${newDate}.json`),
     JSON.stringify(lContent, null, 2) + "\n"

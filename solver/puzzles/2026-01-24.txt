@@ -1,0 +1,28 @@
+name: Fortress
+laser: down
+mirrors: 10
+label a: Central fortress walls
+label b: Outer defense - top
+label c: Outer defense - bottom
+label d: Side towers
+label e: Corner blocks
+ee.....@.....ee
+e.............e
+...............
+...............
+...bbb...bbb...
+...............
+.d...........d.
+.d...........d.
+.d...aaaaa...d.
+.d...a...a...d.
+.d...a...a...d.
+.d...aaaaa...d.
+.d...........d.
+.d...........d.
+...............
+...ccc...ccc...
+...............
+...............
+e.............e
+ee...........ee

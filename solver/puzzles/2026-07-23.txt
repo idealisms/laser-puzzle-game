@@ -1,0 +1,37 @@
+name: Marsh
+laser: left
+mirrors: 10
+label a: NW corner block
+label b: NE corner block
+label c: SW corner block
+label d: SE corner block
+label e: W mid wall — touches left between gate rows
+label f: E mid wall — touches right near laser
+label g: Upper-left flank — near x=6 y=4 gate
+label h: Upper-right flank — near x=9 y=4 gate
+label i: Lower-left flank — near x=6 y=14 gate
+label j: Lower-right flank — near x=9 y=14 gate
+note 6,4: x=6 upper gate — beam must travel UP; downward blocked
+note 6,14: x=6 lower gate — beam must travel DOWN; upward blocked
+note 9,4: x=9 upper gate — beam must travel UP; downward blocked
+note 9,14: x=9 lower gate — beam must travel DOWN; upward blocked
+aaaa.......bbbb
+aa...........bb
+a.............b
+....gg....hh...
+......N..N.....
+e.............f
+e.............f
+e.............f
+e.............f
+..............@
+...............
+...............
+...............
+...............
+......S..S.....
+....ii....jj...
+...............
+c.............d
+cc...........dd
+cccc.......dddd
