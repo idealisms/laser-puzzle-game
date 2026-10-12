@@ -1,0 +1,94 @@
+{
+  "date": "2026-11-09",
+  "name": "Delta",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 0,
+    "y": 7,
+    "dir": "right"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "north post",
+      "cells": [
+        [11, 0],
+        [11, 1],
+        [11, 2]
+      ]
+    },
+    {
+      "label": "northwest ledge",
+      "cells": [
+        [0, 2],
+        [1, 2],
+        [2, 2]
+      ]
+    },
+    {
+      "label": "east shelf",
+      "cells": [
+        [10, 5],
+        [11, 5],
+        [12, 5],
+        [13, 5],
+        [14, 5]
+      ]
+    },
+    {
+      "label": "west shelf",
+      "cells": [
+        [0, 10],
+        [1, 10],
+        [2, 10],
+        [3, 10]
+      ]
+    },
+    {
+      "label": "center post",
+      "cells": [
+        [11, 11],
+        [11, 12],
+        [11, 13]
+      ]
+    },
+    {
+      "label": "southeast shelf",
+      "cells": [
+        [11, 17],
+        [12, 17],
+        [13, 17],
+        [14, 17]
+      ]
+    },
+    {
+      "label": "southwest ledge",
+      "cells": [
+        [0, 18],
+        [1, 18]
+      ]
+    },
+    {
+      "label": "south stub",
+      "cells": [
+        [4, 19]
+      ]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 8,
+      "y": 7,
+      "dir": "right",
+      "note": "upper splitter \u2014 laser travelling RIGHT splits UP and DOWN"
+    },
+    {
+      "x": 4,
+      "y": 14,
+      "dir": "left",
+      "note": "lower splitter \u2014 laser travelling LEFT splits UP and DOWN"
+    }
+  ],
+  "gates": []
+}

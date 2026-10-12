@@ -94,3 +94,4 @@ When working with the database, never echo the production database name or passw
 - **Full-height/full-width walls with gaps** force engagement — the beam has no choice but to pass through the gap. Works well for "dungeon gates" or "column" themes.
 - **Avoid isolated central shapes** with lots of open space around them — the optimal path just hugs the edges.
 - **Splitter placement**: place the splitter where the laser can naturally reach it, with clear corridors in/out. Don't surround it with obstacles that block the split beams (especially directly above/below for UP/DOWN splits).
+- **One-way gate entrance must be open**: the cell a beam comes from to pass the gate (e.g. the cell below an `up` gate) can't be a wall, splitter, or off-grid, otherwise the gate can never be passed and is just a wall. The same goes for the exit cell. A gate the optimal path never uses is fine if it blocks or reroutes a better path; otherwise make it a wall.
