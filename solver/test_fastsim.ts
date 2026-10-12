@@ -34,7 +34,9 @@ function reference(config, mirrors) {
       const { x, y } = seg.end;
       if (x >= 0 && x < config.width && y >= 0 && y < config.height) cells.add(x * config.height + y);
     }
-  return { length: lp.totalLength, cells, streams: lp.streams.length, collisions: lp.collisionPoints.length };
+  // Collisions with a lit cell are reported on the cell edge, at a half coordinate.
+  const litCollisions = lp.collisionPoints.filter(p => !Number.isInteger(p.x) || !Number.isInteger(p.y)).length;
+  return { length: lp.totalLength, cells, streams: lp.streams.length, collisions: lp.collisionPoints.length, litCollisions };
 }
 
 function fast(sim, config, mirrors) {
@@ -180,5 +182,61 @@ describe('fastsim matches calculateLaserPath on symmetric splitter boards', () =
       assert.deepEqual([...got.cells].sort((a, b) => a - b), [...ref.cells].sort((a, b) => a - b), ctx);
     }
     assert.ok(collisions > 1000, `only ${collisions} boards had collisions`);
+  });
+});
+
+describe('fastsim lit cells', () => {
+  // Mirrors are reversible, so a beam only runs back along a lit path after
+  // passing something one-way (a gate or a splitter). Small boards dense with
+  // both still produce lit-cell collisions only rarely, hence many trials.
+  it('random dense boards', () => {
+    const rand = rng(777);
+    const dirs = ['up', 'right', 'down', 'left'];
+    let litCollisions = 0;
+    for (let trial = 0; trial < 100000; trial++) {
+      const width = 4 + Math.floor(rand() * 7), height = 4 + Math.floor(rand() * 7);
+      const config = {
+        width, height, laserX: 0, laserY: Math.floor(rand() * height), laserDir: 1,
+        obstacles: [], splitters: [], gates: [], numMirrors: 0,
+      };
+      const mirrors = [];
+      for (let x = 0; x < width; x++)
+        for (let y = 0; y < height; y++) {
+          if (x === config.laserX && y === config.laserY) continue;
+          const r = rand();
+          if (r < 0.3) mirrors.push([x, y, rand() < 0.5 ? '/' : '\\']);
+          else if (r < 0.4) config.splitters.push([x, y, dirs[Math.floor(rand() * 4)]]);
+          else if (r < 0.6) config.gates.push([x, y, dirs[Math.floor(rand() * 4)]]);
+          else if (r < 0.62) config.obstacles.push([x, y]);
+        }
+      const ref = reference(config, mirrors);
+      if (ref.litCollisions > 0) litCollisions++;
+      const got = fast(createFastSim(config), config, mirrors);
+      const ctx = JSON.stringify({ config, mirrors });
+      assert.equal(got.length, ref.length, ctx);
+      assert.deepEqual([...got.cells].sort((a, b) => a - b), [...ref.cells].sort((a, b) => a - b), ctx);
+    }
+    assert.ok(litCollisions > 50, `only ${litCollisions} boards had lit-cell collisions`);
+  });
+
+  // Same rig as the lit-cell tests in simulate.test.ts: the up beam passes the
+  // gate at (3,8) and runs head-on into (4,8), which the down beam lit earlier.
+  const config = {
+    width: 10, height: 10, laserX: 9, laserY: 5, laserDir: 3,
+    obstacles: [], splitters: [[6, 5, 'left']], gates: [[3, 8, 'right']], numMirrors: 4,
+  };
+
+  it('a beam running head-on into a lit cell stops there', () => {
+    const mirrors = [[6, 8, '/'], [6, 2, '\\'], [1, 2, '/'], [1, 8, '\\']];
+    const ref = reference(config, mirrors);
+    assert.equal(ref.litCollisions, 1);
+    assert.equal(fast(createFastSim(config), config, mirrors).length, 26);
+    assert.equal(ref.length, 26);
+  });
+
+  it('a beam crossing a lit cell perpendicularly passes through', () => {
+    const mirrors = [[6, 8, '/'], [6, 2, '\\'], [4, 2, '/']];
+    assert.equal(fast(createFastSim(config), config, mirrors).length, 22);
+    assert.equal(reference(config, mirrors).length, 22);
   });
 });

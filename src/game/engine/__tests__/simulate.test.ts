@@ -1,4 +1,4 @@
-import { calculateLaserPath, sameCellCollision } from '../simulate'
+import { calculateLaserPath, litCellCollision, sameCellCollision } from '../simulate'
 import { Direction, LaserConfig, LaserPath, Mirror, Obstacle } from '../../types'
 
 // Mirror reflection reference:
@@ -64,6 +64,43 @@ describe('sameCellCollision', () => {
 
   it('splitter: two beams on reflect faces collide', () => {
     expect(collide('up', 'down', [], [splitter(5, 5, 'right')])).toBe(true)
+  })
+})
+
+// ─────────────────────────────────────────────────────────────────────────────
+// litCellCollision — a beam entering a cell an earlier beam still lights
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('litCellCollision', () => {
+  const at = { x: 5, y: 5 }
+  const collide = (lit: Direction, dir: Direction, mirrors: Mirror[] = [], obstacles: Obstacle[] = []) =>
+    litCellCollision(at, lit, dir, mirrors, obstacles)
+
+  it('open space: a beam running head-on into a lit cell collides', () => {
+    expect(collide('left', 'right')).toBe(true)
+    expect(collide('up', 'down')).toBe(true)
+  })
+
+  it('open space: a beam entering in the lit direction merges, no collision', () => {
+    for (const d of ['up', 'right', 'down', 'left'] as Direction[]) expect(collide(d, d)).toBe(false)
+  })
+
+  it('open space: a beam crossing a lit cell perpendicularly passes through', () => {
+    expect(collide('left', 'up')).toBe(false)
+    expect(collide('down', 'right')).toBe(false)
+  })
+
+  it('mirror: a beam hitting the lit face collides, the other face does not', () => {
+    const m = [mirror(5, 5, '/')]
+    expect(collide('right', 'down', m)).toBe(true)  // face {right, down} is lit
+    expect(collide('right', 'left', m)).toBe(false)
+    expect(collide('right', 'up', m)).toBe(false)
+  })
+
+  it('splitter: collides unless the new beam hits the wall face', () => {
+    const spl = [splitter(5, 5, 'right')]
+    expect(collide('right', 'up', [], spl)).toBe(true)
+    expect(collide('right', 'left', [], spl)).toBe(false)
   })
 })
 
@@ -396,5 +433,64 @@ describe('calculateLaserPath — collision detection', () => {
     for (const mirrors of rigs) {
       expectNoOrphanBeams(calculateLaserPath(laser, mirrors, [splitter(5, 10, 'right')], BOUNDS_15x20))
     }
+  })
+})
+
+// ─────────────────────────────────────────────────────────────────────────────
+// calculateLaserPath — lit cells (beams are continuous streams)
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('calculateLaserPath — lit cells', () => {
+  // The laser at (9,5) hits a left splitter at (6,5) at t=3.
+  //   Down beam: (6,8) '/' turns it left; it lights (5,8) and (4,8) and stops
+  //   against the closed side of the right-only gate at (3,8) at t=9.
+  //   Up beam: (6,2) '\', (1,2) '/' and (1,8) '\' bring it round to (2,8)
+  //   heading right; it passes the gate at t=19.
+  const laser: LaserConfig = { x: 9, y: 5, direction: 'left' }
+  const spl = splitter(6, 5, 'left')
+  const gate: Obstacle = { x: 3, y: 8, type: 'gate', orientation: 'right' }
+  const loopMirrors = [mirror(6, 8, '/'), mirror(6, 2, '\\'), mirror(1, 2, '/'), mirror(1, 8, '\\')]
+
+  it("a beam running head-on into an earlier beam's path stops at the cell edge", () => {
+    const result = calculateLaserPath(laser, loopMirrors, [spl, gate], BOUNDS_10x10)
+    // The up beam leaves the gate at t=20 into (4,8), which the down beam lit
+    // heading left at t=8, long after its front stopped. They meet on the
+    // edge between the gate and (4,8).
+    expect(result.collisionPoints).toEqual([{ x: 3.5, y: 8 }])
+    const up = result.streams.find((st) => st.segments[0].direction === 'up')!
+    expect(up.segments).toHaveLength(17)
+    expect(up.segments[up.segments.length - 1].end).toEqual({ x: 4, y: 8 })
+    expect(result.totalLength).toBe(26)
+    expectNoOrphanBeams(result)
+  })
+
+  it('the earlier beam is unaffected by the later collision', () => {
+    const result = calculateLaserPath(laser, loopMirrors, [spl, gate], BOUNDS_10x10)
+    const down = result.streams.find((st) => st.segments[0].direction === 'down')!
+    expect(down.segments).toHaveLength(6)
+    expect(down.segments[down.segments.length - 1].end).toEqual({ x: 3, y: 8 })
+  })
+
+  it('a cell that blocks a beam is not lit by it', () => {
+    // The down beam is stopped by the gate's closed side, so the up beam can
+    // enter the gate cell heading the other way; the collision is on the
+    // gate's far edge (3.5), not its near edge (2.5).
+    const gateResult = calculateLaserPath(laser, loopMirrors, [spl, gate], BOUNDS_10x10)
+    expect(gateResult.collisionPoints).not.toContainEqual({ x: 2.5, y: 8 })
+    // With a wall instead of the gate both beams just stop against it.
+    const wallResult = calculateLaserPath(laser, loopMirrors, [spl, wall(3, 8)], BOUNDS_10x10)
+    expect(wallResult.collisionPoints).toEqual([])
+    expect(wallResult.totalLength).toBe(25)
+  })
+
+  it("a beam crossing an earlier beam's path perpendicularly passes through", () => {
+    // The up beam turns down at (4,2) and crosses (4,8), which the down beam
+    // lit heading left, then leaves the grid.
+    const mirrors = [mirror(6, 8, '/'), mirror(6, 2, '\\'), mirror(4, 2, '/')]
+    const result = calculateLaserPath(laser, mirrors, [spl, gate], BOUNDS_10x10)
+    expect(result.collisionPoints).toEqual([])
+    const up = result.streams.find((st) => st.segments[0].direction === 'up')!
+    expect(up.segments[up.segments.length - 1].end).toEqual({ x: 4, y: 10 })
+    expect(result.totalLength).toBe(22)
   })
 })

@@ -110,6 +110,25 @@ export function sameCellCollision(
   return dirA === dirB || dirA === oppositeDir(dirB)
 }
 
+/**
+ * Does a beam entering `cell` travelling `dir` collide with an earlier beam
+ * that entered the same cell travelling `litDir` and still lights it?
+ *
+ * Same rule as sameCellCollision, except that a beam entering in the same
+ * direction as the lit beam just merges into it (loop detection stops it).
+ *
+ * Exported for unit testing.
+ */
+export function litCellCollision(
+  cell: Position,
+  litDir: Direction,
+  dir: Direction,
+  mirrors: Mirror[],
+  obstacles: Obstacle[] = []
+): boolean {
+  return litDir !== dir && sameCellCollision(cell, litDir, dir, mirrors, obstacles)
+}
+
 function findMirror(pos: Position, mirrors: Mirror[]): Mirror | undefined {
   return mirrors.find((m) => m.position.x === pos.x && m.position.y === pos.y)
 }
@@ -141,6 +160,12 @@ interface Arrival {
  * sameCellCollision) both stop there, and a stopped beam never reaches any
  * later mirror or splitter, so it spawns nothing further.
  *
+ * A beam is a continuous stream, so every cell it has entered stays lit after
+ * its front moves on. A beam that later enters a lit cell and would collide
+ * with the beam lighting it (see litCellCollision) stops at the edge of that
+ * cell; the earlier beam is unaffected. Cells a beam is blocked by (walls, a
+ * gate's closed side, a splitter's wall face, off-grid) are not lit.
+ *
  * Beams can never cross mid-step (swap two adjacent cells): every beam starts
  * at the laser and moves one cell per step, so at time t every beam is on a
  * cell with (x + y) ≡ (laser.x + laser.y + t) mod 2, and no two beams are ever
@@ -160,6 +185,8 @@ export function calculateLaserPath(
 ): LaserPath {
   const streams: LaserStream[] = []
   const visited = new Set<string>()
+  // cell key → directions of the beams that have entered (and lit) the cell
+  const lit = new Map<string, Direction[]>()
   const collisionPoints: Position[] = []
   let totalLength = 0
   let terminationReason: LaserPath['terminationReason'] = 'max-length'
@@ -223,7 +250,28 @@ export function calculateLaserPath(
       }
     }
 
-    // 3. Apply each surviving beam's outcome.
+    // 3. Beams entering a cell lit by an earlier beam collide with it on the
+    //    cell's edge.
+    for (const arr of arrivals) {
+      if (arr.collided) continue
+      const earlier = lit.get(`${arr.to.x},${arr.to.y}`)
+      if (earlier?.some((d) => litCellCollision(arr.to, d, arr.dir, mirrors, obstacles))) {
+        arr.collided = true
+        collisionPoints.push({ x: (arr.beam.pos.x + arr.to.x) / 2, y: (arr.beam.pos.y + arr.to.y) / 2 })
+      }
+    }
+
+    // 4. Every beam that got into its cell lights it, including beams that
+    //    collided there.
+    for (const arr of arrivals) {
+      if (arr.outcome.kind === 'stop') continue
+      const key = `${arr.to.x},${arr.to.y}`
+      const dirs = lit.get(key)
+      if (dirs) dirs.push(arr.dir)
+      else lit.set(key, [arr.dir])
+    }
+
+    // 5. Apply each surviving beam's outcome.
     const next: Beam[] = []
     for (const arr of arrivals) {
       const { beam, outcome } = arr

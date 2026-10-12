@@ -11,6 +11,8 @@
  *
  * Like simulate.ts, all beams advance one cell per time step; beams that
  * collide on arrival both stop, and a stopped beam spawns nothing further.
+ * Cells stay lit after a beam passes, and a later beam entering a lit cell
+ * stops if it would collide with the beam lighting it.
  */
 
 const UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
@@ -58,6 +60,10 @@ export function createFastSim(config: any): FastSim {
   // Visited (pos, dir) stamps — avoids clearing between runs.
   const visited = new Uint32Array(N * 4);
   let stamp = 0;
+  // Lit cells: bit d of litDirs[c] is set when a beam travelling d has entered
+  // cell c this run (valid only where litStamp[c] === stamp).
+  const litStamp = new Uint32Array(N);
+  const litDirs = new Uint8Array(N);
 
   // Live beams, double-buffered: position and direction.
   let bx = new Int32Array(MAX_BEAMS), by = new Int32Array(MAX_BEAMS), bd = new Int32Array(MAX_BEAMS);
@@ -85,7 +91,7 @@ export function createFastSim(config: any): FastSim {
 
   function run(cellsOut?: Uint8Array | null): number {
     stamp++;
-    if (stamp === 0xFFFFFFFF) { visited.fill(0); stamp = 1; }
+    if (stamp === 0xFFFFFFFF) { visited.fill(0); litStamp.fill(0); stamp = 1; }
     if (cellsOut) cellsOut.fill(0);
 
     let total = 0;
@@ -136,7 +142,28 @@ export function createFastSim(config: any): FastSim {
               ahit[i] = ahit[j] = 1;
       }
 
-      // 3. Surviving beams continue or split.
+      // 3. Collisions with beams that entered the cell at an earlier step.
+      for (let i = 0; i < na; i++) {
+        if (ahit[i]) continue;
+        const x = ax[i], y = ay[i];
+        if (x < 0 || x >= W || y < 0 || y >= H) continue;
+        const c = x * H + y;
+        if (litStamp[c] !== stamp) continue;
+        const lit = litDirs[c];
+        for (let d = 0; d < 4; d++) {
+          if (d !== adir[i] && (lit & (1 << d)) && sameCellCollides(x, y, d, adir[i])) { ahit[i] = 1; break; }
+        }
+      }
+
+      // 4. Beams that got into their cell light it.
+      for (let i = 0; i < na; i++) {
+        if (aout[i] === OUT_STOP) continue;
+        const c = ax[i] * H + ay[i];
+        if (litStamp[c] !== stamp) { litStamp[c] = stamp; litDirs[c] = 0; }
+        litDirs[c] |= 1 << adir[i];
+      }
+
+      // 5. Surviving beams continue or split.
       let m = 0;
       for (let i = 0; i < na; i++) {
         if (ahit[i] || aout[i] === OUT_STOP) continue;
