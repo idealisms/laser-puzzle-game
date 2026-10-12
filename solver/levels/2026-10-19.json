@@ -113,43 +113,43 @@
       "y": 19
     },
     {
-      "x": 7,
+      "x": 5,
       "y": 5,
       "type": "splitter",
       "orientation": "right"
     }
   ],
   "mirrorsAvailable": 9,
-  "optimalScore": 114,
+  "optimalScore": 115,
   "optimalSolution": [
     {
-      "x": 7,
-      "y": 13,
-      "type": "\\"
-    },
-    {
-      "x": 6,
-      "y": 19,
-      "type": "\\"
-    },
-    {
-      "x": 14,
-      "y": 13,
-      "type": "\\"
-    },
-    {
-      "x": 14,
-      "y": 19,
-      "type": "/"
-    },
-    {
-      "x": 6,
+      "x": 5,
       "y": 0,
       "type": "/"
     },
     {
       "x": 9,
       "y": 0,
+      "type": "\\"
+    },
+    {
+      "x": 5,
+      "y": 9,
+      "type": "\\"
+    },
+    {
+      "x": 14,
+      "y": 9,
+      "type": "\\"
+    },
+    {
+      "x": 14,
+      "y": 19,
+      "type": "/"
+    },
+    {
+      "x": 6,
+      "y": 19,
       "type": "\\"
     },
     {

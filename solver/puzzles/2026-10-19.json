@@ -167,7 +167,7 @@
   ],
   "splitters": [
     {
-      "x": 7,
+      "x": 5,
       "y": 5,
       "dir": "right",
       "note": "laser going RIGHT splits UP into upper zone and DOWN into lower zone"
