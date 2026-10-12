@@ -69,10 +69,11 @@ When working with the database, never echo the production database name or passw
 ## Generating Puzzle Levels
 
 ### Pipeline
-1. Create `solver/puzzles/YYYY-MM-DD.json` — the puzzle config (obstacle layout, laser, mirrors, splitters)
+1. Create `solver/puzzles/YYYY-MM-DD.json` — the puzzle config (obstacle layout, laser, mirrors, splitters). Drafting as an ASCII map and converting it is easiest: `cd solver && npx tsx puzzle_map.ts build <map.txt>` (format at the top of `solver/puzzle_map.ts`; `puzzle_map.ts show DATE` prints an existing puzzle as a map).
 2. Run solver from inside the `solver/` directory (any puzzle type, ~2–6 s per puzzle):
    `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --beam-width 12000`
    - After solving, the generator prints layout metrics and warns when more than 40% of the optimal path is on the outer ring or fewer than 25% of obstacle cells are anchored to an edge (see `solver/layout_metrics.ts`). These shapes rate poorly with players — rework the layout rather than shipping it.
+   - Then run `npx tsx check_levels.ts --start DATE --end DATE`. It draws each optimal solution and fails when a beam out of a splitter places no mirror (puzzles are more fun when both split beams matter) or a gate can never be passed. To fix a weak split, try `npx tsx search_splitter.ts DATE --x A-B --y A-B` to rank splitter placements, then regenerate at full beam width and re-check.
 3. Seed to dev: `DOTENV_CONFIG_PATH=.env.local npm run db:seed`
 4. Seed to prod: `DOTENV_CONFIG_PATH=.env.production npm run db:seed`
 
