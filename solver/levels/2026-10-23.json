@@ -121,24 +121,20 @@
       "y": 8
     },
     {
+      "x": 4,
+      "y": 9
+    },
+    {
+      "x": 11,
+      "y": 11
+    },
+    {
       "x": 10,
       "y": 12
     },
     {
       "x": 11,
       "y": 12
-    },
-    {
-      "x": 4,
-      "y": 9,
-      "type": "gate",
-      "orientation": "down"
-    },
-    {
-      "x": 11,
-      "y": 11,
-      "type": "gate",
-      "orientation": "up"
     }
   ],
   "mirrorsAvailable": 11,
