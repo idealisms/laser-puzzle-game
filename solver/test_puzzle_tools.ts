@@ -88,10 +88,7 @@ describe('puzzleToMap', () => {
       assert.deepEqual(back.splitters, sorted(p.splitters), `${file}: splitters`);
       assert.deepEqual(back.gates, sorted(p.gates), `${file}: gates`);
       // A cell in two groups is kept in the first, so compare the cells overall.
-      // The map can't show a wall under the laser (2026-02-04 has one).
-      const walls = cellSet(p);
-      walls.delete(`${p.laser.x},${p.laser.y}`);
-      assert.deepEqual(cellSet(back), walls, `${file}: walls`);
+      assert.deepEqual(cellSet(back), cellSet(p), `${file}: walls`);
       const labels = p.obstacle_groups.map((g: any) => g.label);
       for (const g of back.obstacle_groups) assert.ok(labels.includes(g.label), `${file}: label ${g.label}`);
     }

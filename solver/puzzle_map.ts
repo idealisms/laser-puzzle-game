@@ -123,7 +123,7 @@ export function parseMap(text: string, defaultDate?: string): PuzzleJson {
 /**
  * Prints a puzzle config as a map. A cell listed in more than one group goes
  * to the first; a group left with no cells is dropped. A wall under the laser
- * (only 2026-02-04 has one) is lost, since the cell can only show '@'.
+ * would be lost, since the cell can only show '@'.
  */
 export function puzzleToMap(p: PuzzleJson): string {
   const grid = Array.from({ length: p.height }, () => Array(p.width).fill('.'));
