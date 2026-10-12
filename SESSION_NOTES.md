@@ -21,33 +21,32 @@ React 19, TypeScript, Tailwind CSS 4, Prisma with PostgreSQL (Neon).
 ## Puzzle Generation Pipeline
 
 ### Files involved
-- `solver/puzzles/YYYY-MM-DD.json` — puzzle config (obstacle layout, laser, mirrors, optional splitters/gates)
+- `solver/puzzles/YYYY-MM-DD.txt` — puzzle as an ASCII map (obstacle layout, laser, mirrors, optional splitters/gates)
 - `solver/levels/YYYY-MM-DD.json` — solver output (obstacles flat list, optimalScore, optimalSolution)
 - `prisma/seed.ts` — reads from `solver/levels/` and upserts `Level` rows
 
 ### Step-by-step
-1. Write `solver/puzzles/YYYY-MM-DD.json` (see format below)
+1. Write `solver/puzzles/YYYY-MM-DD.txt` (see format below)
 2. Run solver:
    - Any puzzle type: `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --beam-width 12000` (~2–6 s/puzzle)
 3. Seed to dev: `DOTENV_CONFIG_PATH=.env.local npm run db:seed`
 4. Seed to prod: `DOTENV_CONFIG_PATH=.env.production npm run db:seed`
 
-### Puzzle config format
-```json
-{
-  "date": "2026-09-01",
-  "name": "Dale",
-  "width": 15,
-  "height": 20,
-  "laser": {"x": 0, "y": 9, "dir": "right"},
-  "num_mirrors": 9,
-  "obstacle_groups": [
-    {"label": "NW corner", "cells": [[0,0],[1,0],[0,1]]}
-  ],
-  "splitters": [],
-  "gates": []
-}
+### Puzzle map format
 ```
+name: Fork Road
+laser: right
+mirrors: 9
+label a: north post
+label e: east divider
+note 7,9: laser travelling RIGHT splits UP and DOWN
+.....a.........
+.....a.........
+               ... 20 rows of 15 cells, including:
+@......>..eeeee
+```
+
+Full format: top of `solver/puzzle_map.ts`.
 
 ### Grid conventions
 - x: 0–14 (left→right), y: 0–19 (top→bottom)

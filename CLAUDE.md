@@ -69,7 +69,7 @@ When working with the database, never echo the production database name or passw
 ## Generating Puzzle Levels
 
 ### Pipeline
-1. Create `solver/puzzles/YYYY-MM-DD.json` — the puzzle config (obstacle layout, laser, mirrors, splitters). Drafting as an ASCII map and converting it is easiest: `cd solver && npx tsx puzzle_map.ts build <map.txt>` (format at the top of `solver/puzzle_map.ts`; `puzzle_map.ts show DATE` prints an existing puzzle as a map).
+1. Create `solver/puzzles/YYYY-MM-DD.txt` — the puzzle as an ASCII map (header lines for name, laser direction, mirror count, group labels and notes, then 20 rows of 15 cells: `.` empty, `#`/letters walls, `@` laser, `^>v<` splitters, `NESW` gates). Format: top of `solver/puzzle_map.ts`; copy an existing puzzle as a starting point.
 2. Run solver from inside the `solver/` directory (any puzzle type, ~2–6 s per puzzle):
    `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --beam-width 12000`
    - After solving, the generator prints layout metrics and warns when more than 40% of the optimal path is on the outer ring or fewer than 25% of obstacle cells are anchored to an edge (see `solver/layout_metrics.ts`). These shapes rate poorly with players — rework the layout rather than shipping it.
@@ -79,8 +79,8 @@ When working with the database, never echo the production database name or passw
 
 ### Puzzle config rules
 - Grid: 15 wide (x: 0–14) × 20 tall (y: 0–19)
-- `num_mirrors`: 8–11
-- `splitters`: 0–2 per puzzle
+- `mirrors:` 8–11
+- Splitters: 0–2 per puzzle
 - No duplicate obstacle layouts across puzzles
 
 ### Splitter semantics (easy to get wrong)
