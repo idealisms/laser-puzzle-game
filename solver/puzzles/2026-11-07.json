@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-07",
+  "name": "Crossroads",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 11,
+    "y": 19,
+    "dir": "up"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "north wall",
+      "cells": [
+        [6, 2],
+        [6, 3],
+        [6, 4],
+        [6, 5]
+      ]
+    },
+    {
+      "label": "northeast ledge",
+      "cells": [
+        [12, 4],
+        [13, 4],
+        [14, 4]
+      ]
+    },
+    {
+      "label": "west ledge",
+      "cells": [
+        [0, 7],
+        [1, 7],
+        [2, 7]
+      ]
+    },
+    {
+      "label": "west shelf",
+      "cells": [
+        [0, 12],
+        [1, 12],
+        [2, 12],
+        [3, 12]
+      ]
+    },
+    {
+      "label": "center post",
+      "cells": [
+        [9, 14],
+        [9, 15],
+        [9, 16]
+      ]
+    },
+    {
+      "label": "east ledge",
+      "cells": [
+        [12, 16],
+        [13, 16],
+        [14, 16]
+      ]
+    },
+    {
+      "label": "south post",
+      "cells": [
+        [4, 18],
+        [4, 19]
+      ]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 10,
+      "y": 9,
+      "dir": "left",
+      "note": "laser travelling LEFT splits UP and DOWN"
+    }
+  ],
+  "gates": []
+}

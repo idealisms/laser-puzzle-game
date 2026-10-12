@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-03",
+  "name": "Twin Wells",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 7,
+    "y": 19,
+    "dir": "up"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "northwest post",
+      "cells": [
+        [2, 1],
+        [2, 2],
+        [2, 3]
+      ]
+    },
+    {
+      "label": "center divider",
+      "cells": [
+        [7, 1],
+        [7, 2],
+        [7, 3],
+        [7, 4],
+        [7, 5],
+        [7, 6],
+        [7, 7],
+        [7, 8]
+      ]
+    },
+    {
+      "label": "northeast post",
+      "cells": [
+        [11, 1],
+        [11, 2],
+        [11, 3]
+      ]
+    },
+    {
+      "label": "west shelf",
+      "cells": [
+        [0, 5],
+        [1, 5],
+        [2, 5],
+        [3, 5]
+      ]
+    },
+    {
+      "label": "east shelf",
+      "cells": [
+        [11, 5],
+        [12, 5],
+        [13, 5],
+        [14, 5]
+      ]
+    },
+    {
+      "label": "southwest post",
+      "cells": [
+        [2, 14],
+        [2, 15],
+        [2, 16]
+      ]
+    },
+    {
+      "label": "southeast post",
+      "cells": [
+        [12, 14],
+        [12, 15],
+        [12, 16]
+      ]
+    },
+    {
+      "label": "southwest base",
+      "cells": [
+        [0, 18],
+        [1, 18],
+        [2, 18]
+      ]
+    },
+    {
+      "label": "southeast base",
+      "cells": [
+        [13, 18],
+        [14, 18]
+      ]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 7,
+      "y": 12,
+      "dir": "up",
+      "note": "laser travelling UP splits LEFT and RIGHT"
+    }
+  ],
+  "gates": []
+}

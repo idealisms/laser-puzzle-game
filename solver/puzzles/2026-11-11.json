@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-11",
+  "name": "Prism Yard",
+  "width": 15,
+  "height": 20,
+  "laser": {
+    "x": 14,
+    "y": 17,
+    "dir": "left"
+  },
+  "num_mirrors": 10,
+  "obstacle_groups": [
+    {
+      "label": "north post",
+      "cells": [
+        [7, 0],
+        [7, 1],
+        [7, 2]
+      ]
+    },
+    {
+      "label": "northwest shelf",
+      "cells": [
+        [0, 2],
+        [1, 2],
+        [2, 2]
+      ]
+    },
+    {
+      "label": "northeast shelf",
+      "cells": [
+        [11, 4],
+        [12, 4],
+        [13, 4],
+        [14, 4]
+      ]
+    },
+    {
+      "label": "west post",
+      "cells": [
+        [4, 7],
+        [4, 8]
+      ]
+    },
+    {
+      "label": "east post",
+      "cells": [
+        [10, 12],
+        [10, 13],
+        [10, 14]
+      ]
+    },
+    {
+      "label": "southwest shelf",
+      "cells": [
+        [0, 14],
+        [1, 14],
+        [2, 14],
+        [3, 14]
+      ]
+    },
+    {
+      "label": "south post",
+      "cells": [
+        [6, 17],
+        [6, 18],
+        [6, 19]
+      ]
+    }
+  ],
+  "splitters": [
+    {
+      "x": 7,
+      "y": 10,
+      "dir": "up",
+      "note": "laser travelling UP splits LEFT and RIGHT"
+    }
+  ],
+  "gates": []
+}
