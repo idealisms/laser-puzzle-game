@@ -149,12 +149,20 @@
         [
           5,
           8
+        ],
+        [
+          4,
+          9
         ]
       ]
     },
     {
       "label": "post B",
       "cells": [
+        [
+          11,
+          11
+        ],
         [
           10,
           12
@@ -167,18 +175,5 @@
     }
   ],
   "splitters": [],
-  "gates": [
-    {
-      "x": 4,
-      "y": 9,
-      "dir": "down",
-      "note": "gate below post A — DOWN passes, UP blocked"
-    },
-    {
-      "x": 11,
-      "y": 11,
-      "dir": "up",
-      "note": "gate above post B — UP passes, DOWN blocked"
-    }
-  ]
+  "gates": []
 }
