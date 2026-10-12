@@ -23,6 +23,10 @@ The search keeps one beam across all depths and splits each depth's expansion ac
 | `test_simulator.ts` | Unit tests for the `simulateLaser` adapter |
 | `test_fastsim.ts` | Differential tests: `fastsim.ts` vs `calculateLaserPath` on every puzzle and on random collision-heavy boards |
 | `test_beam_search.ts` | Beam search results verify and don't depend on worker count |
+| `puzzle_map.ts` | Converts an ASCII map draft to `puzzles/DATE.json`, or prints a puzzle as a map |
+| `check_levels.ts` | Draws each level's optimal solution; flags splitter beams that place no mirror and gates that can never be passed |
+| `search_splitter.ts` | Tries a splitter at each cell/orientation in a region and ranks placements by the weakest split beam |
+| `test_puzzle_tools.ts` | Tests for `puzzle_map.ts`, `check_levels.ts` and `search_splitter.ts` |
 | `benchmark.js` | Benchmarks single-worker vs multi-worker performance |
 | `levels/` | Generated level JSON files (one per date) |
 
@@ -62,10 +66,45 @@ npx tsx generate_levels.ts --start 2026-03-01 --end 2026-03-07 --beam-width 1200
 
 Generated files are saved to `levels/` and include the puzzle config, optimal score, and optimal solution.
 
+### Design tools
+
+Draft a puzzle as an ASCII map and convert it to a puzzle config. A map is a few header lines and then 20 rows of 15 cells: `.` empty, `#` or a letter for walls (one obstacle group per letter, `v` excepted), `@` the laser, `^ > v <` splitters and `N E S W` one-way gates. The full format is at the top of `puzzle_map.ts`.
+
+```
+name: Fork Road
+laser: right
+mirrors: 9
+label a: north post
+note 7,9: laser travelling RIGHT splits UP and DOWN
+.....a.........
+.....a.....c...
+               ... 17 more rows, including:
+@......>..eeeee
+```
+
+```bash
+npx tsx puzzle_map.ts build drafts/2026-11-01.txt   # writes puzzles/2026-11-01.json (date from the file name or a date: line)
+npx tsx puzzle_map.ts show 2026-10-23              # prints an existing puzzle as a map to edit
+```
+
+After generating levels, check them. This exits 1 if a split beam (with everything it splits into) places no mirror or runs fewer than 8 cells, or if a gate's entrance or exit is blocked:
+
+```bash
+npx tsx check_levels.ts --start 2026-11-01 --end 2026-11-15   # add --quiet to skip the drawings
+```
+
+If one beam out of a splitter goes unused, search for a better splitter placement (index into the puzzle's `splitters` list), then regenerate at full beam width and check again:
+
+```bash
+npx tsx search_splitter.ts 2026-11-09 --splitter 1 --x 3-12 --y 11-16 --dirs left,right,down
+```
+
+Each candidate is solved at `--beam-width 4000`, about 3 s each with 12 workers, so keep the region small.
+
 ### Run tests
 
 ```bash
-node --require tsx/cjs --test test_simulator.ts test_fastsim.ts test_beam_search.ts
+node --require tsx/cjs --test test_simulator.ts test_fastsim.ts test_beam_search.ts test_puzzle_tools.ts
 ```
 
 ## CLI options
