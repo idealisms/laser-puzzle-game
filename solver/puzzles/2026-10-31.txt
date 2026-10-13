@@ -1,6 +1,6 @@
 name: Graveyard
 laser: left
-mirrors: 11
+mirrors: 9
 label a: crypt wall
 label b: dead tree
 label c: crypt floor
@@ -16,11 +16,10 @@ label l: gravestone 9
 label m: SW corner
 label n: SE corner
 label o: east fence
-note 9,3: crypt door — the only way out of the crypt; LEFT passes only
 ....b....a.....
-....b....a....@
+....b....a.....
 .........a.....
-.........W.....
+..............@
 .........a.....
 ..dd.....cccccc
 ...d...........

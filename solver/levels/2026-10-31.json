@@ -4,7 +4,7 @@
   "gridHeight": 20,
   "laserConfig": {
     "x": 14,
-    "y": 1,
+    "y": 3,
     "direction": "left"
   },
   "obstacles": [
@@ -187,28 +187,12 @@
     {
       "x": 14,
       "y": 19
-    },
-    {
-      "x": 9,
-      "y": 3,
-      "type": "gate",
-      "orientation": "left"
     }
   ],
-  "mirrorsAvailable": 11,
-  "optimalScore": 96,
+  "mirrorsAvailable": 9,
+  "optimalScore": 94,
   "optimalSolution": [
     {
-      "x": 11,
-      "y": 1,
-      "type": "/"
-    },
-    {
-      "x": 11,
-      "y": 3,
-      "type": "/"
-    },
-    {
       "x": 4,
       "y": 3,
       "type": "/"
@@ -245,12 +229,12 @@
     },
     {
       "x": 9,
-      "y": 16,
+      "y": 15,
       "type": "/"
     },
     {
-      "x": 3,
-      "y": 16,
+      "x": 2,
+      "y": 15,
       "type": "\\"
     }
   ]
