@@ -69,11 +69,11 @@ When working with the database, never echo the production database name or passw
 ## Generating Puzzle Levels
 
 ### Pipeline
-1. Create `solver/puzzles/YYYY-MM-DD.txt` — the puzzle as an ASCII map (header lines for name, laser direction, mirror count, group labels and notes, then 20 rows of 15 cells: `.` empty, `#`/letters walls, `@` laser, `^>v<` splitters, `NESW` gates). Format: top of `solver/puzzle_map.ts`; copy an existing puzzle as a starting point.
+1. Create `solver/puzzles/YYYY-MM-DD.txt` — the puzzle as an ASCII map (header lines for name, laser direction, mirror count, group labels and notes, then 20 rows of 15 cells: `.` empty, `#`/letters walls, `@` laser, `^>v<` splitters, `NESW` gates, `1` `2` `3` portal pairs). Format: top of `solver/puzzle_map.ts`; copy an existing puzzle as a starting point.
 2. Run solver from inside the `solver/` directory (any puzzle type, ~2–6 s per puzzle):
    `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --beam-width 12000`
    - After solving, the generator prints layout metrics and warns when more than 40% of the optimal path is on the outer ring or fewer than 25% of obstacle cells are anchored to an edge (see `solver/layout_metrics.ts`). These shapes rate poorly with players — rework the layout rather than shipping it.
-   - Then run `npx tsx check_levels.ts --start DATE --end DATE`. It draws each optimal solution and fails when a beam out of a splitter places no mirror (puzzles are more fun when both split beams matter) or a gate can never be passed. To fix a weak split, try `npx tsx search_splitter.ts DATE --x A-B --y A-B` to rank splitter placements, then regenerate at full beam width and re-check.
+   - Then run `npx tsx check_levels.ts --start DATE --end DATE`. It draws each optimal solution and fails when a beam out of a splitter places no mirror (puzzles are more fun when both split beams matter), a gate can never be passed, or a puzzle with portals uses none of them. To fix a weak split, try `npx tsx search_splitter.ts DATE --x A-B --y A-B` to rank splitter placements, then regenerate at full beam width and re-check.
 3. Seed to dev: `DOTENV_CONFIG_PATH=.env.local npm run db:seed`
 4. Seed to prod: `DOTENV_CONFIG_PATH=.env.production npm run db:seed`
 
@@ -81,6 +81,7 @@ When working with the database, never echo the production database name or passw
 - Grid: 15 wide (x: 0–14) × 20 tall (y: 0–19)
 - `mirrors:` 8–11
 - Splitters: 0–2 per puzzle
+- Portals: 0–3 pairs per puzzle; each digit appears exactly twice
 - No duplicate obstacle layouts across puzzles
 
 ### Splitter semantics (easy to get wrong)
@@ -90,9 +91,15 @@ When working with the database, never echo the production database name or passw
 - otherwise → reflects toward `OPPOSITE[dir]`
 - **Common mistake**: setting `dir=down` for a laser arriving LEFT — the laser just reflects UP, it doesn't split. Match `dir` to the laser's natural travel direction if you want a natural split.
 
+### Portal semantics
+- A beam entering a portal leaves its twin heading the same way, from any side, in both directions. Entering costs 1 step; the jump is free.
+- For collisions both portals of a pair are **one cell**: beams travelling in opposite directions through the pair collide (even through different portals); perpendicular or same-direction beams pass. The engine (`simulate.ts`) and the solver (`fastsim.ts`) must agree; `test_fastsim.ts` checks this on random boards with portals.
+- Portals join cells of any parity, so beams can try to swap across an edge beside a portal; the lit-cell rule stops both.
+
 ### What makes a good layout
 - **Obstacles must reach near the grid edges**, otherwise players ignore them and bounce around the perimeter. Thin central shapes (pentagons, rooms, totems) are easily bypassed.
 - **Full-height/full-width walls with gaps** force engagement — the beam has no choice but to pass through the gap. Works well for "dungeon gates" or "column" themes.
 - **Avoid isolated central shapes** with lots of open space around them — the optimal path just hugs the edges.
 - **Splitter placement**: place the splitter where the laser can naturally reach it, with clear corridors in/out. Don't surround it with obstacles that block the split beams (especially directly above/below for UP/DOWN splits).
+- **Portals work best as the only way into a sealed region** (a full wall with no gap), with the exit door facing an open run. A door that exits straight into a wall or off the grid is worthless, and the solver ignores it.
 - **One-way gate entrance must be open**: the cell a beam comes from to pass the gate (e.g. the cell below an `up` gate) can't be a wall, splitter, or off-grid, otherwise the gate can never be passed and is just a wall. The same goes for the exit cell. A gate the optimal path never uses is fine if it blocks or reroutes a better path; otherwise make it a wall.
