@@ -3,7 +3,7 @@
  * fastsim.ts — Allocation-free scorer for the beam search.
  *
  * Computes exactly the same totalLength as calculateLaserPath in
- * src/game/engine/simulate.ts (splitters, gates, loops, the shared
+ * src/game/engine/simulate.ts (splitters, gates, portals, loops, the shared
  * MAX_LASER_LENGTH cap and collisions), but on integer-encoded grids with
  * preallocated buffers, so a simulation does no heap allocation.
  * test_fastsim.ts keeps the two in sync by comparing them on random mirror
@@ -12,7 +12,9 @@
  * Like simulate.ts, all beams advance one cell per time step; beams that
  * collide on arrival both stop, and a stopped beam spawns nothing further.
  * Cells stay lit after a beam passes, and a later beam entering a lit cell
- * stops if it would collide with the beam lighting it.
+ * stops if it would collide with the beam lighting it. Both portals of a pair
+ * count as one cell for collisions and lit cells (canon[] maps each to the
+ * pair's first cell).
  */
 
 const UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
@@ -29,7 +31,7 @@ const MAX_LENGTH = 1000; // MAX_LASER_LENGTH in src/game/constants.ts
 const MAX_BEAMS = 64; // live beams at once; each splitter can split at most once
 const OUT_CONTINUE = 0, OUT_STOP = 1, OUT_SPLIT = 2;
 
-const CELL_EMPTY = 0, CELL_WALL = 1, CELL_SPLITTER = 2, CELL_GATE = 3;
+const CELL_EMPTY = 0, CELL_WALL = 1, CELL_SPLITTER = 2, CELL_GATE = 3, CELL_PORTAL = 4;
 
 export const MIRROR_SLASH = 1, MIRROR_BACKSLASH = 2;
 
@@ -53,6 +55,20 @@ export function createFastSim(config: any): FastSim {
   for (const [x, y] of config.obstacles) kind[x * H + y] = CELL_WALL;
   for (const [x, y, o] of config.splitters || []) { kind[x * H + y] = CELL_SPLITTER; orient[x * H + y] = DIR_TO_INT[o]; }
   for (const [x, y, o] of config.gates || []) { kind[x * H + y] = CELL_GATE; orient[x * H + y] = DIR_TO_INT[o]; }
+  // Portals: twin[c] is the cell a beam entering portal c leaves from; canon[c]
+  // is the cell that stands for c in collisions and lit cells.
+  const twin = new Int32Array(N).fill(-1);
+  const canon = new Int32Array(N);
+  for (let c = 0; c < N; c++) canon[c] = c;
+  const portals: [number, number, number][] = config.portals || [];
+  for (const [x, y, pair] of portals) {
+    const other = portals.find(([x2, y2, p2]) => p2 === pair && (x2 !== x || y2 !== y));
+    if (!other) continue;
+    const c = x * H + y, t = other[0] * H + other[1];
+    kind[c] = CELL_PORTAL;
+    twin[c] = t;
+    canon[c] = Math.min(c, t);
+  }
 
   const mirrors = new Int8Array(N);
   const laserX: number = config.laserX, laserY: number = config.laserY, laserDir: number = config.laserDir;
@@ -69,7 +85,9 @@ export function createFastSim(config: any): FastSim {
   let bx = new Int32Array(MAX_BEAMS), by = new Int32Array(MAX_BEAMS), bd = new Int32Array(MAX_BEAMS);
   let nx2 = new Int32Array(MAX_BEAMS), ny2 = new Int32Array(MAX_BEAMS), nd2 = new Int32Array(MAX_BEAMS);
   // This step's arrivals.
-  const ax = new Int32Array(MAX_BEAMS), ay = new Int32Array(MAX_BEAMS);
+  const ax = new Int32Array(MAX_BEAMS), ay = new Int32Array(MAX_BEAMS);  // cell entered
+  const ak = new Int32Array(MAX_BEAMS);      // collision key of the cell entered
+  const apx = new Int32Array(MAX_BEAMS), apy = new Int32Array(MAX_BEAMS);  // where the beam is after the step
   const adir = new Int32Array(MAX_BEAMS);    // direction of travel into the cell
   const aout = new Int32Array(MAX_BEAMS);    // OUT_* outcome
   const anew = new Int32Array(MAX_BEAMS);    // new direction for OUT_CONTINUE
@@ -85,6 +103,7 @@ export function createFastSim(config: any): FastSim {
         const wall = OPP[orient[c]];
         return da !== wall && db !== wall;
       }
+      if (kind[c] === CELL_PORTAL) return da === OPP[db];
     }
     return da === db || da === OPP[db];
   }
@@ -110,11 +129,13 @@ export function createFastSim(config: any): FastSim {
 
         const tx = x + DX[dir], ty = y + DY[dir];
         total++;
-        let out = OUT_CONTINUE, nd = dir;
+        let out = OUT_CONTINUE, nd = dir, px = tx, py = ty, key: number;
         if (tx < 0 || tx >= W || ty < 0 || ty >= H) {
           out = OUT_STOP;
+          key = -1 - ((tx + 1) * (H + 2) + (ty + 1)); // unique per off-grid cell
         } else {
           const c = tx * H + ty;
+          key = canon[c];
           if (cellsOut) cellsOut[c >> 3] |= 1 << (c & 7);
           const k = kind[c];
           if (k === CELL_EMPTY) {
@@ -122,6 +143,9 @@ export function createFastSim(config: any): FastSim {
             if (m) nd = REFLECT[m][dir];
           } else if (k === CELL_WALL) {
             out = OUT_STOP;
+          } else if (k === CELL_PORTAL) {
+            const t = twin[c];
+            px = (t / H) | 0; py = t - px * H;
           } else {
             const o = orient[c];
             if (k === CELL_GATE) { if (dir !== o) out = OUT_STOP; }
@@ -130,7 +154,8 @@ export function createFastSim(config: any): FastSim {
             else nd = OPP[o];
           }
         }
-        ax[na] = tx; ay[na] = ty; adir[na] = dir; aout[na] = out; anew[na] = nd; ahit[na] = 0;
+        ax[na] = tx; ay[na] = ty; ak[na] = key; apx[na] = px; apy[na] = py;
+        adir[na] = dir; aout[na] = out; anew[na] = nd; ahit[na] = 0;
         na++;
       }
 
@@ -138,7 +163,7 @@ export function createFastSim(config: any): FastSim {
       if (na > 1) {
         for (let i = 0; i < na; i++)
           for (let j = i + 1; j < na; j++)
-            if (ax[i] === ax[j] && ay[i] === ay[j] && sameCellCollides(ax[i], ay[i], adir[i], adir[j]))
+            if (ak[i] === ak[j] && sameCellCollides(ax[i], ay[i], adir[i], adir[j]))
               ahit[i] = ahit[j] = 1;
       }
 
@@ -147,7 +172,7 @@ export function createFastSim(config: any): FastSim {
         if (ahit[i]) continue;
         const x = ax[i], y = ay[i];
         if (x < 0 || x >= W || y < 0 || y >= H) continue;
-        const c = x * H + y;
+        const c = ak[i];
         if (litStamp[c] !== stamp) continue;
         const lit = litDirs[c];
         for (let d = 0; d < 4; d++) {
@@ -158,7 +183,7 @@ export function createFastSim(config: any): FastSim {
       // 4. Beams that got into their cell light it.
       for (let i = 0; i < na; i++) {
         if (aout[i] === OUT_STOP) continue;
-        const c = ax[i] * H + ay[i];
+        const c = ak[i];
         if (litStamp[c] !== stamp) { litStamp[c] = stamp; litDirs[c] = 0; }
         litDirs[c] |= 1 << adir[i];
       }
@@ -172,7 +197,7 @@ export function createFastSim(config: any): FastSim {
           nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? DOWN : RIGHT; m++;
           nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? UP : LEFT; m++;
         } else {
-          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = anew[i]; m++;
+          nx2[m] = apx[i]; ny2[m] = apy[i]; nd2[m] = anew[i]; m++;
         }
       }
       let t = bx; bx = nx2; nx2 = t;

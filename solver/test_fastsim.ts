@@ -11,17 +11,14 @@ const assert = require('node:assert/strict');
 const { calculateLaserPath } = require('../src/game/engine/simulate');
 const { createFastSim } = require('./fastsim');
 const { PUZZLES } = require('./puzzles');
+const { configToObstacles } = require('./obstacles');
 const fs = require('fs');
 const path = require('path');
 
 const INT_TO_DIR = ['up', 'right', 'down', 'left'];
 
 function reference(config, mirrors) {
-  const obstacles = [
-    ...config.obstacles.map(([x, y]) => ({ x, y, type: 'wall' })),
-    ...(config.splitters || []).map(([x, y, o]) => ({ x, y, type: 'splitter', orientation: o })),
-    ...(config.gates || []).map(([x, y, o]) => ({ x, y, type: 'gate', orientation: o })),
-  ];
+  const obstacles = configToObstacles(config);
   const lp = calculateLaserPath(
     { x: config.laserX, y: config.laserY, direction: INT_TO_DIR[config.laserDir] },
     mirrors.map(([x, y, type]) => ({ position: { x, y }, type })),
@@ -36,7 +33,10 @@ function reference(config, mirrors) {
     }
   // Collisions with a lit cell are reported on the cell edge, at a half coordinate.
   const litCollisions = lp.collisionPoints.filter(p => !Number.isInteger(p.x) || !Number.isInteger(p.y)).length;
-  return { length: lp.totalLength, cells, streams: lp.streams.length, collisions: lp.collisionPoints.length, litCollisions };
+  // Did any beam go through a portal? (A segment starting away from where the last one ended.)
+  const teleports = lp.streams.some(st => st.segments.some((seg, i) =>
+    i > 0 && (seg.start.x !== st.segments[i - 1].end.x || seg.start.y !== st.segments[i - 1].end.y)));
+  return { length: lp.totalLength, cells, streams: lp.streams.length, collisions: lp.collisionPoints.length, litCollisions, teleports };
 }
 
 function fast(sim, config, mirrors) {
@@ -238,5 +238,91 @@ describe('fastsim lit cells', () => {
     const mirrors = [[6, 8, '/'], [6, 2, '\\'], [4, 2, '/']];
     assert.equal(fast(createFastSim(config), config, mirrors).length, 22);
     assert.equal(reference(config, mirrors).length, 22);
+  });
+});
+
+// Portals join cells of any parity, so beams can meet at a pair through
+// different portals or swap across an edge beside one. Random dense boards
+// with splitters, gates and 1–3 portal pairs cover these; in half of them each
+// pair is mirror-symmetric about the laser's row, so that split beams reach
+// both portals of a pair at the same time.
+describe('fastsim matches calculateLaserPath with portals', () => {
+  it('random dense boards with portals', () => {
+    const rand = rng(4242);
+    const dirs = ['up', 'right', 'down', 'left'];
+    let teleports = 0, collisions = 0, litCollisions = 0;
+    for (let trial = 0; trial < 60000; trial++) {
+      const width = 4 + Math.floor(rand() * 8), height = 5 + Math.floor(rand() * 7);
+      const laserY = Math.floor(rand() * height);
+      const config = {
+        width, height, laserX: 0, laserY, laserDir: 1,
+        obstacles: [], splitters: [], gates: [], portals: [], numMirrors: 0,
+      };
+      const taken = new Set([laserY]);
+      const free = (x, y) => x >= 0 && x < width && y >= 0 && y < height && !taken.has(x * height + y);
+      const symmetric = rand() < 0.5;
+      const pairs = 1 + Math.floor(rand() * 3);
+      for (let pair = 1; pair <= pairs; pair++) {
+        for (let attempt = 0; attempt < 20; attempt++) {
+          const x1 = Math.floor(rand() * width), y1 = Math.floor(rand() * height);
+          const x2 = symmetric ? x1 : Math.floor(rand() * width);
+          const y2 = symmetric ? 2 * laserY - y1 : Math.floor(rand() * height);
+          if ((x1 === x2 && y1 === y2) || !free(x1, y1) || !free(x2, y2)) continue;
+          taken.add(x1 * height + y1); taken.add(x2 * height + y2);
+          config.portals.push([x1, y1, pair], [x2, y2, pair]);
+          break;
+        }
+      }
+      const mirrors = [];
+      for (let x = 0; x < width; x++)
+        for (let y = 0; y < height; y++) {
+          if (!free(x, y)) continue;
+          const r = rand();
+          if (r < 0.3) mirrors.push([x, y, rand() < 0.5 ? '/' : '\\']);
+          else if (r < 0.4) config.splitters.push([x, y, dirs[Math.floor(rand() * 4)]]);
+          else if (r < 0.5) config.gates.push([x, y, dirs[Math.floor(rand() * 4)]]);
+          else if (r < 0.53) config.obstacles.push([x, y]);
+        }
+      const ref = reference(config, mirrors);
+      if (ref.teleports) {
+        teleports++;
+        if (ref.collisions > 0) collisions++;
+        if (ref.litCollisions > 0) litCollisions++;
+      }
+      const got = fast(createFastSim(config), config, mirrors);
+      const ctx = JSON.stringify({ config, mirrors });
+      assert.equal(got.length, ref.length, ctx);
+      assert.deepEqual([...got.cells].sort((a, b) => a - b), [...ref.cells].sort((a, b) => a - b), ctx);
+    }
+    assert.ok(teleports > 10000, `only ${teleports} boards used a portal`);
+    assert.ok(collisions > 150, `only ${collisions} boards with a teleport had collisions`);
+    assert.ok(litCollisions > 100, `only ${litCollisions} boards with a teleport had lit-cell collisions`);
+  });
+
+  // The portal rigs from simulate.test.ts: a splitter at (5,5) sends its up
+  // beam left through (3,2) at t=8.
+  const rig = (portals, mirrors) => {
+    const config = {
+      width: 10, height: 10, laserX: 2, laserY: 5, laserDir: 1,
+      obstacles: [], splitters: [[5, 5, 'right']], gates: [], portals, numMirrors: 0,
+    };
+    return { ref: reference(config, mirrors).length, got: fast(createFastSim(config), config, mirrors).length };
+  };
+  const up = [5, 2, '\\'];
+
+  it('head-on through different portals of a pair', () => {
+    assert.deepEqual(rig([[3, 2, 1], [7, 8, 1]], [up, [5, 8, '\\']]), { ref: 13, got: 13 });
+  });
+
+  it('same direction through different portals of a pair', () => {
+    assert.deepEqual(rig([[3, 2, 1], [3, 8, 1]], [up, [5, 8, '/']]), { ref: 21, got: 21 });
+  });
+
+  it('head-on into a pair lit earlier', () => {
+    assert.deepEqual(rig([[3, 2, 1], [8, 9, 1]], [up, [5, 8, '/'], [1, 8, '\\'], [1, 2, '/']]), { ref: 32, got: 32 });
+  });
+
+  it('swapping across the edge beside a portal', () => {
+    assert.deepEqual(rig([[3, 2, 1], [6, 8, 1]], [up, [5, 6, '/'], [4, 6, '/'], [4, 8, '\\']]), { ref: 15, got: 15 });
   });
 });
