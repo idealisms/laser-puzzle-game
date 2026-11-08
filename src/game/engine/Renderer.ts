@@ -159,6 +159,45 @@ export class Renderer {
     this.ctx.fill()
   }
 
+  drawPortal(x: number, y: number, pair: number = 1): void {
+    const palette = this.colors.portal
+    const colors = palette[Math.min(Math.max(pair, 1), palette.length) - 1]
+    const cx = x * CELL_SIZE + CELL_SIZE / 2
+    const cy = y * CELL_SIZE + CELL_SIZE / 2
+    const r = CELL_SIZE / 2 - 5
+
+    this.ctx.save()
+
+    // Glowing disc
+    const gradient = this.ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
+    gradient.addColorStop(0, this.colors.grid.background)
+    gradient.addColorStop(1, colors.glow)
+    this.ctx.fillStyle = gradient
+    this.ctx.beginPath()
+    this.ctx.arc(cx, cy, r, 0, Math.PI * 2)
+    this.ctx.fill()
+
+    // Outer ring and a thinner inner ring
+    this.ctx.strokeStyle = colors.ring
+    this.ctx.lineWidth = 3
+    this.ctx.beginPath()
+    this.ctx.arc(cx, cy, r, 0, Math.PI * 2)
+    this.ctx.stroke()
+    this.ctx.lineWidth = 1.5
+    this.ctx.beginPath()
+    this.ctx.arc(cx, cy, r * 0.55, 0, Math.PI * 2)
+    this.ctx.stroke()
+
+    // Pair number in the top-left corner, clear of the beam through the centre
+    this.ctx.fillStyle = colors.ring
+    this.ctx.font = 'bold 11px sans-serif'
+    this.ctx.textAlign = 'left'
+    this.ctx.textBaseline = 'top'
+    this.ctx.fillText(String(pair), x * CELL_SIZE + 3, y * CELL_SIZE + 2)
+
+    this.ctx.restore()
+  }
+
   drawGate(x: number, y: number, orientation: SplitterOrientation = 'right'): void {
     const p = 4
     const cs = CELL_SIZE
@@ -260,11 +299,17 @@ export class Renderer {
       segments[0].start.x * CELL_SIZE + CELL_SIZE / 2,
       segments[0].start.y * CELL_SIZE + CELL_SIZE / 2
     )
+    let prev = segments[0].start
     for (const seg of segments) {
+      // A portal jump: the next segment starts away from where the last ended.
+      if (seg.start.x !== prev.x || seg.start.y !== prev.y) {
+        this.ctx.moveTo(seg.start.x * CELL_SIZE + CELL_SIZE / 2, seg.start.y * CELL_SIZE + CELL_SIZE / 2)
+      }
       this.ctx.lineTo(
         seg.end.x * CELL_SIZE + CELL_SIZE / 2,
         seg.end.y * CELL_SIZE + CELL_SIZE / 2
       )
+      prev = seg.end
     }
     this.ctx.stroke()
   }
@@ -458,6 +503,8 @@ export class Renderer {
         this.drawSplitter(obstacle.x, obstacle.y, obstacle.orientation ?? 'right')
       } else if (obstacle.type === 'gate') {
         this.drawGate(obstacle.x, obstacle.y, obstacle.orientation ?? 'right')
+      } else if (obstacle.type === 'portal') {
+        this.drawPortal(obstacle.x, obstacle.y, obstacle.pair ?? 1)
       } else {
         this.drawObstacle(obstacle.x, obstacle.y)
       }

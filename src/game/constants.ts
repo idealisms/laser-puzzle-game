@@ -42,6 +42,13 @@ const DEFAULT_COLORS = {
     stroke: '#1a5a1a',
     arrow: '#44ff88',
   },
+  // One color per portal pair (pair 1, 2, 3). Each portal also shows its
+  // pair number, so pairs can be matched without telling colors apart.
+  portal: [
+    { ring: '#b366ff', glow: 'rgba(179,102,255,0.35)' },  // violet
+    { ring: '#ff4fd8', glow: 'rgba(255,79,216,0.35)' },   // magenta
+    { ring: '#ffd23f', glow: 'rgba(255,210,63,0.35)' },   // gold
+  ],
   eraser: {
     highlight: 'rgba(255, 0, 0, 0.25)',
     border: 'rgba(255, 0, 0, 0.6)',
