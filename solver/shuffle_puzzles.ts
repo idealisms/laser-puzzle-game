@@ -53,7 +53,7 @@ function shuffle<T>(arr: T[], rand: () => number): T[] {
   return a;
 }
 
-type PuzzleType = "standard" | "gate" | "splitter" | "large";
+type PuzzleType = "standard" | "gate" | "splitter" | "portal" | "large";
 
 interface PuzzleInfo {
   date: string;
@@ -69,7 +69,10 @@ function getPuzzleType(puzzleConfig: Record<string, unknown>): PuzzleType {
     Array.isArray(puzzleConfig.splitters) && puzzleConfig.splitters.length > 0;
   const hasGate =
     Array.isArray(puzzleConfig.gates) && puzzleConfig.gates.length > 0;
+  const hasPortal =
+    Array.isArray(puzzleConfig.portals) && puzzleConfig.portals.length > 0;
   if (isLarge) return "large";
+  if (hasPortal) return "portal";
   if (hasSplitter) return "splitter";
   if (hasGate) return "gate";
   return "standard";
@@ -179,6 +182,7 @@ const typeSymbol = {
   standard: "·",
   gate: "G",
   splitter: "S",
+  portal: "P",
   large: "L",
 };
 for (let i = 0; i < dates.length; i++) {

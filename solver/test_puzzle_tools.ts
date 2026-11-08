@@ -156,6 +156,24 @@ describe('analyzeLevel', () => {
     const config = { ...RIG, splitters: [], gates: [[4, 10, 'right']] };
     assert.equal(analyzeLevel(levelFromConfig(config, [])).gates[0].passes, 1);
   });
+
+  it('a gate next to a portal can be passed', () => {
+    const config = { ...RIG, splitters: [], gates: [[5, 5, 'up']], portals: [[5, 6, 1], [9, 9, 1]] };
+    assert.deepEqual(analyzeLevel(levelFromConfig(config, [])).problems.filter((p: string) => /gate/.test(p)), []);
+  });
+
+  it('counts portal entries and needs at least one pair on the path', () => {
+    // The laser runs along row 10 into pair 1 at (4,10) and out of (4,3).
+    const portals = [[4, 10, 1], [4, 3, 1], [9, 15, 2], [12, 15, 2]];
+    const used = analyzeLevel(levelFromConfig({ ...RIG, splitters: [], portals }, []));
+    assert.deepEqual(used.portals, [
+      { pair: 1, cells: [[4, 10], [4, 3]], passes: 1 },
+      { pair: 2, cells: [[9, 15], [12, 15]], passes: 0 },
+    ]);
+    assert.deepEqual(used.problems, []);
+    const unused = analyzeLevel(levelFromConfig({ ...RIG, splitters: [], portals: portals.slice(2) }, []));
+    assert.deepEqual(unused.problems, ['no portal pair is on the optimal path']);
+  });
 });
 
 describe('renderSolution', () => {
@@ -164,6 +182,13 @@ describe('renderSolution', () => {
     assert.equal(rows[2], ' 2        /-------');
     assert.equal(rows[10], '10 @------>       ');
     assert.equal(rows[17], '17        \\-------');
+  });
+
+  it('draws portals as their pair number', () => {
+    const level = levelFromConfig({ ...RIG, splitters: [], portals: [[4, 10, 1], [4, 3, 1]] }, []);
+    const rows = renderSolution(level).split('\n');
+    assert.equal(rows[10], '10 @---1          ');
+    assert.equal(rows[3], ' 3     1----------');
   });
 });
 

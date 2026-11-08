@@ -1,7 +1,7 @@
 'use strict';
 /**
- * Checks generated levels (solver/levels/*.json) for splitter and gate
- * problems, and draws each optimal solution as ASCII.
+ * Checks generated levels (solver/levels/*.json) for splitter, gate and
+ * portal problems, and draws each optimal solution as ASCII.
  *
  * Usage (from solver/):
  *   npx tsx check_levels.ts 2026-11-01 [more dates...]
@@ -14,6 +14,8 @@
  *     beams out of a splitter matter.
  *   - a one-way gate whose entrance or exit cell is a wall, a splitter or
  *     off the grid: no beam can ever pass it, so it is just a wall.
+ *   - a puzzle with portals whose optimal path enters none of them. With
+ *     several pairs, some may go unused (they may block or tempt).
  * A gate the optimal path doesn't pass is fine: it may block a better path.
  */
 
@@ -37,6 +39,7 @@ export interface Level {
 export interface StreamReport { direction: Direction; length: number; mirrors: number }
 export interface SplitterReport { x: number; y: number; orientation: Direction; streams: StreamReport[]; ok: boolean }
 export interface GateReport { x: number; y: number; orientation: Direction; passes: number; entranceOpen: boolean; exitOpen: boolean }
+export interface PortalReport { pair: number; cells: [number, number][]; passes: number }
 
 const DELTA: Record<Direction, [number, number]> = { up: [0, -1], right: [1, 0], down: [0, 1], left: [-1, 0] };
 const key = (x: number, y: number) => `${x},${y}`;
@@ -90,7 +93,8 @@ export function analyzeLevel(level: Level, laserPath: LaserPath = tracePath(leve
     return { x: o.x, y: o.y, orientation: o.orientation ?? 'right', streams, ok };
   });
 
-  const blocked = new Set(level.obstacles.filter(o => o.type !== 'gate').map(o => key(o.x, o.y)));
+  // A beam can come out of a portal into a gate, or go from a gate into one.
+  const blocked = new Set(level.obstacles.filter(o => o.type !== 'gate' && o.type !== 'portal').map(o => key(o.x, o.y)));
   const open = (x: number, y: number) =>
     x >= 0 && x < level.gridWidth && y >= 0 && y < level.gridHeight && !blocked.has(key(x, y));
   const gates: GateReport[] = level.obstacles.filter(o => o.type === 'gate').map(o => {
@@ -101,14 +105,23 @@ export function analyzeLevel(level: Level, laserPath: LaserPath = tracePath(leve
     return { x: o.x, y: o.y, orientation, passes, entranceOpen: open(o.x - dx, o.y - dy), exitOpen: open(o.x + dx, o.y + dy) };
   });
 
+  const pairs = [...new Set(level.obstacles.filter(o => o.type === 'portal').map(o => o.pair ?? 1))].sort();
+  const portals: PortalReport[] = pairs.map(pair => {
+    const cells = level.obstacles.filter(o => o.type === 'portal' && o.pair === pair).map(o => [o.x, o.y] as [number, number]);
+    const cellKeys = new Set(cells.map(([x, y]) => key(x, y)));
+    const passes = laserPath.streams.flatMap(st => st.segments).filter(s => cellKeys.has(key(s.end.x, s.end.y))).length;
+    return { pair, cells, passes };
+  });
+
   const problems = [
     ...splitters.filter(s => !s.ok).map(s => s.streams.length < 2
       ? `splitter (${s.x},${s.y}) never splits`
       : `splitter (${s.x},${s.y}) has a weak beam: ` + s.streams.map(st => `${st.direction} ${st.length} cells/${st.mirrors} mirrors`).join(', ')),
     ...gates.filter(g => !g.entranceOpen || !g.exitOpen).map(g =>
       `gate (${g.x},${g.y}) ${g.orientation} can never be passed: its ${!g.entranceOpen ? 'entrance' : 'exit'} is blocked`),
+    ...(portals.length && portals.every(p => p.passes === 0) ? ['no portal pair is on the optimal path'] : []),
   ];
-  return { splitters, gates, problems };
+  return { splitters, gates, portals, problems };
 }
 
 /** The optimal path drawn over the grid: '-' '|' beam, '+' crossing, '/' '\' mirrors. */
@@ -124,7 +137,8 @@ export function renderSolution(level: Level, laserPath: LaserPath = tracePath(le
   const gateChar = { up: 'N', right: 'E', down: 'S', left: 'W' };
   for (const o of level.obstacles) {
     const orientation = o.orientation ?? 'right';
-    grid[o.y][o.x] = o.type === 'splitter' ? splitterChar[orientation] : o.type === 'gate' ? gateChar[orientation] : '#';
+    grid[o.y][o.x] = o.type === 'splitter' ? splitterChar[orientation] : o.type === 'gate' ? gateChar[orientation]
+      : o.type === 'portal' ? String(o.pair ?? 1) : '#';
   }
   for (const m of level.optimalSolution) grid[m.y][m.x] = m.type;
   grid[level.laserConfig.y][level.laserConfig.x] = '@';
@@ -161,7 +175,7 @@ function main(argv: string[]): number {
     const level: Level & { optimalScore: number } =
       JSON.parse(fs.readFileSync(path.join(__dirname, 'levels', `${date}.json`), 'utf8'));
     const laserPath = tracePath(level);
-    const { splitters, gates, problems } = analyzeLevel(level, laserPath);
+    const { splitters, gates, portals, problems } = analyzeLevel(level, laserPath);
     console.log(`\n${date}: score ${level.optimalScore}, ${level.optimalSolution.length} mirrors`);
     if (!quiet) console.log(renderSolution(level, laserPath));
     for (const s of splitters) {
@@ -169,6 +183,9 @@ function main(argv: string[]): number {
       console.log(`  splitter (${s.x},${s.y}) ${s.orientation}: ${streams || 'never splits'}`);
     }
     for (const g of gates) console.log(`  gate (${g.x},${g.y}) ${g.orientation}: passed ${g.passes}x`);
+    for (const p of portals) {
+      console.log(`  portal ${p.pair} ${p.cells.map(([x, y]) => `(${x},${y})`).join('-')}: entered ${p.passes}x${p.passes ? '' : ' (unused)'}`);
+    }
     for (const p of problems) console.log(`  PROBLEM: ${p}`);
     if (problems.length) failed++;
   }
