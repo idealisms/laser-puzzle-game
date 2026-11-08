@@ -554,30 +554,25 @@ describe('calculateLaserPath — portals', () => {
   const spl = splitter(5, 5, 'right')
   const upMirror = mirror(5, 2, '\\')
 
-  it('beams entering a pair head-on through different portals pass each other', () => {
-    // The down beam turns right at (5,8) and enters the twin at (7,8) at t=8.
-    // Each comes out onto the path the other came in on and retraces it,
-    // through the mirrors, back to the splitter, where both run into the
-    // laser's beam at t=13.
+  it('beams going into a pair at the same step in opposite directions collide', () => {
+    // The down beam turns right at (5,8) and goes into the twin at (7,8)
+    // heading right at t=8, as the up beam goes into (3,2) heading left.
     const result = calculateLaserPath(laser, [upMirror, mirror(5, 8, '\\')],
       [spl, portal(3, 2, 1), portal(7, 8, 1)], BOUNDS_10x10)
-    expect(result.totalLength).toBe(23)
-    // Both stop entering the splitter at once: one collision, at its centre.
-    expect(result.collisionPoints).toEqual([{ x: 5, y: 5 }])
+    expect(result.totalLength).toBe(13)
+    expect(result.collisionPoints).toHaveLength(2)
+    expect(result.collisionPoints).toEqual(expect.arrayContaining([{ x: 3, y: 2 }, { x: 7, y: 8 }]))
     expectNoOrphanBeams(result)
   })
 
-  it('partners pass each other on a mirror right outside the portal', () => {
-    // The down beam winds through (5,6), (6,6) and (6,8) into the twin at
-    // (7,8) heading right at t=8, as the up beam goes into (3,2) heading left.
-    // The up beam comes out onto the mirror at (6,8), which the down beam hit
-    // from above: the same mirror face, but as partners they pass, and both
-    // retrace the other's route back to the splitter.
-    const mirrors = [upMirror, mirror(5, 6, '\\'), mirror(6, 6, '\\'), mirror(6, 8, '\\')]
-    const result = calculateLaserPath(laser, mirrors, [spl, portal(3, 2, 1), portal(7, 8, 1)], BOUNDS_10x10)
-    // Both stop entering the splitter at once: one collision, at its centre.
-    expect(result.collisionPoints).toEqual([{ x: 5, y: 5 }])
-    expect(result.totalLength).toBe(23)
+  it('beams going into the same portal from opposite sides at the same step collide', () => {
+    // The laser splits at (4,3); the beams come round by (2,3)/(2,6) and
+    // (6,3)/(6,6) and reach the portal at (4,6) from both sides at t=10.
+    const mirrors = [mirror(2, 3, '/'), mirror(2, 6, '\\'), mirror(6, 3, '\\'), mirror(6, 6, '/')]
+    const result = calculateLaserPath({ x: 4, y: 0, direction: 'down' }, mirrors,
+      [splitter(4, 3, 'down'), portal(4, 6, 1), portal(8, 8, 1)], BOUNDS_10x10)
+    expect(result.collisionPoints).toEqual([{ x: 4, y: 6 }])
+    expect(result.totalLength).toBe(17)
   })
 
   it('beams entering a pair in the same direction through different portals pass', () => {
@@ -608,17 +603,14 @@ describe('calculateLaserPath — portals', () => {
     expect(result.totalLength).toBe(34)
   })
 
-  it('two beams swapping across the edge next to a portal pass each other', () => {
-    // The up beam enters (3,2) at t=8 and comes out of (6,8) heading left.
-    // The down beam winds through (5,6), (4,6) and (4,8) to reach (5,8)
-    // heading right at t=8. At t=9 they swap (5,8) and (6,8): the down beam
-    // goes into the portal the up beam is coming out of, so they pass each
-    // other, retrace each other's paths back to the splitter and run into the
-    // laser's beam there at t=14.
+  it('beams going into a pair one step apart in opposite directions meet just outside it', () => {
+    // The up beam goes into (3,2) at t=8 and comes out of (6,8) heading left.
+    // The down beam winds through (5,6), (4,6) and (4,8) and goes into (6,8)
+    // heading right at t=9. Each comes out onto the path the other went in
+    // on, which is lit, and stops on the edge beside the portal.
     const mirrors = [upMirror, mirror(5, 6, '/'), mirror(4, 6, '/'), mirror(4, 8, '\\')]
     const result = calculateLaserPath(laser, mirrors, [spl, portal(3, 2, 1), portal(6, 8, 1)], BOUNDS_10x10)
-    // Both stop entering the splitter at once: one collision, at its centre.
-    expect(result.collisionPoints).toEqual([{ x: 5, y: 5 }])
-    expect(result.totalLength).toBe(25)
+    expect(result.collisionPoints).toEqual([{ x: 5.5, y: 8 }, { x: 3.5, y: 2 }])
+    expect(result.totalLength).toBe(16)
   })
 })

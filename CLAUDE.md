@@ -93,9 +93,9 @@ When working with the database, never echo the production database name or passw
 
 ### Portal semantics
 - A beam entering a portal leaves its twin heading the same way, from any side, in both directions. Entering costs 1 step; the jump is free.
-- A portal is a **hole**: beams going into it never collide there, from any side and at any time, and it is never lit.
-- Two beams that pass each other head-on through a pair (each comes out onto the path the other went in on) become **partners** and never collide with each other again; each retraces the other's route. They still collide with any other beam as usual.
-- The engine (`simulate.ts`) and the solver (`fastsim.ts`) must agree; `test_fastsim.ts` checks this on random boards with portals, including symmetric boards that send split beams through both portals of a pair at once.
+- A portal is a **hole**: it is never lit, so a beam going into it never runs into an earlier beam there (e.g. a later beam can go into the same portal from the other side).
+- Two beams going into the **same pair** (through either portal) **at the same step in opposite directions collide**, each at the portal it went into. One step apart, each comes out onto the other's lit incoming path and stops just outside the portal.
+- The engine (`simulate.ts`) and the solver (`fastsim.ts`) must agree; `test_fastsim.ts` checks this on random boards with portals, including symmetric boards that send split beams into both portals of a pair at once.
 
 ### What makes a good layout
 - **Obstacles must reach near the grid edges**, otherwise players ignore them and bounce around the perimeter. Thin central shapes (pentagons, rooms, totems) are easily bypassed.

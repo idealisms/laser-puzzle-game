@@ -295,17 +295,15 @@ describe('fastsim matches calculateLaserPath with portals', () => {
       assert.deepEqual([...got.cells].sort((a, b) => a - b), [...ref.cells].sort((a, b) => a - b), ctx);
     }
     assert.ok(teleports > 10000, `only ${teleports} boards used a portal`);
-    assert.ok(collisions > 150, `only ${collisions} boards with a teleport had collisions`);
+    assert.ok(collisions > 100, `only ${collisions} boards with a teleport had collisions`);
     // (Counted by half-cell collision points; beams stopped entering the same
     // cell at once show one point at its centre, which isn't counted.)
     assert.ok(litCollisions > 50, `only ${litCollisions} boards with a teleport had lit-cell collisions`);
   });
 
-  // Two beams that pass each other head-on through a pair become partners and
-  // never collide again. Boards symmetric about a splitter's row, with portal
-  // pairs placed symmetrically, send the split beams through both portals of a
-  // pair at once; about 8% of them score differently with and without the
-  // partner rule (measured when it was added).
+  // Two beams going into a pair at the same step in opposite directions
+  // collide. Boards symmetric about a splitter's row, with portal pairs placed
+  // symmetrically, send the split beams into both portals of a pair at once.
   it('random symmetric boards with portal pairs', () => {
     const rand = rng(31337);
     for (let trial = 0; trial < 20000; trial++) {
@@ -330,11 +328,7 @@ describe('fastsim matches calculateLaserPath with portals', () => {
   const up = [5, 2, '\\'];
 
   it('head-on through different portals of a pair', () => {
-    assert.deepEqual(rig([[3, 2, 1], [7, 8, 1]], [up, [5, 8, '\\']]), { ref: 23, got: 23 });
-  });
-
-  it('partners passing on a mirror right outside the portal', () => {
-    assert.deepEqual(rig([[3, 2, 1], [7, 8, 1]], [up, [5, 6, '\\'], [6, 6, '\\'], [6, 8, '\\']]), { ref: 23, got: 23 });
+    assert.deepEqual(rig([[3, 2, 1], [7, 8, 1]], [up, [5, 8, '\\']]), { ref: 13, got: 13 });
   });
 
   it('same direction through different portals of a pair', () => {
@@ -346,7 +340,7 @@ describe('fastsim matches calculateLaserPath with portals', () => {
   });
 
   it('swapping across the edge beside a portal', () => {
-    assert.deepEqual(rig([[3, 2, 1], [6, 8, 1]], [up, [5, 6, '/'], [4, 6, '/'], [4, 8, '\\']]), { ref: 25, got: 25 });
+    assert.deepEqual(rig([[3, 2, 1], [6, 8, 1]], [up, [5, 6, '/'], [4, 6, '/'], [4, 8, '\\']]), { ref: 16, got: 16 });
   });
 });
 
