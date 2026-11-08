@@ -136,9 +136,12 @@ function findMirror(pos: Position, mirrors: Mirror[]): Mirror | undefined {
 }
 
 interface Beam {
+  id: number
   pos: Position
   dir: Direction
   stream: LaserStream
+  /** Set for the one step after a jump: the portal the beam is coming out of. */
+  emergingFrom?: Position
 }
 
 type StepOutcome =
@@ -149,6 +152,7 @@ type StepOutcome =
 
 interface Arrival {
   beam: Beam
+  emergingFrom?: Position // portal the beam came out of on this step
   to: Position
   dir: Direction // direction of travel into `to`
   outcome: StepOutcome
@@ -175,6 +179,11 @@ interface Arrival {
  * it), so beams going through different portals of a pair never collide at
  * the portals. Two beams going head-on through a pair still meet just outside
  * it: each comes out onto the path the other came in on, which is lit.
+ * Those two beams pass each other through the portal instead: a beam coming
+ * out of portal B onto a cell lit, heading the other way, by a beam that went
+ * into B makes the two beams partners, and partners never collide with each
+ * other (each retraces the other's path, meeting it head-on or on the same
+ * mirror face).
  *
  * Without portals, beams can never cross mid-step (swap two adjacent cells),
  * since every beam is on a cell of the same parity at any time. A portal can
@@ -196,7 +205,7 @@ export function calculateLaserPath(
   const streams: LaserStream[] = []
   const visited = new Set<string>()
   // cell key → directions of the beams that have entered (and lit) the cell
-  const lit = new Map<string, Direction[]>()
+  const lit = new Map<string, { dir: Direction; id: number }[]>()
   const collisionPoints: Position[] = []
   let totalLength = 0
   let terminationReason: LaserPath['terminationReason'] = 'max-length'
@@ -214,10 +223,31 @@ export function calculateLaserPath(
     if (!collisionPoints.some((p) => p.x === pos.x && p.y === pos.y)) collisionPoints.push(pos)
   }
 
+  let nextBeamId = 0
   const newBeam = (pos: Position, dir: Direction, generation: number, globalOffset: number, colorIndex: number): Beam => {
     const stream: LaserStream = { segments: [], generation, colorIndex, globalOffset }
     streams.push(stream)
-    return { pos: { ...pos }, dir, stream }
+    return { id: nextBeamId++, pos: { ...pos }, dir, stream }
+  }
+
+  // Portal crossings: "x,y,dir" of a portal → id of the beam that went into it
+  // heading dir (at most one, by loop detection). Pairs of beams that passed
+  // each other through a portal, as "a,b" with a < b.
+  const portalEntries = new Map<string, number>()
+  const partners = new Set<string>()
+  const partnerKey = (a: number, b: number) => (a < b ? `${a},${b}` : `${b},${a}`)
+  // A beam passes a lit cell's earlier beam if they are partners, or become
+  // partners now: the beam is coming out of a portal, head-on to the earlier
+  // beam, which went into that portal.
+  const passes = (arr: Arrival, earlier: { dir: Direction; id: number }) => {
+    if (partners.has(partnerKey(arr.beam.id, earlier.id))) return true
+    const door = arr.emergingFrom
+    if (door && earlier.dir === oppositeDir(arr.dir) &&
+        portalEntries.get(`${door.x},${door.y},${earlier.dir}`) === earlier.id) {
+      partners.add(partnerKey(arr.beam.id, earlier.id))
+      return true
+    }
+    return false
   }
 
   let beams: Beam[] = [newBeam({ x: laserConfig.x, y: laserConfig.y }, laserConfig.direction, 0, 0, 0)]
@@ -260,14 +290,21 @@ export function calculateLaserPath(
           outcome = { kind: 'continue', dir: mirror ? reflectLaser(beam.dir, mirror.type) : beam.dir }
         }
       }
-      arrivals.push({ beam, to, dir: beam.dir, outcome, collided: false })
+      arrivals.push({ beam, emergingFrom: beam.emergingFrom, to, dir: beam.dir, outcome, collided: false })
+      beam.emergingFrom = undefined
+    }
+
+    // Beams going into a portal this step (whether or not they collide).
+    for (const arr of arrivals) {
+      if (arr.outcome.kind === 'teleport') portalEntries.set(`${arr.to.x},${arr.to.y},${arr.dir}`, arr.beam.id)
     }
 
     // 2. Resolve collisions between beams that moved this step.
     for (let i = 0; i < arrivals.length; i++) {
       for (let j = i + 1; j < arrivals.length; j++) {
         const a = arrivals[i], b = arrivals[j]
-        if (cellKey(a.to) === cellKey(b.to) && sameCellCollision(a.to, a.dir, b.dir, mirrors, obstacles)) {
+        if (cellKey(a.to) === cellKey(b.to) && sameCellCollision(a.to, a.dir, b.dir, mirrors, obstacles) &&
+            !partners.has(partnerKey(a.beam.id, b.beam.id))) {
           a.collided = b.collided = true
           addCollision({ ...a.to })
           addCollision({ ...b.to })
@@ -279,8 +316,13 @@ export function calculateLaserPath(
     //    cell's edge.
     for (const arr of arrivals) {
       if (arr.collided) continue
-      const earlier = lit.get(cellKey(arr.to))
-      if (earlier?.some((d) => litCellCollision(arr.to, d, arr.dir, mirrors, obstacles))) {
+      // Check every earlier beam (no early exit), so that partners are recorded
+      // the same way as in solver/fastsim.ts.
+      let hit = false
+      for (const e of lit.get(cellKey(arr.to)) ?? []) {
+        if (litCellCollision(arr.to, e.dir, arr.dir, mirrors, obstacles) && !passes(arr, e)) hit = true
+      }
+      if (hit) {
         arr.collided = true
         addCollision({ x: (arr.beam.pos.x + arr.to.x) / 2, y: (arr.beam.pos.y + arr.to.y) / 2 })
       }
@@ -291,9 +333,9 @@ export function calculateLaserPath(
     for (const arr of arrivals) {
       if (arr.outcome.kind === 'stop') continue
       const key = cellKey(arr.to)
-      const dirs = lit.get(key)
-      if (dirs) dirs.push(arr.dir)
-      else lit.set(key, [arr.dir])
+      const entries = lit.get(key)
+      if (entries) entries.push({ dir: arr.dir, id: arr.beam.id })
+      else lit.set(key, [{ dir: arr.dir, id: arr.beam.id }])
     }
 
     // 5. Apply each surviving beam's outcome.
@@ -313,6 +355,7 @@ export function calculateLaserPath(
         next.push(newBeam(arr.to, outcome.dirs[0], gen, time, nextColorIndex++))
       } else if (outcome.kind === 'teleport') {
         beam.pos = { ...outcome.to }
+        beam.emergingFrom = { ...outcome.to }
         next.push(beam)
       } else {
         beam.pos = arr.to

@@ -14,7 +14,8 @@
  * Cells stay lit after a beam passes, and a later beam entering a lit cell
  * stops if it would collide with the beam lighting it. A beam entering a
  * portal leaves its twin; each portal is its own cell for collisions, lit only
- * by beams entering it.
+ * by beams entering it. Two beams that pass each other head-on through a
+ * portal pair become partners and never collide with each other.
  */
 
 const UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
@@ -76,10 +77,29 @@ export function createFastSim(config: any): FastSim {
   // cell c this run (valid only where litStamp[c] === stamp).
   const litStamp = new Uint32Array(N);
   const litDirs = new Uint8Array(N);
+  // Id of the beam that lit cell c travelling d, at litId[c * 4 + d] (only
+  // one beam can, by loop detection).
+  const litId = new Int32Array(N * 4);
+  // Portal entries: pentId[c * 4 + d] is the beam that went into portal c
+  // travelling d, valid where pentStamp matches.
+  const pentStamp = new Uint32Array(N * 4);
+  const pentId = new Int32Array(N * 4);
+  // Partner pairs (beams that passed each other through a portal).
+  const MAX_PARTNERS = 4096;
+  const partnerA = new Int32Array(MAX_PARTNERS), partnerB = new Int32Array(MAX_PARTNERS);
+  let numPartners = 0;
+  const arePartners = (a: number, b: number) => {
+    for (let p = 0; p < numPartners; p++)
+      if ((partnerA[p] === a && partnerB[p] === b) || (partnerA[p] === b && partnerB[p] === a)) return true;
+    return false;
+  };
 
-  // Live beams, double-buffered: position and direction.
+  // Live beams, double-buffered: position, direction, id and the portal cell
+  // the beam is coming out of on its next step (-1 if none).
   let bx = new Int32Array(MAX_BEAMS), by = new Int32Array(MAX_BEAMS), bd = new Int32Array(MAX_BEAMS);
   let nx2 = new Int32Array(MAX_BEAMS), ny2 = new Int32Array(MAX_BEAMS), nd2 = new Int32Array(MAX_BEAMS);
+  let bid = new Int32Array(MAX_BEAMS), bem = new Int32Array(MAX_BEAMS);
+  let nid2 = new Int32Array(MAX_BEAMS), nem2 = new Int32Array(MAX_BEAMS);
   // This step's arrivals.
   const ax = new Int32Array(MAX_BEAMS), ay = new Int32Array(MAX_BEAMS);  // cell entered
   const ak = new Int32Array(MAX_BEAMS);      // cell entered as an index (unique negative key off-grid)
@@ -88,6 +108,9 @@ export function createFastSim(config: any): FastSim {
   const aout = new Int32Array(MAX_BEAMS);    // OUT_* outcome
   const anew = new Int32Array(MAX_BEAMS);    // new direction for OUT_CONTINUE
   const ahit = new Uint8Array(MAX_BEAMS);    // collided this step
+  const aid = new Int32Array(MAX_BEAMS);     // beam id
+  const aem = new Int32Array(MAX_BEAMS);     // portal cell the beam came out of this step, or -1
+  const anem = new Int32Array(MAX_BEAMS);    // portal cell it will come out of next step, or -1
 
   // Do two beams arriving at (x, y) (possibly off-grid) travelling da and db collide?
   function sameCellCollides(x: number, y: number, da: number, db: number): boolean {
@@ -110,7 +133,9 @@ export function createFastSim(config: any): FastSim {
 
     let total = 0;
     let n = 1;
-    bx[0] = laserX; by[0] = laserY; bd[0] = laserDir;
+    let nextId = 1;
+    numPartners = 0;
+    bx[0] = laserX; by[0] = laserY; bd[0] = laserDir; bid[0] = 0; bem[0] = -1;
 
     while (n > 0) {
       // 1. Move every beam one cell.
@@ -124,7 +149,7 @@ export function createFastSim(config: any): FastSim {
 
         const tx = x + DX[dir], ty = y + DY[dir];
         total++;
-        let out = OUT_CONTINUE, nd = dir, px = tx, py = ty, key: number;
+        let out = OUT_CONTINUE, nd = dir, px = tx, py = ty, key: number, nem = -1;
         if (tx < 0 || tx >= W || ty < 0 || ty >= H) {
           out = OUT_STOP;
           key = -1 - ((tx + 1) * (H + 2) + (ty + 1)); // unique per off-grid cell
@@ -141,6 +166,8 @@ export function createFastSim(config: any): FastSim {
           } else if (k === CELL_PORTAL) {
             const t = twin[c];
             px = (t / H) | 0; py = t - px * H;
+            nem = t;
+            pentStamp[c * 4 + dir] = stamp; pentId[c * 4 + dir] = bid[i];
           } else {
             const o = orient[c];
             if (k === CELL_GATE) { if (dir !== o) out = OUT_STOP; }
@@ -151,6 +178,7 @@ export function createFastSim(config: any): FastSim {
         }
         ax[na] = tx; ay[na] = ty; ak[na] = key; apx[na] = px; apy[na] = py;
         adir[na] = dir; aout[na] = out; anew[na] = nd; ahit[na] = 0;
+        aid[na] = bid[i]; aem[na] = bem[i]; anem[na] = nem;
         na++;
       }
 
@@ -158,7 +186,8 @@ export function createFastSim(config: any): FastSim {
       if (na > 1) {
         for (let i = 0; i < na; i++)
           for (let j = i + 1; j < na; j++)
-            if (ak[i] === ak[j] && sameCellCollides(ax[i], ay[i], adir[i], adir[j]))
+            if (ak[i] === ak[j] && sameCellCollides(ax[i], ay[i], adir[i], adir[j]) &&
+                (numPartners === 0 || !arePartners(aid[i], aid[j])))
               ahit[i] = ahit[j] = 1;
       }
 
@@ -170,8 +199,20 @@ export function createFastSim(config: any): FastSim {
         const c = ak[i];
         if (litStamp[c] !== stamp) continue;
         const lit = litDirs[c];
+        // Check every earlier beam (no early exit), recording partners the
+        // same way as simulate.ts.
         for (let d = 0; d < 4; d++) {
-          if (d !== adir[i] && (lit & (1 << d)) && sameCellCollides(x, y, d, adir[i])) { ahit[i] = 1; break; }
+          if (d === adir[i] || !(lit & (1 << d)) || !sameCellCollides(x, y, d, adir[i])) continue;
+          const other = litId[c * 4 + d];
+          if (numPartners > 0 && arePartners(aid[i], other)) continue;
+          // Coming out of portal e head-on to a beam that went into e: they pass.
+          const e = aem[i];
+          if (e >= 0 && d === OPP[adir[i]] && pentStamp[e * 4 + d] === stamp && pentId[e * 4 + d] === other) {
+            if (numPartners === MAX_PARTNERS) throw new Error('fastsim: too many partner beams');
+            partnerA[numPartners] = aid[i]; partnerB[numPartners] = other; numPartners++;
+            continue;
+          }
+          ahit[i] = 1;
         }
       }
 
@@ -181,6 +222,7 @@ export function createFastSim(config: any): FastSim {
         const c = ak[i];
         if (litStamp[c] !== stamp) { litStamp[c] = stamp; litDirs[c] = 0; }
         litDirs[c] |= 1 << adir[i];
+        litId[c * 4 + adir[i]] = aid[i];
       }
 
       // 5. Surviving beams continue or split.
@@ -189,15 +231,17 @@ export function createFastSim(config: any): FastSim {
         if (ahit[i] || aout[i] === OUT_STOP) continue;
         if (aout[i] === OUT_SPLIT) {
           const horiz = adir[i] === LEFT || adir[i] === RIGHT;
-          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? DOWN : RIGHT; m++;
-          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? UP : LEFT; m++;
+          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? DOWN : RIGHT; nid2[m] = nextId++; nem2[m] = -1; m++;
+          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? UP : LEFT; nid2[m] = nextId++; nem2[m] = -1; m++;
         } else {
-          nx2[m] = apx[i]; ny2[m] = apy[i]; nd2[m] = anew[i]; m++;
+          nx2[m] = apx[i]; ny2[m] = apy[i]; nd2[m] = anew[i]; nid2[m] = aid[i]; nem2[m] = anem[i]; m++;
         }
       }
       let t = bx; bx = nx2; nx2 = t;
       t = by; by = ny2; ny2 = t;
       t = bd; bd = nd2; nd2 = t;
+      t = bid; bid = nid2; nid2 = t;
+      t = bem; bem = nem2; nem2 = t;
       n = m;
     }
     return total;

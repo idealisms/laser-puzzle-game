@@ -299,6 +299,23 @@ describe('fastsim matches calculateLaserPath with portals', () => {
     assert.ok(litCollisions > 100, `only ${litCollisions} boards with a teleport had lit-cell collisions`);
   });
 
+  // Two beams that pass each other head-on through a pair become partners and
+  // never collide again. Boards symmetric about a splitter's row, with portal
+  // pairs placed symmetrically, send the split beams through both portals of a
+  // pair at once; about 8% of them score differently with and without the
+  // partner rule (measured when it was added).
+  it('random symmetric boards with portal pairs', () => {
+    const rand = rng(31337);
+    for (let trial = 0; trial < 20000; trial++) {
+      const { config, mirrors } = symmetricPortalBoard(rand);
+      const ref = reference(config, mirrors);
+      const got = fast(createFastSim(config), config, mirrors);
+      const ctx = JSON.stringify({ config, mirrors });
+      assert.equal(got.length, ref.length, ctx);
+      assert.deepEqual([...got.cells].sort((a, b) => a - b), [...ref.cells].sort((a, b) => a - b), ctx);
+    }
+  });
+
   // The portal rigs from simulate.test.ts: a splitter at (5,5) sends its up
   // beam left through (3,2) at t=8.
   const rig = (portals, mirrors) => {
@@ -311,7 +328,7 @@ describe('fastsim matches calculateLaserPath with portals', () => {
   const up = [5, 2, '\\'];
 
   it('head-on through different portals of a pair', () => {
-    assert.deepEqual(rig([[3, 2, 1], [7, 8, 1]], [up, [5, 8, '\\']]), { ref: 15, got: 15 });
+    assert.deepEqual(rig([[3, 2, 1], [7, 8, 1]], [up, [5, 8, '\\']]), { ref: 23, got: 23 });
   });
 
   it('same direction through different portals of a pair', () => {
@@ -323,6 +340,54 @@ describe('fastsim matches calculateLaserPath with portals', () => {
   });
 
   it('swapping across the edge beside a portal', () => {
-    assert.deepEqual(rig([[3, 2, 1], [6, 8, 1]], [up, [5, 6, '/'], [4, 6, '/'], [4, 8, '\\']]), { ref: 16, got: 16 });
+    assert.deepEqual(rig([[3, 2, 1], [6, 8, 1]], [up, [5, 6, '/'], [4, 6, '/'], [4, 8, '\\']]), { ref: 25, got: 25 });
   });
 });
+
+// Mirror-symmetric board about the laser's row with a splitter on the axis and
+// symmetric portal pairs, so the split beams reach both portals of a pair at once.
+function symmetricPortalBoard(rand: () => number) {
+  const FLIP_DIR: any = { up: 'down', down: 'up', left: 'left', right: 'right' };
+  const FLIP_MIRROR: any = { '/': '\\', '\\': '/' };
+  const dirs = ['up', 'right', 'down', 'left'];
+  const width = 5 + Math.floor(rand() * 8);
+  const half = 2 + Math.floor(rand() * 5);
+  const height = 2 * half + 1, axis = half;
+  const splitX = 1 + Math.floor(rand() * (width - 2));
+  const config: any = {
+    width, height, laserX: 0, laserY: axis, laserDir: 1,
+    obstacles: [], splitters: [[splitX, axis, 'right']], gates: [], portals: [], numMirrors: 0,
+  };
+  const mirrors: any[] = [];
+  const taken = new Set([axis, splitX * height + axis]);
+  const pairs = 1 + Math.floor(rand() * 2);
+  for (let pair = 1; pair <= pairs; pair++) {
+    for (let attempt = 0; attempt < 20; attempt++) {
+      const x = Math.floor(rand() * width), y = Math.floor(rand() * half), y2 = 2 * axis - y;
+      if (taken.has(x * height + y) || taken.has(x * height + y2)) continue;
+      taken.add(x * height + y); taken.add(x * height + y2);
+      config.portals.push([x, y, pair], [x, y2, pair]);
+      break;
+    }
+  }
+  const n = Math.floor(rand() * width * half * 0.6);
+  for (let i = 0; i < n; i++) {
+    const x = Math.floor(rand() * width), y = Math.floor(rand() * half), y2 = 2 * axis - y;
+    if (taken.has(x * height + y) || taken.has(x * height + y2)) continue;
+    taken.add(x * height + y);
+    const symmetric = rand() < 0.9;
+    if (symmetric) taken.add(x * height + y2);
+    const r = rand();
+    if (r < 0.65) {
+      const t = rand() < 0.5 ? '/' : '\\';
+      mirrors.push([x, y, t]); if (symmetric) mirrors.push([x, y2, FLIP_MIRROR[t]]);
+    } else if (r < 0.8) {
+      config.obstacles.push([x, y]); if (symmetric) config.obstacles.push([x, y2]);
+    } else {
+      const list = r < 0.9 ? config.splitters : config.gates;
+      const d = dirs[Math.floor(rand() * 4)];
+      list.push([x, y, d]); if (symmetric) list.push([x, y2, FLIP_DIR[d]]);
+    }
+  }
+  return { config, mirrors };
+}
