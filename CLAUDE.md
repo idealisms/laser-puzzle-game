@@ -93,8 +93,7 @@ When working with the database, never echo the production database name or passw
 
 ### Portal semantics
 - A beam entering a portal leaves its twin heading the same way, from any side, in both directions. Entering costs 1 step; the jump is free.
-- For collisions both portals of a pair are **one cell**: beams travelling in opposite directions through the pair collide (even through different portals); perpendicular or same-direction beams pass. The engine (`simulate.ts`) and the solver (`fastsim.ts`) must agree; `test_fastsim.ts` checks this on random boards with portals.
-- Portals join cells of any parity, so beams can try to swap across an edge beside a portal; the lit-cell rule stops both.
+- For collisions each portal is **its own open cell**, lit only by beams entering it (not by beams coming out of it), so beams going through different portals of a pair never collide at the portals. Head-on beams through a pair still meet just outside it, because each comes out onto the other's lit incoming path. The engine (`simulate.ts`) and the solver (`fastsim.ts`) must agree; `test_fastsim.ts` checks this on random boards with portals.
 
 ### What makes a good layout
 - **Obstacles must reach near the grid edges**, otherwise players ignore them and bounce around the perimeter. Thin central shapes (pentagons, rooms, totems) are easily bypassed.

@@ -88,9 +88,8 @@ function mirrorSide(dir: Direction, mirrorType: '/' | '\\'): 0 | 1 {
  *   - Mirror cell: only beams hitting the same mirror face collide (mirrorSide).
  *   - Splitter cell: they collide unless at least one hits the wall face, which
  *     just stops that beam.
- *   - Portal cell: both portals of a pair count as one cell, and only beams
- *     travelling in opposite directions collide. (Same-direction beams can
- *     reach a pair through different portals and leave by different ones.)
+ *   - A portal is an open cell of its own: beams entering the two portals of
+ *     a pair never collide with each other there.
  *   - Anything else (open cell, wall, gate, off-grid): head-on or same-direction
  *     beams collide; perpendicular beams pass through each other.
  *
@@ -110,7 +109,6 @@ export function sameCellCollision(
     const wallDir = oppositeDir(obs.orientation ?? 'right')
     return dirA !== wallDir && dirB !== wallDir
   }
-  if (obs?.type === 'portal') return dirA === oppositeDir(dirB)
   return dirA === dirB || dirA === oppositeDir(dirB)
 }
 
@@ -172,14 +170,16 @@ interface Arrival {
  * gate's closed side, a splitter's wall face, off-grid) are not lit.
  *
  * A beam that enters a portal leaves from its twin in the same direction on
- * the next step; the jump itself takes no time. For collisions and lit cells
- * the two portals of a pair are one cell (see cellKey and sameCellCollision).
+ * the next step; the jump itself takes no time. Each portal is its own cell
+ * for collisions, lit only by beams entering it (not by beams coming out of
+ * it), so beams going through different portals of a pair never collide at
+ * the portals. Two beams going head-on through a pair still meet just outside
+ * it: each comes out onto the path the other came in on, which is lit.
  *
  * Without portals, beams can never cross mid-step (swap two adjacent cells),
  * since every beam is on a cell of the same parity at any time. A portal can
- * join cells of different parity, but a swap still can't slip through: both
- * cells were lit by the beams on them a step earlier, so each beam runs into
- * the other's lit cell and both stop on the shared edge.
+ * join cells of different parity; a beam coming out of a portal into a cell
+ * another beam lit is stopped by the lit-cell rule as usual.
  *
  * Loop detection is shared by all beams: a beam stops when it is about to
  * leave a cell in a direction that any beam already left that cell in.
@@ -202,17 +202,14 @@ export function calculateLaserPath(
   let terminationReason: LaserPath['terminationReason'] = 'max-length'
   let nextColorIndex = 1
 
-  // Portals: each portal cell's twin, and the collision key shared by a pair.
+  // Portals: each portal cell's twin.
   const twins = new Map<string, Position>()
-  const pairKeys = new Map<string, string>()
   for (const o of obstacles) {
     if (o.type !== 'portal') continue
     const twin = obstacles.find((t) => t.type === 'portal' && t.pair === o.pair && t !== o)
-    if (!twin) continue
-    twins.set(`${o.x},${o.y}`, { x: twin.x, y: twin.y })
-    pairKeys.set(`${o.x},${o.y}`, `portal${o.pair}`)
+    if (twin) twins.set(`${o.x},${o.y}`, { x: twin.x, y: twin.y })
   }
-  const cellKey = (pos: Position) => pairKeys.get(`${pos.x},${pos.y}`) ?? `${pos.x},${pos.y}`
+  const cellKey = (pos: Position) => `${pos.x},${pos.y}`
   const addCollision = (pos: Position) => {
     if (!collisionPoints.some((p) => p.x === pos.x && p.y === pos.y)) collisionPoints.push(pos)
   }

@@ -241,8 +241,8 @@ describe('fastsim lit cells', () => {
   });
 });
 
-// Portals join cells of any parity, so beams can meet at a pair through
-// different portals or swap across an edge beside one. Random dense boards
+// Portals join cells of any parity, so beams can meet beside a pair after
+// going through different portals, or swap across an edge beside one. Random dense boards
 // with splitters, gates and 1–3 portal pairs cover these; in half of them each
 // pair is mirror-symmetric about the laser's row, so that split beams reach
 // both portals of a pair at the same time.
@@ -311,18 +311,18 @@ describe('fastsim matches calculateLaserPath with portals', () => {
   const up = [5, 2, '\\'];
 
   it('head-on through different portals of a pair', () => {
-    assert.deepEqual(rig([[3, 2, 1], [7, 8, 1]], [up, [5, 8, '\\']]), { ref: 13, got: 13 });
+    assert.deepEqual(rig([[3, 2, 1], [7, 8, 1]], [up, [5, 8, '\\']]), { ref: 15, got: 15 });
   });
 
   it('same direction through different portals of a pair', () => {
     assert.deepEqual(rig([[3, 2, 1], [3, 8, 1]], [up, [5, 8, '/']]), { ref: 21, got: 21 });
   });
 
-  it('head-on into a pair lit earlier', () => {
+  it('head-on into a portal lit earlier', () => {
     assert.deepEqual(rig([[3, 2, 1], [8, 9, 1]], [up, [5, 8, '/'], [1, 8, '\\'], [1, 2, '/']]), { ref: 32, got: 32 });
   });
 
   it('swapping across the edge beside a portal', () => {
-    assert.deepEqual(rig([[3, 2, 1], [6, 8, 1]], [up, [5, 6, '/'], [4, 6, '/'], [4, 8, '\\']]), { ref: 15, got: 15 });
+    assert.deepEqual(rig([[3, 2, 1], [6, 8, 1]], [up, [5, 6, '/'], [4, 6, '/'], [4, 8, '\\']]), { ref: 16, got: 16 });
   });
 });
