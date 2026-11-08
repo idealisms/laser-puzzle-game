@@ -296,7 +296,9 @@ describe('fastsim matches calculateLaserPath with portals', () => {
     }
     assert.ok(teleports > 10000, `only ${teleports} boards used a portal`);
     assert.ok(collisions > 150, `only ${collisions} boards with a teleport had collisions`);
-    assert.ok(litCollisions > 100, `only ${litCollisions} boards with a teleport had lit-cell collisions`);
+    // (Counted by half-cell collision points; beams stopped entering the same
+    // cell at once show one point at its centre, which isn't counted.)
+    assert.ok(litCollisions > 50, `only ${litCollisions} boards with a teleport had lit-cell collisions`);
   });
 
   // Two beams that pass each other head-on through a pair become partners and
