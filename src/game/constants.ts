@@ -45,7 +45,7 @@ const DEFAULT_COLORS = {
   // One color per portal pair (pair 1, 2, 3). Each pair also has its own
   // shape (circle, square, triangle) so pairs can be matched without color.
   portal: [
-    { ring: '#b366ff', glow: 'rgba(179,102,255,0.35)' },  // violet
+    { ring: '#5b8cff', glow: 'rgba(91,140,255,0.35)' },   // blue
     { ring: '#ff4fd8', glow: 'rgba(255,79,216,0.35)' },   // magenta
     { ring: '#ffd23f', glow: 'rgba(255,210,63,0.35)' },   // gold
   ],
@@ -79,6 +79,12 @@ const COLORBLIND_COLORS: ColorScheme = {
     stroke: '#1a4060',
     cross: '#4488ff',
   },
+  // Okabe-Ito colors, distinct under the common color vision deficiencies.
+  portal: [
+    { ring: '#f0e442', glow: 'rgba(240,228,66,0.35)' },   // yellow
+    { ring: '#cc79a7', glow: 'rgba(204,121,167,0.35)' },  // reddish purple
+    { ring: '#e66a2c', glow: 'rgba(230,106,44,0.35)' },   // vermillion (not sky blue: the beam is blue)
+  ],
   eraser: {
     highlight: 'rgba(255, 153, 0, 0.25)',
     border: 'rgba(255, 153, 0, 0.6)',
