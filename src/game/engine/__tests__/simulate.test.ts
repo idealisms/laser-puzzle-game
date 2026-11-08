@@ -562,8 +562,8 @@ describe('calculateLaserPath — portals', () => {
     const result = calculateLaserPath(laser, [upMirror, mirror(5, 8, '\\')],
       [spl, portal(3, 2, 1), portal(7, 8, 1)], BOUNDS_10x10)
     expect(result.totalLength).toBe(23)
-    expect(result.collisionPoints).toHaveLength(2)
-    expect(result.collisionPoints).toEqual(expect.arrayContaining([{ x: 5, y: 4.5 }, { x: 5, y: 5.5 }]))
+    // Both stop entering the splitter at once: one collision, at its centre.
+    expect(result.collisionPoints).toEqual([{ x: 5, y: 5 }])
     expectNoOrphanBeams(result)
   })
 
@@ -575,8 +575,8 @@ describe('calculateLaserPath — portals', () => {
     // retrace the other's route back to the splitter.
     const mirrors = [upMirror, mirror(5, 6, '\\'), mirror(6, 6, '\\'), mirror(6, 8, '\\')]
     const result = calculateLaserPath(laser, mirrors, [spl, portal(3, 2, 1), portal(7, 8, 1)], BOUNDS_10x10)
-    expect(result.collisionPoints).toEqual(expect.arrayContaining([{ x: 5, y: 4.5 }, { x: 5, y: 5.5 }]))
-    expect(result.collisionPoints).toHaveLength(2)
+    // Both stop entering the splitter at once: one collision, at its centre.
+    expect(result.collisionPoints).toEqual([{ x: 5, y: 5 }])
     expect(result.totalLength).toBe(23)
   })
 
@@ -617,7 +617,8 @@ describe('calculateLaserPath — portals', () => {
     // laser's beam there at t=14.
     const mirrors = [upMirror, mirror(5, 6, '/'), mirror(4, 6, '/'), mirror(4, 8, '\\')]
     const result = calculateLaserPath(laser, mirrors, [spl, portal(3, 2, 1), portal(6, 8, 1)], BOUNDS_10x10)
-    expect(result.collisionPoints).toEqual(expect.arrayContaining([{ x: 5, y: 4.5 }, { x: 5, y: 5.5 }]))
+    // Both stop entering the splitter at once: one collision, at its centre.
+    expect(result.collisionPoints).toEqual([{ x: 5, y: 5 }])
     expect(result.totalLength).toBe(25)
   })
 })

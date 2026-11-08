@@ -304,19 +304,23 @@ export function calculateLaserPath(
     }
 
     // 3. Beams entering a cell lit by an earlier beam collide with it on the
-    //    cell's edge.
+    //    cell's edge. Several beams stopped entering the same cell at once
+    //    show one collision, at the cell's centre.
+    const litStops = new Map<string, Arrival[]>()
     for (const arr of arrivals) {
       if (arr.collided || arr.outcome.kind === 'teleport') continue
-      // Check every earlier beam (no early exit), so that partners are recorded
-      // the same way as in solver/fastsim.ts.
-      let hit = false
-      for (const e of lit.get(cellKey(arr.to)) ?? []) {
-        if (litCellCollision(arr.to, e.dir, arr.dir, mirrors, obstacles) && !passes(arr, e)) hit = true
-      }
-      if (hit) {
+      const earlier = lit.get(cellKey(arr.to)) ?? []
+      if (earlier.some((e) => litCellCollision(arr.to, e.dir, arr.dir, mirrors, obstacles) && !passes(arr, e))) {
         arr.collided = true
-        addCollision({ x: (arr.beam.pos.x + arr.to.x) / 2, y: (arr.beam.pos.y + arr.to.y) / 2 })
+        const key = cellKey(arr.to)
+        const stops = litStops.get(key)
+        if (stops) stops.push(arr)
+        else litStops.set(key, [arr])
       }
+    }
+    for (const stops of litStops.values()) {
+      if (stops.length > 1) addCollision({ ...stops[0].to })
+      else addCollision({ x: (stops[0].beam.pos.x + stops[0].to.x) / 2, y: (stops[0].beam.pos.y + stops[0].to.y) / 2 })
     }
 
     // 4. Every beam that got into its cell lights it, including beams that
