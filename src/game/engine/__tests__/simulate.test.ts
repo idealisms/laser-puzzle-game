@@ -494,3 +494,111 @@ describe('calculateLaserPath — lit cells', () => {
     expect(result.totalLength).toBe(22)
   })
 })
+
+// ─────────────────────────────────────────────────────────────────────────────
+// calculateLaserPath — portals
+// ─────────────────────────────────────────────────────────────────────────────
+
+function portal(x: number, y: number, pair: number): Obstacle {
+  return { x, y, type: 'portal', pair }
+}
+
+describe('calculateLaserPath — portals', () => {
+  const pair1 = [portal(4, 2, 1), portal(6, 7, 1)]
+
+  it('a beam entering a portal leaves its twin in the same direction', () => {
+    const result = calculateLaserPath({ x: 0, y: 2, direction: 'right' }, [], pair1, BOUNDS_10x10)
+    // 4 steps into (4,2), free jump to (6,7), 4 steps to the right edge.
+    expect(result.totalLength).toBe(8)
+    const segs = result.streams[0].segments
+    expect(segs[3].end).toEqual({ x: 4, y: 2 })
+    expect(segs[4].start).toEqual({ x: 6, y: 7 })
+    expect(segs[4].end).toEqual({ x: 7, y: 7 })
+    expect(segs.every((s) => s.direction === 'right')).toBe(true)
+    expect(result.terminationReason).toBe('edge')
+  })
+
+  it('portals work in both directions', () => {
+    const result = calculateLaserPath({ x: 0, y: 7, direction: 'right' }, [], pair1, BOUNDS_10x10)
+    // 6 steps into (6,7), out of (4,2), 6 steps to the edge.
+    expect(result.totalLength).toBe(12)
+    expect(result.streams[0].segments[6].start).toEqual({ x: 4, y: 2 })
+  })
+
+  it('a twin on the grid edge sends the beam straight off the grid', () => {
+    const result = calculateLaserPath({ x: 0, y: 2, direction: 'right' }, [],
+      [portal(4, 2, 1), portal(9, 5, 1)], BOUNDS_10x10)
+    expect(result.totalLength).toBe(5)
+    expect(result.terminationReason).toBe('edge')
+  })
+
+  it('loop detection works through a portal', () => {
+    // Out of (7,5), round the mirrors and back into the laser cell heading right.
+    const mirrors = [mirror(8, 5, '\\'), mirror(8, 8, '/'), mirror(0, 8, '\\'), mirror(0, 5, '/')]
+    const result = calculateLaserPath({ x: 1, y: 5, direction: 'right' }, mirrors,
+      [portal(2, 5, 1), portal(7, 5, 1)], BOUNDS_10x10)
+    expect(result.totalLength).toBe(17)
+    expect(result.terminationReason).toBe('loop')
+  })
+
+  it('portals chain', () => {
+    const portals = [portal(3, 2, 1), portal(6, 6, 1), portal(8, 6, 2), portal(2, 9, 2)]
+    const result = calculateLaserPath({ x: 0, y: 2, direction: 'right' }, [], portals, BOUNDS_10x10)
+    expect(result.totalLength).toBe(13)
+    expect(result.streams[0].segments[5].start).toEqual({ x: 2, y: 9 })
+  })
+
+  // The laser at (2,5) splits at (5,5) at t=3. The up beam turns left at
+  // (5,2) and enters a portal at (3,2) at t=8.
+  const laser: LaserConfig = { x: 2, y: 5, direction: 'right' }
+  const spl = splitter(5, 5, 'right')
+  const upMirror = mirror(5, 2, '\\')
+
+  it('beams entering a pair head-on through different portals collide', () => {
+    // The down beam turns right at (5,8) and enters the twin at (7,8) at t=8.
+    const result = calculateLaserPath(laser, [upMirror, mirror(5, 8, '\\')],
+      [spl, portal(3, 2, 1), portal(7, 8, 1)], BOUNDS_10x10)
+    expect(result.totalLength).toBe(13)
+    expect(result.collisionPoints).toHaveLength(2)
+    expect(result.collisionPoints).toEqual(expect.arrayContaining([{ x: 3, y: 2 }, { x: 7, y: 8 }]))
+    expectNoOrphanBeams(result)
+  })
+
+  it('beams entering a pair in the same direction through different portals pass', () => {
+    // The down beam turns left at (5,8) and enters the twin at (3,8) at t=8;
+    // each beam leaves by the other's portal.
+    const result = calculateLaserPath(laser, [upMirror, mirror(5, 8, '/')],
+      [spl, portal(3, 2, 1), portal(3, 8, 1)], BOUNDS_10x10)
+    expect(result.collisionPoints).toEqual([])
+    expect(result.totalLength).toBe(21)
+  })
+
+  it('beams entering a pair perpendicularly pass', () => {
+    // The down beam turns left at (5,8) and up at (4,8), entering (4,7) at t=8.
+    const result = calculateLaserPath(laser, [upMirror, mirror(5, 8, '/'), mirror(4, 8, '\\')],
+      [spl, portal(3, 2, 1), portal(4, 7, 1)], BOUNDS_10x10)
+    expect(result.collisionPoints).toEqual([])
+    expect(result.totalLength).toBe(21)
+  })
+
+  it("a beam entering a pair head-on to an earlier beam stops at the portal's edge", () => {
+    // The up beam goes through (3,2) heading left at t=8 and out of (8,9).
+    // The down beam goes round by (1,8) and (1,2) and reaches (3,2) heading
+    // right at t=18: the pair is lit heading left, so it stops.
+    const mirrors = [upMirror, mirror(5, 8, '/'), mirror(1, 8, '\\'), mirror(1, 2, '/')]
+    const result = calculateLaserPath(laser, mirrors, [spl, portal(3, 2, 1), portal(8, 9, 1)], BOUNDS_10x10)
+    expect(result.collisionPoints).toEqual([{ x: 2.5, y: 2 }])
+    expect(result.totalLength).toBe(32)
+  })
+
+  it('two beams swapping across the edge next to a portal both stop', () => {
+    // The up beam enters (3,2) at t=8 and comes out of (6,8) heading left.
+    // The down beam winds through (5,6), (4,6) and (4,8) to reach (5,8)
+    // heading right at t=8. At t=9 they would
+    // swap (5,8) and (6,8).
+    const mirrors = [upMirror, mirror(5, 6, '/'), mirror(4, 6, '/'), mirror(4, 8, '\\')]
+    const result = calculateLaserPath(laser, mirrors, [spl, portal(3, 2, 1), portal(6, 8, 1)], BOUNDS_10x10)
+    expect(result.collisionPoints).toEqual([{ x: 5.5, y: 8 }])
+    expect(result.totalLength).toBe(15)
+  })
+})

@@ -53,6 +53,14 @@ describe('canPlaceMirror', () => {
     expect(canPlaceMirror(state, { x: 4, y: 4 })).toBe(false)
   })
 
+  it('rejects a portal', () => {
+    const portalState = createInitialGameState({
+      ...testLevel,
+      obstacles: [{ x: 1, y: 1, type: 'portal', pair: 1 }, { x: 3, y: 3, type: 'portal', pair: 1 }],
+    })
+    expect(canPlaceMirror(portalState, { x: 1, y: 1 })).toBe(false)
+  })
+
   it('rejects duplicate position', () => {
     const withMirror = placeMirror(state, { x: 2, y: 2 }, '/')
     expect(canPlaceMirror(withMirror, { x: 2, y: 2 })).toBe(false)

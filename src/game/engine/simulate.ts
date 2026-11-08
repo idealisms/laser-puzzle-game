@@ -88,6 +88,9 @@ function mirrorSide(dir: Direction, mirrorType: '/' | '\\'): 0 | 1 {
  *   - Mirror cell: only beams hitting the same mirror face collide (mirrorSide).
  *   - Splitter cell: they collide unless at least one hits the wall face, which
  *     just stops that beam.
+ *   - Portal cell: both portals of a pair count as one cell, and only beams
+ *     travelling in opposite directions collide. (Same-direction beams can
+ *     reach a pair through different portals and leave by different ones.)
  *   - Anything else (open cell, wall, gate, off-grid): head-on or same-direction
  *     beams collide; perpendicular beams pass through each other.
  *
@@ -102,11 +105,12 @@ export function sameCellCollision(
 ): boolean {
   const m = findMirror(cell, mirrors)
   if (m) return mirrorSide(dirA, m.type) === mirrorSide(dirB, m.type)
-  const spl = obstacles.find((o) => o.type === 'splitter' && o.x === cell.x && o.y === cell.y)
-  if (spl) {
-    const wallDir = oppositeDir(spl.orientation ?? 'right')
+  const obs = findObstacle(cell, obstacles)
+  if (obs?.type === 'splitter') {
+    const wallDir = oppositeDir(obs.orientation ?? 'right')
     return dirA !== wallDir && dirB !== wallDir
   }
+  if (obs?.type === 'portal') return dirA === oppositeDir(dirB)
   return dirA === dirB || dirA === oppositeDir(dirB)
 }
 
@@ -141,6 +145,7 @@ interface Beam {
 
 type StepOutcome =
   | { kind: 'continue'; dir: Direction }
+  | { kind: 'teleport'; to: Position }
   | { kind: 'stop'; reason: LaserPath['terminationReason'] }
   | { kind: 'split'; dirs: [Direction, Direction] }
 
@@ -166,10 +171,15 @@ interface Arrival {
  * cell; the earlier beam is unaffected. Cells a beam is blocked by (walls, a
  * gate's closed side, a splitter's wall face, off-grid) are not lit.
  *
- * Beams can never cross mid-step (swap two adjacent cells): every beam starts
- * at the laser and moves one cell per step, so at time t every beam is on a
- * cell with (x + y) ≡ (laser.x + laser.y + t) mod 2, and no two beams are ever
- * on adjacent cells at the same time.
+ * A beam that enters a portal leaves from its twin in the same direction on
+ * the next step; the jump itself takes no time. For collisions and lit cells
+ * the two portals of a pair are one cell (see cellKey and sameCellCollision).
+ *
+ * Without portals, beams can never cross mid-step (swap two adjacent cells),
+ * since every beam is on a cell of the same parity at any time. A portal can
+ * join cells of different parity, but a swap still can't slip through: both
+ * cells were lit by the beams on them a step earlier, so each beam runs into
+ * the other's lit cell and both stop on the shared edge.
  *
  * Loop detection is shared by all beams: a beam stops when it is about to
  * leave a cell in a direction that any beam already left that cell in.
@@ -191,6 +201,21 @@ export function calculateLaserPath(
   let totalLength = 0
   let terminationReason: LaserPath['terminationReason'] = 'max-length'
   let nextColorIndex = 1
+
+  // Portals: each portal cell's twin, and the collision key shared by a pair.
+  const twins = new Map<string, Position>()
+  const pairKeys = new Map<string, string>()
+  for (const o of obstacles) {
+    if (o.type !== 'portal') continue
+    const twin = obstacles.find((t) => t.type === 'portal' && t.pair === o.pair && t !== o)
+    if (!twin) continue
+    twins.set(`${o.x},${o.y}`, { x: twin.x, y: twin.y })
+    pairKeys.set(`${o.x},${o.y}`, `portal${o.pair}`)
+  }
+  const cellKey = (pos: Position) => pairKeys.get(`${pos.x},${pos.y}`) ?? `${pos.x},${pos.y}`
+  const addCollision = (pos: Position) => {
+    if (!collisionPoints.some((p) => p.x === pos.x && p.y === pos.y)) collisionPoints.push(pos)
+  }
 
   const newBeam = (pos: Position, dir: Direction, generation: number, globalOffset: number, colorIndex: number): Beam => {
     const stream: LaserStream = { segments: [], generation, colorIndex, globalOffset }
@@ -225,7 +250,9 @@ export function calculateLaserPath(
         outcome = { kind: 'stop', reason: 'edge' }
       } else {
         const obstacle = findObstacle(to, obstacles)
-        if (obstacle) {
+        if (obstacle?.type === 'portal' && twins.has(`${to.x},${to.y}`)) {
+          outcome = { kind: 'teleport', to: twins.get(`${to.x},${to.y}`)! }
+        } else if (obstacle) {
           const action = getObstacleAction(beam.dir, obstacle)
           if (action.kind === 'wall') outcome = { kind: 'stop', reason: 'obstacle' }
           else if (action.kind === 'pass') outcome = { kind: 'continue', dir: beam.dir }
@@ -243,9 +270,10 @@ export function calculateLaserPath(
     for (let i = 0; i < arrivals.length; i++) {
       for (let j = i + 1; j < arrivals.length; j++) {
         const a = arrivals[i], b = arrivals[j]
-        if (a.to.x === b.to.x && a.to.y === b.to.y && sameCellCollision(a.to, a.dir, b.dir, mirrors, obstacles)) {
+        if (cellKey(a.to) === cellKey(b.to) && sameCellCollision(a.to, a.dir, b.dir, mirrors, obstacles)) {
           a.collided = b.collided = true
-          collisionPoints.push({ ...a.to })
+          addCollision({ ...a.to })
+          addCollision({ ...b.to })
         }
       }
     }
@@ -254,10 +282,10 @@ export function calculateLaserPath(
     //    cell's edge.
     for (const arr of arrivals) {
       if (arr.collided) continue
-      const earlier = lit.get(`${arr.to.x},${arr.to.y}`)
+      const earlier = lit.get(cellKey(arr.to))
       if (earlier?.some((d) => litCellCollision(arr.to, d, arr.dir, mirrors, obstacles))) {
         arr.collided = true
-        collisionPoints.push({ x: (arr.beam.pos.x + arr.to.x) / 2, y: (arr.beam.pos.y + arr.to.y) / 2 })
+        addCollision({ x: (arr.beam.pos.x + arr.to.x) / 2, y: (arr.beam.pos.y + arr.to.y) / 2 })
       }
     }
 
@@ -265,7 +293,7 @@ export function calculateLaserPath(
     //    collided there.
     for (const arr of arrivals) {
       if (arr.outcome.kind === 'stop') continue
-      const key = `${arr.to.x},${arr.to.y}`
+      const key = cellKey(arr.to)
       const dirs = lit.get(key)
       if (dirs) dirs.push(arr.dir)
       else lit.set(key, [arr.dir])
@@ -286,6 +314,9 @@ export function calculateLaserPath(
         const gen = beam.stream.generation + 1
         next.push(newBeam(arr.to, outcome.dirs[1], gen, time, beam.stream.colorIndex ?? 0))
         next.push(newBeam(arr.to, outcome.dirs[0], gen, time, nextColorIndex++))
+      } else if (outcome.kind === 'teleport') {
+        beam.pos = { ...outcome.to }
+        next.push(beam)
       } else {
         beam.pos = arr.to
         beam.dir = outcome.dir
