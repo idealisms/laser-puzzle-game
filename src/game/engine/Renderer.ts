@@ -159,6 +159,28 @@ export class Renderer {
     this.ctx.fill()
   }
 
+  // Traces a portal's outline: pair 1 a circle, pair 2 a square, pair 3 a
+  // triangle, so pairs can be matched without telling colors apart.
+  private portalPath(pair: number, cx: number, cy: number, r: number): void {
+    this.ctx.beginPath()
+    if (pair === 2) {
+      const h = r * 0.85
+      this.ctx.rect(cx - h, cy - h, h * 2, h * 2)
+    } else if (pair === 3) {
+      // Equilateral triangle, point up, centred on (cx, cy)
+      for (let i = 0; i < 3; i++) {
+        const angle = -Math.PI / 2 + (i * 2 * Math.PI) / 3
+        const px = cx + Math.cos(angle) * r * 1.1
+        const py = cy + Math.sin(angle) * r * 1.1 + r * 0.12
+        if (i === 0) this.ctx.moveTo(px, py)
+        else this.ctx.lineTo(px, py)
+      }
+      this.ctx.closePath()
+    } else {
+      this.ctx.arc(cx, cy, r, 0, Math.PI * 2)
+    }
+  }
+
   drawPortal(x: number, y: number, pair: number = 1): void {
     const palette = this.colors.portal
     const colors = palette[Math.min(Math.max(pair, 1), palette.length) - 1]
@@ -168,32 +190,23 @@ export class Renderer {
 
     this.ctx.save()
 
-    // Glowing disc
+    // Glowing fill
     const gradient = this.ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
     gradient.addColorStop(0, this.colors.grid.background)
     gradient.addColorStop(1, colors.glow)
     this.ctx.fillStyle = gradient
-    this.ctx.beginPath()
-    this.ctx.arc(cx, cy, r, 0, Math.PI * 2)
+    this.portalPath(pair, cx, cy, r)
     this.ctx.fill()
 
-    // Outer ring and a thinner inner ring
+    // Outer outline and a thinner inner one of the same shape
     this.ctx.strokeStyle = colors.ring
+    this.ctx.lineJoin = 'round'
     this.ctx.lineWidth = 3
-    this.ctx.beginPath()
-    this.ctx.arc(cx, cy, r, 0, Math.PI * 2)
+    this.portalPath(pair, cx, cy, r)
     this.ctx.stroke()
     this.ctx.lineWidth = 1.5
-    this.ctx.beginPath()
-    this.ctx.arc(cx, cy, r * 0.55, 0, Math.PI * 2)
+    this.portalPath(pair, cx, cy, r * 0.5)
     this.ctx.stroke()
-
-    // Pair number in the top-left corner, clear of the beam through the centre
-    this.ctx.fillStyle = colors.ring
-    this.ctx.font = 'bold 11px sans-serif'
-    this.ctx.textAlign = 'left'
-    this.ctx.textBaseline = 'top'
-    this.ctx.fillText(String(pair), x * CELL_SIZE + 3, y * CELL_SIZE + 2)
 
     this.ctx.restore()
   }
