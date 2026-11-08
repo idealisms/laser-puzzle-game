@@ -13,9 +13,9 @@
  * collide on arrival both stop, and a stopped beam spawns nothing further.
  * Cells stay lit after a beam passes, and a later beam entering a lit cell
  * stops if it would collide with the beam lighting it. A beam entering a
- * portal leaves its twin; each portal is its own cell for collisions, lit only
- * by beams entering it. Two beams that pass each other head-on through a
- * portal pair become partners and never collide with each other.
+ * portal leaves its twin; portals are holes that are never lit and where
+ * beams going in never collide. Two beams that pass each other head-on
+ * through a portal pair become partners and never collide with each other.
  */
 
 const UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
@@ -184,16 +184,18 @@ export function createFastSim(config: any): FastSim {
 
       // 2. Collisions between beams arriving at the same cell.
       if (na > 1) {
-        for (let i = 0; i < na; i++)
+        for (let i = 0; i < na; i++) {
+          if (anem[i] >= 0) continue; // going into a portal: never collides there
           for (let j = i + 1; j < na; j++)
             if (ak[i] === ak[j] && sameCellCollides(ax[i], ay[i], adir[i], adir[j]) &&
                 (numPartners === 0 || !arePartners(aid[i], aid[j])))
               ahit[i] = ahit[j] = 1;
+        }
       }
 
       // 3. Collisions with beams that entered the cell at an earlier step.
       for (let i = 0; i < na; i++) {
-        if (ahit[i]) continue;
+        if (ahit[i] || anem[i] >= 0) continue;
         const x = ax[i], y = ay[i];
         if (x < 0 || x >= W || y < 0 || y >= H) continue;
         const c = ak[i];
@@ -218,7 +220,7 @@ export function createFastSim(config: any): FastSim {
 
       // 4. Beams that got into their cell light it.
       for (let i = 0; i < na; i++) {
-        if (aout[i] === OUT_STOP) continue;
+        if (aout[i] === OUT_STOP || anem[i] >= 0) continue;
         const c = ak[i];
         if (litStamp[c] !== stamp) { litStamp[c] = stamp; litDirs[c] = 0; }
         litDirs[c] |= 1 << adir[i];

@@ -584,14 +584,15 @@ describe('calculateLaserPath — portals', () => {
     expect(result.totalLength).toBe(21)
   })
 
-  it("a beam entering a portal head-on to an earlier beam through the same portal stops at its edge", () => {
-    // The up beam goes through (3,2) heading left at t=8 and out of (8,9).
-    // The down beam goes round by (1,8) and (1,2) and reaches (3,2) heading
-    // right at t=18: the pair is lit heading left, so it stops.
+  it('a beam going into a portal from the other side of an earlier beam goes through', () => {
+    // The up beam goes into (3,2) heading left at t=8 and out of (8,9).
+    // The down beam goes round by (1,8) and (1,2) and goes into (3,2) heading
+    // right at t=18: a portal is a hole, so the two don't collide there. It
+    // comes out of (8,9) heading right and leaves the grid.
     const mirrors = [upMirror, mirror(5, 8, '/'), mirror(1, 8, '\\'), mirror(1, 2, '/')]
     const result = calculateLaserPath(laser, mirrors, [spl, portal(3, 2, 1), portal(8, 9, 1)], BOUNDS_10x10)
-    expect(result.collisionPoints).toEqual([{ x: 2.5, y: 2 }])
-    expect(result.totalLength).toBe(32)
+    expect(result.collisionPoints).toEqual([])
+    expect(result.totalLength).toBe(34)
   })
 
   it('two beams swapping across the edge next to a portal pass each other', () => {

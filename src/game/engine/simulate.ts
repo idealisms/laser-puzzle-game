@@ -88,8 +88,6 @@ function mirrorSide(dir: Direction, mirrorType: '/' | '\\'): 0 | 1 {
  *   - Mirror cell: only beams hitting the same mirror face collide (mirrorSide).
  *   - Splitter cell: they collide unless at least one hits the wall face, which
  *     just stops that beam.
- *   - A portal is an open cell of its own: beams entering the two portals of
- *     a pair never collide with each other there.
  *   - Anything else (open cell, wall, gate, off-grid): head-on or same-direction
  *     beams collide; perpendicular beams pass through each other.
  *
@@ -171,15 +169,15 @@ interface Arrival {
  * its front moves on. A beam that later enters a lit cell and would collide
  * with the beam lighting it (see litCellCollision) stops at the edge of that
  * cell; the earlier beam is unaffected. Cells a beam is blocked by (walls, a
- * gate's closed side, a splitter's wall face, off-grid) are not lit.
+ * gate's closed side, a splitter's wall face, off-grid) and portals are not
+ * lit.
  *
  * A beam that enters a portal leaves from its twin in the same direction on
- * the next step; the jump itself takes no time. Each portal is its own cell
- * for collisions, lit only by beams entering it (not by beams coming out of
- * it), so beams going through different portals of a pair never collide at
- * the portals. Two beams going head-on through a pair still meet just outside
- * it: each comes out onto the path the other came in on, which is lit.
- * Those two beams pass each other through the portal instead: a beam coming
+ * the next step; the jump itself takes no time. A portal is a hole: beams
+ * going into it never collide there, from any side and at any time, and it is
+ * never lit. Two beams going head-on through a pair would meet just outside
+ * it, each coming out onto the path the other went in on; they pass each
+ * other through the portal instead: a beam coming
  * out of portal B onto a cell lit, heading the other way, by a beam that went
  * into B makes the two beams partners, and partners never collide with each
  * other (each retraces the other's path, meeting it head-on or on the same
@@ -303,6 +301,7 @@ export function calculateLaserPath(
     for (let i = 0; i < arrivals.length; i++) {
       for (let j = i + 1; j < arrivals.length; j++) {
         const a = arrivals[i], b = arrivals[j]
+        if (a.outcome.kind === 'teleport') continue // beams going into a portal never collide there
         if (cellKey(a.to) === cellKey(b.to) && sameCellCollision(a.to, a.dir, b.dir, mirrors, obstacles) &&
             !partners.has(partnerKey(a.beam.id, b.beam.id))) {
           a.collided = b.collided = true
@@ -315,7 +314,7 @@ export function calculateLaserPath(
     // 3. Beams entering a cell lit by an earlier beam collide with it on the
     //    cell's edge.
     for (const arr of arrivals) {
-      if (arr.collided) continue
+      if (arr.collided || arr.outcome.kind === 'teleport') continue
       // Check every earlier beam (no early exit), so that partners are recorded
       // the same way as in solver/fastsim.ts.
       let hit = false
@@ -331,7 +330,7 @@ export function calculateLaserPath(
     // 4. Every beam that got into its cell lights it, including beams that
     //    collided there.
     for (const arr of arrivals) {
-      if (arr.outcome.kind === 'stop') continue
+      if (arr.outcome.kind === 'stop' || arr.outcome.kind === 'teleport') continue
       const key = cellKey(arr.to)
       const entries = lit.get(key)
       if (entries) entries.push({ dir: arr.dir, id: arr.beam.id })
