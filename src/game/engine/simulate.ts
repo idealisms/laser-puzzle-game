@@ -138,8 +138,6 @@ interface Beam {
   pos: Position
   dir: Direction
   stream: LaserStream
-  /** Set for the one step after a jump: the portal the beam is coming out of. */
-  emergingFrom?: Position
 }
 
 type StepOutcome =
@@ -150,7 +148,6 @@ type StepOutcome =
 
 interface Arrival {
   beam: Beam
-  emergingFrom?: Position // portal the beam came out of on this step
   to: Position
   dir: Direction // direction of travel into `to`
   outcome: StepOutcome
@@ -177,11 +174,10 @@ interface Arrival {
  * going into it never collide there, from any side and at any time, and it is
  * never lit. Two beams going head-on through a pair would meet just outside
  * it, each coming out onto the path the other went in on; they pass each
- * other through the portal instead: a beam coming
- * out of portal B onto a cell lit, heading the other way, by a beam that went
- * into B makes the two beams partners, and partners never collide with each
- * other (each retraces the other's path, meeting it head-on or on the same
- * mirror face).
+ * other through the portal instead: two beams going into the two portals of
+ * a pair in opposite directions, at the same step or one step apart, become
+ * partners, and partners never collide with each other (each retraces the
+ * other's path, meeting it head-on or on the same mirror face).
  *
  * Without portals, beams can never cross mid-step (swap two adjacent cells),
  * since every beam is on a cell of the same parity at any time. A portal can
@@ -228,25 +224,14 @@ export function calculateLaserPath(
     return { id: nextBeamId++, pos: { ...pos }, dir, stream }
   }
 
-  // Portal crossings: "x,y,dir" of a portal → id of the beam that went into it
-  // heading dir (at most one, by loop detection). Pairs of beams that passed
-  // each other through a portal, as "a,b" with a < b.
-  const portalEntries = new Map<string, number>()
+  // Portal crossings: "x,y,dir" of a portal → the beam that went into it
+  // heading dir, and when (at most one, by loop detection). Pairs of beams
+  // that passed each other through a portal pair, as "a,b" with a < b.
+  const portalEntries = new Map<string, { id: number; time: number }>()
   const partners = new Set<string>()
   const partnerKey = (a: number, b: number) => (a < b ? `${a},${b}` : `${b},${a}`)
-  // A beam passes a lit cell's earlier beam if they are partners, or become
-  // partners now: the beam is coming out of a portal, head-on to the earlier
-  // beam, which went into that portal.
-  const passes = (arr: Arrival, earlier: { dir: Direction; id: number }) => {
-    if (partners.has(partnerKey(arr.beam.id, earlier.id))) return true
-    const door = arr.emergingFrom
-    if (door && earlier.dir === oppositeDir(arr.dir) &&
-        portalEntries.get(`${door.x},${door.y},${earlier.dir}`) === earlier.id) {
-      partners.add(partnerKey(arr.beam.id, earlier.id))
-      return true
-    }
-    return false
-  }
+  const passes = (arr: Arrival, earlier: { dir: Direction; id: number }) =>
+    partners.has(partnerKey(arr.beam.id, earlier.id))
 
   let beams: Beam[] = [newBeam({ x: laserConfig.x, y: laserConfig.y }, laserConfig.direction, 0, 0, 0)]
 
@@ -288,13 +273,20 @@ export function calculateLaserPath(
           outcome = { kind: 'continue', dir: mirror ? reflectLaser(beam.dir, mirror.type) : beam.dir }
         }
       }
-      arrivals.push({ beam, emergingFrom: beam.emergingFrom, to, dir: beam.dir, outcome, collided: false })
-      beam.emergingFrom = undefined
+      arrivals.push({ beam, to, dir: beam.dir, outcome, collided: false })
     }
 
-    // Beams going into a portal this step (whether or not they collide).
+    // Beams going into a portal this step. One going into the twin portal in
+    // the opposite direction at this step or the one before passes this one:
+    // they become partners.
     for (const arr of arrivals) {
-      if (arr.outcome.kind === 'teleport') portalEntries.set(`${arr.to.x},${arr.to.y},${arr.dir}`, arr.beam.id)
+      if (arr.outcome.kind === 'teleport') portalEntries.set(`${arr.to.x},${arr.to.y},${arr.dir}`, { id: arr.beam.id, time })
+    }
+    for (const arr of arrivals) {
+      if (arr.outcome.kind !== 'teleport') continue
+      const twin = arr.outcome.to
+      const other = portalEntries.get(`${twin.x},${twin.y},${oppositeDir(arr.dir)}`)
+      if (other && other.id !== arr.beam.id && other.time >= time - 1) partners.add(partnerKey(arr.beam.id, other.id))
     }
 
     // 2. Resolve collisions between beams that moved this step.
@@ -354,7 +346,6 @@ export function calculateLaserPath(
         next.push(newBeam(arr.to, outcome.dirs[0], gen, time, nextColorIndex++))
       } else if (outcome.kind === 'teleport') {
         beam.pos = { ...outcome.to }
-        beam.emergingFrom = { ...outcome.to }
         next.push(beam)
       } else {
         beam.pos = arr.to

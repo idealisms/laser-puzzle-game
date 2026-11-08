@@ -567,6 +567,19 @@ describe('calculateLaserPath — portals', () => {
     expectNoOrphanBeams(result)
   })
 
+  it('partners pass each other on a mirror right outside the portal', () => {
+    // The down beam winds through (5,6), (6,6) and (6,8) into the twin at
+    // (7,8) heading right at t=8, as the up beam goes into (3,2) heading left.
+    // The up beam comes out onto the mirror at (6,8), which the down beam hit
+    // from above: the same mirror face, but as partners they pass, and both
+    // retrace the other's route back to the splitter.
+    const mirrors = [upMirror, mirror(5, 6, '\\'), mirror(6, 6, '\\'), mirror(6, 8, '\\')]
+    const result = calculateLaserPath(laser, mirrors, [spl, portal(3, 2, 1), portal(7, 8, 1)], BOUNDS_10x10)
+    expect(result.collisionPoints).toEqual(expect.arrayContaining([{ x: 5, y: 4.5 }, { x: 5, y: 5.5 }]))
+    expect(result.collisionPoints).toHaveLength(2)
+    expect(result.totalLength).toBe(23)
+  })
+
   it('beams entering a pair in the same direction through different portals pass', () => {
     // The down beam turns left at (5,8) and enters the twin at (3,8) at t=8;
     // each beam leaves by the other's portal.

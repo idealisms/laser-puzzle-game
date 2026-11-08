@@ -81,9 +81,10 @@ export function createFastSim(config: any): FastSim {
   // one beam can, by loop detection).
   const litId = new Int32Array(N * 4);
   // Portal entries: pentId[c * 4 + d] is the beam that went into portal c
-  // travelling d, valid where pentStamp matches.
+  // travelling d and pentTime when, valid where pentStamp matches.
   const pentStamp = new Uint32Array(N * 4);
   const pentId = new Int32Array(N * 4);
+  const pentTime = new Int32Array(N * 4);
   // Partner pairs (beams that passed each other through a portal).
   const MAX_PARTNERS = 4096;
   const partnerA = new Int32Array(MAX_PARTNERS), partnerB = new Int32Array(MAX_PARTNERS);
@@ -94,12 +95,10 @@ export function createFastSim(config: any): FastSim {
     return false;
   };
 
-  // Live beams, double-buffered: position, direction, id and the portal cell
-  // the beam is coming out of on its next step (-1 if none).
+  // Live beams, double-buffered: position, direction and id.
   let bx = new Int32Array(MAX_BEAMS), by = new Int32Array(MAX_BEAMS), bd = new Int32Array(MAX_BEAMS);
   let nx2 = new Int32Array(MAX_BEAMS), ny2 = new Int32Array(MAX_BEAMS), nd2 = new Int32Array(MAX_BEAMS);
-  let bid = new Int32Array(MAX_BEAMS), bem = new Int32Array(MAX_BEAMS);
-  let nid2 = new Int32Array(MAX_BEAMS), nem2 = new Int32Array(MAX_BEAMS);
+  let bid = new Int32Array(MAX_BEAMS), nid2 = new Int32Array(MAX_BEAMS);
   // This step's arrivals.
   const ax = new Int32Array(MAX_BEAMS), ay = new Int32Array(MAX_BEAMS);  // cell entered
   const ak = new Int32Array(MAX_BEAMS);      // cell entered as an index (unique negative key off-grid)
@@ -109,8 +108,7 @@ export function createFastSim(config: any): FastSim {
   const anew = new Int32Array(MAX_BEAMS);    // new direction for OUT_CONTINUE
   const ahit = new Uint8Array(MAX_BEAMS);    // collided this step
   const aid = new Int32Array(MAX_BEAMS);     // beam id
-  const aem = new Int32Array(MAX_BEAMS);     // portal cell the beam came out of this step, or -1
-  const anem = new Int32Array(MAX_BEAMS);    // portal cell it will come out of next step, or -1
+  const anem = new Int32Array(MAX_BEAMS);    // twin portal it comes out of, or -1 if not going into one
 
   // Do two beams arriving at (x, y) (possibly off-grid) travelling da and db collide?
   function sameCellCollides(x: number, y: number, da: number, db: number): boolean {
@@ -135,9 +133,11 @@ export function createFastSim(config: any): FastSim {
     let n = 1;
     let nextId = 1;
     numPartners = 0;
-    bx[0] = laserX; by[0] = laserY; bd[0] = laserDir; bid[0] = 0; bem[0] = -1;
+    bx[0] = laserX; by[0] = laserY; bd[0] = laserDir; bid[0] = 0;
+    let time = 0;
 
     while (n > 0) {
+      time++;
       // 1. Move every beam one cell.
       let na = 0;
       for (let i = 0; i < n; i++) {
@@ -167,7 +167,7 @@ export function createFastSim(config: any): FastSim {
             const t = twin[c];
             px = (t / H) | 0; py = t - px * H;
             nem = t;
-            pentStamp[c * 4 + dir] = stamp; pentId[c * 4 + dir] = bid[i];
+            pentStamp[c * 4 + dir] = stamp; pentId[c * 4 + dir] = bid[i]; pentTime[c * 4 + dir] = time;
           } else {
             const o = orient[c];
             if (k === CELL_GATE) { if (dir !== o) out = OUT_STOP; }
@@ -178,8 +178,21 @@ export function createFastSim(config: any): FastSim {
         }
         ax[na] = tx; ay[na] = ty; ak[na] = key; apx[na] = px; apy[na] = py;
         adir[na] = dir; aout[na] = out; anew[na] = nd; ahit[na] = 0;
-        aid[na] = bid[i]; aem[na] = bem[i]; anem[na] = nem;
+        aid[na] = bid[i]; anem[na] = nem;
         na++;
+      }
+
+      // 1b. A beam going into a portal passes one that went into the twin in
+      //     the opposite direction at this step or the one before: partners.
+      for (let i = 0; i < na; i++) {
+        const t = anem[i];
+        if (t < 0) continue;
+        const k = t * 4 + OPP[adir[i]];
+        if (pentStamp[k] !== stamp || pentTime[k] < time - 1) continue;
+        const other = pentId[k];
+        if (other === aid[i] || arePartners(aid[i], other)) continue;
+        if (numPartners === MAX_PARTNERS) throw new Error('fastsim: too many partner beams');
+        partnerA[numPartners] = aid[i]; partnerB[numPartners] = other; numPartners++;
       }
 
       // 2. Collisions between beams arriving at the same cell.
@@ -201,20 +214,10 @@ export function createFastSim(config: any): FastSim {
         const c = ak[i];
         if (litStamp[c] !== stamp) continue;
         const lit = litDirs[c];
-        // Check every earlier beam (no early exit), recording partners the
-        // same way as simulate.ts.
         for (let d = 0; d < 4; d++) {
           if (d === adir[i] || !(lit & (1 << d)) || !sameCellCollides(x, y, d, adir[i])) continue;
-          const other = litId[c * 4 + d];
-          if (numPartners > 0 && arePartners(aid[i], other)) continue;
-          // Coming out of portal e head-on to a beam that went into e: they pass.
-          const e = aem[i];
-          if (e >= 0 && d === OPP[adir[i]] && pentStamp[e * 4 + d] === stamp && pentId[e * 4 + d] === other) {
-            if (numPartners === MAX_PARTNERS) throw new Error('fastsim: too many partner beams');
-            partnerA[numPartners] = aid[i]; partnerB[numPartners] = other; numPartners++;
-            continue;
-          }
-          ahit[i] = 1;
+          if (numPartners > 0 && arePartners(aid[i], litId[c * 4 + d])) continue;
+          ahit[i] = 1; break;
         }
       }
 
@@ -233,17 +236,16 @@ export function createFastSim(config: any): FastSim {
         if (ahit[i] || aout[i] === OUT_STOP) continue;
         if (aout[i] === OUT_SPLIT) {
           const horiz = adir[i] === LEFT || adir[i] === RIGHT;
-          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? DOWN : RIGHT; nid2[m] = nextId++; nem2[m] = -1; m++;
-          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? UP : LEFT; nid2[m] = nextId++; nem2[m] = -1; m++;
+          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? DOWN : RIGHT; nid2[m] = nextId++; m++;
+          nx2[m] = ax[i]; ny2[m] = ay[i]; nd2[m] = horiz ? UP : LEFT; nid2[m] = nextId++; m++;
         } else {
-          nx2[m] = apx[i]; ny2[m] = apy[i]; nd2[m] = anew[i]; nid2[m] = aid[i]; nem2[m] = anem[i]; m++;
+          nx2[m] = apx[i]; ny2[m] = apy[i]; nd2[m] = anew[i]; nid2[m] = aid[i]; m++;
         }
       }
       let t = bx; bx = nx2; nx2 = t;
       t = by; by = ny2; ny2 = t;
       t = bd; bd = nd2; nd2 = t;
       t = bid; bid = nid2; nid2 = t;
-      t = bem; bem = nem2; nem2 = t;
       n = m;
     }
     return total;

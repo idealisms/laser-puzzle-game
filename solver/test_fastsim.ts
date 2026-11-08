@@ -331,6 +331,10 @@ describe('fastsim matches calculateLaserPath with portals', () => {
     assert.deepEqual(rig([[3, 2, 1], [7, 8, 1]], [up, [5, 8, '\\']]), { ref: 23, got: 23 });
   });
 
+  it('partners passing on a mirror right outside the portal', () => {
+    assert.deepEqual(rig([[3, 2, 1], [7, 8, 1]], [up, [5, 6, '\\'], [6, 6, '\\'], [6, 8, '\\']]), { ref: 23, got: 23 });
+  });
+
   it('same direction through different portals of a pair', () => {
     assert.deepEqual(rig([[3, 2, 1], [3, 8, 1]], [up, [5, 8, '/']]), { ref: 21, got: 21 });
   });
