@@ -9,22 +9,27 @@
  *   laser: right                (direction; the laser cell is '@')
  *   mirrors: 9
  *   label a: north post         (label for obstacle group 'a'; '#' and a-z except v are groups)
- *   note 7,9: splits UP/DOWN    (note on the splitter or gate at x,y)
+ *   note 7,9: splits UP/DOWN    (note on the splitter, gate or portal at x,y)
  *   notes: free text            (puzzle notes; repeat for more lines)
  *   .....a.........
  *   ...
  *
  * Cells: '.' empty, '#' or a-z except v: wall (one obstacle group per character),
  * '@' laser, '^' '>' 'v' '<' splitter triggered by a beam travelling that
- * way, 'N' 'E' 'S' 'W' one-way gate passing up/right/down/left.
+ * way, 'N' 'E' 'S' 'W' one-way gate passing up/right/down/left, '1' '2' '3'
+ * portal pairs (each digit used exactly twice; a beam entering one portal
+ * leaves the other in the same direction).
  */
 
 const SPLITTER_CHARS: Record<string, string> = { '^': 'up', '>': 'right', 'v': 'down', '<': 'left' };
 const GATE_CHARS: Record<string, string> = { N: 'up', E: 'right', S: 'down', W: 'left' };
 // Every lowercase letter but 'v', which is a splitter.
 const GROUP_CHARS = 'abcdefghijklmnopqrstuwxyz#';
+const PORTAL_CHARS = '123';
+export const MAX_PORTAL_PAIRS = PORTAL_CHARS.length;
 
 interface Device { x: number; y: number; dir: string; note?: string }
+export interface Portal { x: number; y: number; pair: number; note?: string }
 
 export interface Puzzle {
   date: string;
@@ -36,6 +41,7 @@ export interface Puzzle {
   obstacle_groups: { label: string; cells: [number, number][] }[];
   splitters: Device[];
   gates: Device[];
+  portals: Portal[];
   notes?: string[];
 }
 
@@ -66,13 +72,14 @@ export function parseMap(text: string, date: string): Puzzle {
   if (rows.length !== height) throw new Error(`expected ${height} rows, got ${rows.length}`);
 
   const groups = new Map<string, [number, number][]>();
-  const splitters: Device[] = [], gates: Device[] = [];
+  const splitters: Device[] = [], gates: Device[] = [], portals: Portal[] = [];
   let laser: { x: number; y: number } | null = null;
-  const device = (x: number, y: number, dir: string): Device => {
+  const withNote = <T extends object>(x: number, y: number, item: T): T & { note?: string } => {
     const note = deviceNotes.get(`${x},${y}`);
     deviceNotes.delete(`${x},${y}`);
-    return note === undefined ? { x, y, dir } : { x, y, dir, note };
+    return note === undefined ? item : { ...item, note };
   };
+  const device = (x: number, y: number, dir: string): Device => withNote(x, y, { x, y, dir });
 
   rows.forEach((row, y) => {
     if (row.length !== width) throw new Error(`row ${y} has ${row.length} cells, expected ${width}: "${row}"`);
@@ -83,6 +90,7 @@ export function parseMap(text: string, date: string): Puzzle {
         laser = { x, y };
       } else if (c in SPLITTER_CHARS) splitters.push(device(x, y, SPLITTER_CHARS[c]));
       else if (c in GATE_CHARS) gates.push(device(x, y, GATE_CHARS[c]));
+      else if (PORTAL_CHARS.includes(c)) portals.push(withNote(x, y, { x, y, pair: Number(c) }));
       else if (GROUP_CHARS.includes(c)) {
         if (!groups.has(c)) groups.set(c, []);
         groups.get(c)!.push([x, y]);
@@ -90,7 +98,11 @@ export function parseMap(text: string, date: string): Puzzle {
     });
   });
   if (!laser) throw new Error('map has no laser ("@")');
-  if (deviceNotes.size) throw new Error(`notes on cells with no splitter or gate: ${[...deviceNotes.keys()].join(' ')}`);
+  if (deviceNotes.size) throw new Error(`notes on cells with no splitter, gate or portal: ${[...deviceNotes.keys()].join(' ')}`);
+  for (const pair of new Set(portals.map(p => p.pair))) {
+    const count = portals.filter(p => p.pair === pair).length;
+    if (count !== 2) throw new Error(`portal "${pair}" appears ${count} times, expected exactly 2`);
+  }
   for (const k of Object.keys(labels)) if (!groups.has(k)) throw new Error(`label for unused group "${k}"`);
 
   const { x, y } = laser as { x: number; y: number };
@@ -104,6 +116,7 @@ export function parseMap(text: string, date: string): Puzzle {
     obstacle_groups: [...groups].map(([k, cells]) => ({ label: labels[k] ?? (k === '#' ? 'walls' : k), cells })),
     splitters,
     gates,
+    portals,
   };
   if (notes.length) puzzle.notes = notes;
   return puzzle;
@@ -135,6 +148,10 @@ export function puzzleToMap(p: Puzzle): string {
       grid[d.y][d.x] = chars[d.dir];
       if (d.note !== undefined) header.push(`note ${d.x},${d.y}: ${d.note}`);
     }
+  }
+  for (const pt of p.portals ?? []) {
+    grid[pt.y][pt.x] = String(pt.pair);
+    if (pt.note !== undefined) header.push(`note ${pt.x},${pt.y}: ${pt.note}`);
   }
   for (const n of p.notes ?? []) header.push(`notes: ${n}`);
   grid[p.laser.y][p.laser.x] = '@';

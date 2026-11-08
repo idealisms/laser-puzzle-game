@@ -45,8 +45,23 @@ describe('parseMap', () => {
       ],
       splitters: [{ x: 7, y: 9, dir: 'right', note: 'splits' }],
       gates: [{ x: 10, y: 4, dir: 'up' }],
+      portals: [],
       notes: ['hello'],
     });
+  });
+
+  it('reads portal pairs', () => {
+    const p = parseMap(map([...HEADER, 'note 2,3: way in'], [
+      [0, 0, '@'], [2, 3, '1'], [12, 15, '1'], [5, 5, '2'], [6, 6, '2'],
+    ]), '2026-12-01');
+    assert.deepEqual(p.portals, [
+      { x: 2, y: 3, pair: 1, note: 'way in' },
+      { x: 5, y: 5, pair: 2 },
+      { x: 6, y: 6, pair: 2 },
+      { x: 12, y: 15, pair: 1 },
+    ]);
+    assert.equal(parseMap(puzzleToMap(p), '2026-12-01').portals.length, 4);
+    assert.deepEqual(parseMap(puzzleToMap(p), '2026-12-01'), p);
   });
 
   it("reads 'v' as a down splitter, not an obstacle group", () => {
@@ -60,7 +75,10 @@ describe('parseMap', () => {
     bad(map(HEADER, []), /no laser/);
     bad(map(HEADER, [[0, 0, '@'], [1, 0, '@']]), /second laser/);
     bad(map(HEADER, [[0, 0, '@'], [1, 0, '?']]), /unknown cell "\?" at \(1,0\)/);
-    bad(map([...HEADER, 'note 4,4: nothing here'], [[0, 0, '@']]), /notes on cells with no splitter or gate: 4,4/);
+    bad(map([...HEADER, 'note 4,4: nothing here'], [[0, 0, '@']]), /notes on cells with no splitter, gate or portal: 4,4/);
+    bad(map(HEADER, [[0, 0, '@'], [3, 3, '1']]), /portal "1" appears 1 times, expected exactly 2/);
+    bad(map(HEADER, [[0, 0, '@'], [3, 3, '2'], [4, 4, '2'], [5, 5, '2']]), /portal "2" appears 3 times/);
+    bad(map(HEADER, [[0, 0, '@'], [3, 3, '4'], [4, 4, '4']]), /unknown cell "4"/);
     bad(map([...HEADER, 'label q: unused'], [[0, 0, '@']]), /unused group "q"/);
     bad(map(HEADER.slice(1), [[0, 0, '@']]), /missing "name:"/);
     bad(map(HEADER, [[0, 0, '@']]).replace(EMPTY_ROW, EMPTY_ROW + '.'), /row 1 has 16 cells/);

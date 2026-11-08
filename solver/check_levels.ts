@@ -21,6 +21,7 @@ const fs = require('fs');
 const path = require('path');
 import { calculateLaserPath } from '../src/game/engine/simulate';
 import type { Direction, LaserPath, LaserStream, MirrorType, Obstacle } from '../src/game/types';
+import { configToObstacles } from './obstacles';
 
 export const MIN_STREAM_MIRRORS = 1;
 export const MIN_STREAM_LENGTH = 8;
@@ -47,11 +48,7 @@ export function levelFromConfig(config: any, mirrors: [number, number, MirrorTyp
     gridWidth: config.width,
     gridHeight: config.height,
     laserConfig: { x: config.laserX, y: config.laserY, direction: dirs[config.laserDir] },
-    obstacles: [
-      ...config.obstacles.map(([x, y]: [number, number]) => ({ x, y })),
-      ...(config.splitters || []).map(([x, y, o]: [number, number, Direction]) => ({ x, y, type: 'splitter', orientation: o })),
-      ...(config.gates || []).map(([x, y, o]: [number, number, Direction]) => ({ x, y, type: 'gate', orientation: o })),
-    ],
+    obstacles: configToObstacles(config),
     optimalSolution: mirrors.map(([x, y, type]) => ({ x, y, type })),
   };
 }

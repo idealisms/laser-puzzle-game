@@ -155,6 +155,7 @@ function createExpander(config: any, opts: { usePathPruning?: boolean } = {}) {
   for (const [x, y] of config.obstacles) invalid[x * H + y] = 1;
   for (const [x, y] of config.splitters || []) invalid[x * H + y] = 1;
   for (const [x, y] of config.gates || []) invalid[x * H + y] = 1;
+  for (const [x, y] of config.portals || []) invalid[x * H + y] = 1;
   invalid[config.laserX * H + config.laserY] = 1;
 
   const cells = new Uint8Array(sim.cellBytes);

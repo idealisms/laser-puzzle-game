@@ -3,6 +3,7 @@
 // used to verify solver results. The beam search scores with fastsim.ts.
 
 const { calculateLaserPath } = require('../src/game/engine/simulate');
+const { configToObstacles } = require('./obstacles');
 
 const INT_TO_DIR = ['up', 'right', 'down', 'left'];
 const DIR_TO_INT = { up: 0, right: 1, down: 2, left: 3 };
@@ -26,15 +27,7 @@ function simulateLaser(config, mirrors) {
   // Convert mirrors from [[x,y,type]] to Mirror[]
   const mirrorObjs = mirrors.map(([x, y, type]) => ({ position: { x, y }, type }));
 
-  // Convert config obstacles (plain walls), splitters, and gates to Obstacle[]
-  const wallObstacles = config.obstacles.map(([x, y]) => ({ x, y, type: 'wall' }));
-  const splitterObstacles = (config.splitters || []).map(([x, y, o]) => ({
-    x, y, type: 'splitter', orientation: o,
-  }));
-  const gateObstacles = (config.gates || []).map(([x, y, o]) => ({
-    x, y, type: 'gate', orientation: o,
-  }));
-  const allObstacles = [...wallObstacles, ...splitterObstacles, ...gateObstacles];
+  const allObstacles = configToObstacles(config);
 
   // Convert laserDir from int to string
   const laserConfig = {
