@@ -74,10 +74,14 @@ export function traceBeam(laserPath: LaserPath, isFree: (x: number, y: number) =
   const runs: { horizontal: boolean; length: number }[] = [];
   for (const stream of laserPath.streams) {
     let prev: string | null = null;
+    let prevEnd: { x: number; y: number } | null = null;
     for (const seg of stream.segments) {
-      if (seg.direction === prev) runs[runs.length - 1].length++;
+      // A portal jump starts a new run even when the direction doesn't change.
+      const jumped = prevEnd !== null && (seg.start.x !== prevEnd.x || seg.start.y !== prevEnd.y);
+      if (seg.direction === prev && !jumped) runs[runs.length - 1].length++;
       else runs.push({ horizontal: seg.direction === 'left' || seg.direction === 'right', length: 1 });
       prev = seg.direction;
+      prevEnd = seg.end;
       const { x, y } = seg.end;
       if (isFree(x, y)) visits.set(key(x, y), (visits.get(key(x, y)) ?? 0) + 1);
     }
@@ -92,7 +96,8 @@ export function measureShape(level: LevelShape) {
   const bounds = playableBounds(borderWalls, level.gridWidth, level.gridHeight);
   const inside = (x: number, y: number) =>
     x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom;
-  const interior = obstacles.filter(o => inside(o.x, o.y));
+  // Portals don't block anything, so they aren't part of the layout's shape.
+  const interior = obstacles.filter(o => o.type !== 'portal' && inside(o.x, o.y));
   const groups = obstacleGroups(interior);
   const anchoredCells = groups
     .filter(g => g.some(c => edgeDistance(c.x, c.y, bounds) === 0))
@@ -100,7 +105,7 @@ export function measureShape(level: LevelShape) {
 
   const laserPath = calculateLaserPath(level.laserConfig, mirrors, obstacles,
     { width: level.gridWidth, height: level.gridHeight });
-  const walls = new Set(obstacles.filter(o => o.type !== 'gate').map(o => key(o.x, o.y)));
+  const walls = new Set(obstacles.filter(o => o.type !== 'gate' && o.type !== 'portal').map(o => key(o.x, o.y)));
   const { visits, runs } = traceBeam(laserPath, (x, y) => inside(x, y) && !walls.has(key(x, y)));
   const edgeCells = [...visits.keys()].filter(k => {
     const [x, y] = k.split(',').map(Number);

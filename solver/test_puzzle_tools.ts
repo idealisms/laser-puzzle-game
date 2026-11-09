@@ -45,8 +45,23 @@ describe('parseMap', () => {
       ],
       splitters: [{ x: 7, y: 9, dir: 'right', note: 'splits' }],
       gates: [{ x: 10, y: 4, dir: 'up' }],
+      portals: [],
       notes: ['hello'],
     });
+  });
+
+  it('reads portal pairs', () => {
+    const p = parseMap(map([...HEADER, 'note 2,3: way in'], [
+      [0, 0, '@'], [2, 3, '1'], [12, 15, '1'], [5, 5, '2'], [6, 6, '2'],
+    ]), '2026-12-01');
+    assert.deepEqual(p.portals, [
+      { x: 2, y: 3, pair: 1, note: 'way in' },
+      { x: 5, y: 5, pair: 2 },
+      { x: 6, y: 6, pair: 2 },
+      { x: 12, y: 15, pair: 1 },
+    ]);
+    assert.equal(parseMap(puzzleToMap(p), '2026-12-01').portals.length, 4);
+    assert.deepEqual(parseMap(puzzleToMap(p), '2026-12-01'), p);
   });
 
   it("reads 'v' as a down splitter, not an obstacle group", () => {
@@ -60,7 +75,10 @@ describe('parseMap', () => {
     bad(map(HEADER, []), /no laser/);
     bad(map(HEADER, [[0, 0, '@'], [1, 0, '@']]), /second laser/);
     bad(map(HEADER, [[0, 0, '@'], [1, 0, '?']]), /unknown cell "\?" at \(1,0\)/);
-    bad(map([...HEADER, 'note 4,4: nothing here'], [[0, 0, '@']]), /notes on cells with no splitter or gate: 4,4/);
+    bad(map([...HEADER, 'note 4,4: nothing here'], [[0, 0, '@']]), /notes on cells with no splitter, gate or portal: 4,4/);
+    bad(map(HEADER, [[0, 0, '@'], [3, 3, '1']]), /portal "1" appears 1 times, expected exactly 2/);
+    bad(map(HEADER, [[0, 0, '@'], [3, 3, '2'], [4, 4, '2'], [5, 5, '2']]), /portal "2" appears 3 times/);
+    bad(map(HEADER, [[0, 0, '@'], [3, 3, '4'], [4, 4, '4']]), /unknown cell "4"/);
     bad(map([...HEADER, 'label q: unused'], [[0, 0, '@']]), /unused group "q"/);
     bad(map(HEADER.slice(1), [[0, 0, '@']]), /missing "name:"/);
     bad(map(HEADER, [[0, 0, '@']]).replace(EMPTY_ROW, EMPTY_ROW + '.'), /row 1 has 16 cells/);
@@ -138,6 +156,24 @@ describe('analyzeLevel', () => {
     const config = { ...RIG, splitters: [], gates: [[4, 10, 'right']] };
     assert.equal(analyzeLevel(levelFromConfig(config, [])).gates[0].passes, 1);
   });
+
+  it('a gate next to a portal can be passed', () => {
+    const config = { ...RIG, splitters: [], gates: [[5, 5, 'up']], portals: [[5, 6, 1], [9, 9, 1]] };
+    assert.deepEqual(analyzeLevel(levelFromConfig(config, [])).problems.filter((p: string) => /gate/.test(p)), []);
+  });
+
+  it('counts portal entries and needs at least one pair on the path', () => {
+    // The laser runs along row 10 into pair 1 at (4,10) and out of (4,3).
+    const portals = [[4, 10, 1], [4, 3, 1], [9, 15, 2], [12, 15, 2]];
+    const used = analyzeLevel(levelFromConfig({ ...RIG, splitters: [], portals }, []));
+    assert.deepEqual(used.portals, [
+      { pair: 1, cells: [[4, 10], [4, 3]], passes: 1 },
+      { pair: 2, cells: [[9, 15], [12, 15]], passes: 0 },
+    ]);
+    assert.deepEqual(used.problems, []);
+    const unused = analyzeLevel(levelFromConfig({ ...RIG, splitters: [], portals: portals.slice(2) }, []));
+    assert.deepEqual(unused.problems, ['no portal pair is on the optimal path']);
+  });
 });
 
 describe('renderSolution', () => {
@@ -146,6 +182,13 @@ describe('renderSolution', () => {
     assert.equal(rows[2], ' 2        /-------');
     assert.equal(rows[10], '10 @------>       ');
     assert.equal(rows[17], '17        \\-------');
+  });
+
+  it('draws portals as their pair number', () => {
+    const level = levelFromConfig({ ...RIG, splitters: [], portals: [[4, 10, 1], [4, 3, 1]] }, []);
+    const rows = renderSolution(level).split('\n');
+    assert.equal(rows[10], '10 @---1          ');
+    assert.equal(rows[3], ' 3     1----------');
   });
 });
 

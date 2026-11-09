@@ -20,6 +20,7 @@ const { PUZZLES } = require('./puzzles');
 const { solvePuzzle } = require('./solve');
 import { analyzeLevel, levelFromConfig, MIN_STREAM_LENGTH, MIN_STREAM_MIRRORS } from './check_levels';
 import type { SplitterReport } from './check_levels';
+import { occupiedCells } from './obstacles';
 
 export interface Candidate {
   x: number;
@@ -48,12 +49,9 @@ export function weakestStream(splitters: SplitterReport[]): number {
 export async function searchSplitter(config: any, index: number, xs: number[], ys: number[], dirs: string[],
   opts: { beamWidth: number; workers: number; onCandidate?: (c: Candidate) => void }): Promise<Candidate[]> {
   if (!config.splitters?.[index]) throw new Error(`puzzle has no splitter #${index}`);
-  const taken = new Set([
-    ...config.obstacles.map(([x, y]: number[]) => `${x},${y}`),
-    ...config.splitters.filter((_: unknown, i: number) => i !== index).map(([x, y]: number[]) => `${x},${y}`),
-    ...(config.gates || []).map(([x, y]: number[]) => `${x},${y}`),
-    `${config.laserX},${config.laserY}`,
-  ]);
+  const [sx, sy] = config.splitters[index];
+  const taken = occupiedCells(config);
+  taken.delete(`${sx},${sy}`);
   const results: Candidate[] = [];
   for (const x of xs) for (const y of ys) {
     if (taken.has(`${x},${y}`)) continue;

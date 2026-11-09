@@ -16,6 +16,8 @@ const os = require('os');
 const { PUZZLES } = require('./puzzles');
 const { solvePuzzle } = require('./solve');
 const { checkLayout, measureShape } = require('./layout_metrics');
+const { configToObstacles } = require('./obstacles');
+const { MAX_PORTAL_PAIRS } = require('./puzzle_map');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -37,6 +39,7 @@ interface PuzzleConfig {
   numMirrors: number;
   splitters?: [number, number, string][];
   gates?: [number, number, string][];
+  portals?: [number, number, number][];
 }
 
 /**
@@ -66,6 +69,11 @@ async function generateLevel(dateStr: string, config: PuzzleConfig, solverOpts: 
     );
   }
 
+  const numPairs = (config.portals || []).length / 2;
+  if (numPairs > MAX_PORTAL_PAIRS) {
+    throw new Error(`${dateStr}: puzzle has ${numPairs} portal pairs (max ${MAX_PORTAL_PAIRS}).`);
+  }
+
   console.log(`Computing optimal score for ${dateStr} (${config.name})...`);
   const result = await solvePuzzle(config, solverOpts);
   const optimalScore = result.score;
@@ -86,18 +94,7 @@ async function generateLevel(dateStr: string, config: PuzzleConfig, solverOpts: 
       y: config.laserY,
       direction: dirName,
     },
-    obstacles: [
-      // Plain wall obstacles
-      ...config.obstacles.map(([x, y]) => ({ x, y })),
-      // Splitters (emitted after walls, matching Python order)
-      ...(config.splitters || []).map(([x, y, orientation]) => ({
-        x, y, type: 'splitter', orientation,
-      })),
-      // Gates
-      ...(config.gates || []).map(([x, y, orientation]) => ({
-        x, y, type: 'gate', orientation,
-      })),
-    ],
+    obstacles: configToObstacles(config),
     mirrorsAvailable: config.numMirrors,
     optimalScore,
     optimalSolution,

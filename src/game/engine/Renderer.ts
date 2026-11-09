@@ -159,6 +159,58 @@ export class Renderer {
     this.ctx.fill()
   }
 
+  // Traces a portal's outline: pair 1 a circle, pair 2 a square, pair 3 a
+  // triangle, so pairs can be matched without telling colors apart.
+  private portalPath(pair: number, cx: number, cy: number, r: number): void {
+    this.ctx.beginPath()
+    if (pair === 2) {
+      const h = r * 0.85
+      this.ctx.rect(cx - h, cy - h, h * 2, h * 2)
+    } else if (pair === 3) {
+      // Equilateral triangle, point up, centred on (cx, cy)
+      for (let i = 0; i < 3; i++) {
+        const angle = -Math.PI / 2 + (i * 2 * Math.PI) / 3
+        const px = cx + Math.cos(angle) * r * 1.1
+        const py = cy + Math.sin(angle) * r * 1.1 + r * 0.12
+        if (i === 0) this.ctx.moveTo(px, py)
+        else this.ctx.lineTo(px, py)
+      }
+      this.ctx.closePath()
+    } else {
+      this.ctx.arc(cx, cy, r, 0, Math.PI * 2)
+    }
+  }
+
+  drawPortal(x: number, y: number, pair: number = 1): void {
+    const palette = this.colors.portal
+    const colors = palette[Math.min(Math.max(pair, 1), palette.length) - 1]
+    const cx = x * CELL_SIZE + CELL_SIZE / 2
+    const cy = y * CELL_SIZE + CELL_SIZE / 2
+    const r = CELL_SIZE / 2 - 5
+
+    this.ctx.save()
+
+    // Glowing fill
+    const gradient = this.ctx.createRadialGradient(cx, cy, 0, cx, cy, r)
+    gradient.addColorStop(0, this.colors.grid.background)
+    gradient.addColorStop(1, colors.glow)
+    this.ctx.fillStyle = gradient
+    this.portalPath(pair, cx, cy, r)
+    this.ctx.fill()
+
+    // Outer outline and a thinner inner one of the same shape
+    this.ctx.strokeStyle = colors.ring
+    this.ctx.lineJoin = 'round'
+    this.ctx.lineWidth = 3
+    this.portalPath(pair, cx, cy, r)
+    this.ctx.stroke()
+    this.ctx.lineWidth = 1.5
+    this.portalPath(pair, cx, cy, r * 0.5)
+    this.ctx.stroke()
+
+    this.ctx.restore()
+  }
+
   drawGate(x: number, y: number, orientation: SplitterOrientation = 'right'): void {
     const p = 4
     const cs = CELL_SIZE
@@ -260,11 +312,17 @@ export class Renderer {
       segments[0].start.x * CELL_SIZE + CELL_SIZE / 2,
       segments[0].start.y * CELL_SIZE + CELL_SIZE / 2
     )
+    let prev = segments[0].start
     for (const seg of segments) {
+      // A portal jump: the next segment starts away from where the last ended.
+      if (seg.start.x !== prev.x || seg.start.y !== prev.y) {
+        this.ctx.moveTo(seg.start.x * CELL_SIZE + CELL_SIZE / 2, seg.start.y * CELL_SIZE + CELL_SIZE / 2)
+      }
       this.ctx.lineTo(
         seg.end.x * CELL_SIZE + CELL_SIZE / 2,
         seg.end.y * CELL_SIZE + CELL_SIZE / 2
       )
+      prev = seg.end
     }
     this.ctx.stroke()
   }
@@ -458,6 +516,8 @@ export class Renderer {
         this.drawSplitter(obstacle.x, obstacle.y, obstacle.orientation ?? 'right')
       } else if (obstacle.type === 'gate') {
         this.drawGate(obstacle.x, obstacle.y, obstacle.orientation ?? 'right')
+      } else if (obstacle.type === 'portal') {
+        this.drawPortal(obstacle.x, obstacle.y, obstacle.pair ?? 1)
       } else {
         this.drawObstacle(obstacle.x, obstacle.y)
       }

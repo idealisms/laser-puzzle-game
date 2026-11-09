@@ -23,8 +23,9 @@ export type SplitterOrientation = 'right' | 'left' | 'up' | 'down'
 export interface Obstacle {
   x: number
   y: number
-  type?: 'wall' | 'splitter' | 'gate'
+  type?: 'wall' | 'splitter' | 'gate' | 'portal'
   orientation?: SplitterOrientation  // splitter: trigger dir; gate: pass-through dir; defaults to 'right'
+  pair?: number  // portal: pair number (1-3); a beam entering one portal leaves its twin
 }
 
 export interface LaserSegment {

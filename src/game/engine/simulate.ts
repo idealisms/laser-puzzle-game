@@ -102,9 +102,9 @@ export function sameCellCollision(
 ): boolean {
   const m = findMirror(cell, mirrors)
   if (m) return mirrorSide(dirA, m.type) === mirrorSide(dirB, m.type)
-  const spl = obstacles.find((o) => o.type === 'splitter' && o.x === cell.x && o.y === cell.y)
-  if (spl) {
-    const wallDir = oppositeDir(spl.orientation ?? 'right')
+  const obs = findObstacle(cell, obstacles)
+  if (obs?.type === 'splitter') {
+    const wallDir = oppositeDir(obs.orientation ?? 'right')
     return dirA !== wallDir && dirB !== wallDir
   }
   return dirA === dirB || dirA === oppositeDir(dirB)
@@ -141,6 +141,7 @@ interface Beam {
 
 type StepOutcome =
   | { kind: 'continue'; dir: Direction }
+  | { kind: 'teleport'; to: Position }
   | { kind: 'stop'; reason: LaserPath['terminationReason'] }
   | { kind: 'split'; dirs: [Direction, Direction] }
 
@@ -164,12 +165,22 @@ interface Arrival {
  * its front moves on. A beam that later enters a lit cell and would collide
  * with the beam lighting it (see litCellCollision) stops at the edge of that
  * cell; the earlier beam is unaffected. Cells a beam is blocked by (walls, a
- * gate's closed side, a splitter's wall face, off-grid) are not lit.
+ * gate's closed side, a splitter's wall face, off-grid) and portals are not
+ * lit.
  *
- * Beams can never cross mid-step (swap two adjacent cells): every beam starts
- * at the laser and moves one cell per step, so at time t every beam is on a
- * cell with (x + y) ≡ (laser.x + laser.y + t) mod 2, and no two beams are ever
- * on adjacent cells at the same time.
+ * A beam that enters a portal leaves from its twin in the same direction on
+ * the next step; the jump itself takes no time. A portal is a hole: it is
+ * never lit, so a beam going into it never runs into an earlier beam there.
+ * Two beams going into the two different portals of a pair at the same step
+ * in opposite directions collide, each at the portal it went into: each
+ * would come out onto the path the other went in on. Two going into the same
+ * portal from opposite sides both go through and come out of the twin
+ * heading apart.
+ *
+ * Without portals, beams can never cross mid-step (swap two adjacent cells),
+ * since every beam is on a cell of the same parity at any time. A portal can
+ * join cells of different parity; a beam coming out of a portal into a cell
+ * another beam lit is stopped by the lit-cell rule as usual.
  *
  * Loop detection is shared by all beams: a beam stops when it is about to
  * leave a cell in a direction that any beam already left that cell in.
@@ -191,6 +202,21 @@ export function calculateLaserPath(
   let totalLength = 0
   let terminationReason: LaserPath['terminationReason'] = 'max-length'
   let nextColorIndex = 1
+
+  // Portals: each portal cell's twin and pair.
+  const twins = new Map<string, Position>()
+  const pairOf = new Map<string, number>()
+  for (const o of obstacles) {
+    if (o.type !== 'portal') continue
+    const twin = obstacles.find((t) => t.type === 'portal' && t.pair === o.pair && t !== o)
+    if (!twin) continue
+    twins.set(`${o.x},${o.y}`, { x: twin.x, y: twin.y })
+    pairOf.set(`${o.x},${o.y}`, o.pair ?? 1)
+  }
+  const cellKey = (pos: Position) => `${pos.x},${pos.y}`
+  const addCollision = (pos: Position) => {
+    if (!collisionPoints.some((p) => p.x === pos.x && p.y === pos.y)) collisionPoints.push(pos)
+  }
 
   const newBeam = (pos: Position, dir: Direction, generation: number, globalOffset: number, colorIndex: number): Beam => {
     const stream: LaserStream = { segments: [], generation, colorIndex, globalOffset }
@@ -225,7 +251,9 @@ export function calculateLaserPath(
         outcome = { kind: 'stop', reason: 'edge' }
       } else {
         const obstacle = findObstacle(to, obstacles)
-        if (obstacle) {
+        if (obstacle?.type === 'portal' && twins.has(`${to.x},${to.y}`)) {
+          outcome = { kind: 'teleport', to: twins.get(`${to.x},${to.y}`)! }
+        } else if (obstacle) {
           const action = getObstacleAction(beam.dir, obstacle)
           if (action.kind === 'wall') outcome = { kind: 'stop', reason: 'obstacle' }
           else if (action.kind === 'pass') outcome = { kind: 'continue', dir: beam.dir }
@@ -243,29 +271,44 @@ export function calculateLaserPath(
     for (let i = 0; i < arrivals.length; i++) {
       for (let j = i + 1; j < arrivals.length; j++) {
         const a = arrivals[i], b = arrivals[j]
-        if (a.to.x === b.to.x && a.to.y === b.to.y && sameCellCollision(a.to, a.dir, b.dir, mirrors, obstacles)) {
+        const collide = a.outcome.kind === 'teleport' || b.outcome.kind === 'teleport'
+          // Into the two portals of a pair at once, in opposite directions.
+          ? a.outcome.kind === 'teleport' && b.outcome.kind === 'teleport' && cellKey(a.to) !== cellKey(b.to) &&
+            pairOf.get(cellKey(a.to)) === pairOf.get(cellKey(b.to)) && a.dir === oppositeDir(b.dir)
+          : cellKey(a.to) === cellKey(b.to) && sameCellCollision(a.to, a.dir, b.dir, mirrors, obstacles)
+        if (collide) {
           a.collided = b.collided = true
-          collisionPoints.push({ ...a.to })
+          addCollision({ ...a.to })
+          addCollision({ ...b.to })
         }
       }
     }
 
     // 3. Beams entering a cell lit by an earlier beam collide with it on the
-    //    cell's edge.
+    //    cell's edge. Several beams stopped entering the same cell at once
+    //    show one collision, at the cell's centre.
+    const litStops = new Map<string, Arrival[]>()
     for (const arr of arrivals) {
-      if (arr.collided) continue
-      const earlier = lit.get(`${arr.to.x},${arr.to.y}`)
-      if (earlier?.some((d) => litCellCollision(arr.to, d, arr.dir, mirrors, obstacles))) {
+      if (arr.collided || arr.outcome.kind === 'teleport') continue
+      const earlier = lit.get(cellKey(arr.to)) ?? []
+      if (earlier.some((d) => litCellCollision(arr.to, d, arr.dir, mirrors, obstacles))) {
         arr.collided = true
-        collisionPoints.push({ x: (arr.beam.pos.x + arr.to.x) / 2, y: (arr.beam.pos.y + arr.to.y) / 2 })
+        const key = cellKey(arr.to)
+        const stops = litStops.get(key)
+        if (stops) stops.push(arr)
+        else litStops.set(key, [arr])
       }
+    }
+    for (const stops of litStops.values()) {
+      if (stops.length > 1) addCollision({ ...stops[0].to })
+      else addCollision({ x: (stops[0].beam.pos.x + stops[0].to.x) / 2, y: (stops[0].beam.pos.y + stops[0].to.y) / 2 })
     }
 
     // 4. Every beam that got into its cell lights it, including beams that
     //    collided there.
     for (const arr of arrivals) {
-      if (arr.outcome.kind === 'stop') continue
-      const key = `${arr.to.x},${arr.to.y}`
+      if (arr.outcome.kind === 'stop' || arr.outcome.kind === 'teleport') continue
+      const key = cellKey(arr.to)
       const dirs = lit.get(key)
       if (dirs) dirs.push(arr.dir)
       else lit.set(key, [arr.dir])
@@ -286,6 +329,9 @@ export function calculateLaserPath(
         const gen = beam.stream.generation + 1
         next.push(newBeam(arr.to, outcome.dirs[1], gen, time, beam.stream.colorIndex ?? 0))
         next.push(newBeam(arr.to, outcome.dirs[0], gen, time, nextColorIndex++))
+      } else if (outcome.kind === 'teleport') {
+        beam.pos = { ...outcome.to }
+        next.push(beam)
       } else {
         beam.pos = arr.to
         beam.dir = outcome.dir

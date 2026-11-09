@@ -3,8 +3,8 @@
  * Puzzle configurations loaded from the maps in solver/puzzles/*.txt (format
  * in puzzle_map.ts).
  *
- * Obstacle groups are flattened into a plain obstacles array, and splitters
- * and gates become [x, y, dir] triples.
+ * Obstacle groups are flattened into a plain obstacles array, splitters
+ * and gates become [x, y, dir] triples and portals [x, y, pair] triples.
  */
 
 const fs = require('fs');
@@ -24,6 +24,7 @@ interface PuzzleConfig {
   numMirrors: number;
   splitters: [number, number, string][];
   gates: [number, number, string][];
+  portals: [number, number, number][];
 }
 
 function loadPuzzles(): Record<string, PuzzleConfig> {
@@ -43,6 +44,7 @@ function loadPuzzles(): Record<string, PuzzleConfig> {
     const obstacles: [number, number][] = data.obstacle_groups.flatMap(g => g.cells);
     const splitters: [number, number, string][] = data.splitters.map(s => [s.x, s.y, s.dir]);
     const gates: [number, number, string][] = data.gates.map(g => [g.x, g.y, g.dir]);
+    const portals: [number, number, number][] = data.portals.map(p => [p.x, p.y, p.pair]);
 
     configs[date] = {
       name: data.name,
@@ -55,6 +57,7 @@ function loadPuzzles(): Record<string, PuzzleConfig> {
       numMirrors: data.num_mirrors,
       splitters,
       gates,
+      portals,
     };
   }
 
