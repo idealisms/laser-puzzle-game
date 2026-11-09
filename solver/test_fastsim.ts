@@ -392,10 +392,12 @@ function symmetricPortalBoard(rand: () => number) {
   return { config, mirrors };
 }
 
-// Examples from play-testing the Dec 5 2026 puzzle (Crossfire): the laser
-// splits at (7,3); the circle portals are (2,5) and (10,9).
-describe('Dec 5 portal examples', () => {
-  const config = PUZZLES['2026-12-05'];
+// Examples from play-testing the portal puzzle Crossfire (found by name, since
+// puzzles get rescheduled; an older puzzle shares the name but has no
+// portals): the laser splits at (7,3); the circle portals are (2,5) and (10,9).
+describe('Crossfire portal examples', () => {
+  const config = Object.values(PUZZLES).find((c: any) => c.name === 'Crossfire' && c.portals.length > 0);
+  assert.ok(config, 'the Crossfire portal puzzle exists');
   const run = (mirrors) => {
     const lp = calculateLaserPath(
       { x: config.laserX, y: config.laserY, direction: INT_TO_DIR[config.laserDir] },
