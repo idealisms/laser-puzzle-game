@@ -391,3 +391,43 @@ function symmetricPortalBoard(rand: () => number) {
   }
   return { config, mirrors };
 }
+
+// Examples from play-testing the Dec 5 2026 puzzle (Crossfire): the laser
+// splits at (7,3); the circle portals are (2,5) and (10,9).
+describe('Dec 5 portal examples', () => {
+  const config = PUZZLES['2026-12-05'];
+  const run = (mirrors) => {
+    const lp = calculateLaserPath(
+      { x: config.laserX, y: config.laserY, direction: INT_TO_DIR[config.laserDir] },
+      mirrors.map(([x, y, type]) => ({ position: { x, y }, type })),
+      configToObstacles(config),
+      { width: config.width, height: config.height },
+    );
+    assert.equal(fast(createFastSim(config), config, mirrors).length, lp.totalLength);
+    return lp;
+  };
+  const top = [[1, 3, '/'], [1, 5, '\\'], [11, 3, '\\'], [11, 5, '/']];
+
+  it('a later beam goes into a circle from the other side and comes out of the other circle', () => {
+    // The left beam goes into (2,5) heading right at t=12 and out of (10,9).
+    // The right beam goes into (2,5) heading left at t=20: no collision; it
+    // comes out of (10,9) heading left and stops at the divide.
+    const lp = run(top);
+    assert.deepEqual(lp.collisionPoints, []);
+    assert.equal(lp.totalLength, 35);
+    const right = lp.streams.find(st => st.segments[0].direction === 'right');
+    const out = right.segments.findIndex(s => s.start.x === 10 && s.start.y === 9);
+    assert.ok(out > 0, 'the right beam comes out of (10,9)');
+    assert.equal(right.segments[out].direction, 'left');
+  });
+
+  it('beams going into the circle pair at the same step in opposite directions collide at both circles', () => {
+    // With a box of mirrors below (10,9), the left beam comes back into
+    // (10,9) heading right at t=18, as the right beam goes into (2,5)
+    // heading left.
+    const lp = run([...top, [9, 9, '/'], [9, 10, '\\'], [11, 9, '\\'], [11, 10, '/']]);
+    assert.equal(lp.collisionPoints.length, 2);
+    assert.deepEqual(new Set(lp.collisionPoints.map(p => `${p.x},${p.y}`)), new Set(['2,5', '10,9']));
+    assert.equal(lp.totalLength, 33);
+  });
+});
