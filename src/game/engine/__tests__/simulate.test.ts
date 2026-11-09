@@ -554,7 +554,7 @@ describe('calculateLaserPath — portals', () => {
   const spl = splitter(5, 5, 'right')
   const upMirror = mirror(5, 2, '\\')
 
-  it('beams going into a pair at the same step in opposite directions collide', () => {
+  it('beams going into the two portals of a pair at the same step in opposite directions collide', () => {
     // The down beam turns right at (5,8) and goes into the twin at (7,8)
     // heading right at t=8, as the up beam goes into (3,2) heading left.
     const result = calculateLaserPath(laser, [upMirror, mirror(5, 8, '\\')],
@@ -565,14 +565,15 @@ describe('calculateLaserPath — portals', () => {
     expectNoOrphanBeams(result)
   })
 
-  it('beams going into the same portal from opposite sides at the same step collide', () => {
+  it('beams going into the same portal from opposite sides at the same step both go through', () => {
     // The laser splits at (4,3); the beams come round by (2,3)/(2,6) and
-    // (6,3)/(6,6) and reach the portal at (4,6) from both sides at t=10.
+    // (6,3)/(6,6) and reach the portal at (4,6) from both sides at t=10. Both
+    // come out of (8,8), heading apart, so they don't meet.
     const mirrors = [mirror(2, 3, '/'), mirror(2, 6, '\\'), mirror(6, 3, '\\'), mirror(6, 6, '/')]
     const result = calculateLaserPath({ x: 4, y: 0, direction: 'down' }, mirrors,
       [splitter(4, 3, 'down'), portal(4, 6, 1), portal(8, 8, 1)], BOUNDS_10x10)
-    expect(result.collisionPoints).toEqual([{ x: 4, y: 6 }])
-    expect(result.totalLength).toBe(17)
+    expect(result.collisionPoints).toEqual([])
+    expect(result.totalLength).toBe(28)
   })
 
   it('beams entering a pair in the same direction through different portals pass', () => {

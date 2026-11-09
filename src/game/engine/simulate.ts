@@ -171,8 +171,11 @@ interface Arrival {
  * A beam that enters a portal leaves from its twin in the same direction on
  * the next step; the jump itself takes no time. A portal is a hole: it is
  * never lit, so a beam going into it never runs into an earlier beam there.
- * Two beams going into the same pair (through either portal) at the same step
- * in opposite directions collide, each at the portal it went into.
+ * Two beams going into the two different portals of a pair at the same step
+ * in opposite directions collide, each at the portal it went into: each
+ * would come out onto the path the other went in on. Two going into the same
+ * portal from opposite sides both go through and come out of the twin
+ * heading apart.
  *
  * Without portals, beams can never cross mid-step (swap two adjacent cells),
  * since every beam is on a cell of the same parity at any time. A portal can
@@ -269,8 +272,8 @@ export function calculateLaserPath(
       for (let j = i + 1; j < arrivals.length; j++) {
         const a = arrivals[i], b = arrivals[j]
         const collide = a.outcome.kind === 'teleport' || b.outcome.kind === 'teleport'
-          // Into the same portal pair at once, in opposite directions.
-          ? a.outcome.kind === 'teleport' && b.outcome.kind === 'teleport' &&
+          // Into the two portals of a pair at once, in opposite directions.
+          ? a.outcome.kind === 'teleport' && b.outcome.kind === 'teleport' && cellKey(a.to) !== cellKey(b.to) &&
             pairOf.get(cellKey(a.to)) === pairOf.get(cellKey(b.to)) && a.dir === oppositeDir(b.dir)
           : cellKey(a.to) === cellKey(b.to) && sameCellCollision(a.to, a.dir, b.dir, mirrors, obstacles)
         if (collide) {

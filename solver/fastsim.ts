@@ -14,7 +14,8 @@
  * Cells stay lit after a beam passes, and a later beam entering a lit cell
  * stops if it would collide with the beam lighting it. A beam entering a
  * portal leaves its twin; portals are holes that are never lit. Two beams
- * going into the same pair at the same step in opposite directions collide.
+ * going into the two different portals of a pair at the same step in
+ * opposite directions collide.
  */
 
 const UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
@@ -164,10 +165,10 @@ export function createFastSim(config: any): FastSim {
       if (na > 1) {
         for (let i = 0; i < na; i++) {
           if (anem[i] >= 0) {
-            // Into the same portal pair at once, in opposite directions.
+            // Into the two portals of a pair at once, in opposite directions.
             const p = pairOf[ak[i]];
             for (let j = i + 1; j < na; j++)
-              if (anem[j] >= 0 && pairOf[ak[j]] === p && adir[i] === OPP[adir[j]]) ahit[i] = ahit[j] = 1;
+              if (anem[j] >= 0 && ak[j] !== ak[i] && pairOf[ak[j]] === p && adir[i] === OPP[adir[j]]) ahit[i] = ahit[j] = 1;
             continue;
           }
           for (let j = i + 1; j < na; j++)

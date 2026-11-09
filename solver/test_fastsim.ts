@@ -301,8 +301,8 @@ describe('fastsim matches calculateLaserPath with portals', () => {
     assert.ok(litCollisions > 50, `only ${litCollisions} boards with a teleport had lit-cell collisions`);
   });
 
-  // Two beams going into a pair at the same step in opposite directions
-  // collide. Boards symmetric about a splitter's row, with portal pairs placed
+  // Two beams going into the two portals of a pair at the same step in
+  // opposite directions collide. Boards symmetric about a splitter's row, with portal pairs placed
   // symmetrically, send the split beams into both portals of a pair at once.
   it('random symmetric boards with portal pairs', () => {
     const rand = rng(31337);
@@ -421,7 +421,15 @@ describe('Dec 5 portal examples', () => {
     assert.equal(right.segments[out].direction, 'left');
   });
 
-  it('beams going into the circle pair at the same step in opposite directions collide at both circles', () => {
+  it('beams going into the same circle from opposite sides at the same step both go through', () => {
+    // Both beams reach (2,5) at t=12, one from each side, and come out of
+    // (10,9) heading apart: no collision.
+    const lp = run([[1, 3, '/'], [1, 5, '\\'], [8, 3, '\\'], [8, 5, '/']]);
+    assert.deepEqual(lp.collisionPoints, []);
+    assert.equal(lp.totalLength, 29);
+  });
+
+  it('beams going into the two circles at the same step in opposite directions collide at both circles', () => {
     // With a box of mirrors below (10,9), the left beam comes back into
     // (10,9) heading right at t=18, as the right beam goes into (2,5)
     // heading left.

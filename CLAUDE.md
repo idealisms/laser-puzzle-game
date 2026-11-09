@@ -94,7 +94,7 @@ When working with the database, never echo the production database name or passw
 ### Portal semantics
 - A beam entering a portal leaves its twin heading the same way, from any side, in both directions. Entering costs 1 step; the jump is free.
 - A portal is a **hole**: it is never lit, so a beam going into it never runs into an earlier beam there (e.g. a later beam can go into the same portal from the other side).
-- Two beams going into the **same pair** (through either portal) **at the same step in opposite directions collide**, each at the portal it went into. One step apart, each comes out onto the other's lit incoming path and stops just outside the portal.
+- Two beams going into the **two different portals** of a pair **at the same step in opposite directions collide**, each at the portal it went into (each would come out onto the path the other went in on). One step apart, they stop just outside the portals instead, for the same reason. Two beams going into the **same** portal from opposite sides both go through and come out of the twin heading apart.
 - The engine (`simulate.ts`) and the solver (`fastsim.ts`) must agree; `test_fastsim.ts` checks this on random boards with portals, including symmetric boards that send split beams into both portals of a pair at once.
 
 ### What makes a good layout
