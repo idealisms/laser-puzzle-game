@@ -56,6 +56,12 @@ Level → LevelProgress (1:many)
 
 Complex fields (laserConfig, obstacles, solution) stored as JSON.
 
+## Domain and Migration
+
+The site lives at `laserpuzzle.ponderer.org` (Cloudflare DNS → Vercel). `src/lib/siteConfig.ts` holds the site URL and the old hosts; `next.config.ts` sets them per environment. On an old host (`laser-puzzle-game.vercel.app`), `src/proxy.ts` rewrites every page to `/moved`, which carries the player's localStorage to the new site in a `#migrate=v1.…` fragment; `src/components/MigrationImport.tsx` merges it on arrival (`src/lib/migration.ts`).
+- Dev: `127.0.0.1:3000` plays the old host and redirects to `localhost:3000` (used by `e2e/migration.spec.ts`).
+- Preview: the branch URL redirects to the deployment's own URL, to try the move by hand.
+
 ## Path Alias
 
 `@/*` maps to `./src/*` (configured in tsconfig.json)

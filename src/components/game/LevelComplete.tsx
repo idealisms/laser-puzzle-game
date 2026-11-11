@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { SITE_HOST } from '@/lib/siteConfig'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Histogram } from './Histogram'
@@ -38,7 +39,7 @@ export function LevelComplete({
     const formattedDate = date.replace(/-/g, '/')
     const emojiSuffix = achievements.length > 0 ? ` ${achievements.map((a) => a.emoji).join('')}` : ''
     const percentLine = `${percentage}%${emojiSuffix}`
-    const shareText = `Laser Puzzle ${formattedDate}\n${percentLine}\nlaser-puzzle-game.vercel.app`
+    const shareText = `Laser Puzzle ${formattedDate}\n${percentLine}\n${SITE_HOST}`
 
     try {
       await navigator.clipboard.writeText(shareText)
