@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
@@ -27,6 +27,11 @@ export const metadata: Metadata = {
   applicationName: "Laser Puzzle",
   openGraph: { siteName: "Laser Puzzle", type: "website" },
   twitter: { card: "summary_large_image" },
+};
+
+// Matches the page background (bg-gray-900), for the browser's toolbar on phones.
+export const viewport: Viewport = {
+  themeColor: "#111827",
 };
 
 export default function RootLayout({
