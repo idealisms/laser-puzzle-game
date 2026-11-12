@@ -275,6 +275,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
         mirrorsAvailable: levelConfig?.mirrorsAvailable ?? DEFAULT_LEVEL.mirrorsAvailable,
         optimalSolution: levelConfig?.optimalSolution,
         laserPath: resolvedLaserPath,
+        obstacles: levelConfig?.obstacles,
         playedPreviousDay: getPlayedPreviousDay(date),
         averagePercentage: getAveragePercentage(date),
         ...engagement,

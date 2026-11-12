@@ -1,5 +1,6 @@
 import { computeAchievements } from './achievements'
-import { Direction, LaserPath, Mirror, OptimalMirror } from './types'
+import { calculateLaserPath } from './engine/simulate'
+import { Direction, LaserPath, Mirror, Obstacle, OptimalMirror } from './types'
 
 function mirror(x: number, y: number, type: '/' | '\\' = '/'): Mirror {
   return { position: { x, y }, type }
@@ -238,5 +239,98 @@ describe('computeAchievements', () => {
   it('does not award Equal mirror types with no mirrors placed', () => {
     const achievements = computeAchievements({ ...baseCtx, mirrors: [] })
     expect(achievements.map((a) => a.id)).not.toContain('equal-mirror-types')
+  })
+})
+
+// Splitter and portal badges, on real boards traced by the engine.
+describe('splitter and portal achievements', () => {
+  function ids(
+    laser: { x: number; y: number; direction: Direction },
+    mirrors: Mirror[],
+    obstacles: Obstacle[],
+    size = { width: 9, height: 9 }
+  ): string[] {
+    const laserPath = calculateLaserPath(laser, mirrors, obstacles, size)
+    return computeAchievements({ ...baseCtx, mirrors, laserPath, obstacles }).map((a) => a.id)
+  }
+
+  // Splits at (3,2); the down beam turns right at (3,6) into a second splitter at (6,6).
+  const twoSplitters = (secondOrientation: 'right' | 'left'): Obstacle[] => [
+    { x: 3, y: 2, type: 'splitter', orientation: 'right' },
+    { x: 6, y: 6, type: 'splitter', orientation: secondOrientation },
+  ]
+  const toSecondSplitter = [mirror(3, 6, '\\')]
+  const fromLeft = { x: 0, y: 2, direction: 'right' as const }
+
+  it('Full spectrum: every splitter on a two-splitter board splits', () => {
+    expect(ids(fromLeft, toSecondSplitter, twoSplitters('right'))).toContain('full-spectrum')
+  })
+
+  it('no Full spectrum when only one of two splitters splits', () => {
+    const result = ids(fromLeft, toSecondSplitter, twoSplitters('left')) // hits the back of the second
+    expect(result).not.toContain('full-spectrum')
+    expect(result).not.toContain('didnt-split')
+  })
+
+  it('no Full spectrum on a one-splitter board', () => {
+    expect(ids(fromLeft, [], [{ x: 3, y: 2, type: 'splitter', orientation: 'right' }])).not.toContain('full-spectrum')
+  })
+
+  it("Didn't split: the board has a splitter the beam never splits at", () => {
+    expect(ids({ x: 0, y: 0, direction: 'right' }, [], [{ x: 3, y: 3, type: 'splitter', orientation: 'right' }])).toContain(
+      'didnt-split'
+    )
+    // Hitting a side turns the beam without splitting it: still counts.
+    expect(
+      ids({ x: 0, y: 0, direction: 'right' }, [mirror(3, 0, '\\')], [{ x: 3, y: 3, type: 'splitter', orientation: 'right' }])
+    ).toContain('didnt-split')
+  })
+
+  it("no Didn't split on a board without splitters", () => {
+    expect(ids(fromLeft, [], [])).not.toContain('didnt-split')
+  })
+
+  it('Collision course: split beams sent back at each other', () => {
+    const mirrors = [mirror(3, 0, '/'), mirror(6, 0, '\\'), mirror(3, 4, '\\'), mirror(6, 4, '/')]
+    const result = ids(fromLeft, mirrors, [{ x: 3, y: 2, type: 'splitter', orientation: 'right' }], { width: 7, height: 5 })
+    expect(result).toContain('collision-course')
+  })
+
+  it('no Collision course when nothing collides', () => {
+    expect(ids(fromLeft, [], [{ x: 3, y: 2, type: 'splitter', orientation: 'right' }])).not.toContain('collision-course')
+  })
+
+  // Portal pair at (2,1) and (6,1), with a wall between them.
+  const portals: Obstacle[] = [
+    { x: 2, y: 1, type: 'portal', pair: 1 },
+    { x: 6, y: 1, type: 'portal', pair: 1 },
+  ]
+  const intoPortal = { x: 0, y: 1, direction: 'right' as const }
+
+  it('Round trip: through the pair one way, then back the other way', () => {
+    // Out of (6,1) heading right, down at (7,1), left at (7,4), up at (6,4), back
+    // into (6,1) heading up, and out of (2,1).
+    const mirrors = [mirror(7, 1, '\\'), mirror(7, 4, '/'), mirror(6, 4, '\\')]
+    const result = ids(intoPortal, mirrors, portals)
+    expect(result).toContain('round-trip')
+    expect(result).not.toContain('cake-is-a-lie')
+  })
+
+  it('no Round trip when the portals are used only one way', () => {
+    const result = ids(intoPortal, [], portals)
+    expect(result).not.toContain('round-trip')
+    expect(result).not.toContain('cake-is-a-lie')
+  })
+
+  it('The cake is a lie: the board has portals and the beam skips them', () => {
+    const result = ids({ x: 0, y: 5, direction: 'right' }, [], portals)
+    expect(result).toContain('cake-is-a-lie')
+    expect(result).not.toContain('round-trip')
+  })
+
+  it('no portal badges on a board without portals', () => {
+    const result = ids(fromLeft, [], [])
+    expect(result).not.toContain('cake-is-a-lie')
+    expect(result).not.toContain('round-trip')
   })
 })
