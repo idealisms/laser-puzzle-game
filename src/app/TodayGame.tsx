@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { getLocalDateString } from '@/lib/date'
 import { GameView } from '@/components/game/GameView'
 
-export default function HomePage() {
+// Today's puzzle; switches to the new day's puzzle when the tab comes back after midnight.
+export function TodayGame() {
   const [date, setDate] = useState(getLocalDateString)
 
   useEffect(() => {
