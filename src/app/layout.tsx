@@ -18,8 +18,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Laser Puzzle Game",
-  description: "Place mirrors to direct the laser and create the longest path!",
+  title: {
+    default: "Laser Puzzle – a free daily mirror logic game",
+    template: "%s – Laser Puzzle",
+  },
+  description:
+    "A free daily logic puzzle: place mirrors to bend a laser into the longest path you can. A new puzzle every day, with splitters, one-way gates and portals.",
+  applicationName: "Laser Puzzle",
+  openGraph: { siteName: "Laser Puzzle", type: "website" },
 };
 
 export default function RootLayout({

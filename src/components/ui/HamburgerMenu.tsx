@@ -93,7 +93,7 @@ export function HamburgerMenu({ isOpen, onClose, onOpenHowToPlay, onOpenSettings
               onClick={onClose}
               className="block py-2 text-gray-300 hover:text-white transition-colors"
             >
-              Browse Levels
+              Past Puzzles
             </Link>
 
             <button
