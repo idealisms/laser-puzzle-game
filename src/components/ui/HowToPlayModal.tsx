@@ -52,6 +52,12 @@ export function HowToPlayModal({ isOpen, onClose }: HowToPlayModalProps) {
         <p className="text-gray-400">
           Redirect the laser beam to create the <strong className="text-gray-300">longest path possible</strong>. Each puzzle is new daily — you only get <strong className="text-gray-300">one</strong> submission, so take your time.
         </p>
+        <p className="mt-4 text-sm">
+          {/* New tab, so a puzzle in progress isn't lost. */}
+          <a href="/how-to-play" target="_blank" rel="noopener" className="text-emerald-400 hover:text-emerald-300">
+            Full guide: splitters, gates, portals and strategy tips →
+          </a>
+        </p>
         <button
           onClick={onClose}
           className="mt-6 w-full py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md transition-colors"

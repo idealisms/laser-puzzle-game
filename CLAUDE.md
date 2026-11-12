@@ -44,6 +44,8 @@ npm run test:e2e   # Run Playwright browser tests (local only; reuses dev server
 
 **API Routes**: RESTful JSON endpoints. Errors return `{ error: string }` with appropriate HTTP status codes.
 
+**How-to-play guide**: `/how-to-play` explains the rules with small example boards drawn by the real engine (`src/app/how-to-play/examples.ts`). `examples.test.ts` checks each board still does what its caption says; update both if game rules change.
+
 **Components**: Client components use `"use client"` directive. Tailwind classes for styling, no CSS modules.
 
 ### Database Models
