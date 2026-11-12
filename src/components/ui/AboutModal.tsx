@@ -33,7 +33,7 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
     >
       <div className="absolute inset-0 bg-black/70" />
       <div
-        className="relative bg-gray-900 border border-gray-700 rounded-lg p-6 max-w-md mx-4"
+        className="relative bg-gray-900 border border-gray-700 rounded-lg p-6 max-w-md mx-4 max-h-[90svh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -68,6 +68,16 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
           If you have feedback or suggestions on this game and want to get in touch with me (Tony Chang), join the{' '}
           <a href="https://discord.gg/3EeWNbZYXD" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">Discord server</a>
           .
+        </p>
+
+        <h3 className="text-lg font-semibold text-white mt-6 mb-2">Privacy</h3>
+        <p className="text-gray-400 text-sm mb-2">
+          There are no accounts and no cookies. Your progress and settings are saved in your browser.
+        </p>
+        <p className="text-gray-400 text-sm">
+          When you submit a score, the game sends it with a random player ID, your mirror placement and how long you
+          spent, so it can show how you compare with other players. Visits are counted with Vercel Web Analytics,
+          which doesn&apos;t use cookies or follow you across sites.
         </p>
       </div>
     </div>
