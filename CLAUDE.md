@@ -82,6 +82,7 @@ When working with the database, never echo the production database name or passw
    `cd solver && npx tsx generate_levels.ts --start DATE --end DATE --workers 12 --beam-width 12000`
    - After solving, the generator prints layout metrics and warns when more than 40% of the optimal path is on the outer ring or fewer than 25% of obstacle cells are anchored to an edge (see `solver/layout_metrics.ts`). These shapes rate poorly with players — rework the layout rather than shipping it.
    - Then run `npx tsx check_levels.ts --start DATE --end DATE`. It draws each optimal solution and fails when a beam out of a splitter places no mirror (puzzles are more fun when both split beams matter), a gate can never be passed, or a puzzle with portals uses none of them. To fix a weak split, try `npx tsx search_splitter.ts DATE --x A-B --y A-B` to rank splitter placements, then regenerate at full beam width and re-check.
+   - The generator also rewrites `src/data/puzzle-names.json` (date → name, for page titles and link previews); commit it with the levels. After renaming a puzzle without re-solving, run `cd solver && npx tsx export_puzzle_names.ts`. `src/lib/puzzleInfo.test.ts` fails if the file is stale.
 3. Seed to dev: `DOTENV_CONFIG_PATH=.env.local npm run db:seed`
 4. Seed to prod: `DOTENV_CONFIG_PATH=.env.production npm run db:seed`
 

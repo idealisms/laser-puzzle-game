@@ -18,6 +18,7 @@ const { solvePuzzle } = require('./solve');
 const { checkLayout, measureShape } = require('./layout_metrics');
 const { configToObstacles } = require('./obstacles');
 const { MAX_PORTAL_PAIRS } = require('./puzzle_map');
+const { exportPuzzleNames } = require('./export_puzzle_names');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -199,6 +200,7 @@ async function main() {
       // Generate single specific date
       await generateForDate(opts.date!, outputDir, solverOpts);
     }
+    console.log(`Updated puzzle names in ${exportPuzzleNames()}`);
     console.log('\nDone!');
   } catch (err: any) {
     console.error(`Error: ${err.message}`);
