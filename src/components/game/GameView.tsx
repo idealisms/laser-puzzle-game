@@ -19,6 +19,8 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Header } from '@/components/ui/Header'
 import { HowToPlayModal } from '@/components/ui/HowToPlayModal'
+import { SubmitConfirmDialog } from './SubmitConfirmDialog'
+import { getSubmitWarnings, SubmitWarning } from '@/game/submitWarnings'
 
 const DEFAULT_LEVEL: LevelConfig = {
   gridWidth: 15,
@@ -95,6 +97,8 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
   const [showHowToPlay, setShowHowToPlay] = useState(false)
   const [histogramData, setHistogramData] = useState<HistogramData | null>(null)
   const [achievements, setAchievements] = useState<Achievement[]>([])
+  // Set while the "Are you sure?" dialog is open.
+  const [submitWarnings, setSubmitWarnings] = useState<SubmitWarning[] | null>(null)
 
   const {
     gameState,
@@ -332,6 +336,26 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
     setShowComplete(true)
   }, [date, level, gameState, buildAchievements, getMirrorsErasedCount])
 
+  // Submit right away, unless the path looks unfinished: then ask first.
+  const handleSubmitClick = useCallback(() => {
+    const warnings = getSubmitWarnings({
+      placedMirrors: gameState.placedMirrors,
+      mirrorsAvailable: activeLevel.mirrorsAvailable,
+      laserPath: gameState.laserPath,
+      score: gameState.score,
+      sessionBestScore,
+    })
+    if (warnings.length === 0) handleSubmit()
+    else setSubmitWarnings(warnings)
+  }, [gameState, activeLevel.mirrorsAvailable, sessionBestScore, handleSubmit])
+
+  const handleSubmitAnyway = useCallback(() => {
+    setSubmitWarnings(null)
+    handleSubmit()
+  }, [handleSubmit])
+
+  const handleCancelSubmit = useCallback(() => setSubmitWarnings(null), [])
+
   const handleRestoreBest = useCallback(() => {
     if (hasSubmitted && bestSolution) {
       loadSolution(bestSolution)
@@ -407,7 +431,7 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
       />
       <GameControls
         onReset={onReset}
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmitClick}
         canSubmit={gameState.score > 0}
         hasSubmitted={hasSubmitted}
         onShowResults={handleShowResults}
@@ -475,6 +499,12 @@ export function GameView({ date, enableLevelCache }: GameViewProps) {
         date={date}
         histogram={histogramData}
         achievements={achievements}
+      />
+
+      <SubmitConfirmDialog
+        warnings={submitWarnings}
+        onSubmitAnyway={handleSubmitAnyway}
+        onCancel={handleCancelSubmit}
       />
 
       <HowToPlayModal

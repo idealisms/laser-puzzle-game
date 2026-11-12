@@ -52,6 +52,8 @@ async function setVisibility(page: Page, state: 'visible' | 'hidden') {
 
 async function submit(page: Page, submissions: { timeSpentSeconds: number }[]) {
   await page.getByRole('button', { name: 'Submit Score' }).click()
+  // Only one mirror is placed, so the game asks first.
+  await page.getByRole('button', { name: 'Submit Anyway' }).click()
   await expect.poll(() => submissions.length).toBe(1)
   return submissions[0].timeSpentSeconds
 }

@@ -140,6 +140,8 @@ test('later submissions use the imported player ID', async ({ page }) => {
   const cell = b.width / 15
   await grid.click({ position: { x: 5.5 * cell, y: 0.5 * cell } })
   await page.getByRole('button', { name: 'Submit Score' }).click()
+  // Only one mirror is placed, so the game asks first.
+  await page.getByRole('button', { name: 'Submit Anyway' }).click()
 
   await expect.poll(() => submissions.length).toBe(1)
   expect(submissions[0]).toMatchObject({ anonId: ID_OLD, levelDate: '2026-01-02' })
