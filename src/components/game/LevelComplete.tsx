@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { SITE_HOST } from '@/lib/siteConfig'
+import { SITE_URL } from '@/lib/siteConfig'
+import { useSettings } from '@/context/SettingsContext'
+import { buildShareText } from '@/game/shareText'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Histogram } from './Histogram'
@@ -32,14 +34,18 @@ export function LevelComplete({
   achievements = [],
 }: LevelCompleteProps) {
   const [copied, setCopied] = useState(false)
+  const { settings } = useSettings()
   const percentage = Math.round((score / optimalScore) * 100)
   const isPerfect = score >= optimalScore
 
   const handleShare = async () => {
-    const formattedDate = date.replace(/-/g, '/')
-    const emojiSuffix = achievements.length > 0 ? ` ${achievements.map((a) => a.emoji).join('')}` : ''
-    const percentLine = `${percentage}%${emojiSuffix}`
-    const shareText = `Laser Puzzle ${formattedDate}\n${percentLine}\n${SITE_HOST}`
+    const shareText = buildShareText({
+      date,
+      percentage,
+      achievements,
+      siteUrl: SITE_URL,
+      includeLink: settings.shareLink,
+    })
 
     try {
       await navigator.clipboard.writeText(shareText)

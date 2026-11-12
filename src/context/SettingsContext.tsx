@@ -5,11 +5,14 @@ import { createContext, useContext, useSyncExternalStore, ReactNode } from 'reac
 interface Settings {
   showBlipAnimations: boolean
   colorblindMode: boolean
+  // Add a link to the puzzle when copying results to share.
+  shareLink: boolean
 }
 
 const DEFAULT_SETTINGS: Settings = {
   showBlipAnimations: true,
   colorblindMode: false,
+  shareLink: true,
 }
 
 const STORAGE_KEY = 'laser-puzzle-settings'
