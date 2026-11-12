@@ -26,6 +26,7 @@ export const metadata: Metadata = {
     "A free daily logic puzzle: place mirrors to bend a laser into the longest path you can. A new puzzle every day, with splitters, one-way gates and portals.",
   applicationName: "Laser Puzzle",
   openGraph: { siteName: "Laser Puzzle", type: "website" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({

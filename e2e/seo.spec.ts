@@ -92,6 +92,12 @@ test('sitemap.xml lists the main pages', async ({ request }) => {
   for (const path of ['/', '/how-to-play', '/game']) {
     expect(xml).toContain(`<loc>http://localhost:3000${path}</loc>`)
   }
+  // Every released puzzle (reads the local database), and never a future one.
+  expect(xml).toContain('<loc>http://localhost:3000/game/2026-01-22</loc>')
+  const dates = [...xml.matchAll(/\/game\/(\d{4}-\d{2}-\d{2})</g)].map(m => m[1])
+  const latest = new Date(Date.now() + 14 * 60 * 60 * 1000).toISOString().slice(0, 10)
+  expect(dates.length).toBeGreaterThan(0)
+  expect(dates.every(d => d <= latest)).toBe(true)
 })
 
 test('robots.txt allows crawling, hides the API and points to the sitemap', async ({ request }) => {
