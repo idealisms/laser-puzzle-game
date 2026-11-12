@@ -1,4 +1,4 @@
-import { Direction, LaserPath, Mirror, OptimalMirror } from './types'
+import { Direction, LaserPath, Mirror, Obstacle, OptimalMirror } from './types'
 
 export interface Achievement {
   id: string
@@ -13,6 +13,8 @@ export interface AchievementContext {
   mirrorsAvailable: number
   optimalSolution?: OptimalMirror[]
   laserPath: LaserPath | null
+  // The board's walls, splitters, gates and portals. Omit for a board with none.
+  obstacles?: Obstacle[]
   playedPreviousDay: boolean
   averagePercentage: number | null // player's average % on other days, excluding today
   // Engagement stats from this submission. null when unavailable (e.g. recomputing
@@ -85,6 +87,35 @@ function hasLongPath(laserPath: LaserPath | null): boolean {
     }
   }
   return false
+}
+
+// How many times the laser split. Every split starts two new streams.
+function countSplits(laserPath: LaserPath | null): number {
+  if (!laserPath) return 0
+  return laserPath.streams.filter((s) => s.generation > 0).length / 2
+}
+
+// Portal jumps as "from->to" cell keys. A jump shows up as a segment that starts
+// somewhere other than where the previous one ended.
+function collectPortalJumps(laserPath: LaserPath | null): string[] {
+  if (!laserPath) return []
+  const jumps: string[] = []
+  for (const stream of laserPath.streams) {
+    for (let i = 1; i < stream.segments.length; i++) {
+      const from = stream.segments[i - 1].end
+      const to = stream.segments[i].start
+      if (from.x !== to.x || from.y !== to.y) jumps.push(`${from.x},${from.y}->${to.x},${to.y}`)
+    }
+  }
+  return jumps
+}
+
+function hasRoundTrip(jumps: string[]): boolean {
+  const seen = new Set(jumps)
+  return jumps.some((j) => {
+    const [from, to] = j.split('->')
+    return seen.has(`${to}->${from}`)
+  })
 }
 
 export function computeAchievements(ctx: AchievementContext): Achievement[] {
@@ -164,6 +195,32 @@ export function computeAchievements(ctx: AchievementContext): Achievement[] {
     const backslashCount = ctx.mirrors.length - slashCount
     if (slashCount === backslashCount) {
       achievements.push({ id: 'equal-mirror-types', emoji: '⚖️', label: 'Equal mirror types' })
+    }
+  }
+
+  const obstacles = ctx.obstacles ?? []
+  const splitterCount = obstacles.filter((o) => o.type === 'splitter').length
+  const hasPortals = obstacles.some((o) => o.type === 'portal')
+  const splits = countSplits(ctx.laserPath)
+
+  if (splitterCount >= 2 && splits >= splitterCount) {
+    achievements.push({ id: 'full-spectrum', emoji: '🌈', label: 'Full spectrum' })
+  }
+
+  if (splitterCount > 0 && splits === 0) {
+    achievements.push({ id: 'didnt-split', emoji: '🙈', label: "Didn't split" })
+  }
+
+  if (ctx.laserPath && ctx.laserPath.collisionPoints.length > 0) {
+    achievements.push({ id: 'collision-course', emoji: '💥', label: 'Collision course' })
+  }
+
+  if (hasPortals) {
+    const jumps = collectPortalJumps(ctx.laserPath)
+    if (jumps.length === 0) {
+      achievements.push({ id: 'cake-is-a-lie', emoji: '🍰', label: 'The cake is a lie' })
+    } else if (hasRoundTrip(jumps)) {
+      achievements.push({ id: 'round-trip', emoji: '🔁', label: 'Round trip' })
     }
   }
 
