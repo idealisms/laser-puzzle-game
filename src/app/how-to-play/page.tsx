@@ -149,6 +149,11 @@ export default function HowToPlayPage() {
         <Section id="strategy" title="Strategy tips">
           <ul className="list-disc pl-6 space-y-3">
             <li>
+              <strong className="text-white">Find the longest runs first.</strong> Before placing anything, look
+              for the longest straight lines on the board, such as rows or columns with no walls in the way. Then
+              work out how to get the beam into each one and out again.
+            </li>
+            <li>
               <strong className="text-white">Make every mirror earn its place.</strong> Long straight runs score the
               most per mirror, so zigzag across the whole width or height of the board instead of making tight
               turns.
